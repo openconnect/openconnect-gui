@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>329</width>
-    <height>144</height>
+    <height>132</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -33,7 +33,7 @@
     <item>
      <layout class="QVBoxLayout" name="verticalLayout">
       <property name="spacing">
-       <number>3</number>
+       <number>8</number>
       </property>
       <item>
        <layout class="QHBoxLayout" name="horizontalLayout">
@@ -51,17 +51,28 @@
          </widget>
         </item>
         <item>
-         <widget class="QToolButton" name="toolButton">
-          <property name="text">
-           <string>Edit</string>
-          </property>
-          <property name="toolButtonStyle">
-           <enum>Qt::ToolButtonIconOnly</enum>
-          </property>
-          <property name="arrowType">
-           <enum>Qt::NoArrow</enum>
-          </property>
-         </widget>
+         <layout class="QHBoxLayout" name="horizontalLayout_3">
+          <item>
+           <widget class="QToolButton" name="toolButton">
+            <property name="text">
+             <string>Edit</string>
+            </property>
+            <property name="toolButtonStyle">
+             <enum>Qt::ToolButtonIconOnly</enum>
+            </property>
+            <property name="arrowType">
+             <enum>Qt::NoArrow</enum>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QToolButton" name="toolButton_2">
+            <property name="text">
+             <string>Delete</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
         </item>
        </layout>
       </item>
@@ -104,25 +115,6 @@
      </layout>
     </item>
    </layout>
-  </widget>
-  <widget class="QToolBar" name="mainToolBar">
-   <attribute name="toolBarArea">
-    <enum>TopToolBarArea</enum>
-   </attribute>
-   <attribute name="toolBarBreak">
-    <bool>false</bool>
-   </attribute>
-  </widget>
-  <widget class="QToolBar" name="toolBar">
-   <property name="windowTitle">
-    <string>toolBar</string>
-   </property>
-   <attribute name="toolBarArea">
-    <enum>TopToolBarArea</enum>
-   </attribute>
-   <attribute name="toolBarBreak">
-    <bool>false</bool>
-   </attribute>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
  </widget>
