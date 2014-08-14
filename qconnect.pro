@@ -14,11 +14,14 @@ TEMPLATE = app
 
 SOURCES += main.cpp\
         mainwindow.cpp \
-    vpninfo.cpp
+    vpninfo.cpp \
+    storage.cpp
 
 HEADERS  += mainwindow.h \
-    vpninfo.h
+    vpninfo.h \
+    storage.h
 
-FORMS    += mainwindow.ui
+FORMS    += mainwindow.ui \
+    edit.ui
 
 unix|win32: LIBS += -lopenconnect

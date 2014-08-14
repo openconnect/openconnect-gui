@@ -7,6 +7,8 @@ extern "C" {
 #include <QtConcurrentRun>
 #include <QMessageBox>
 #include <vpninfo.h>
+#include <storage.h>
+#include <QLineEdit>
 
 #define APP_NAME "Qconnect"
 
@@ -17,7 +19,9 @@ MainWindow::MainWindow(QWidget *parent) :
     const char *version = openconnect_get_version();
     ui->setupUi(this);
     this->setWindowTitle(QLatin1String("Qconnect (openconnect ")+QLatin1String(version)+QLatin1String(")"));
-    this->cmd_fd = -1;
+
+     connect(ui->comboBox->lineEdit(), SIGNAL(returnPressed()), this, SLOT(on_connectBtn_clicked()), Qt::QueuedConnection);
+
 }
 
 MainWindow::~MainWindow()
@@ -25,12 +29,22 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-void MainWindow::updateProgressBar(const char *str, int value)
+void MainWindow::set_settings(QSettings *s)
+{
+       QStringList servers;
+       this->settings = s;
+
+       servers = get_server_list(this->settings);
+
+        for (int i = 0;i<servers.size();i++) {
+            ui->comboBox->addItem(servers.at(i));
+        }
+};
+
+void MainWindow::updateProgressBar(const char *str)
 {
     QMutexLocker locker(&this->progress_mutex);
-    ui->progressBar->setFormat(QLatin1String(str));
-    if (value != -1)
-        ui->progressBar->setValue(value);
+    ui->statusBar->showMessage(QLatin1String(str));
 }
 
 void MainWindow::enableDisconnect(bool val)
@@ -42,24 +56,28 @@ void MainWindow::enableDisconnect(bool val)
 static void main_loop(VpnInfo *vpninfo, MainWindow *m)
 {
     vpninfo->mainloop();
-    m->updateProgressBar(vpninfo->last_err, -1);
+    m->updateProgressBar(vpninfo->last_err);
     m->enableDisconnect(false);
+
+    delete vpninfo;
 }
 
 void MainWindow::on_disconnectBtn_clicked()
 {
-    char cmd = OC_CMD_CANCEL;
-    if (this->cmd_fd != -1)
-        write(this->cmd_fd, &cmd, 1);
+    this->vpninfo->disconnect();
 }
 
 void MainWindow::on_connectBtn_clicked()
 {
     VpnInfo *vpninfo = NULL;
+    StoredServer *ss = new StoredServer(this->settings);
     QFuture<void> result;
+    QString name;
     int ret;
 
-    if (ui->lineEdit->text().isEmpty()) {
+    updateProgressBar("");
+
+    if (ui->comboBox->currentText().isEmpty()) {
         QMessageBox::information(
             this,
             tr(APP_NAME),
@@ -67,36 +85,35 @@ void MainWindow::on_connectBtn_clicked()
         return;
     }
 
-    vpninfo = new VpnInfo("Qconnect 0.1", this);
+    name = ui->comboBox->currentText();
+    if (ss->load(name) == 0) {
+        ss->set_servername(name);
+    }
+
+    vpninfo = new VpnInfo("Qconnect 0.1", ss, this);
     if (vpninfo == NULL)
         return;
 
-    updateProgressBar("%p%", 5);
-
-    vpninfo->parse_url(ui->lineEdit->text().toLocal8Bit().data());
+    vpninfo->parse_url(ss->get_servername().toLocal8Bit().data());
 
     enableDisconnect(true);
 
     /* XXX openconnect_set_http_proxy */
 
-    updateProgressBar("%p%", 10);
     ret = vpninfo->connect();
     if (ret != 0) {
-        updateProgressBar(vpninfo->last_err, -1);
+        updateProgressBar(vpninfo->last_err);
         goto fail;
     }
-
-    updateProgressBar("%p%", 70);
 
     ret = vpninfo->dtls_connect();
     if (ret != 0) {
-        updateProgressBar(vpninfo->last_err, -1);
+        updateProgressBar(vpninfo->last_err);
         goto fail;
     }
 
-    updateProgressBar("%p%", 100);
-
     result = QtConcurrent::run (main_loop, vpninfo, this);
+    this->vpninfo = vpninfo;
 
     return;
  fail:
@@ -104,3 +121,4 @@ void MainWindow::on_connectBtn_clicked()
     enableDisconnect(false);
     return;
 }
+

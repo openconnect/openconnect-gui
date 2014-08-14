@@ -2,6 +2,8 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QCoreApplication>
+#include <QSettings>
 #include <QMutex>
 
 extern "C" {
@@ -18,8 +20,10 @@ class MainWindow : public QMainWindow
 
 public:
     explicit MainWindow(QWidget *parent = 0);
-    void updateProgressBar(const char *str, int value);
+    void updateProgressBar(const char *str);
     void enableDisconnect(bool);
+    void set_settings(QSettings *s);
+
     ~MainWindow();
 
 private slots:
@@ -28,8 +32,9 @@ private slots:
     void on_connectBtn_clicked();
 
 private:
+    class VpnInfo *vpninfo;
     Ui::MainWindow *ui;
-    int cmd_fd;
+    QSettings *settings;
     QMutex progress_mutex;
 };
 
