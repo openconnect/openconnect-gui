@@ -1,3 +1,22 @@
+/*
+ * Copyright (C) 2014 Red Hat
+ *
+ * This file is part of qconnect.
+ *
+ * Qconnect is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 #ifndef STORAGE_H
 #define STORAGE_H
 
@@ -8,6 +27,7 @@
 #include <gnutls/gnutls.h>
 
 QStringList get_server_list(QSettings *settings);
+void remove_server(QSettings *settings, QString server);
 
 class StoredServer
 {
@@ -40,20 +60,15 @@ public:
         return t;
     }
 
-    const gnutls_datum_t get_user_cert(void) {
-        gnutls_datum_t t = {(unsigned char*)user_cert.data(), (unsigned)user_cert.size()};
-        return t;
-    }
-
-    void set_servername(QString & name) {
+    void set_servername(QString name) {
         this->servername = name;
     }
 
-    void set_username(QString & username) {
+    void set_username(QString username) {
         this->username = username;
     }
 
-    void set_password(QString & p) {
+    void set_password(QString p) {
         this->password = p;
     }
 
@@ -62,7 +77,6 @@ public:
     }
 
     void set_server_cert(gnutls_datum_t *cert);
-    void set_user_cert(gnutls_datum_t *cert);
     int save();
 
 private:
@@ -71,7 +85,6 @@ private:
     QString groupname;
     QString servername;
     QByteArray server_cert;
-    QByteArray user_cert;
     QSettings *settings;
 };
 

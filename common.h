@@ -17,33 +17,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef VPNINFO_H
-#define VPNINFO_H
+#ifndef COMMON_H
+#define COMMON_H
 
-#include <mainwindow.h>
-#include <storage.h>
+#define APP_NAME "Qconnect"
 
-extern "C" {
-#include <openconnect.h>
-}
-
-class VpnInfo
-{
-public:
-    explicit VpnInfo(const char *name, class StoredServer *ss, class MainWindow *m);
-    ~VpnInfo();
-    void parse_url(const char *url);
-    int connect();
-    void disconnect();
-    int dtls_connect();
-    void mainloop();
-
-    const char *last_err;
-    MainWindow *m;
-    StoredServer *ss;
-private:
-    int cmd_fd;
-    struct openconnect_info *vpninfo;
-};
-
-#endif // VPNINFO_H
+#endif // COMMON_H
