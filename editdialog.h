@@ -41,6 +41,12 @@ private slots:
 
     void on_buttonBox_rejected();
 
+    void on_userCertButton_clicked();
+
+    void on_userKeyButton_clicked();
+
+    void on_caCertButton_clicked();
+
 private:
     Ui::EditDialog *ui;
     StoredServer *ss;

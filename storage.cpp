@@ -58,35 +58,90 @@ void remove_server(QSettings *settings, QString server)
     return;
 }
 
+QString StoredServer::get_cert_file()
+{
+    QString File;
+    this->client.cert.tmpfile_export(File);
+    return File;
+}
+
+QString StoredServer::get_key_file()
+{
+    QString File;
+    this->client.key.tmpfile_export(File);
+    return File;
+}
+
+QString StoredServer::get_ca_cert_file()
+{
+    QString File;
+    this->ca_cert.tmpfile_export(File);
+    return File;
+}
+
+int StoredServer::set_ca_cert(QString filename)
+{
+    int ret = this->ca_cert.import(filename);
+    this->last_err = this->ca_cert.last_err;
+    return ret;
+}
+
+int StoredServer::set_client_cert(QString filename)
+{
+    int ret = this->client.import(filename);
+    this->last_err = this->client.last_err;
+    return ret;
+}
+
+int StoredServer::set_client_key(QString filename)
+{
+    int ret = this->client.import(filename);
+    this->last_err = this->client.last_err;
+    return ret;
+}
+
 int StoredServer::load(QString &name)
 {
+    QByteArray data;
+
     this->servername = name;
     settings->beginGroup(PREFIX+name);
     this->username = settings->value("username").toString();
     this->groupname = settings->value("groupname").toString();
     this->password = settings->value("password").toString();
 
-    this->server_cert = settings->value("server-cert").toByteArray();
+    data = settings->value("ca-cert").toByteArray();
+    this->ca_cert.import(data);
+
+    data = settings->value("client-cert").toByteArray();
+    this->client.cert.import(data);
+
+    data = settings->value("client-key").toByteArray();
+    this->client.key.import(data);
 
     settings->endGroup();
     return 0;
 }
 
-void StoredServer::set_server_cert(gnutls_datum_t *cert)
-{
-    this->server_cert.setRawData((char*)cert->data, cert->size);
-}
-
 int StoredServer::save()
 {
     QString empty = "";
+    QByteArray data;
 
     settings->beginGroup(PREFIX+this->servername);
     settings->setValue("server", this->servername);
     settings->setValue("username", this->username);
     settings->setValue("password", this->password);
     settings->setValue("groupname", this->groupname);
-    settings->setValue("server-cert", this->server_cert);
+
+    this->ca_cert.data_export(data);
+    settings->setValue("ca-cert", data);
+
+    this->client.cert_export(data);
+    settings->setValue("client-cert", data);
+
+    this->client.key_export(data);
+    settings->setValue("client-key", data);
 
     settings->endGroup();
     return 0;

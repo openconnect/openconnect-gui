@@ -25,6 +25,7 @@
 #include <QCoreApplication>
 #include <QSettings>
 #include <gnutls/gnutls.h>
+#include "keypair.h"
 
 QStringList get_server_list(QSettings *settings);
 void remove_server(QSettings *settings, QString server);
@@ -55,11 +56,6 @@ public:
         return this->servername;
     }
 
-    const gnutls_datum_t get_server_cert(void) {
-        gnutls_datum_t t = {(unsigned char*)server_cert.data(), (unsigned)server_cert.size()};
-        return t;
-    }
-
     void set_servername(QString name) {
         this->servername = name;
     }
@@ -76,15 +72,23 @@ public:
         this->groupname = groupname;
     }
 
-    void set_server_cert(gnutls_datum_t *cert);
+    QString get_cert_file();
+    QString get_key_file();
+    QString get_ca_cert_file();
+
+    int set_ca_cert(QString filename);
+    int set_client_cert(QString filename);
+    int set_client_key(QString filename);
     int save();
 
+    QString last_err;
 private:
     QString username;
     QString password;
     QString groupname;
     QString servername;
-    QByteArray server_cert;
+    Cert ca_cert;
+    KeyPair client;
     QSettings *settings;
 };
 

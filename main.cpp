@@ -20,9 +20,41 @@
 #include "mainwindow.h"
 #include <QApplication>
 #include <QCoreApplication>
+#include <QInputDialog>
+#include <QMessageBox>
+#include "common.h"
 extern "C" {
-#include <openconnect.h>
+#include <stdio.h>
 #include <signal.h>
+#include <openconnect.h>
+#include <gnutls/pkcs11.h>
+}
+
+int pin_callback(void *userdata, int attempt, const char *token_url,
+                 const char *token_label, unsigned flags, char *pin, size_t pin_max)
+{
+    MainWindow *w = (MainWindow*)userdata;
+    QString text, outtext, type = "user";
+    bool ok;
+
+    if (flags & GNUTLS_PIN_SO)
+        type = "security officer";
+
+    outtext = "Please enter the " + type + " PIN for " + QLatin1String(token_label) + ".";
+    if (flags & GNUTLS_PKCS11_PIN_FINAL_TRY)
+        outtext += " This is the FINAL try!";
+
+    if (flags & GNUTLS_PKCS11_PIN_COUNT_LOW)
+        outtext += " Only few tries before token lock!";
+
+    text = QInputDialog::getText(w, QLatin1String(token_url),
+                                    outtext, QLineEdit::Normal,
+                                    QString(), &ok);
+    if (!ok)
+        return -1;
+
+    snprintf(pin, pin_max, "%s", text.toAscii().data());
+    return 0;
 }
 
 int main(int argc, char *argv[])
@@ -32,12 +64,14 @@ int main(int argc, char *argv[])
     QVariant v;
     MainWindow w;
     QCoreApplication::setOrganizationDomain("redhat.com");
+    QMessageBox msgBox;
 
     signal(SIGPIPE, SIG_IGN);
     QSettings settings("Red Hat", "Qconnect");
     openconnect_init_ssl();
+    gnutls_pkcs11_set_pin_function(pin_callback, &w);
 
-#if 0
+#if !defined(DEVEL)
     v = settings.value("mainwindow/size");
     if (v.isNull() == false)
         w.resize(v.toSize());
@@ -51,8 +85,15 @@ int main(int argc, char *argv[])
         w.setWindowState(Qt::WindowMaximized);
     }
 #endif
+
     w.set_settings(&settings);
     w.show();
+
+#if !defined(_WIN32) && !defined(DEVEL)
+    msgBox.setText("This program requires root privileges to fully function.");
+    msgBox.setInformativeText("VPN connection establishment would fail.");
+    ret = msgBox.exec();
+#endif
 
     ret = a.exec();
 

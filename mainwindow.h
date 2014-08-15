@@ -26,8 +26,6 @@
 #include <QMutex>
 #include "common.h"
 
-#define toAscii toLatin1
-
 extern "C" {
 #include <openconnect.h>
 }

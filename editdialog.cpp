@@ -20,6 +20,7 @@
 #include "editdialog.h"
 #include "ui_editdialog.h"
 #include <QMessageBox>
+#include <QFileDialog>
 
 EditDialog::EditDialog(QString server, QSettings *settings, QWidget *parent) :
     QDialog(parent),
@@ -60,4 +61,64 @@ void EditDialog::on_buttonBox_accepted()
 void EditDialog::on_buttonBox_rejected()
 {
     this->close();
+}
+
+void EditDialog::on_userCertButton_clicked()
+{
+    QString filename;
+
+    filename = QFileDialog::getOpenFileName(this,
+        tr("Open certificate"), "", tr("Certificate Files (*.crt *.pem *.der *.p12)"));
+
+    if (filename.isEmpty() == false) {
+        if (ss->set_client_cert(filename) != 0) {
+            QMessageBox mbox;
+            mbox.setText("Cannot import certificate.");
+            if (ss->last_err.isEmpty() == false)
+                mbox.setInformativeText(ss->last_err);
+            mbox.exec();
+        } else {
+            ui->userCertEdit->setText(filename);
+        }
+    }
+}
+
+void EditDialog::on_userKeyButton_clicked()
+{
+    QString filename;
+
+    filename = QFileDialog::getOpenFileName(this,
+        tr("Open private key"), "", tr("Private key Files (*.pem *.der *.p8 *.p12)"));
+
+    if (filename.isEmpty() == false) {
+        if (ss->set_client_key(filename) != 0) {
+            QMessageBox mbox;
+            mbox.setText("Cannot import certificate.");
+            if (ss->last_err.isEmpty() == false)
+                mbox.setInformativeText(ss->last_err);
+            mbox.exec();
+        } else {
+            ui->userKeyEdit->setText(filename);
+        }
+    }
+}
+
+void EditDialog::on_caCertButton_clicked()
+{
+    QString filename;
+
+    filename = QFileDialog::getOpenFileName(this,
+        tr("Open certificate"), "", tr("Certificate Files (*.crt *.pem *.der)"));
+
+    if (filename.isEmpty() == false) {
+        if (ss->set_ca_cert(filename) != 0) {
+            QMessageBox mbox;
+            mbox.setText("Cannot import certificate.");
+            if (ss->last_err.isEmpty() == false)
+                mbox.setInformativeText(ss->last_err);
+            mbox.exec();
+        } else {
+            ui->caCertEdit->setText(filename);
+        }
+    }
 }
