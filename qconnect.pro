@@ -16,15 +16,21 @@ SOURCES += main.cpp\
         mainwindow.cpp \
     vpninfo.cpp \
     storage.cpp \
-    editdialog.cpp
+    editdialog.cpp \
+    keypair.cpp \
+    key.cpp \
+    cert.cpp
 
 HEADERS  += mainwindow.h \
     vpninfo.h \
     storage.h \
     editdialog.h \
-    common.h
+    common.h \
+    keypair.h \
+    key.h \
+    cert.h
 
 FORMS    += mainwindow.ui \
     editdialog.ui
 
-unix|win32: LIBS += -lopenconnect
+unix|win32: LIBS += -lopenconnect -lgnutls

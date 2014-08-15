@@ -22,4 +22,9 @@
 
 #define APP_NAME "Qconnect"
 
+#define toAscii toLatin1
+
+/* undef on normal builds */
+#define DEVEL 1
+
 #endif // COMMON_H
