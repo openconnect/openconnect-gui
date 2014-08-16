@@ -33,7 +33,6 @@ int Cert::import(QByteArray data)
     raw.size = data.size();
 
     ret = import_cert(this->crt, &raw);
-    gnutls_free(raw.data);
     if (ret < 0) {
         this->last_err = gnutls_strerror(ret);
         return -1;
