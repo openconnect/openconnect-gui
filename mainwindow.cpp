@@ -23,8 +23,8 @@ extern "C" {
 #include <stdarg.h>
 #include <stdio.h>
 }
-//#include <QtConcurrent/QtConcurrentRun>
-#include <QtConcurrentRun>
+#include <QtConcurrent/QtConcurrentRun>
+//#include <QtConcurrentRun>
 #include <QMessageBox>
 #include <vpninfo.h>
 #include <storage.h>
