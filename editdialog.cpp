@@ -34,6 +34,8 @@ EditDialog::EditDialog(QString server, QSettings *settings, QWidget *parent) :
     ui->groupnameEdit->setText(ss->get_groupname());
     ui->usernameEdit->setText(ss->get_username());
     ui->gatewayEdit->setText(ss->get_servername());
+    ui->userCertHash->setText(ss->get_client_cert_hash());
+    ui->caCertHash->setText(ss->get_ca_cert_hash());
 }
 
 EditDialog::~EditDialog()
@@ -79,6 +81,7 @@ void EditDialog::on_userCertButton_clicked()
             mbox.exec();
         } else {
             ui->userCertEdit->setText(filename);
+            ui->userCertHash->setText(ss->get_client_cert_hash());
         }
     }
 }
@@ -119,6 +122,7 @@ void EditDialog::on_caCertButton_clicked()
             mbox.exec();
         } else {
             ui->caCertEdit->setText(filename);
+            ui->caCertHash->setText(ss->get_client_cert_hash());
         }
     }
 }
