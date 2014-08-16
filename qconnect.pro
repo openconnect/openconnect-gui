@@ -4,6 +4,8 @@
 #
 #-------------------------------------------------
 
+QMAKE_CXXFLAGS += -g
+
 QT       += core gui
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
@@ -33,4 +35,4 @@ HEADERS  += mainwindow.h \
 FORMS    += mainwindow.ui \
     editdialog.ui
 
-unix|win32: LIBS += -lopenconnect -lgnutls
+unix|win32: LIBS += -L/usr/local/lib -lopenconnect -lgnutls

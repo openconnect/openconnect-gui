@@ -30,6 +30,7 @@ EditDialog::EditDialog(QString server, QSettings *settings, QWidget *parent) :
 
     this->ss = new StoredServer(settings);
     this->ss->load(server);
+    this->ss->set_window(this);
 
     ui->groupnameEdit->setText(ss->get_groupname());
     ui->usernameEdit->setText(ss->get_username());
@@ -51,6 +52,14 @@ void EditDialog::on_buttonBox_accepted()
             this,
             tr(APP_NAME),
             tr("You need to specify a gateway. E.g. vpn.example.com:443") );
+        return;
+    }
+
+    if (ss->client_is_complete() != true) {
+        QMessageBox::information(
+            this,
+            tr(APP_NAME),
+            tr("There is a client certificate specified but no key!") );
         return;
     }
     ss->set_username(ui->usernameEdit->text());
@@ -91,7 +100,7 @@ void EditDialog::on_userKeyButton_clicked()
     QString filename;
 
     filename = QFileDialog::getOpenFileName(this,
-        tr("Open private key"), "", tr("Private key Files (*.pem *.der *.p8 *.p12)"));
+        tr("Open private key"), "", tr("Private key Files (*.key *.pem *.der *.p8 *.p12)"));
 
     if (filename.isEmpty() == false) {
         if (ss->set_client_key(filename) != 0) {

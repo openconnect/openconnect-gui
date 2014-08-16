@@ -5,18 +5,26 @@
 
 Key::Key()
 {
-    gnutls_x509_privkey_init(&this->privkey);
+    imported = false;
+    privkey = NULL;
 }
 
 Key::~Key()
 {
-    gnutls_x509_privkey_deinit(this->privkey);
+    if (this->privkey)
+        gnutls_x509_privkey_deinit(this->privkey);
 }
 
-static int import_Key(MainWindow *w, gnutls_x509_privkey_t privkey, gnutls_datum_t *raw)
+static int import_Key(QWidget *w, gnutls_x509_privkey_t *privkey, gnutls_datum_t *raw)
 {
     int ret;
-    ret = gnutls_x509_privkey_import2(privkey, raw, GNUTLS_X509_FMT_PEM, NULL, 0);
+
+    if (raw->size == 0)
+        return -1;
+
+    gnutls_x509_privkey_init(privkey);
+
+    ret = gnutls_x509_privkey_import2(*privkey, raw, GNUTLS_X509_FMT_PEM, NULL, 0);
     if (ret == GNUTLS_E_DECRYPTION_FAILED && w != NULL) {
         bool ok;
         QString text;
@@ -24,18 +32,25 @@ static int import_Key(MainWindow *w, gnutls_x509_privkey_t privkey, gnutls_datum
         text = QInputDialog::getText(w, QLatin1String("This file requires a password"),
                                         QLatin1String("Please enter your password"), QLineEdit::Normal,
                                         QString(), &ok);
-        if (!ok)
-            return -1;
+        if (!ok) {
+            ret = -1;
+            goto fail;
+        }
 
-        ret = gnutls_x509_privkey_import2(privkey, raw, GNUTLS_X509_FMT_PEM, text.toAscii().data(), 0);
+        ret = gnutls_x509_privkey_import2(*privkey, raw, GNUTLS_X509_FMT_PEM, text.toAscii().data(), 0);
     }
 
     if (ret == GNUTLS_E_BASE64_DECODING_ERROR || ret == GNUTLS_E_BASE64_UNEXPECTED_HEADER_ERROR)
-        ret = gnutls_x509_privkey_import(privkey, raw, GNUTLS_X509_FMT_DER);
+        ret = gnutls_x509_privkey_import(*privkey, raw, GNUTLS_X509_FMT_DER);
     if (ret < 0) {
-        return ret;
+        goto fail;
     }
+
     return 0;
+ fail:
+    gnutls_x509_privkey_deinit(*privkey);
+    *privkey = NULL;
+    return ret;
 }
 
 int Key::import(QByteArray data)
@@ -46,11 +61,12 @@ int Key::import(QByteArray data)
     raw.data = (unsigned char*)data.constData();
     raw.size = data.size();
 
-    ret = import_Key(this->w, this->privkey, &raw);
+    ret = import_Key(this->w, &this->privkey, &raw);
     if (ret < 0) {
         this->last_err = gnutls_strerror(ret);
         return -1;
     }
+    imported = true;
     return 0;
 }
 
@@ -58,6 +74,9 @@ int Key::data_export(QByteArray &data)
 {
     int ret;
     gnutls_datum_t raw;
+
+    if (imported == false)
+        return -1;
 
     data.clear();
     if (this->url.isEmpty() == false) {
@@ -71,8 +90,7 @@ int Key::data_export(QByteArray &data)
         this->last_err = gnutls_strerror(ret);
         return -1;
     }
-
-    data.setRawData((char*)raw.data, raw.size);
+    data.append((char*)raw.data, raw.size);
     gnutls_free(raw.data);
     return 0;
 }
@@ -84,6 +102,7 @@ int Key::import(QString File)
 
     if (File.startsWith("pkcs11:") || File.startsWith("tpmkey:")) {
         this->url = File;
+        imported = true;
         return 0;
     }
 
@@ -94,12 +113,14 @@ int Key::import(QString File)
         return -1;
     }
 
-    ret = import_Key(this->w, this->privkey, &contents);
+    ret = import_Key(this->w, &this->privkey, &contents);
     gnutls_free(contents.data);
     if (ret < 0) {
         this->last_err = gnutls_strerror(ret);
         return -1;
     }
+
+    imported = true;
     return 0;
 }
 
@@ -108,6 +129,9 @@ int Key::tmpfile_export(QString &filename)
     int ret;
     gnutls_datum_t out;
     QByteArray qa;
+
+    if (this->imported == false)
+        return -1;
 
     if (this->url.isEmpty() == false) {
         filename = this->url;
@@ -125,13 +149,15 @@ int Key::tmpfile_export(QString &filename)
         return -1;
     }
 
-    qa.fromRawData((const char*)out.data, out.size);
+    qa.append((const char*)out.data, out.size);
     gnutls_free(out.data);
 
+    tmpfile.open();
     ret = tmpfile.write(qa);
+    tmpfile.close();
     if (ret == -1) {
         return -1;
     }
-
+    filename = tmpfile.fileName();
     return 0;
 }

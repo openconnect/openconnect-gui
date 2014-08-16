@@ -70,6 +70,7 @@ void MainWindow::updateProgressBar(const char *str)
 {
     QMutexLocker locker(&this->progress_mutex);
     ui->statusBar->showMessage(QLatin1String(str));
+    std::cerr << str << "\n";
 }
 
 void MainWindow::enableDisconnect(bool val)
@@ -115,7 +116,7 @@ void MainWindow::on_connectBtn_clicked()
         ss->set_servername(name);
     }
 
-    vpninfo = new VpnInfo("Qconnect 0.1", ss, this);
+    vpninfo = new VpnInfo(APP_STRING, ss, this);
     if (vpninfo == NULL)
         return;
 

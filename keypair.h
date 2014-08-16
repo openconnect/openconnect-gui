@@ -12,20 +12,25 @@ public:
 
     /* functions return zero on success */
     int import(QString File);
-    void set_window(MainWindow * w) {
+    void set_window(QWidget * w) {
         this->w = w;
         key.set_window(w);
     };
 
     int cert_export(QByteArray &data);
     int key_export(QByteArray &data);
+    bool is_complete() {
+        if (key.is_ok() == cert.is_ok())
+            return true;
+        return false;
+    };
 
     QString last_err;
 
     Key key;
     Cert cert;
 private:
-    MainWindow * w;
+    QWidget * w;
 
 };
 

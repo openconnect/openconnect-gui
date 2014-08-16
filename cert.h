@@ -22,12 +22,19 @@ public:
     int tmpfile_export(QString &File);
     QString sha1_hash(void);
 
+    bool is_ok() {
+        if (imported != false)
+            return true;
+        return false;
+    };
+
     Cert();
     ~Cert();
     QString last_err;
 private:
     gnutls_x509_crt_t crt;
     QTemporaryFile tmpfile;
+    bool imported;
 };
 
 #endif // CERT_H

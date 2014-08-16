@@ -174,7 +174,6 @@ VpnInfo::VpnInfo(const char *name, class StoredServer *ss, class MainWindow *m)
     this->last_err = NULL;
     this->ss = ss;
     this->m = m;
-    openconnect_set_reported_os(vpninfo, "Windows");
 }
 
 VpnInfo::~VpnInfo()
@@ -182,7 +181,8 @@ VpnInfo::~VpnInfo()
     if (this->cmd_fd != -1)
         close(this->cmd_fd);
 
-    openconnect_vpninfo_free(vpninfo);
+    if (vpninfo)
+        openconnect_vpninfo_free(vpninfo);
 }
 
 void VpnInfo::parse_url(const char *url)
@@ -195,6 +195,20 @@ void VpnInfo::parse_url(const char *url)
 int VpnInfo::connect()
 {
     int ret;
+    QString cert_file, key_file;
+
+    cert_file = ss->get_cert_file();
+    key_file = ss->get_key_file();
+
+    if (key_file.isEmpty() == true)
+        key_file = cert_file;
+
+    if (cert_file.isEmpty() != true) {
+        openconnect_set_client_cert(vpninfo, strdup(cert_file.toAscii().data()),
+                                    strdup(key_file.toAscii().data()));
+    }
+
+    openconnect_set_reported_os(vpninfo, "Windows");
 
     ret = openconnect_obtain_cookie(vpninfo);
     if (ret != 0) {
