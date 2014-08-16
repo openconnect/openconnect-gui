@@ -12,7 +12,7 @@ KeyPair::~KeyPair()
 }
 
 static
-int load_pkcs12_file(MainWindow *w, Key &key, Cert &cert, QString File)
+int load_pkcs12_file(QWidget *w, Key &key, Cert &cert, QString File)
 {
     gnutls_datum_t raw = {NULL, 0};
     int ret;
@@ -93,11 +93,15 @@ int ret1 = 0, ret2 = 0;
     ret1 = this->key.import(File);
     if (ret1 != 0) {
         last_err = key.last_err;
+    } else {
+        std::cerr << "Key imported\n";
     }
 
     ret2 = this->cert.import(File);
     if (ret2 != 0) {
         last_err = cert.last_err;
+    } else {
+        std::cerr << "Certificate imported\n";
     }
 
     if (ret1 != 0 && ret2 != 0)

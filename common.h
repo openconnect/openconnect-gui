@@ -20,7 +20,11 @@
 #ifndef COMMON_H
 #define COMMON_H
 
+#include <iostream>
+
+#define VERSION "0.1"
 #define APP_NAME "Qconnect"
+#define APP_STRING APP_NAME" "VERSION
 
 #define toAscii toLatin1
 

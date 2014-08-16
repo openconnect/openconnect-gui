@@ -77,16 +77,25 @@ public:
     QString get_ca_cert_file();
 
     QString get_client_cert_hash() {
-        return ca_cert.sha1_hash();
+        return client.cert.sha1_hash();
     };
 
     QString get_ca_cert_hash() {
-        return client.cert.sha1_hash();
+        return ca_cert.sha1_hash();
+    };
+
+    void set_window(QWidget * w) {
+        client.key.set_window(w);
     };
 
     int set_ca_cert(QString filename);
     int set_client_cert(QString filename);
     int set_client_key(QString filename);
+
+    bool client_is_complete() {
+        return client.is_complete();
+    };
+
     int save();
 
     QString last_err;

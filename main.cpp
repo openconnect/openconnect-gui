@@ -66,6 +66,7 @@ int main(int argc, char *argv[])
     QCoreApplication::setOrganizationDomain("redhat.com");
     QMessageBox msgBox;
 
+    gnutls_global_init();
     signal(SIGPIPE, SIG_IGN);
     QSettings settings("Red Hat", "Qconnect");
     openconnect_init_ssl();

@@ -17,12 +17,18 @@ public:
         this->privkey = privkey;
     };
 
-    void set_window(MainWindow * w) {
+    void set_window(QWidget * w) {
         this->w = w;
     };
 
     int data_export(QByteArray &data);
     int tmpfile_export(QString &File);
+
+    bool is_ok() {
+        if (imported != false)
+            return true;
+        return false;
+    };
 
     Key();
     ~Key();
@@ -31,7 +37,8 @@ private:
     gnutls_x509_privkey_t privkey;
     QTemporaryFile tmpfile;
     QString url;
-    MainWindow *w;
+    QWidget *w;
+    bool imported;
 };
 
 
