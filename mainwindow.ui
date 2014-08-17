@@ -110,6 +110,13 @@
           </property>
          </widget>
         </item>
+        <item>
+         <widget class="QToolButton" name="toolButton_3">
+          <property name="text">
+           <string>View log</string>
+          </property>
+         </widget>
+        </item>
        </layout>
       </item>
      </layout>

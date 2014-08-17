@@ -40,7 +40,7 @@ class MainWindow : public QMainWindow
 
 public:
     explicit MainWindow(QWidget *parent = 0);
-    void updateProgressBar(const char *str);
+    void updateProgressBar(QString str);
     void enableDisconnect(bool);
     void set_settings(QSettings *s);
     void reload_settings();
@@ -55,11 +55,14 @@ private slots:
 
     void on_toolButton_2_clicked();
 
+    void on_toolButton_3_clicked();
+
 private:
     class VpnInfo *vpninfo;
     Ui::MainWindow *ui;
     QSettings *settings;
     QMutex progress_mutex;
+    QStringList log;
 };
 
 #endif // MAINWINDOW_H

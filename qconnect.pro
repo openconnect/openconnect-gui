@@ -21,7 +21,8 @@ SOURCES += main.cpp\
     editdialog.cpp \
     keypair.cpp \
     key.cpp \
-    cert.cpp
+    cert.cpp \
+    logdialog.cpp
 
 HEADERS  += mainwindow.h \
     vpninfo.h \
@@ -30,9 +31,11 @@ HEADERS  += mainwindow.h \
     common.h \
     keypair.h \
     key.h \
-    cert.h
+    cert.h \
+    logdialog.h
 
 FORMS    += mainwindow.ui \
-    editdialog.ui
+    editdialog.ui \
+    logdialog.ui
 
 unix|win32: LIBS += -L/usr/local/lib -lopenconnect -lgnutls

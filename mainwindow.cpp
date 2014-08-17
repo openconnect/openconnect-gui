@@ -29,6 +29,7 @@ extern "C" {
 #include <vpninfo.h>
 #include <storage.h>
 #include <QLineEdit>
+#include "logdialog.h"
 #include "editdialog.h"
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -66,11 +67,12 @@ void MainWindow::set_settings(QSettings *s)
     reload_settings();
 };
 
-void MainWindow::updateProgressBar(const char *str)
+void MainWindow::updateProgressBar(QString str)
 {
     QMutexLocker locker(&this->progress_mutex);
-    ui->statusBar->showMessage(QLatin1String(str));
-    std::cerr << str << "\n";
+    ui->statusBar->showMessage(str);
+    if (str.isEmpty() == false)
+        log.append(str);
 }
 
 void MainWindow::enableDisconnect(bool val)
@@ -163,4 +165,11 @@ void MainWindow::on_toolButton_2_clicked()
         remove_server(settings, ui->comboBox->currentText());
         reload_settings();
     }
+}
+
+void MainWindow::on_toolButton_3_clicked()
+{
+    LogDialog dialog(this->log);
+
+    dialog.exec();
 }
