@@ -31,4 +31,7 @@
 /* undef on normal builds */
 #define DEVEL 1
 
+#define TMP_CERT_PREFIX "tmp-certXXXXXX"
+#define TMP_KEY_PREFIX "tmp-keyXXXXXX"
+
 #endif // COMMON_H

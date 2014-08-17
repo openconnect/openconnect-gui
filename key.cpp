@@ -147,7 +147,7 @@ int Key::tmpfile_export(QString &filename)
     }
 
     tmpfile.resize(0);
-    filename = "keyXXXXXX";
+    filename = TMP_KEY_PREFIX;
 
     tmpfile.setFileTemplate(filename);
 

@@ -83,6 +83,12 @@ void StoredServer::clear_ca()
     this->ca_cert.clear();
 }
 
+void StoredServer::clear_server_hash()
+{
+    this->server_hash.clear();
+    this->server_hash_algo = 0;
+}
+
 QString StoredServer::get_cert_file()
 {
     QString File;
@@ -148,6 +154,9 @@ int StoredServer::load(QString &name)
     data = settings->value("client-key").toByteArray();
     this->client.key.import(data);
 
+    this->server_hash = settings->value("server-hash").toByteArray();
+    this->server_hash_algo = settings->value("server-hash-algo").toInt();
+
     settings->endGroup();
     return 0;
 }
@@ -175,6 +184,9 @@ int StoredServer::save()
 
     this->client.key_export(data);
     settings->setValue("client-key", data);
+
+    settings->setValue("server-hash", this->server_hash);
+    settings->setValue("server-hash-algo", this->server_hash_algo);
 
     settings->endGroup();
     return 0;

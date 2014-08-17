@@ -70,7 +70,7 @@ void MainWindow::set_settings(QSettings *s)
 void MainWindow::updateProgressBar(QString str)
 {
     QMutexLocker locker(&this->progress_mutex);
-    ui->statusBar->showMessage(str);
+    ui->statusBar->showMessage(str, 20);
     if (str.isEmpty() == false)
         log.append(str);
 }
@@ -102,8 +102,6 @@ void MainWindow::on_connectBtn_clicked()
     QFuture<void> result;
     QString name;
     int ret;
-
-    updateProgressBar("");
 
     if (ui->comboBox->currentText().isEmpty()) {
         QMessageBox::information(
@@ -139,6 +137,9 @@ void MainWindow::on_connectBtn_clicked()
         updateProgressBar(vpninfo->last_err);
         goto fail;
     }
+
+    updateProgressBar("saving peer's information");
+    vpninfo->ss->save();
 
     result = QtConcurrent::run (main_loop, vpninfo, this);
     this->vpninfo = vpninfo;

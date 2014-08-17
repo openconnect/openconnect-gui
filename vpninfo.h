@@ -41,9 +41,9 @@ public:
     const char *last_err;
     MainWindow *m;
     StoredServer *ss;
+    struct openconnect_info *vpninfo;
 private:
     int cmd_fd;
-    struct openconnect_info *vpninfo;
 };
 
 #endif // VPNINFO_H
