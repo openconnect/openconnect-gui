@@ -9,8 +9,16 @@ Cert::Cert()
 
 Cert::~Cert()
 {
-    if (crt)
+    clear();
+}
+
+void Cert::clear()
+{
+    if (crt) {
         gnutls_x509_crt_deinit(crt);
+        crt = NULL;
+        imported = false;
+    }
 }
 
 static int import_cert(gnutls_x509_crt_t *crt, gnutls_datum_t *raw)

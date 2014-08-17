@@ -64,6 +64,7 @@ void EditDialog::on_buttonBox_accepted()
     }
     ss->set_username(ui->usernameEdit->text());
     ss->set_servername(ui->gatewayEdit->text());
+    ss->set_batch_mode(ui->batchModeBox->isChecked());
 
     ss->save();
     this->close();
@@ -134,4 +135,19 @@ void EditDialog::on_caCertButton_clicked()
             ui->caCertHash->setText(ss->get_client_cert_hash());
         }
     }
+}
+
+void EditDialog::on_userCertClear_clicked()
+{
+    ss->clear_cert();
+}
+
+void EditDialog::on_userKeyClear_clicked()
+{
+    ss->clear_key();
+}
+
+void EditDialog::on_caCertClear_clicked()
+{
+    ss->clear_ca();
 }

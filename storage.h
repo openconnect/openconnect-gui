@@ -75,6 +75,11 @@ public:
     QString get_cert_file();
     QString get_key_file();
     QString get_ca_cert_file();
+    void clear_cert();
+    void clear_key();
+    void clear_ca();
+    void clear_password();
+    void clear_groupname();
 
     QString get_client_cert_hash() {
         return client.cert.sha1_hash();
@@ -91,6 +96,9 @@ public:
     int set_ca_cert(QString filename);
     int set_client_cert(QString filename);
     int set_client_key(QString filename);
+    void set_batch_mode(bool mode) {
+        this->batch_mode = mode;
+    };
 
     bool client_is_complete() {
         return client.is_complete();
@@ -100,6 +108,7 @@ public:
 
     QString last_err;
 private:
+    bool batch_mode;
     QString username;
     QString password;
     QString groupname;
