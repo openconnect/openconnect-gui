@@ -80,6 +80,7 @@ public:
     void clear_ca();
     void clear_password();
     void clear_groupname();
+    void clear_server_hash();
 
     QString get_client_cert_hash() {
         return client.cert.sha1_hash();
@@ -104,6 +105,22 @@ public:
         return client.is_complete();
     };
 
+    void set_server_hash(unsigned algo, QByteArray &hash) {
+        this->server_hash_algo = algo;
+        this->server_hash = hash;
+    };
+
+    unsigned get_server_hash(QByteArray & hash) {
+        hash = this->server_hash;
+        return this->server_hash_algo;
+    };
+
+    void get_server_hash(QString & hash) {
+        hash = gnutls_mac_get_name((gnutls_mac_algorithm_t)this->server_hash_algo);
+        hash += ":";
+        hash += this->server_hash.toHex();
+    };
+
     int save();
 
     QString last_err;
@@ -113,6 +130,8 @@ private:
     QString password;
     QString groupname;
     QString servername;
+    QByteArray server_hash;
+    unsigned server_hash_algo;
     Cert ca_cert;
     KeyPair client;
     QSettings *settings;

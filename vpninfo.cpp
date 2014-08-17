@@ -23,7 +23,7 @@ extern "C" {
 #include <stdarg.h>
 #include <stdio.h>
 }
-
+#include "gtdb.h"
 #include <QMessageBox>
 #include <QInputDialog>
 
@@ -158,6 +158,84 @@ int process_auth_form(void *privdata, struct oc_auth_form *form)
 static
 int validate_peer_cert(void *privdata, OPENCONNECT_X509 *cert, const char *reason)
 {
+    VpnInfo *vpn = static_cast<VpnInfo*>(privdata);
+    unsigned char *der;
+    int der_size, ret;
+    gnutls_datum_t raw;
+    char sha1_hash[41];
+    QString str;
+    gtdb tdb(vpn->ss);
+    QMessageBox msgBox;
+    bool save = false;
+
+    der_size = openconnect_get_cert_DER(vpn->vpninfo,
+                                        cert, &der);
+    if (der_size <= 0) {
+        vpn->m->updateProgressBar("Peer's certificate has invalid size!");
+        return -1;
+    }
+
+    ret = openconnect_get_cert_sha1(vpn->vpninfo, cert, sha1_hash);
+    if (ret != 0) {
+        vpn->m->updateProgressBar("Error getting peer's certificate hash");
+        return -1;
+    }
+
+    raw.data = der;
+    raw.size = der_size;
+
+    ret = gnutls_verify_stored_pubkey(reinterpret_cast<const char*>(&tdb), tdb.tdb, "", "", GNUTLS_CRT_X509, &raw, 0);
+    if (ret == GNUTLS_E_NO_CERTIFICATE_FOUND) {
+        vpn->m->updateProgressBar("peer is unknown");
+
+        msgBox.setText("You are connecting for the first time to this peer. Is the information provided below accurate?");
+        str = "Host: ";
+        str += vpn->ss->get_servername();
+        str += "\nSHA1: ";
+        str += sha1_hash;
+        msgBox.setInformativeText(str);
+        msgBox.setStandardButtons(QMessageBox::Cancel | QMessageBox::Ok);
+        msgBox.setDefaultButton(QMessageBox::Cancel);
+
+        ret = msgBox.exec();
+        if (ret == QMessageBox::Cancel)
+            return -1;
+
+        save = true;
+    } else if (ret == GNUTLS_E_CERTIFICATE_KEY_MISMATCH) {
+        vpn->m->updateProgressBar("peer's key has changed!");
+
+        msgBox.setText("This peer is known and associated with a different key. It may be that the server has multiple keys or you are under attack. Do you want to proceed?");
+        str = "Host: ";
+        str += vpn->ss->get_servername();
+        str += "\nSHA1: ";
+        str += sha1_hash;
+        msgBox.setInformativeText(str);
+        msgBox.setStandardButtons(QMessageBox::Cancel | QMessageBox::Ok);
+        msgBox.setDefaultButton(QMessageBox::Cancel);
+
+        ret = msgBox.exec();
+        if (ret == QMessageBox::Cancel)
+            return -1;
+
+        save = true;
+    } else if (ret < 0) {
+        str = "Could not verify certificate: ";
+        str += gnutls_strerror(ret);
+        vpn->m->updateProgressBar(str);
+        return -1;
+    }
+
+    if (save != false) {
+        vpn->m->updateProgressBar("saving peer's public key");
+        ret = gnutls_store_pubkey(reinterpret_cast<const char*>(&tdb), tdb.tdb,
+                                  "", "", GNUTLS_CRT_X509, &raw, 0, 0);
+        if (ret < 0) {
+            str = "Could not store certificate: ";
+            str += gnutls_strerror(ret);
+            vpn->m->updateProgressBar(str);
+        }
+    }
     return 0;
 }
 
@@ -183,6 +261,9 @@ VpnInfo::~VpnInfo()
 
     if (vpninfo)
         openconnect_vpninfo_free(vpninfo);
+
+    if (this->ss)
+        delete this->ss;
 }
 
 void VpnInfo::parse_url(const char *url)

@@ -130,7 +130,7 @@ int Cert::tmpfile_export(QString &filename)
     QByteArray qa;
 
     tmpfile.resize(0);
-    filename = "certXXXXXX";
+    filename = TMP_CERT_PREFIX;
 
     tmpfile.setFileTemplate(filename);
     ret = gnutls_x509_crt_export2(this->crt, GNUTLS_X509_FMT_PEM, &out);
@@ -175,6 +175,6 @@ QString Cert::sha1_hash(void)
 
     array.append((const char*)id, len);
     hex = array.toHex();
-    s = hex;
+    s = QLatin1String("SHA1:") + hex;
     return s;
 }
