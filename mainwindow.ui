@@ -2,12 +2,15 @@
 <ui version="4.0">
  <class>MainWindow</class>
  <widget class="QMainWindow" name="MainWindow">
+  <property name="windowModality">
+   <enum>Qt::NonModal</enum>
+  </property>
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>329</width>
-    <height>132</height>
+    <width>400</width>
+    <height>130</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -16,8 +19,18 @@
     <verstretch>0</verstretch>
    </sizepolicy>
   </property>
+  <property name="maximumSize">
+   <size>
+    <width>420</width>
+    <height>160</height>
+   </size>
+  </property>
   <property name="windowTitle">
    <string>Qconnect</string>
+  </property>
+  <property name="windowIcon">
+   <iconset resource="resources.qrc">
+    <normaloff>:/new/resource/secure_lock.png</normaloff>:/new/resource/secure_lock.png</iconset>
   </property>
   <property name="autoFillBackground">
    <bool>false</bool>
@@ -29,63 +42,166 @@
      <verstretch>0</verstretch>
     </sizepolicy>
    </property>
-   <layout class="QVBoxLayout" name="verticalLayout_2">
-    <item>
-     <layout class="QVBoxLayout" name="verticalLayout">
-      <property name="spacing">
-       <number>8</number>
-      </property>
+   <layout class="QGridLayout" name="gridLayout">
+    <item row="0" column="0">
+     <layout class="QHBoxLayout" name="horizontalLayout_4">
       <item>
-       <layout class="QHBoxLayout" name="horizontalLayout">
+       <layout class="QVBoxLayout" name="verticalLayout_2">
         <property name="spacing">
-         <number>3</number>
-        </property>
-        <property name="bottomMargin">
          <number>0</number>
         </property>
         <item>
-         <widget class="QComboBox" name="comboBox">
-          <property name="editable">
+         <widget class="QLabel" name="iconLabel">
+          <property name="enabled">
+           <bool>true</bool>
+          </property>
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>60</width>
+            <height>60</height>
+           </size>
+          </property>
+          <property name="autoFillBackground">
+           <bool>false</bool>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+          <property name="pixmap">
+           <pixmap resource="resources.qrc">:/new/resource/globe.png</pixmap>
+          </property>
+          <property name="scaledContents">
            <bool>true</bool>
           </property>
          </widget>
         </item>
         <item>
-         <layout class="QHBoxLayout" name="horizontalLayout_3">
+         <widget class="QWidget" name="widget" native="true"/>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <layout class="QVBoxLayout" name="verticalLayout">
+        <property name="spacing">
+         <number>8</number>
+        </property>
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout">
           <property name="spacing">
-           <number>10</number>
+           <number>3</number>
+          </property>
+          <property name="bottomMargin">
+           <number>0</number>
           </property>
           <item>
-           <widget class="QToolButton" name="toolButton">
-            <property name="whatsThis">
-             <string>Edit</string>
-            </property>
-            <property name="text">
-             <string>Edit</string>
-            </property>
-            <property name="icon">
-             <iconset resource="resources.qrc">
-              <normaloff>:/new/resource/text-editor.png</normaloff>:/new/resource/text-editor.png</iconset>
-            </property>
-            <property name="toolButtonStyle">
-             <enum>Qt::ToolButtonIconOnly</enum>
-            </property>
-            <property name="arrowType">
-             <enum>Qt::NoArrow</enum>
+           <widget class="QComboBox" name="comboBox">
+            <property name="editable">
+             <bool>true</bool>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="QToolButton" name="toolButton_2">
-            <property name="whatsThis">
-             <string>Delete</string>
+           <layout class="QHBoxLayout" name="horizontalLayout_3">
+            <property name="spacing">
+             <number>10</number>
+            </property>
+            <item>
+             <widget class="QToolButton" name="toolButton">
+              <property name="whatsThis">
+               <string>Edit</string>
+              </property>
+              <property name="text">
+               <string>Edit</string>
+              </property>
+              <property name="icon">
+               <iconset resource="resources.qrc">
+                <normaloff>:/new/resource/text-editor.png</normaloff>:/new/resource/text-editor.png</iconset>
+              </property>
+              <property name="toolButtonStyle">
+               <enum>Qt::ToolButtonIconOnly</enum>
+              </property>
+              <property name="arrowType">
+               <enum>Qt::NoArrow</enum>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QToolButton" name="toolButton_2">
+              <property name="whatsThis">
+               <string>Delete</string>
+              </property>
+              <property name="text">
+               <string>Delete</string>
+              </property>
+              <property name="icon">
+               <iconset resource="resources.qrc">
+                <normaloff>:/new/resource/trashcan.png</normaloff>:/new/resource/trashcan.png</iconset>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout_2">
+          <property name="spacing">
+           <number>3</number>
+          </property>
+          <item>
+           <widget class="QPushButton" name="connectBtn">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
             </property>
             <property name="text">
-             <string>Delete</string>
+             <string>Connect</string>
             </property>
             <property name="icon">
              <iconset resource="resources.qrc">
-              <normaloff>:/new/resource/trashcan.png</normaloff>:/new/resource/trashcan.png</iconset>
+              <normaloff>:/new/resource/network-wired.png</normaloff>:/new/resource/network-wired.png</iconset>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="disconnectBtn">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="text">
+             <string>Disconnect</string>
+            </property>
+            <property name="icon">
+             <iconset resource="resources.qrc">
+              <normaloff>:/new/resource/process-stop.png</normaloff>:/new/resource/process-stop.png</iconset>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QToolButton" name="toolButton_3">
+            <property name="text">
+             <string>View log</string>
+            </property>
+            <property name="icon">
+             <iconset resource="resources.qrc">
+              <normaloff>:/new/resource/edit-find.png</normaloff>:/new/resource/edit-find.png</iconset>
+            </property>
+            <property name="toolButtonStyle">
+             <enum>Qt::ToolButtonFollowStyle</enum>
             </property>
            </widget>
           </item>
@@ -93,69 +209,21 @@
         </item>
        </layout>
       </item>
-      <item>
-       <layout class="QHBoxLayout" name="horizontalLayout_2">
-        <property name="spacing">
-         <number>3</number>
-        </property>
-        <item>
-         <widget class="QPushButton" name="connectBtn">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="text">
-           <string>Connect</string>
-          </property>
-          <property name="icon">
-           <iconset resource="resources.qrc">
-            <normaloff>:/new/resource/network-wired.png</normaloff>:/new/resource/network-wired.png</iconset>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QPushButton" name="disconnectBtn">
-          <property name="enabled">
-           <bool>false</bool>
-          </property>
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="text">
-           <string>Disconnect</string>
-          </property>
-          <property name="icon">
-           <iconset resource="resources.qrc">
-            <normaloff>:/new/resource/process-stop.png</normaloff>:/new/resource/process-stop.png</iconset>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QToolButton" name="toolButton_3">
-          <property name="text">
-           <string>View log</string>
-          </property>
-          <property name="icon">
-           <iconset resource="resources.qrc">
-            <normaloff>:/new/resource/edit-find.png</normaloff>:/new/resource/edit-find.png</iconset>
-          </property>
-          <property name="toolButtonStyle">
-           <enum>Qt::ToolButtonFollowStyle</enum>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </item>
      </layout>
     </item>
    </layout>
   </widget>
-  <widget class="QStatusBar" name="statusBar"/>
+  <widget class="QStatusBar" name="statusBar">
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
+   </property>
+   <property name="sizeGripEnabled">
+    <bool>false</bool>
+   </property>
+  </widget>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <resources>

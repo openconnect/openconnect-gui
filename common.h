@@ -34,4 +34,7 @@
 #define TMP_CERT_PREFIX "tmp-certXXXXXX"
 #define TMP_KEY_PREFIX "tmp-keyXXXXXX"
 
+#define OFF_ICON "globe.png"
+#define ON_ICON "secure_lock.png"
+
 #endif // COMMON_H
