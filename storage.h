@@ -33,10 +33,7 @@ void remove_server(QSettings *settings, QString server);
 class StoredServer
 {
 public:
-    explicit StoredServer(QSettings *settings) {
-        this->settings = settings;
-    };
-
+    StoredServer(QSettings *settings);
     ~StoredServer();
 
     int load(QString & name);
@@ -115,11 +112,7 @@ public:
         return this->server_hash_algo;
     };
 
-    void get_server_hash(QString & hash) {
-        hash = gnutls_mac_get_name((gnutls_mac_algorithm_t)this->server_hash_algo);
-        hash += ":";
-        hash += this->server_hash.toHex();
-    };
+    void get_server_hash(QString & hash);
 
     int save();
 
