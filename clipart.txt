@@ -1,0 +1,5 @@
+trashcan.png: CC0: http://openclipart.org/detail/68/trash-can-by-andy
+text-editor.png: CC0: http://openclipart.org/detail/35197/tango-accesories-text-editor-by-warszawianka
+network-wired.png: CC0: http://openclipart.org/detail/34885/tango-network-wired-by-warszawianka
+edit-find.png: CC0: http://openclipart.org/detail/32407/tango-edit-find-by-warszawianka
+process-stop.png: CC0: http://openclipart.org/detail/34267/tango-process-stop-by-warszawianka
