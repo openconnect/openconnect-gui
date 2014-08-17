@@ -27,6 +27,14 @@ extern "C" {
 #include <QMessageBox>
 #include <QInputDialog>
 
+static void
+stats_vfn (void *privdata, const struct oc_stats *stats)
+{
+    VpnInfo *vpn = static_cast<VpnInfo*>(privdata);
+
+    vpn->m->updateStats(stats);
+}
+
 static
 void progress_vfn(void *privdata, int level, const char *fmt, ...)
 {
@@ -252,6 +260,8 @@ VpnInfo::VpnInfo(const char *name, class StoredServer *ss, class MainWindow *m)
     this->last_err = NULL;
     this->ss = ss;
     this->m = m;
+    openconnect_set_stats_handler(this->vpninfo, stats_vfn);
+
 }
 
 VpnInfo::~VpnInfo()
@@ -332,6 +342,13 @@ void VpnInfo::disconnect()
         write(this->cmd_fd, &cmd, 1);
 }
 
+void VpnInfo::request_update_stats()
+{
+    char cmd = OC_CMD_STATS;
+    if (this->cmd_fd != -1)
+        write(this->cmd_fd, &cmd, 1);
+}
+
 void VpnInfo::mainloop()
 {
     int ret;
@@ -345,4 +362,56 @@ void VpnInfo::mainloop()
         }
     }
 
+}
+
+QString VpnInfo::get_dns()
+{
+    const struct oc_ip_info *ip;
+    QString r = "";
+    int ret;
+    ret = openconnect_get_ip_info(this->vpninfo, &ip, NULL, NULL);
+    if (ret == 0) {
+        r = ip->dns[0];
+        if (ip->dns[1]) {
+            r += " ";
+            r += ip->dns[1];
+        }
+        if (ip->dns[2]) {
+            r += " ";
+            r += ip->dns[2];
+        }
+    }
+    return r;
+}
+
+QString VpnInfo::get_ip()
+{
+    const struct oc_ip_info *ip;
+    QString r = "";
+    int ret;
+    ret = openconnect_get_ip_info(this->vpninfo, &ip, NULL, NULL);
+    if (ret == 0) {
+        r = ip->addr;
+        if (ip->addr6) {
+            r += " ";
+            r += ip->addr6;
+        }
+    }
+    return r;
+}
+
+QString VpnInfo::get_mask()
+{
+    const struct oc_ip_info *ip;
+    QString r = "";
+    int ret;
+    ret = openconnect_get_ip_info(this->vpninfo, &ip, NULL, NULL);
+    if (ret == 0) {
+        r = ip->netmask;
+        if (ip->netmask6) {
+            r += " ";
+            r += ip->netmask6;
+        }
+    }
+    return r;
 }

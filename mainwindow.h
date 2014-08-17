@@ -25,6 +25,7 @@
 #include <QSettings>
 #include <QMutex>
 #include "common.h"
+#include <QTimer>
 
 extern "C" {
 #include <openconnect.h>
@@ -43,10 +44,14 @@ public:
     void updateProgressBar(QString str);
     void enableDisconnect(bool);
     void set_settings(QSettings *s);
+    void updateStats(const struct oc_stats *stats);
     void reload_settings();
     ~MainWindow();
+    void stop_timer();
 
 private slots:
+    void request_update_stats();
+
     void on_disconnectBtn_clicked();
 
     void on_connectBtn_clicked();
@@ -63,6 +68,7 @@ private:
     QSettings *settings;
     QMutex progress_mutex;
     QStringList log;
+    QTimer *timer;
 };
 
 #endif // MAINWINDOW_H
