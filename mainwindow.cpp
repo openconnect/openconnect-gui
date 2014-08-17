@@ -40,13 +40,49 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
     this->setWindowTitle(QLatin1String("Qconnect (openconnect ")+QLatin1String(version)+QLatin1String(")"));
 
+    timer = new QTimer(this);
+
+    connect(timer, SIGNAL(timeout()), this, SLOT(request_update_stats()));
     connect(ui->comboBox->lineEdit(), SIGNAL(returnPressed()), this, SLOT(on_connectBtn_clicked()), Qt::QueuedConnection);
 
 }
 
 MainWindow::~MainWindow()
 {
+    timer->stop();
     delete ui;
+    delete timer;
+}
+
+QString
+value_to_string(uint64_t bytes)
+{
+    QString r;
+    if (bytes > 1000 && bytes < 1000 * 1000) {
+        bytes /= 1000;
+        r = QString::number((int)bytes);
+        r += " KB";
+        return r;
+    } else if (bytes >= 1000 * 1000 && bytes < 1000 * 1000 * 1000) {
+        bytes /= 1000*1000;
+        r = QString::number((int)bytes);
+        r += " MB";
+        return r;
+    } else if (bytes >= 1000 * 1000 * 1000) {
+        bytes /= 1000*1000*1000;
+        r = QString::number((int)bytes);
+        r += " GB";
+        return r;
+    } else {
+        r = QString::number((int)bytes);
+        r += " bytes";
+        return r;
+    }
+}
+void MainWindow::updateStats(const struct oc_stats *stats)
+{
+    ui->lcdDown->setText(value_to_string(stats->tx_bytes));
+    ui->lcdUp->setText(value_to_string(stats->rx_bytes));
 }
 
 void MainWindow::reload_settings()
@@ -70,7 +106,7 @@ void MainWindow::set_settings(QSettings *s)
 void MainWindow::updateProgressBar(QString str)
 {
     QMutexLocker locker(&this->progress_mutex);
-    ui->statusBar->showMessage(str, 20);
+//    ui->statusBar->showMessage(str, 20);
     if (str.isEmpty() == false)
         log.append(str);
 }
@@ -82,6 +118,11 @@ void MainWindow::enableDisconnect(bool val)
         ui->connectBtn->setEnabled(false);
     } else {
         QPixmap pixmap(OFF_ICON);
+        timer->stop();
+        ui->IPLabel->setText("");
+        ui->DNSLabel->setText("");
+        ui->maskLabel->setText("");
+
         ui->disconnectBtn->setEnabled(false);
         ui->connectBtn->setEnabled(true);
         ui->iconLabel->setPixmap(pixmap);
@@ -94,7 +135,10 @@ static void main_loop(VpnInfo *vpninfo, MainWindow *m)
     m->updateProgressBar(vpninfo->last_err);
     m->enableDisconnect(false);
 
+    m->stop_timer();
+
     delete vpninfo;
+    vpninfo = NULL;
 }
 
 void MainWindow::on_disconnectBtn_clicked()
@@ -118,6 +162,8 @@ void MainWindow::on_connectBtn_clicked()
             tr("You need to specify a gateway. E.g. vpn.example.com:443") );
         return;
     }
+
+    timer->start(UPDATE_TIMER);
 
     name = ui->comboBox->currentText();
     if (ss->load(name) == 0) {
@@ -151,12 +197,17 @@ void MainWindow::on_connectBtn_clicked()
 
     ui->iconLabel->setPixmap(pixmap);
 
+    ui->IPLabel->setText(vpninfo->get_ip());
+    ui->DNSLabel->setText(vpninfo->get_dns());
+    ui->maskLabel->setText(vpninfo->get_mask());
+
     result = QtConcurrent::run (main_loop, vpninfo, this);
     this->vpninfo = vpninfo;
 
     return;
  fail:
     delete vpninfo;
+    vpninfo = NULL;
     enableDisconnect(false);
     return;
 }
@@ -192,4 +243,16 @@ void MainWindow::on_toolButton_3_clicked()
     LogDialog dialog(this->log);
 
     dialog.exec();
+}
+
+void MainWindow::request_update_stats()
+{
+    if (vpninfo) {
+        vpninfo->request_update_stats();
+    }
+}
+
+void MainWindow::stop_timer()
+{
+    timer->stop();
 }

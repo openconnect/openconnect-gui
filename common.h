@@ -37,4 +37,6 @@
 #define OFF_ICON "globe.png"
 #define ON_ICON "secure_lock.png"
 
+#define UPDATE_TIMER 10000
+
 #endif // COMMON_H

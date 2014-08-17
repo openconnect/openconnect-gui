@@ -34,9 +34,13 @@ public:
     ~VpnInfo();
     void parse_url(const char *url);
     int connect();
+    void request_update_stats();
     void disconnect();
     int dtls_connect();
     void mainloop();
+    QString get_dns();
+    QString get_ip();
+    QString get_mask();
 
     const char *last_err;
     MainWindow *m;
