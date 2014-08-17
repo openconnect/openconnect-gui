@@ -77,8 +77,15 @@ void MainWindow::updateProgressBar(QString str)
 
 void MainWindow::enableDisconnect(bool val)
 {
-    ui->disconnectBtn->setEnabled(val);
-    ui->connectBtn->setEnabled(val==0?1:0);
+    if (val == true) {
+        ui->disconnectBtn->setEnabled(true);
+        ui->connectBtn->setEnabled(false);
+    } else {
+        QPixmap pixmap(OFF_ICON);
+        ui->disconnectBtn->setEnabled(false);
+        ui->connectBtn->setEnabled(true);
+        ui->iconLabel->setPixmap(pixmap);
+    }
 }
 
 static void main_loop(VpnInfo *vpninfo, MainWindow *m)
@@ -102,6 +109,7 @@ void MainWindow::on_connectBtn_clicked()
     QFuture<void> result;
     QString name;
     int ret;
+    QPixmap pixmap(ON_ICON);
 
     if (ui->comboBox->currentText().isEmpty()) {
         QMessageBox::information(
@@ -140,6 +148,8 @@ void MainWindow::on_connectBtn_clicked()
 
     updateProgressBar("saving peer's information");
     vpninfo->ss->save();
+
+    ui->iconLabel->setPixmap(pixmap);
 
     result = QtConcurrent::run (main_loop, vpninfo, this);
     this->vpninfo = vpninfo;

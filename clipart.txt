@@ -3,3 +3,5 @@ text-editor.png: CC0: http://openclipart.org/detail/35197/tango-accesories-text-
 network-wired.png: CC0: http://openclipart.org/detail/34885/tango-network-wired-by-warszawianka
 edit-find.png: CC0: http://openclipart.org/detail/32407/tango-edit-find-by-warszawianka
 process-stop.png: CC0: http://openclipart.org/detail/34267/tango-process-stop-by-warszawianka
+unsecure_lock.png: CC0: https://openclipart.org/detail/77125/unsecure-lock-by-shokunin
+secure_lock.png: CC0: https://openclipart.org/detail/77107/secure-lock-by-shokunin
