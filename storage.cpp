@@ -24,6 +24,12 @@ StoredServer::~StoredServer(void)
 
 }
 
+StoredServer::StoredServer(QSettings *settings)
+{
+    this->server_hash_algo = 0;
+    this->settings = settings;
+};
+
 #define PREFIX "server:"
 QStringList get_server_list(QSettings *settings)
 {
@@ -129,6 +135,17 @@ int StoredServer::set_client_key(QString filename)
     int ret = this->client.import(filename);
     this->last_err = this->client.last_err;
     return ret;
+}
+
+void StoredServer::get_server_hash(QString & hash)
+{
+    if (this->server_hash_algo == 0) {
+        hash = "";
+    } else {
+        hash = gnutls_mac_get_name((gnutls_mac_algorithm_t)this->server_hash_algo);
+        hash += ":";
+        hash += this->server_hash.toHex();
+    }
 }
 
 int StoredServer::load(QString &name)
