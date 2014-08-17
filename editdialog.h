@@ -47,6 +47,12 @@ private slots:
 
     void on_caCertButton_clicked();
 
+    void on_userCertClear_clicked();
+
+    void on_userKeyClear_clicked();
+
+    void on_caCertClear_clicked();
+
 private:
     Ui::EditDialog *ui;
     StoredServer *ss;

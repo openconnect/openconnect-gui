@@ -58,6 +58,31 @@ void remove_server(QSettings *settings, QString server)
     return;
 }
 
+void StoredServer::clear_password()
+{
+    this->password.clear();
+}
+
+void StoredServer::clear_groupname()
+{
+    this->groupname.clear();
+}
+
+void StoredServer::clear_cert()
+{
+    this->client.cert.clear();
+}
+
+void StoredServer::clear_key()
+{
+    this->client.key.clear();
+}
+
+void StoredServer::clear_ca()
+{
+    this->ca_cert.clear();
+}
+
 QString StoredServer::get_cert_file()
 {
     QString File;
@@ -107,8 +132,12 @@ int StoredServer::load(QString &name)
     this->servername = name;
     settings->beginGroup(PREFIX+name);
     this->username = settings->value("username").toString();
-    this->groupname = settings->value("groupname").toString();
-    this->password = settings->value("password").toString();
+    this->batch_mode = settings->value("batch").toBool();
+
+    if (this->batch_mode == true) {
+        this->groupname = settings->value("groupname").toString();
+        this->password = settings->value("password").toString();
+    }
 
     data = settings->value("ca-cert").toByteArray();
     this->ca_cert.import(data);
@@ -130,9 +159,13 @@ int StoredServer::save()
 
     settings->beginGroup(PREFIX+this->servername);
     settings->setValue("server", this->servername);
+    settings->setValue("batch", this->batch_mode);
     settings->setValue("username", this->username);
-    settings->setValue("password", this->password);
-    settings->setValue("groupname", this->groupname);
+
+    if (this->batch_mode == true) {
+        settings->setValue("password", this->password);
+        settings->setValue("groupname", this->groupname);
+    }
 
     this->ca_cert.data_export(data);
     settings->setValue("ca-cert", data);

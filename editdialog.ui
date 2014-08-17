@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>400</width>
-    <height>309</height>
+    <height>382</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -80,7 +80,21 @@
        <item>
         <widget class="QLineEdit" name="userCertEdit"/>
        </item>
+       <item>
+        <widget class="QToolButton" name="userCertClear">
+         <property name="text">
+          <string>Clear</string>
+         </property>
+        </widget>
+       </item>
       </layout>
+     </item>
+     <item row="7" column="1">
+      <widget class="QLabel" name="userCertHash">
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
      </item>
      <item row="8" column="0">
       <widget class="QLabel" name="userKeyLabel">
@@ -111,6 +125,13 @@
          </property>
         </widget>
        </item>
+       <item>
+        <widget class="QToolButton" name="userKeyClear">
+         <property name="text">
+          <string>Clear</string>
+         </property>
+        </widget>
+       </item>
       </layout>
      </item>
      <item row="10" column="0">
@@ -136,14 +157,14 @@
          </property>
         </widget>
        </item>
+       <item>
+        <widget class="QToolButton" name="caCertClear">
+         <property name="text">
+          <string>Clear</string>
+         </property>
+        </widget>
+       </item>
       </layout>
-     </item>
-     <item row="7" column="1">
-      <widget class="QLabel" name="userCertHash">
-       <property name="text">
-        <string/>
-       </property>
-      </widget>
      </item>
      <item row="11" column="1">
       <widget class="QLabel" name="caCertHash">
@@ -152,17 +173,42 @@
        </property>
       </widget>
      </item>
-     <item row="12" column="1">
-      <widget class="QLabel" name="serverCertHash">
-       <property name="text">
-        <string/>
-       </property>
-      </widget>
-     </item>
-     <item row="12" column="0">
+     <item row="13" column="0">
       <widget class="QLabel" name="label_6">
        <property name="text">
         <string>Server Certificate</string>
+       </property>
+      </widget>
+     </item>
+     <item row="13" column="1">
+      <layout class="QHBoxLayout" name="horizontalLayout_3">
+       <item>
+        <widget class="QLabel" name="serverCertHash">
+         <property name="text">
+          <string/>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QToolButton" name="serverCertClear">
+         <property name="text">
+          <string>Clear</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item row="14" column="0">
+      <widget class="QLabel" name="label_7">
+       <property name="text">
+        <string>Batch Mode</string>
+       </property>
+      </widget>
+     </item>
+     <item row="14" column="1">
+      <widget class="QCheckBox" name="batchModeBox">
+       <property name="text">
+        <string/>
        </property>
       </widget>
      </item>

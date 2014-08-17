@@ -27,6 +27,7 @@ public:
             return true;
         return false;
     };
+    void clear();
 
     Cert();
     ~Cert();

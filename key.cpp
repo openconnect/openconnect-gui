@@ -11,8 +11,16 @@ Key::Key()
 
 Key::~Key()
 {
-    if (this->privkey)
+    clear();
+}
+
+void Key::clear()
+{
+    if (this->privkey) {
         gnutls_x509_privkey_deinit(this->privkey);
+        privkey = NULL;
+        imported = false;
+    }
 }
 
 static int import_Key(QWidget *w, gnutls_x509_privkey_t *privkey, gnutls_datum_t *raw)
