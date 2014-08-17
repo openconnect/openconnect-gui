@@ -1,0 +1,9 @@
+<RCC>
+    <qresource prefix="/new/resource">
+        <file>trashcan.png</file>
+        <file>text-editor.png</file>
+        <file>network-wired.png</file>
+        <file>edit-find.png</file>
+        <file>process-stop.png</file>
+    </qresource>
+</RCC>

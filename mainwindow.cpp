@@ -163,8 +163,17 @@ void MainWindow::on_toolButton_clicked()
 void MainWindow::on_toolButton_2_clicked()
 {
     if (ui->comboBox->currentText().isEmpty() == false) {
-        remove_server(settings, ui->comboBox->currentText());
-        reload_settings();
+        QMessageBox mbox;
+        int ret;
+
+        mbox.setText(QLatin1String("Are you sure you want to remove ")+ui->comboBox->currentText()+"?");
+        mbox.setStandardButtons(QMessageBox::Cancel | QMessageBox::Ok);
+        mbox.setDefaultButton(QMessageBox::Cancel);
+        ret = mbox.exec();
+        if (ret == QMessageBox::Ok) {
+            remove_server(settings, ui->comboBox->currentText());
+            reload_settings();
+        }
     }
 }
 

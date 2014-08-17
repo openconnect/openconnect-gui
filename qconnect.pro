@@ -41,3 +41,6 @@ FORMS    += mainwindow.ui \
     logdialog.ui
 
 unix|win32: LIBS += -L/usr/local/lib -lopenconnect -lgnutls
+
+RESOURCES += \
+    resources.qrc

@@ -52,10 +52,20 @@
         </item>
         <item>
          <layout class="QHBoxLayout" name="horizontalLayout_3">
+          <property name="spacing">
+           <number>10</number>
+          </property>
           <item>
            <widget class="QToolButton" name="toolButton">
+            <property name="whatsThis">
+             <string>Edit</string>
+            </property>
             <property name="text">
              <string>Edit</string>
+            </property>
+            <property name="icon">
+             <iconset resource="resources.qrc">
+              <normaloff>:/new/resource/text-editor.png</normaloff>:/new/resource/text-editor.png</iconset>
             </property>
             <property name="toolButtonStyle">
              <enum>Qt::ToolButtonIconOnly</enum>
@@ -67,8 +77,15 @@
           </item>
           <item>
            <widget class="QToolButton" name="toolButton_2">
+            <property name="whatsThis">
+             <string>Delete</string>
+            </property>
             <property name="text">
              <string>Delete</string>
+            </property>
+            <property name="icon">
+             <iconset resource="resources.qrc">
+              <normaloff>:/new/resource/trashcan.png</normaloff>:/new/resource/trashcan.png</iconset>
             </property>
            </widget>
           </item>
@@ -92,6 +109,10 @@
           <property name="text">
            <string>Connect</string>
           </property>
+          <property name="icon">
+           <iconset resource="resources.qrc">
+            <normaloff>:/new/resource/network-wired.png</normaloff>:/new/resource/network-wired.png</iconset>
+          </property>
          </widget>
         </item>
         <item>
@@ -108,12 +129,23 @@
           <property name="text">
            <string>Disconnect</string>
           </property>
+          <property name="icon">
+           <iconset resource="resources.qrc">
+            <normaloff>:/new/resource/process-stop.png</normaloff>:/new/resource/process-stop.png</iconset>
+          </property>
          </widget>
         </item>
         <item>
          <widget class="QToolButton" name="toolButton_3">
           <property name="text">
            <string>View log</string>
+          </property>
+          <property name="icon">
+           <iconset resource="resources.qrc">
+            <normaloff>:/new/resource/edit-find.png</normaloff>:/new/resource/edit-find.png</iconset>
+          </property>
+          <property name="toolButtonStyle">
+           <enum>Qt::ToolButtonFollowStyle</enum>
           </property>
          </widget>
         </item>
@@ -126,6 +158,8 @@
   <widget class="QStatusBar" name="statusBar"/>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
- <resources/>
+ <resources>
+  <include location="resources.qrc"/>
+ </resources>
  <connections/>
 </ui>
