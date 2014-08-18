@@ -38,9 +38,7 @@ public:
     void disconnect();
     int dtls_connect();
     void mainloop();
-    QString get_dns();
-    QString get_ip();
-    QString get_mask();
+    void get_info(QString &dns, QString &ip, QString &ip6);
 
     const char *last_err;
     MainWindow *m;

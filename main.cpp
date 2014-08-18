@@ -88,7 +88,6 @@ int main(int argc, char *argv[])
 #endif
 
     w.set_settings(&settings);
-    w.setWindowFlags(w.windowFlags() |= Qt::FramelessWindowHint);
     w.show();
 
 #if !defined(_WIN32) && !defined(DEVEL)
