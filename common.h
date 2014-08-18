@@ -40,7 +40,7 @@
 #define UPDATE_TIMER 10000
 
 #ifdef _WIN32
-# define DEFAULT_VPNC_SCRIPT "vpn-script.js"
+# define DEFAULT_VPNC_SCRIPT "./vpnc-script-win.js"
 #else
 # define DEFAULT_VPNC_SCRIPT "/etc/vpnc/vpnc-script"
 #endif

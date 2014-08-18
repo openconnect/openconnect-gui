@@ -8,5 +8,6 @@
         <file>secure_lock.png</file>
         <file>unsecure_lock.png</file>
         <file>globe.png</file>
+        <file>vpnc-script-win.js</file>
     </qresource>
 </RCC>

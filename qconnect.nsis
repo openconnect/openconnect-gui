@@ -1,0 +1,162 @@
+# This installs two files, app.exe and qconnect.ico, creates a start menu shortcut, builds an uninstaller, and
+# adds uninstall information to the registry for Add/Remove Programs
+ 
+# To get started, put this script into a folder with the two files (app.exe, qconnect.ico, and license.rtf -
+# You'll have to create these yourself) and run makensis on it
+ 
+# If you change the names "app.exe", "qconnect.ico", or "license.rtf" you should do a search and replace - they
+# show up in a few places.
+# All the other settings can be tweaked by editing the !defines at the top of this script
+!define APPNAME "Qconnect"
+!define DESCRIPTION "OpenConnect VPN client for windows"
+# These three must be integers
+!define VERSIONMAJOR 0
+!define VERSIONMINOR 1
+!define VERSIONBUILD 1
+# These will be displayed by the "Click here for support information" link in "Add/Remove Programs"
+# It is possible to use "mailto:" links in here to open the email client
+!define HELPURL "http://www.infradead.org/openconnect/mail.html" # "Support Information" link
+#!define UPDATEURL "http://..." # "Product Updates" link
+!define ABOUTURL "http://www.infradead.org/openconnect" # "Publisher" link
+ 
+RequestExecutionLevel admin ;Require admin rights on NT6+ (When UAC is turned on)
+ 
+InstallDir "$PROGRAMFILES\${APPNAME}"
+ 
+# rtf or txt file - remember if it is txt, it must be in the DOS text format (\r\n)
+LicenseData "COPYING"
+# This will be in the installer/uninstaller's title bar
+Name "${APPNAME}"
+Icon "qconnect.ico"
+outFile "qconnect-installer.exe"
+ 
+!include LogicLib.nsh
+ 
+# Just three pages - license agreement, install location, and installation
+page license
+page directory
+Page instfiles
+ 
+!macro VerifyUserIsAdmin
+UserInfo::GetAccountType
+pop $0
+${If} $0 != "admin" ;Require admin rights on NT4+
+        messageBox mb_iconstop "Administrator rights are required to install Qconnect!"
+        setErrorLevel 740 ;ERROR_ELEVATION_REQUIRED
+        quit
+${EndIf}
+!macroend
+ 
+function .onInit
+	setShellVarContext all
+	!insertmacro VerifyUserIsAdmin
+functionEnd
+ 
+section "install"
+	# Files for the install directory - to build the installer, these should be in the same directory as the install script (this file)
+	setOutPath $INSTDIR
+	# Files added here should be removed by the uninstaller (see section "uninstall")
+	file "qconnect.exe"
+	file "qconnect.ico"
+	file iconv.dll
+	file libEGL.dll
+	file libffi-6.dll
+	file libgcc_s_sjlj-1.dll
+	file libGLESv2.dll
+	file libgmp-10.dll
+	file libgnutls-28.dll
+	file libhogweed-2-5.dll
+	file libintl-8.dll
+	file libnettle-4-7.dll
+	file libopenconnect-3.dll
+	file libp11-kit-0.dll
+	file libpcre16-0.dll
+	file libpng16-16.dll
+	file libstdc++-6.dll
+	file libtasn1-6.dll
+	file libxml2-2.dll
+	file Qt5Core.dll
+	file Qt5Gui.dll
+	file Qt5Widgets.dll
+	file vpnc-script-win.js
+	file zlib1.dll
+
+	# Add any other files for the install directory (license files, app data, etc) here
+ 
+	# Uninstaller - See function un.onInit and section "uninstall" for configuration
+	writeUninstaller "$INSTDIR\uninstall.exe"
+ 
+	# Start Menu
+ 
+	# Registry information for add/remove programs
+	WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${APPNAME}" "DisplayName" "${APPNAME} - ${DESCRIPTION}"
+	WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${APPNAME}" "UninstallString" "$\"$INSTDIR\uninstall.exe$\""
+	WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${APPNAME}" "QuietUninstallString" "$\"$INSTDIR\uninstall.exe$\" /S"
+	WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${APPNAME}" "InstallLocation" "$\"$INSTDIR$\""
+	WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${APPNAME}" "DisplayIcon" "$\"$INSTDIR\qconnect.ico$\""
+	WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${APPNAME}" "Publisher" "$\"${APPNAME}$\""
+	WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${APPNAME}" "HelpLink" "$\"${HELPURL}$\""
+	#WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${APPNAME}" "URLUpdateInfo" "$\"${UPDATEURL}$\""
+	WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${APPNAME}" "URLInfoAbout" "$\"${ABOUTURL}$\""
+	WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${APPNAME}" "DisplayVersion" "$\"${VERSIONMAJOR}.${VERSIONMINOR}.${VERSIONBUILD}$\""
+	WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${APPNAME}" "VersionMajor" ${VERSIONMAJOR}
+	WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${APPNAME}" "VersionMinor" ${VERSIONMINOR}
+	# There is no option for modifying or repairing the install
+	WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${APPNAME}" "NoModify" 1
+	WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${APPNAME}" "NoRepair" 1
+	# Set the INSTALLSIZE constant (!defined at the top of this script) so Add/Remove Programs can accurately report the size
+	#WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${APPNAME}" "EstimatedSize" ${INSTALLSIZE}
+sectionEnd
+ 
+# Uninstaller
+ 
+function un.onInit
+	SetShellVarContext all
+ 
+	#Verify the uninstaller - last chance to back out
+	MessageBox MB_OKCANCEL "Permanantly remove ${APPNAME}?" IDOK next
+		Abort
+	next:
+	!insertmacro VerifyUserIsAdmin
+functionEnd
+ 
+section "uninstall"
+ 
+	# Remove Start Menu launcher
+	# Try to remove the Start Menu folder - this will only happen if it is empty
+ 
+	# Remove files
+	delete $INSTDIR\qconnect.exe
+	delete $INSTDIR\qconnect.ico
+	delete iconv.dll
+	delete libEGL.dll
+	delete libffi-6.dll
+	delete libgcc_s_sjlj-1.dll
+	delete libGLESv2.dll
+	delete libgmp-10.dll
+	delete libgnutls-28.dll
+	delete libhogweed-2-5.dll
+	delete libintl-8.dll
+	delete libnettle-4-7.dll
+	delete libopenconnect-3.dll
+	delete libp11-kit-0.dll
+	delete libpcre16-0.dll
+	delete libpng16-16.dll
+	delete libstdc++-6.dll
+	delete libtasn1-6.dll
+	delete libxml2-2.dll
+	delete Qt5Core.dll
+	delete Qt5Gui.dll
+	delete Qt5Widgets.dll
+	delete vpnc-script-win.js
+	delete zlib1.dll
+ 
+	# Always delete uninstaller as the last action
+	delete $INSTDIR\uninstall.exe
+ 
+	# Try to remove the install directory - this will only happen if it is empty
+	rmDir $INSTDIR
+ 
+	# Remove uninstaller information from the registry
+	DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${APPNAME}"
+sectionEnd
