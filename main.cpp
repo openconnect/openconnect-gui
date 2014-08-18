@@ -65,10 +65,12 @@ int main(int argc, char *argv[])
     MainWindow w;
     QCoreApplication::setOrganizationDomain("redhat.com");
     QMessageBox msgBox;
+    QSettings settings("Red Hat", "Qconnect");
 
     gnutls_global_init();
+#ifndef _WIN32
     signal(SIGPIPE, SIG_IGN);
-    QSettings settings("Red Hat", "Qconnect");
+#endif
     openconnect_init_ssl();
     gnutls_pkcs11_set_pin_function(pin_callback, &w);
 

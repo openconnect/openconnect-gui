@@ -40,7 +40,7 @@ FORMS    += mainwindow.ui \
     editdialog.ui \
     logdialog.ui
 
-unix|win32: LIBS += -L/usr/local/lib -lopenconnect -lgnutls
+unix|win32: LIBS += -lopenconnect -lgnutls
 
 RESOURCES += \
     resources.qrc
