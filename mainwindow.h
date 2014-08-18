@@ -42,7 +42,6 @@ class MainWindow : public QMainWindow
 public:
     explicit MainWindow(QWidget *parent = 0);
     void updateProgressBar(QString str);
-    void enableDisconnect(bool);
     void set_settings(QSettings *s);
     void updateStats(const struct oc_stats *stats);
     void reload_settings();
@@ -52,7 +51,13 @@ public:
         cmd_fd = -1;
     };
 
+    void vpn_status_changed(bool connected) {
+        emit vpn_status_changed_sig(connected);
+    };
+
 private slots:
+    void enableDisconnect(bool);
+
     void request_update_stats();
 
     void on_disconnectBtn_clicked();
@@ -64,6 +69,10 @@ private slots:
     void on_toolButton_2_clicked();
 
     void on_toolButton_3_clicked();
+
+signals:
+    void log_changed(QString val);
+    void vpn_status_changed_sig(bool connected);
 
 private:
     /* we keep the fd instead of a pointer to vpninfo to avoid

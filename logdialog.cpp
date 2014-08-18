@@ -20,13 +20,16 @@
 
 #include "logdialog.h"
 #include "ui_logdialog.h"
+#include <QClipboard>
 
 LogDialog::LogDialog(QStringList items, QWidget *parent) :
     QDialog(parent),
     ui(new Ui::LogDialog)
 {
     ui->setupUi(this);
-    ui->listWidget->addItems(items);
+    this->text = items;
+    ui->listWidget->addItems(text);
+    ui->listWidget->scrollToBottom();
 }
 
 LogDialog::~LogDialog()
@@ -37,4 +40,17 @@ LogDialog::~LogDialog()
 void LogDialog::on_pushButton_clicked()
 {
     this->close();
+}
+
+void LogDialog::on_copyButton_clicked()
+{
+    QClipboard *clipboard = QApplication::clipboard();
+
+    clipboard->setText(text.join("\n"));
+}
+
+void LogDialog::append(QString item)
+{
+    this->text.append(item);
+    ui->listWidget->addItem(item);
 }

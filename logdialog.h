@@ -35,10 +35,18 @@ public:
     ~LogDialog();
 
 private slots:
+    void append(QString item);
+    void cancel() {
+        this->close();
+    };
+
     void on_pushButton_clicked();
+
+    void on_copyButton_clicked();
 
 private:
     Ui::LogDialog *ui;
+    QStringList text;
 };
 
 #endif // LOGDIALOG_H

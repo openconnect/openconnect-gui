@@ -98,21 +98,28 @@ void StoredServer::clear_server_hash()
 QString StoredServer::get_cert_file()
 {
     QString File;
-    this->client.cert.tmpfile_export(File);
+    if (this->client.cert.is_ok()) {
+        this->client.cert.tmpfile_export(File);
+    }
     return File;
+
 }
 
 QString StoredServer::get_key_file()
 {
     QString File;
-    this->client.key.tmpfile_export(File);
+    if (this->client.key.is_ok()) {
+        this->client.key.tmpfile_export(File);
+    }
     return File;
 }
 
 QString StoredServer::get_ca_cert_file()
 {
     QString File;
-    this->ca_cert.tmpfile_export(File);
+    if (this->ca_cert.is_ok()) {
+        this->ca_cert.tmpfile_export(File);
+    }
     return File;
 }
 

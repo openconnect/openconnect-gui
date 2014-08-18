@@ -66,7 +66,7 @@
          <x>0</x>
          <y>0</y>
          <width>432</width>
-         <height>102</height>
+         <height>103</height>
         </rect>
        </property>
        <attribute name="label">
@@ -248,7 +248,7 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>432</width>
+         <width>419</width>
          <height>149</height>
         </rect>
        </property>
@@ -378,16 +378,7 @@
     </item>
    </layout>
   </widget>
-  <widget class="QMenuBar" name="menuBar">
-   <property name="geometry">
-    <rect>
-     <x>0</x>
-     <y>0</y>
-     <width>450</width>
-     <height>27</height>
-    </rect>
-   </property>
-  </widget>
+  <widget class="QStatusBar" name="statusBar"/>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <resources>
