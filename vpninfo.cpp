@@ -364,54 +364,36 @@ void VpnInfo::mainloop()
 
 }
 
-QString VpnInfo::get_dns()
+void VpnInfo::get_info(QString &dns, QString &ip, QString &ip6)
 {
-    const struct oc_ip_info *ip;
-    QString r = "";
+    const struct oc_ip_info *info;
     int ret;
-    ret = openconnect_get_ip_info(this->vpninfo, &ip, NULL, NULL);
+    ret = openconnect_get_ip_info(this->vpninfo, &info, NULL, NULL);
     if (ret == 0) {
-        r = ip->dns[0];
-        if (ip->dns[1]) {
-            r += " ";
-            r += ip->dns[1];
+        if (info->addr) {
+            ip = info->addr;
+            if (info->netmask) {
+                ip += "/";
+                ip += info->netmask;
+            }
         }
-        if (ip->dns[2]) {
-            r += " ";
-            r += ip->dns[2];
+        if (info->addr6) {
+            ip6 = info->addr6;
+            if (info->netmask6) {
+                ip6 += "/";
+                ip6 += info->netmask6;
+            }
         }
-    }
-    return r;
-}
 
-QString VpnInfo::get_ip()
-{
-    const struct oc_ip_info *ip;
-    QString r = "";
-    int ret;
-    ret = openconnect_get_ip_info(this->vpninfo, &ip, NULL, NULL);
-    if (ret == 0) {
-        r = ip->addr;
-        if (ip->addr6) {
-            r += " ";
-            r += ip->addr6;
+        dns = info->dns[0];
+        if (info->dns[1]) {
+            dns += ", ";
+            dns += info->dns[1];
+        }
+        if (info->dns[2]) {
+            dns += " ";
+            dns += info->dns[2];
         }
     }
-    return r;
-}
-
-QString VpnInfo::get_mask()
-{
-    const struct oc_ip_info *ip;
-    QString r = "";
-    int ret;
-    ret = openconnect_get_ip_info(this->vpninfo, &ip, NULL, NULL);
-    if (ret == 0) {
-        r = ip->netmask;
-        if (ip->netmask6) {
-            r += " ";
-            r += ip->netmask6;
-        }
-    }
-    return r;
+    return;
 }

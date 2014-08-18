@@ -23,8 +23,8 @@ extern "C" {
 #include <stdarg.h>
 #include <stdio.h>
 }
-#include <QtConcurrent/QtConcurrentRun>
-//#include <QtConcurrentRun>
+//#include <QtConcurrent/QtConcurrentRun>
+#include <QtConcurrentRun>
 #include <QMessageBox>
 #include <vpninfo.h>
 #include <storage.h>
@@ -121,7 +121,7 @@ void MainWindow::enableDisconnect(bool val)
         timer->stop();
         ui->IPLabel->setText("");
         ui->DNSLabel->setText("");
-        ui->maskLabel->setText("");
+        ui->IP6Label->setText("");
 
         ui->disconnectBtn->setEnabled(false);
         ui->connectBtn->setEnabled(true);
@@ -154,6 +154,10 @@ void MainWindow::on_connectBtn_clicked()
     QString name;
     int ret;
     QPixmap pixmap(ON_ICON);
+    QString ip, ip6, dns;
+
+    if (this->vpninfo != NULL)
+        return;
 
     if (ui->comboBox->currentText().isEmpty()) {
         QMessageBox::information(
@@ -197,9 +201,11 @@ void MainWindow::on_connectBtn_clicked()
 
     ui->iconLabel->setPixmap(pixmap);
 
-    ui->IPLabel->setText(vpninfo->get_ip());
-    ui->DNSLabel->setText(vpninfo->get_dns());
-    ui->maskLabel->setText(vpninfo->get_mask());
+    vpninfo->get_info(dns, ip, ip6);;
+    ui->IPLabel->setText(ip);
+    ui->IP6Label->setText(ip6);
+
+    ui->DNSLabel->setText(dns);
 
     result = QtConcurrent::run (main_loop, vpninfo, this);
     this->vpninfo = vpninfo;
