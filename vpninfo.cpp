@@ -281,8 +281,6 @@ void VpnInfo::parse_url(const char *url)
     openconnect_parse_url(this->vpninfo, const_cast<char*>(url));
 }
 
-#define DEFAULT_VPNC_SCRIPT "/etc/vpnc/vpnc-script"
-
 int VpnInfo::connect()
 {
     int ret;
