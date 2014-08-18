@@ -23,12 +23,13 @@ extern "C" {
 #include <stdarg.h>
 #include <stdio.h>
 }
-//#include <QtConcurrent/QtConcurrentRun>
-#include <QtConcurrentRun>
+#include <QtConcurrent/QtConcurrentRun>
+#include <QDateTime>
 #include <QMessageBox>
 #include <vpninfo.h>
 #include <storage.h>
 #include <QLineEdit>
+#include <QFutureWatcher>
 #include "logdialog.h"
 #include "editdialog.h"
 
@@ -45,11 +46,23 @@ MainWindow::MainWindow(QWidget *parent) :
 
     connect(timer, SIGNAL(timeout()), this, SLOT(request_update_stats()));
     connect(ui->comboBox->lineEdit(), SIGNAL(returnPressed()), this, SLOT(on_connectBtn_clicked()), Qt::QueuedConnection);
+    connect(this, SIGNAL(vpn_status_changed_sig(bool)), this, SLOT(enableDisconnect(bool)));
 
+}
+
+static void term_thread(int *fd)
+{
+    char cmd = OC_CMD_CANCEL;
+    if (*fd != -1) {
+        write(*fd, &cmd, 1);
+        close(*fd);
+        *fd = -1;
+    }
 }
 
 MainWindow::~MainWindow()
 {
+    term_thread(&this->cmd_fd);
     timer->stop();
     delete ui;
     delete timer;
@@ -107,9 +120,13 @@ void MainWindow::set_settings(QSettings *s)
 void MainWindow::updateProgressBar(QString str)
 {
     QMutexLocker locker(&this->progress_mutex);
-//    ui->statusBar->showMessage(str, 20);
-    if (str.isEmpty() == false)
+    ui->statusBar->showMessage(str, 20*1000);
+    if (str.isEmpty() == false) {
+        QDateTime now;
+        str.prepend(now.currentDateTime().toString("yyyy-MM-dd hh:mm "));
         log.append(str);
+        emit log_changed(str);
+    }
 }
 
 void MainWindow::enableDisconnect(bool val)
@@ -134,9 +151,9 @@ static void main_loop(VpnInfo *vpninfo, MainWindow *m)
 {
     vpninfo->mainloop();
     m->updateProgressBar(vpninfo->last_err);
-    m->enableDisconnect(false);
-    m->disable_cmd_fd();
 
+    m->vpn_status_changed(false);
+    m->disable_cmd_fd();
     m->stop_timer();
 
     delete vpninfo;
@@ -145,9 +162,7 @@ static void main_loop(VpnInfo *vpninfo, MainWindow *m)
 
 void MainWindow::on_disconnectBtn_clicked()
 {
-    char cmd = OC_CMD_CANCEL;
-    if (this->cmd_fd != -1)
-        write(this->cmd_fd, &cmd, 1);
+    term_thread(&this->cmd_fd);
 }
 
 void MainWindow::on_connectBtn_clicked()
@@ -251,8 +266,14 @@ void MainWindow::on_toolButton_2_clicked()
 void MainWindow::on_toolButton_3_clicked()
 {
     LogDialog dialog(this->log);
+    QFutureWatcher<void> futureWatcher;
+
+    QObject::connect(&futureWatcher, SIGNAL(finished()), &dialog, SLOT(cancel()));
+    QObject::connect(this, SIGNAL(log_changed(QString)), &dialog, SLOT(append(QString)));
 
     dialog.exec();
+
+    futureWatcher.waitForFinished();
 }
 
 void MainWindow::request_update_stats()
