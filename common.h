@@ -34,8 +34,8 @@
 #define TMP_CERT_PREFIX "tmp-certXXXXXX"
 #define TMP_KEY_PREFIX "tmp-keyXXXXXX"
 
-#define OFF_ICON "globe.png"
-#define ON_ICON "secure_lock.png"
+#define OFF_ICON QPixmap(QString::fromUtf8(":/new/resource/globe.png"))
+#define ON_ICON QPixmap(QString::fromUtf8(":/new/resource/secure_lock.png"))
 
 #define UPDATE_TIMER 10000
 
