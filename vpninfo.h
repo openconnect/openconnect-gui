@@ -34,11 +34,12 @@ public:
     ~VpnInfo();
     void parse_url(const char *url);
     int connect();
-    void request_update_stats();
-    void disconnect();
     int dtls_connect();
     void mainloop();
     void get_info(QString &dns, QString &ip, QString &ip6);
+    int get_cmd_fd() {
+        return cmd_fd;
+    };
 
     const char *last_err;
     MainWindow *m;

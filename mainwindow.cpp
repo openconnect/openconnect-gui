@@ -41,6 +41,7 @@ MainWindow::MainWindow(QWidget *parent) :
     this->setWindowTitle(QLatin1String("Qconnect (openconnect ")+QLatin1String(version)+QLatin1String(")"));
 
     timer = new QTimer(this);
+    this->cmd_fd = -1;
 
     connect(timer, SIGNAL(timeout()), this, SLOT(request_update_stats()));
     connect(ui->comboBox->lineEdit(), SIGNAL(returnPressed()), this, SLOT(on_connectBtn_clicked()), Qt::QueuedConnection);
@@ -134,6 +135,7 @@ static void main_loop(VpnInfo *vpninfo, MainWindow *m)
     vpninfo->mainloop();
     m->updateProgressBar(vpninfo->last_err);
     m->enableDisconnect(false);
+    m->disable_cmd_fd();
 
     m->stop_timer();
 
@@ -143,7 +145,9 @@ static void main_loop(VpnInfo *vpninfo, MainWindow *m)
 
 void MainWindow::on_disconnectBtn_clicked()
 {
-    this->vpninfo->disconnect();
+    char cmd = OC_CMD_CANCEL;
+    if (this->cmd_fd != -1)
+        write(this->cmd_fd, &cmd, 1);
 }
 
 void MainWindow::on_connectBtn_clicked()
@@ -156,7 +160,7 @@ void MainWindow::on_connectBtn_clicked()
     QPixmap pixmap(ON_ICON);
     QString ip, ip6, dns;
 
-    if (this->vpninfo != NULL)
+    if (this->cmd_fd != -1)
         return;
 
     if (ui->comboBox->currentText().isEmpty()) {
@@ -208,7 +212,7 @@ void MainWindow::on_connectBtn_clicked()
     ui->DNSLabel->setText(dns);
 
     result = QtConcurrent::run (main_loop, vpninfo, this);
-    this->vpninfo = vpninfo;
+    this->cmd_fd = vpninfo->get_cmd_fd();
 
     return;
  fail:
@@ -253,9 +257,9 @@ void MainWindow::on_toolButton_3_clicked()
 
 void MainWindow::request_update_stats()
 {
-    if (vpninfo) {
-        vpninfo->request_update_stats();
-    }
+    char cmd = OC_CMD_STATS;
+    if (this->cmd_fd != -1)
+        write(this->cmd_fd, &cmd, 1);
 }
 
 void MainWindow::stop_timer()
