@@ -335,20 +335,6 @@ int VpnInfo::dtls_connect()
     return 0;
 }
 
-void VpnInfo::disconnect()
-{
-    char cmd = OC_CMD_CANCEL;
-    if (this->cmd_fd != -1)
-        write(this->cmd_fd, &cmd, 1);
-}
-
-void VpnInfo::request_update_stats()
-{
-    char cmd = OC_CMD_STATS;
-    if (this->cmd_fd != -1)
-        write(this->cmd_fd, &cmd, 1);
-}
-
 void VpnInfo::mainloop()
 {
     int ret;

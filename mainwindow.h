@@ -48,6 +48,9 @@ public:
     void reload_settings();
     ~MainWindow();
     void stop_timer();
+    void disable_cmd_fd() {
+        cmd_fd = -1;
+    };
 
 private slots:
     void request_update_stats();
@@ -63,7 +66,9 @@ private slots:
     void on_toolButton_3_clicked();
 
 private:
-    class VpnInfo *vpninfo;
+    /* we keep the fd instead of a pointer to vpninfo to avoid
+     * any multithread issues */
+    int cmd_fd;
     Ui::MainWindow *ui;
     QSettings *settings;
     QMutex progress_mutex;
