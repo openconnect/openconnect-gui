@@ -135,7 +135,6 @@ void MainWindow::enableDisconnect(bool val)
         ui->disconnectBtn->setEnabled(true);
         ui->connectBtn->setEnabled(false);
     } else {
-        QPixmap pixmap(OFF_ICON);
         timer->stop();
         ui->IPLabel->setText("");
         ui->DNSLabel->setText("");
@@ -143,7 +142,7 @@ void MainWindow::enableDisconnect(bool val)
 
         ui->disconnectBtn->setEnabled(false);
         ui->connectBtn->setEnabled(true);
-        ui->iconLabel->setPixmap(pixmap);
+        ui->iconLabel->setPixmap(OFF_ICON);
     }
 }
 
@@ -172,7 +171,6 @@ void MainWindow::on_connectBtn_clicked()
     QFuture<void> result;
     QString name;
     int ret;
-    QPixmap pixmap(ON_ICON);
     QString ip, ip6, dns;
 
     if (this->cmd_fd != -1)
@@ -218,7 +216,7 @@ void MainWindow::on_connectBtn_clicked()
     updateProgressBar("saving peer's information");
     vpninfo->ss->save();
 
-    ui->iconLabel->setPixmap(pixmap);
+    ui->iconLabel->setPixmap(ON_ICON);
 
     vpninfo->get_info(dns, ip, ip6);;
     ui->IPLabel->setText(ip);
