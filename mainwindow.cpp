@@ -242,7 +242,7 @@ void MainWindow::on_connectBtn_clicked()
 
     ui->DNSLabel->setText(dns);
 
-    updateProgressBar("connecting...");
+    updateProgressBar("connected!");
     result = QtConcurrent::run (main_loop, vpninfo, this);
 
     return;
@@ -299,11 +299,11 @@ void MainWindow::request_update_stats()
         int ret = send(this->cmd_fd, &cmd, 1, 0);
         if (ret < 0) {
             this->updateProgressBar(QLatin1String("IPC error: ")+WSAGetLastError());
-            //this->timer->stop();
+            this->timer->stop();
         }
     } else {
     	this->updateProgressBar(QLatin1String("invalid socket"));
-        //this->timer->stop();
+        this->timer->stop();
     }
 }
 
