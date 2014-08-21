@@ -1,10 +1,10 @@
-# This installs two files, app.exe and qconnect.ico, creates a start menu shortcut, builds an uninstaller, and
+# This installs two files, qconnect.exe and logo.ico, creates a start menu shortcut, builds an uninstaller, and
 # adds uninstall information to the registry for Add/Remove Programs
  
-# To get started, put this script into a folder with the two files (app.exe, qconnect.ico, and license.rtf -
+# To get started, put this script into a folder with the two files (qconnect.exe, logo.ico, and COPYING -
 # You'll have to create these yourself) and run makensis on it
  
-# If you change the names "app.exe", "qconnect.ico", or "license.rtf" you should do a search and replace - they
+# If you change the names "qconnect.exe", "logo.ico", or "COPYING" you should do a search and replace - they
 # show up in a few places.
 # All the other settings can be tweaked by editing the !defines at the top of this script
 !define APPNAME "Qconnect"
@@ -27,7 +27,7 @@ InstallDir "$PROGRAMFILES\${APPNAME}"
 LicenseData "COPYING"
 # This will be in the installer/uninstaller's title bar
 Name "${APPNAME}"
-Icon "qconnect.ico"
+Icon "logo.ico"
 outFile "qconnect-installer.exe"
  
 !include LogicLib.nsh
@@ -57,7 +57,7 @@ section "install"
 	setOutPath $INSTDIR
 	# Files added here should be removed by the uninstaller (see section "uninstall")
 	file "qconnect.exe"
-	file "qconnect.ico"
+	file "logo.ico"
 	file iconv.dll
 	file libEGL.dll
 	file libffi-6.dll
@@ -93,7 +93,7 @@ section "install"
 	WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${APPNAME}" "UninstallString" "$\"$INSTDIR\uninstall.exe$\""
 	WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${APPNAME}" "QuietUninstallString" "$\"$INSTDIR\uninstall.exe$\" /S"
 	WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${APPNAME}" "InstallLocation" "$\"$INSTDIR$\""
-	WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${APPNAME}" "DisplayIcon" "$\"$INSTDIR\qconnect.ico$\""
+	WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${APPNAME}" "DisplayIcon" "$\"$INSTDIR\logo.ico$\""
 	WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${APPNAME}" "Publisher" "$\"${APPNAME}$\""
 	WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${APPNAME}" "HelpLink" "$\"${HELPURL}$\""
 	#WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${APPNAME}" "URLUpdateInfo" "$\"${UPDATEURL}$\""
@@ -127,7 +127,7 @@ section "uninstall"
  
 	# Remove files
 	delete $INSTDIR\qconnect.exe
-	delete $INSTDIR\qconnect.ico
+	delete $INSTDIR\logo.ico
 	delete iconv.dll
 	delete libEGL.dll
 	delete libffi-6.dll
