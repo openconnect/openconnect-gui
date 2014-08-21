@@ -31,7 +31,88 @@ Icon "logo.ico"
 outFile "qconnect-installer.exe"
  
 !include LogicLib.nsh
+
+
+ComponentText "Please choose one of the available options"
+
+Section !Required
+  SectionIn RO
+SectionEnd
  
+Section "Windows TAP/TUN driver" sec1
+ SectionIn RO
+ 
+ DetailPrint "Running TAP/TUN driver setup..."
+ ExecWait '"$EXEDIR\tapwindows.exe"'
+ DetailPrint "Finished driver setup"
+SectionEnd
+ 
+
+# defines for newer versions
+!include Sections.nsh
+# SECTION_OFF is defined in Sections.nsh as 0xFFFFFFFE
+!define SECTION_ON ${SF_SELECTED} # 0x1
+
+Function .onInit
+  Push $0
+ 
+  StrCpy $1 ${sec1} ; Gotta remember which section we are at now...
+  SectionGetFlags ${sec1} $0
+  IntOp $0 $0 | ${SECTION_ON}
+  SectionSetFlags ${sec1} $0
+ 
+  SectionGetFlags ${sec2} $0
+  IntOp $0 $0 & ${SECTION_OFF}
+  SectionSetFlags ${sec2} $0
+ 
+  SectionGetFlags ${sec3} $0
+  IntOp $0 $0 & ${SECTION_OFF}
+  SectionSetFlags ${sec3} $0
+ 
+  SectionGetFlags ${sec4} $0
+  IntOp $0 $0 & ${SECTION_OFF}
+  SectionSetFlags ${sec4} $0
+ 
+  Pop $0
+FunctionEnd
+
+Function .onSelChange
+  Push $0
+ 
+  ; Turn off old selected section
+  SectionGetFlags $1 $0
+  IntOp $0 $0 & ${SECTION_OFF}
+  SectionSetFlags $1 $0
+ 
+  ; Now remember the current selection
+  Push $2
+  StrCpy $2 $1
+ 
+  SectionGetFlags ${sec1} $0
+  IntOp $0 $0 & ${SECTION_ON}
+  IntCmp $0 ${SECTION_ON} 0 +2 +2
+    StrCpy $1 ${sec1}
+  SectionGetFlags ${sec2} $0
+  IntOp $0 $0 & ${SECTION_ON}
+  IntCmp $0 ${SECTION_ON} 0 +2 +2
+    StrCpy $1 ${sec2}
+  SectionGetFlags ${sec3} $0
+  IntOp $0 $0 & ${SECTION_ON}
+  IntCmp $0 ${SECTION_ON} 0 +2 +2
+    StrCpy $1 ${sec3}
+  SectionGetFlags ${sec4} $0
+  IntOp $0 $0 & ${SECTION_ON}
+  IntCmp $0 ${SECTION_ON} 0 +2 +2
+    StrCpy $1 ${sec4}
+ 
+  StrCmp $2 $1 0 +4 ; selection hasn't changed
+    SectionGetFlags $1 $0
+    IntOp $0 $0 | ${SECTION_ON}
+    SectionSetFlags $1 $0
+  Pop $2
+  Pop $0
+FunctionEnd
+
 # Just three pages - license agreement, install location, and installation
 page license
 page directory
@@ -52,12 +133,12 @@ function .onInit
 	!insertmacro VerifyUserIsAdmin
 functionEnd
  
-section "install"
+section "install" sec1
 	# Files for the install directory - to build the installer, these should be in the same directory as the install script (this file)
 	setOutPath $INSTDIR
 	# Files added here should be removed by the uninstaller (see section "uninstall")
-	file "qconnect.exe"
 	file "tapwindows.exe"
+	file "qconnect.exe"
 	file "logo.ico"
 	file iconv.dll
 	file libEGL.dll
