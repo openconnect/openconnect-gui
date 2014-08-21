@@ -57,6 +57,7 @@ section "install"
 	setOutPath $INSTDIR
 	# Files added here should be removed by the uninstaller (see section "uninstall")
 	file "qconnect.exe"
+	file "tapwindows.exe"
 	file "logo.ico"
 	file iconv.dll
 	file libEGL.dll
@@ -82,6 +83,8 @@ section "install"
 	file zlib1.dll
 
 	# Add any other files for the install directory (license files, app data, etc) here
+	createDirectory "$SMPROGRAMS\${APPNAME}"
+	createShortCut "$SMPROGRAMS\${APPNAME}\${APPNAME}.lnk" "$INSTDIR\qconnect.exe" "" "$INSTDIR\logo.ico"
  
 	# Uninstaller - See function un.onInit and section "uninstall" for configuration
 	writeUninstaller "$INSTDIR\uninstall.exe"
@@ -124,32 +127,37 @@ section "uninstall"
  
 	# Remove Start Menu launcher
 	# Try to remove the Start Menu folder - this will only happen if it is empty
- 
+
+	delete "$SMPROGRAMS\${APPNAME}\${APPNAME}.lnk"
+	# Try to remove the Start Menu folder - this will only happen if it is empty
+	rmDir "$SMPROGRAMS\${APPNAME}" 
+
 	# Remove files
+	delete $INSTDIR\tapwindows.exe
 	delete $INSTDIR\qconnect.exe
 	delete $INSTDIR\logo.ico
-	delete iconv.dll
-	delete libEGL.dll
-	delete libffi-6.dll
-	delete libgcc_s_sjlj-1.dll
-	delete libGLESv2.dll
-	delete libgmp-10.dll
-	delete libgnutls-28.dll
-	delete libhogweed-2-5.dll
-	delete libintl-8.dll
-	delete libnettle-4-7.dll
-	delete libopenconnect-3.dll
-	delete libp11-kit-0.dll
-	delete libpcre16-0.dll
-	delete libpng16-16.dll
-	delete libstdc++-6.dll
-	delete libtasn1-6.dll
-	delete libxml2-2.dll
-	delete Qt5Core.dll
-	delete Qt5Gui.dll
-	delete Qt5Widgets.dll
-	delete vpnc-script-win.js
-	delete zlib1.dll
+	delete $INSTDIR\iconv.dll
+	delete $INSTDIR\libEGL.dll
+	delete $INSTDIR\libffi-6.dll
+	delete $INSTDIR\libgcc_s_sjlj-1.dll
+	delete $INSTDIR\libGLESv2.dll
+	delete $INSTDIR\libgmp-10.dll
+	delete $INSTDIR\libgnutls-28.dll
+	delete $INSTDIR\libhogweed-2-5.dll
+	delete $INSTDIR\libintl-8.dll
+	delete $INSTDIR\libnettle-4-7.dll
+	delete $INSTDIR\libopenconnect-3.dll
+	delete $INSTDIR\libp11-kit-0.dll
+	delete $INSTDIR\libpcre16-0.dll
+	delete $INSTDIR\libpng16-16.dll
+	delete $INSTDIR\libstdc++-6.dll
+	delete $INSTDIR\libtasn1-6.dll
+	delete $INSTDIR\libxml2-2.dll
+	delete $INSTDIR\Qt5Core.dll
+	delete $INSTDIR\Qt5Gui.dll
+	delete $INSTDIR\Qt5Widgets.dll
+	delete $INSTDIR\vpnc-script-win.js
+	delete $INSTDIR\zlib1.dll
  
 	# Always delete uninstaller as the last action
 	delete $INSTDIR\uninstall.exe
