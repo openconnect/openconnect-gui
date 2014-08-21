@@ -30,6 +30,7 @@ extern "C" {
 #include <storage.h>
 #include <QLineEdit>
 #include <QFutureWatcher>
+
 #include "logdialog.h"
 #include "editdialog.h"
 
@@ -42,7 +43,7 @@ MainWindow::MainWindow(QWidget *parent) :
     this->setWindowTitle(QLatin1String("Qconnect (openconnect ")+QLatin1String(version)+QLatin1String(")"));
 
     timer = new QTimer(this);
-    this->cmd_fd = -1;
+    this->cmd_fd = INVALID_SOCKET;
 
     connect(timer, SIGNAL(timeout()), this, SLOT(request_update_stats()));
     connect(ui->comboBox->lineEdit(), SIGNAL(returnPressed()), this, SLOT(on_connectBtn_clicked()), Qt::QueuedConnection);
@@ -50,19 +51,24 @@ MainWindow::MainWindow(QWidget *parent) :
 
 }
 
-static void term_thread(int *fd)
+static void term_thread(MainWindow *m, SOCKET *fd)
 {
     char cmd = OC_CMD_CANCEL;
-    if (*fd != -1) {
-        write(*fd, &cmd, 1);
-        close(*fd);
-        *fd = -1;
+
+    if (*fd != INVALID_SOCKET) {
+        int ret = send(*fd, &cmd, 1, 0);
+        if (ret < 0)
+          m->updateProgressBar(QLatin1String("term_thread: IPC error: ")+WSAGetLastError());
+        closesocket(*fd);
+        *fd = INVALID_SOCKET;
+    } else {
+      m->updateProgressBar(QLatin1String("term_thread: invalid socket"));
     }
 }
 
 MainWindow::~MainWindow()
 {
-    term_thread(&this->cmd_fd);
+    term_thread(this, &this->cmd_fd);
     timer->stop();
     delete ui;
     delete timer;
@@ -153,7 +159,8 @@ static void main_loop(VpnInfo *vpninfo, MainWindow *m)
 
     m->vpn_status_changed(false);
     m->disable_cmd_fd();
-    m->stop_timer();
+    //m->stop_timer();
+    m->updateProgressBar(QLatin1String("main loop terminated"));
 
     delete vpninfo;
     vpninfo = NULL;
@@ -161,7 +168,7 @@ static void main_loop(VpnInfo *vpninfo, MainWindow *m)
 
 void MainWindow::on_disconnectBtn_clicked()
 {
-    term_thread(&this->cmd_fd);
+    term_thread(this, &this->cmd_fd);
 }
 
 void MainWindow::on_connectBtn_clicked()
@@ -172,9 +179,6 @@ void MainWindow::on_connectBtn_clicked()
     QString name;
     int ret;
     QString ip, ip6, dns;
-
-    if (this->cmd_fd != -1)
-        return;
 
     if (ui->comboBox->currentText().isEmpty()) {
         QMessageBox::information(
@@ -192,10 +196,24 @@ void MainWindow::on_connectBtn_clicked()
     }
 
     vpninfo = new VpnInfo(APP_STRING, ss, this);
-    if (vpninfo == NULL)
+    if (vpninfo == NULL) {
+        QMessageBox::information(
+            this,
+            tr(APP_NAME),
+            tr("There was an issue initializing the VPN.") );
         return;
+    }
 
     vpninfo->parse_url(ss->get_servername().toLocal8Bit().data());
+
+    this->cmd_fd = vpninfo->get_cmd_fd();
+    if (this->cmd_fd == INVALID_SOCKET) {
+        QMessageBox::information(
+            this,
+            tr(APP_NAME),
+            tr("There was an issue establishing IPC with openconnect; try restarting the application.") );
+        goto fail;
+    }
 
     enableDisconnect(true);
 
@@ -224,8 +242,8 @@ void MainWindow::on_connectBtn_clicked()
 
     ui->DNSLabel->setText(dns);
 
+    updateProgressBar("connecting...");
     result = QtConcurrent::run (main_loop, vpninfo, this);
-    this->cmd_fd = vpninfo->get_cmd_fd();
 
     return;
  fail:
@@ -277,8 +295,16 @@ void MainWindow::on_toolButton_3_clicked()
 void MainWindow::request_update_stats()
 {
     char cmd = OC_CMD_STATS;
-    if (this->cmd_fd != -1)
-        write(this->cmd_fd, &cmd, 1);
+    if (this->cmd_fd != INVALID_SOCKET) {
+        int ret = send(this->cmd_fd, &cmd, 1, 0);
+        if (ret < 0) {
+            this->updateProgressBar(QLatin1String("IPC error: ")+WSAGetLastError());
+            //this->timer->stop();
+        }
+    } else {
+    	this->updateProgressBar(QLatin1String("invalid socket"));
+        //this->timer->stop();
+    }
 }
 
 void MainWindow::stop_timer()

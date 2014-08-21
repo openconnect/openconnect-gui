@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QMAKE_CXXFLAGS += -g
+QMAKE_CXXFLAGS += -g -I..\qconnect\include\
 
 QT       += core gui
 
@@ -40,7 +40,7 @@ FORMS    += mainwindow.ui \
     editdialog.ui \
     logdialog.ui
 
-unix|win32: LIBS += -lopenconnect -lgnutls
+unix|win32: LIBS += -L..\qconnect\lib -lopenconnect -lgnutls -lwsock32
 
 RESOURCES += \
     resources.qrc

@@ -42,6 +42,10 @@ void progress_vfn(void *privdata, int level, const char *fmt, ...)
     char buf[512];
     size_t len;
     va_list args;
+    
+    /* don't spam */
+    if (level == PRG_TRACE)
+    	return;
 
     buf[0] = 0;
     va_start(args, fmt);
@@ -257,6 +261,11 @@ VpnInfo::VpnInfo(const char *name, class StoredServer *ss, class MainWindow *m)
     }
 
     this->cmd_fd = openconnect_setup_cmd_pipe(vpninfo);
+    if (this->cmd_fd == INVALID_SOCKET) {
+        m->updateProgressBar("invalid socket");
+        throw;
+    }
+    m->updateProgressBar("socket " + this->cmd_fd);
     this->last_err = NULL;
     this->ss = ss;
     this->m = m;
@@ -266,8 +275,8 @@ VpnInfo::VpnInfo(const char *name, class StoredServer *ss, class MainWindow *m)
 
 VpnInfo::~VpnInfo()
 {
-    if (this->cmd_fd != -1)
-        close(this->cmd_fd);
+    if (this->cmd_fd != INVALID_SOCKET)
+        closesocket(this->cmd_fd);
 
     if (vpninfo)
         openconnect_vpninfo_free(vpninfo);

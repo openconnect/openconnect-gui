@@ -26,6 +26,13 @@
 #include <QMutex>
 #include "common.h"
 #include <QTimer>
+#ifndef _WIN32
+# include <sys/types.h>
+# include <sys/socket.h>
+# include <errno.h>
+#else
+# include <winsock2.h>
+#endif
 
 extern "C" {
 #include <openconnect.h>
@@ -77,7 +84,7 @@ signals:
 private:
     /* we keep the fd instead of a pointer to vpninfo to avoid
      * any multithread issues */
-    int cmd_fd;
+    SOCKET cmd_fd;
     Ui::MainWindow *ui;
     QSettings *settings;
     QMutex progress_mutex;
