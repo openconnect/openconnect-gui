@@ -9,7 +9,7 @@
 
 function echo(msg)
 {
-	WScript.echo(msg);
+	return;
 }
 
 function run(cmd)

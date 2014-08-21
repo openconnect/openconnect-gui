@@ -37,12 +37,16 @@
 #define OFF_ICON QPixmap(QString::fromUtf8(":/new/resource/globe.png"))
 #define ON_ICON QPixmap(QString::fromUtf8(":/new/resource/secure_lock.png"))
 
-#define UPDATE_TIMER 10000
+#define UPDATE_TIMER 15000
 
 #ifdef _WIN32
-# define DEFAULT_VPNC_SCRIPT "./vpnc-script-win.js"
+# define DEFAULT_VPNC_SCRIPT "vpnc-script-win.js"
 #else
 # define DEFAULT_VPNC_SCRIPT "/etc/vpnc/vpnc-script"
+# define INVALID_SOCKET -1
+# define SOCKET int
+# define closesocket close
+# define WSAGetLastError() errno
 #endif
 
 #endif // COMMON_H

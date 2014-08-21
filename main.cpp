@@ -72,7 +72,10 @@ int main(int argc, char *argv[])
     signal(SIGPIPE, SIG_IGN);
 #endif
     openconnect_init_ssl();
+
+#ifdef ENABLE_PKCS11
     gnutls_pkcs11_set_pin_function(pin_callback, &w);
+#endif
 
 #if !defined(DEVEL)
     v = settings.value("mainwindow/size");

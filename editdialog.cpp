@@ -38,6 +38,7 @@ EditDialog::EditDialog(QString server, QSettings *settings, QWidget *parent) :
     ui->gatewayEdit->setText(ss->get_servername());
     ui->userCertHash->setText(ss->get_client_cert_hash());
     ui->caCertHash->setText(ss->get_ca_cert_hash());
+    ui->batchModeBox->setChecked(ss->get_batch_mode());
 
     ss->get_server_hash(hash);
     ui->serverCertHash->setText(hash);

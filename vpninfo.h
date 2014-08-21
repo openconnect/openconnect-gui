@@ -37,7 +37,7 @@ public:
     int dtls_connect();
     void mainloop();
     void get_info(QString &dns, QString &ip, QString &ip6);
-    int get_cmd_fd() {
+    SOCKET get_cmd_fd() {
         return cmd_fd;
     };
 
@@ -46,7 +46,7 @@ public:
     StoredServer *ss;
     struct openconnect_info *vpninfo;
 private:
-    int cmd_fd;
+    SOCKET cmd_fd;
 };
 
 #endif // VPNINFO_H

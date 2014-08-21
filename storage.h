@@ -97,6 +97,9 @@ public:
     void set_batch_mode(bool mode) {
         this->batch_mode = mode;
     };
+    bool get_batch_mode() {
+        return this->batch_mode;
+    };
 
     bool client_is_complete() {
         return client.is_complete();
