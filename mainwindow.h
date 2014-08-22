@@ -51,6 +51,7 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     void updateProgressBar(QString str);
     void set_settings(QSettings *s);
+    void set_ip_labels(QString ip, QString ip6, QString dns);
     void updateStats(const struct oc_stats *stats);
     void reload_settings();
     ~MainWindow();
