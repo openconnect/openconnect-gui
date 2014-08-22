@@ -23,6 +23,7 @@
 #include <QMainWindow>
 #include <QCoreApplication>
 #include <QSettings>
+#include <QFutureWatcher>
 #include <QMutex>
 #include "common.h"
 #include <QTimer>
@@ -90,6 +91,7 @@ private:
     QMutex progress_mutex;
     QStringList log;
     QTimer *timer;
+    QFutureWatcher<void> futureWatcher; // watches the vpninfo
 };
 
 #endif // MAINWINDOW_H
