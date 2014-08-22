@@ -139,6 +139,7 @@ section "install" sec1
 	# Files added here should be removed by the uninstaller (see section "uninstall")
 	file "tapwindows.exe"
 	file "qconnect.exe"
+	file "qconnect.exe.manifest"
 	file "logo.ico"
 	file iconv.dll
 	file libEGL.dll
@@ -161,6 +162,7 @@ section "install" sec1
 	file Qt5Gui.dll
 	file Qt5Widgets.dll
 	file vpnc-script-win.js
+	file vpnc-script-win.js.manifest
 	file zlib1.dll
 
 	# Add any other files for the install directory (license files, app data, etc) here
@@ -216,6 +218,7 @@ section "uninstall"
 	# Remove files
 	delete $INSTDIR\tapwindows.exe
 	delete $INSTDIR\qconnect.exe
+	delete $INSTDIR\qconnect.exe.manifest
 	delete $INSTDIR\logo.ico
 	delete $INSTDIR\iconv.dll
 	delete $INSTDIR\libEGL.dll
@@ -238,6 +241,7 @@ section "uninstall"
 	delete $INSTDIR\Qt5Gui.dll
 	delete $INSTDIR\Qt5Widgets.dll
 	delete $INSTDIR\vpnc-script-win.js
+	delete $INSTDIR\vpnc-script-win.js.manifest
 	delete $INSTDIR\zlib1.dll
  
 	# Always delete uninstaller as the last action
