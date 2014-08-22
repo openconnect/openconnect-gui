@@ -251,6 +251,16 @@ int validate_peer_cert(void *privdata, OPENCONNECT_X509 *cert, const char *reaso
     return 0;
 }
 
+static inline int set_sock_block(int fd)
+{
+#ifdef _WIN32
+	unsigned long mode = 0;
+	return ioctlsocket(fd, FIONBIO, &mode);
+#else
+	return fcntl(fd, F_SETFL, fcntl(fd, F_GETFL) & ~O_NONBLOCK);
+#endif
+}
+
 VpnInfo::VpnInfo(const char *name, class StoredServer *ss, class MainWindow *m)
 {
     char *p = const_cast<char*>(name);
@@ -265,6 +275,8 @@ VpnInfo::VpnInfo(const char *name, class StoredServer *ss, class MainWindow *m)
         m->updateProgressBar("invalid socket");
         throw;
     }
+    set_sock_block(this->cmd_fd);
+
     m->updateProgressBar("socket " + this->cmd_fd);
     this->last_err = NULL;
     this->ss = ss;

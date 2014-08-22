@@ -64,9 +64,17 @@ static void term_thread(MainWindow *m, SOCKET *fd)
 
 MainWindow::~MainWindow()
 {
+    int counter = 5;
     if (this->timer->isActive())
         timer->stop();
-    term_thread(this, &this->cmd_fd);
+
+    if (this->futureWatcher.isRunning() == true) {
+        term_thread(this, &this->cmd_fd);
+    }
+    while(this->futureWatcher.isRunning() == true && counter > 0) {
+        ms_sleep(200);
+        counter--;
+    }
     delete ui;
     delete timer;
 }
@@ -173,13 +181,21 @@ void MainWindow::on_connectBtn_clicked()
 {
     VpnInfo *vpninfo = NULL;
     StoredServer *ss = new StoredServer(this->settings);
-    QFuture<void> result;
+    QFuture<void> future;
     QString name;
     int ret;
     QString ip, ip6, dns;
 
     if (this->cmd_fd != INVALID_SOCKET)
         return;
+
+    if (this->futureWatcher.isRunning() == true) {
+        QMessageBox::information(
+            this,
+            tr(APP_NAME),
+            tr("A previous VPN instance is still running") );
+        return;
+    }
 
     if (ui->comboBox->currentText().isEmpty()) {
         QMessageBox::information(
@@ -202,7 +218,7 @@ void MainWindow::on_connectBtn_clicked()
             this,
             tr(APP_NAME),
             tr("There was an issue initializing the VPN.") );
-        return;
+        goto fail;
     }
 
     vpninfo->parse_url(ss->get_servername().toLocal8Bit().data());
@@ -216,7 +232,7 @@ void MainWindow::on_connectBtn_clicked()
         goto fail;
     }
 
-    enableDisconnect(true);
+    ui->connectBtn->setEnabled(false);
 
     /* XXX openconnect_set_http_proxy */
 
@@ -244,12 +260,18 @@ void MainWindow::on_connectBtn_clicked()
     ui->DNSLabel->setText(dns);
 
     updateProgressBar("Connected!");
-    result = QtConcurrent::run (main_loop, vpninfo, this);
+    future = QtConcurrent::run (main_loop, vpninfo, this);
+
+    this->futureWatcher.setFuture(future);
+
+    enableDisconnect(true);
 
     return;
  fail:
-    delete vpninfo;
-    vpninfo = NULL;
+    if (vpninfo != NULL)
+        delete vpninfo;
+    if (ss != NULL)
+        delete ss;
     enableDisconnect(false);
     return;
 }
@@ -283,14 +305,10 @@ void MainWindow::on_toolButton_2_clicked()
 void MainWindow::on_toolButton_3_clicked()
 {
     LogDialog dialog(this->log);
-    QFutureWatcher<void> futureWatcher;
 
-    QObject::connect(&futureWatcher, SIGNAL(finished()), &dialog, SLOT(cancel()));
     QObject::connect(this, SIGNAL(log_changed(QString)), &dialog, SLOT(append(QString)), Qt::QueuedConnection);
 
     dialog.exec();
-
-    futureWatcher.waitForFinished();
 }
 
 void MainWindow::request_update_stats()
