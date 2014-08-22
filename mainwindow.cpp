@@ -239,9 +239,8 @@ void MainWindow::on_connectBtn_clicked()
         goto fail;
     }
 
-    ui->connectBtn->setEnabled(false);
-
     /* XXX openconnect_set_http_proxy */
+    enableDisconnect(true);
 
     ret = vpninfo->connect();
     if (ret != 0) {
@@ -270,8 +269,6 @@ void MainWindow::on_connectBtn_clicked()
     future = QtConcurrent::run (main_loop, vpninfo, this);
 
     this->futureWatcher.setFuture(future);
-
-    enableDisconnect(true);
 
     return;
  fail:
