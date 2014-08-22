@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QMAKE_CXXFLAGS += -g -I..\qconnect\include\
+QMAKE_CXXFLAGS += -O1 -g -I..\qconnect\include\
 
 QT       += core gui
 
