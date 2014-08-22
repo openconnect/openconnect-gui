@@ -33,7 +33,7 @@ Cert::~Cert()
 
 void Cert::clear()
 {
-    if (crt) {
+    if (this->crt) {
         gnutls_x509_crt_deinit(crt);
         crt = NULL;
         imported = false;

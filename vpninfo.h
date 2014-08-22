@@ -30,7 +30,7 @@ extern "C" {
 class VpnInfo
 {
 public:
-    explicit VpnInfo(const char *name, class StoredServer *ss, class MainWindow *m);
+    explicit VpnInfo(QString name, class StoredServer *ss, class MainWindow *m);
     ~VpnInfo();
     void parse_url(const char *url);
     int connect();
