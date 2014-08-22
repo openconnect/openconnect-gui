@@ -41,16 +41,18 @@
 
 #ifdef _WIN32
 # define DEFAULT_VPNC_SCRIPT "vpnc-script-win.js"
+# define net_errno WSAGetLastError()
 # define ms_sleep Sleep
 #else
 # include <unistd.h>
 # include <fcntl.h>
+# include <errno.h>
 # define ms_sleep(x) usleep(1000*x)
 # define DEFAULT_VPNC_SCRIPT "/etc/vpnc/vpnc-script"
 # define INVALID_SOCKET -1
 # define SOCKET int
 # define closesocket close
-# define WSAGetLastError() errno
+# define net_errno errno
 #endif
 
 #endif // COMMON_H

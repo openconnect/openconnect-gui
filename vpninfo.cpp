@@ -261,10 +261,9 @@ static inline int set_sock_block(int fd)
 #endif
 }
 
-VpnInfo::VpnInfo(const char *name, class StoredServer *ss, class MainWindow *m)
+VpnInfo::VpnInfo(QString name, class StoredServer *ss, class MainWindow *m)
 {
-    char *p = const_cast<char*>(name);
-    this->vpninfo = openconnect_vpninfo_new(p, validate_peer_cert, NULL,
+    this->vpninfo = openconnect_vpninfo_new(name.toAscii().data(), validate_peer_cert, NULL,
                                             process_auth_form, progress_vfn, this);
     if (this->vpninfo == NULL) {
         throw;
@@ -277,7 +276,7 @@ VpnInfo::VpnInfo(const char *name, class StoredServer *ss, class MainWindow *m)
     }
     set_sock_block(this->cmd_fd);
 
-    m->updateProgressBar("socket " + this->cmd_fd);
+    m->updateProgressBar(QLatin1String("socket ") + QString::number(this->cmd_fd));
     this->last_err = NULL;
     this->ss = ss;
     this->m = m;

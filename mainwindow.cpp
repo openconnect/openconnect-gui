@@ -34,6 +34,12 @@ extern "C" {
 #include "logdialog.h"
 #include "editdialog.h"
 
+#ifdef _WIN32
+# define pipe_write(x,y,z) send(x,y,z,0)
+#else
+# define pipe_write(x,y,z) write(x,y,z)
+#endif
+
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
@@ -55,9 +61,9 @@ static void term_thread(MainWindow *m, SOCKET *fd)
     char cmd = OC_CMD_CANCEL;
 
     if (*fd != INVALID_SOCKET) {
-        int ret = send(*fd, &cmd, 1, 0);
+        int ret = pipe_write(*fd, &cmd, 1);
         if (ret < 0)
-          m->updateProgressBar(QLatin1String("term_thread: IPC error: ")+WSAGetLastError());
+          m->updateProgressBar(QLatin1String("term_thread: IPC error: ")+QString::number(net_errno));
         *fd = INVALID_SOCKET;
     }
 }
@@ -212,7 +218,8 @@ void MainWindow::on_connectBtn_clicked()
         ss->set_servername(name);
     }
 
-    vpninfo = new VpnInfo(APP_STRING, ss, this);
+    /* ss is now deallocated by vpninfo */
+    vpninfo = new VpnInfo(tr(APP_STRING), ss, this);
     if (vpninfo == NULL) {
         QMessageBox::information(
             this,
@@ -270,8 +277,6 @@ void MainWindow::on_connectBtn_clicked()
  fail:
     if (vpninfo != NULL)
         delete vpninfo;
-    if (ss != NULL)
-        delete ss;
     enableDisconnect(false);
     return;
 }
@@ -315,9 +320,9 @@ void MainWindow::request_update_stats()
 {
     char cmd = OC_CMD_STATS;
     if (this->cmd_fd != INVALID_SOCKET) {
-        int ret = send(this->cmd_fd, &cmd, 1, 0);
+        int ret = pipe_write(this->cmd_fd, &cmd, 1);
         if (ret < 0) {
-            this->updateProgressBar(QLatin1String("update_stats: IPC error: ")+WSAGetLastError());
+            this->updateProgressBar(QLatin1String("update_stats: IPC error: ")+QString::number(net_errno));
 	    if (this->timer->isActive())
         	this->timer->stop();
         }
