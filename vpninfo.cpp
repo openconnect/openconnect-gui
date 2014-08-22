@@ -275,9 +275,6 @@ VpnInfo::VpnInfo(const char *name, class StoredServer *ss, class MainWindow *m)
 
 VpnInfo::~VpnInfo()
 {
-    if (this->cmd_fd != INVALID_SOCKET)
-        closesocket(this->cmd_fd);
-
     if (vpninfo)
         openconnect_vpninfo_free(vpninfo);
 

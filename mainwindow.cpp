@@ -45,9 +45,9 @@ MainWindow::MainWindow(QWidget *parent) :
     timer = new QTimer(this);
     this->cmd_fd = INVALID_SOCKET;
 
-    connect(timer, SIGNAL(timeout()), this, SLOT(request_update_stats()));
+    connect(timer, SIGNAL(timeout()), this, SLOT(request_update_stats()), Qt::QueuedConnection);
     connect(ui->comboBox->lineEdit(), SIGNAL(returnPressed()), this, SLOT(on_connectBtn_clicked()), Qt::QueuedConnection);
-    connect(this, SIGNAL(vpn_status_changed_sig(bool)), this, SLOT(enableDisconnect(bool)));
+    connect(this, SIGNAL(vpn_status_changed_sig(bool)), this, SLOT(enableDisconnect(bool)), Qt::QueuedConnection);
 
 }
 
@@ -59,7 +59,6 @@ static void term_thread(MainWindow *m, SOCKET *fd)
         int ret = send(*fd, &cmd, 1, 0);
         if (ret < 0)
           m->updateProgressBar(QLatin1String("term_thread: IPC error: ")+WSAGetLastError());
-        closesocket(*fd);
         *fd = INVALID_SOCKET;
     } else {
       m->updateProgressBar(QLatin1String("term_thread: invalid socket"));
@@ -68,8 +67,8 @@ static void term_thread(MainWindow *m, SOCKET *fd)
 
 MainWindow::~MainWindow()
 {
-    term_thread(this, &this->cmd_fd);
     timer->stop();
+    term_thread(this, &this->cmd_fd);
     delete ui;
     delete timer;
 }
@@ -159,7 +158,6 @@ static void main_loop(VpnInfo *vpninfo, MainWindow *m)
 
     m->vpn_status_changed(false);
     m->disable_cmd_fd();
-    //m->stop_timer();
     m->updateProgressBar(QLatin1String("main loop terminated"));
 
     delete vpninfo;
@@ -168,6 +166,8 @@ static void main_loop(VpnInfo *vpninfo, MainWindow *m)
 
 void MainWindow::on_disconnectBtn_clicked()
 {
+    this->timer->stop();
+    this->updateProgressBar(QLatin1String("Disconnecting..."));
     term_thread(this, &this->cmd_fd);
 }
 
@@ -242,7 +242,7 @@ void MainWindow::on_connectBtn_clicked()
 
     ui->DNSLabel->setText(dns);
 
-    updateProgressBar("connected!");
+    updateProgressBar("Connected!");
     result = QtConcurrent::run (main_loop, vpninfo, this);
 
     return;
@@ -285,7 +285,7 @@ void MainWindow::on_toolButton_3_clicked()
     QFutureWatcher<void> futureWatcher;
 
     QObject::connect(&futureWatcher, SIGNAL(finished()), &dialog, SLOT(cancel()));
-    QObject::connect(this, SIGNAL(log_changed(QString)), &dialog, SLOT(append(QString)));
+    QObject::connect(this, SIGNAL(log_changed(QString)), &dialog, SLOT(append(QString)), Qt::QueuedConnection);
 
     dialog.exec();
 
@@ -298,11 +298,11 @@ void MainWindow::request_update_stats()
     if (this->cmd_fd != INVALID_SOCKET) {
         int ret = send(this->cmd_fd, &cmd, 1, 0);
         if (ret < 0) {
-            this->updateProgressBar(QLatin1String("IPC error: ")+WSAGetLastError());
+            this->updateProgressBar(QLatin1String("update_stats: IPC error: ")+WSAGetLastError());
             this->timer->stop();
         }
     } else {
-    	this->updateProgressBar(QLatin1String("invalid socket"));
+    	this->updateProgressBar(QLatin1String("update_stats: invalid socket"));
         this->timer->stop();
     }
 }
