@@ -40,7 +40,8 @@ FORMS    += mainwindow.ui \
     editdialog.ui \
     logdialog.ui
 
-unix|win32: LIBS += -L..\qconnect\lib -lopenconnect -lgnutls -lwsock32
+unix|win32: LIBS += -L..\qconnect\lib -lopenconnect -lgnutls
+win32: LIBS += -lwsock32
 
 RESOURCES += \
     resources.qrc
