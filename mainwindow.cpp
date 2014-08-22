@@ -169,10 +169,39 @@ void MainWindow::enableDisconnect(bool val)
 
 static void main_loop(VpnInfo *vpninfo, MainWindow *m)
 {
+    int ret;
+    QString ip, ip6, dns;
+
+    ret = vpninfo->connect();
+    if (ret != 0) {
+        m->updateProgressBar(vpninfo->last_err);
+        goto fail;
+    }
+
+    ret = vpninfo->dtls_connect();
+    if (ret != 0) {
+        m->updateProgressBar(vpninfo->last_err);
+        goto fail;
+    }
+
+    vpninfo->get_info(dns, ip, ip6);;
+    m->set_ip_labels(dns,ip,ip);
+
+    vpninfo->ss->save();
+
     vpninfo->mainloop();
+
+ fail:
     m->vpn_status_changed(false);
 
     delete vpninfo;
+}
+
+void MainWindow::set_ip_labels(QString ip, QString ip6, QString dns)
+{
+	this->ui->IPLabel->setText(ip);
+    	this->ui->IP6Label->setText(ip6);
+    	this->ui->DNSLabel->setText(dns);
 }
 
 void MainWindow::on_disconnectBtn_clicked()
@@ -189,10 +218,8 @@ void MainWindow::on_connectBtn_clicked()
     StoredServer *ss = new StoredServer(this->settings);
     QFuture<void> future;
     QString name;
-    int ret;
-    QString ip, ip6, dns;
 
-    if (this->cmd_fd != INVALID_SOCKET)
+    if (this->cmd_fd != INVALID_SOCKET || ui->connectBtn->isEnabled() == false)
         return;
 
     if (this->futureWatcher.isRunning() == true) {
@@ -242,30 +269,8 @@ void MainWindow::on_connectBtn_clicked()
     /* XXX openconnect_set_http_proxy */
     enableDisconnect(true);
 
-    ret = vpninfo->connect();
-    if (ret != 0) {
-        updateProgressBar(vpninfo->last_err);
-        goto fail;
-    }
-
-    ret = vpninfo->dtls_connect();
-    if (ret != 0) {
-        updateProgressBar(vpninfo->last_err);
-        goto fail;
-    }
-
-    updateProgressBar("saving peer's information");
-    vpninfo->ss->save();
-
     ui->iconLabel->setPixmap(ON_ICON);
 
-    vpninfo->get_info(dns, ip, ip6);;
-    ui->IPLabel->setText(ip);
-    ui->IP6Label->setText(ip6);
-
-    ui->DNSLabel->setText(dns);
-
-    updateProgressBar("Connected!");
     future = QtConcurrent::run (main_loop, vpninfo, this);
 
     this->futureWatcher.setFuture(future);
