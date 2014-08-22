@@ -39,84 +39,16 @@ Section !Required
   SectionIn RO
 SectionEnd
  
-Section "Windows TAP/TUN driver" sec1
- SectionIn RO
- 
- DetailPrint "Running TAP/TUN driver setup..."
- ExecWait '"$EXEDIR\tapwindows.exe"'
- DetailPrint "Finished driver setup"
-SectionEnd
- 
 
 # defines for newer versions
 !include Sections.nsh
 # SECTION_OFF is defined in Sections.nsh as 0xFFFFFFFE
 !define SECTION_ON ${SF_SELECTED} # 0x1
 
-Function .onInit
-  Push $0
- 
-  StrCpy $1 ${sec1} ; Gotta remember which section we are at now...
-  SectionGetFlags ${sec1} $0
-  IntOp $0 $0 | ${SECTION_ON}
-  SectionSetFlags ${sec1} $0
- 
-  SectionGetFlags ${sec2} $0
-  IntOp $0 $0 & ${SECTION_OFF}
-  SectionSetFlags ${sec2} $0
- 
-  SectionGetFlags ${sec3} $0
-  IntOp $0 $0 & ${SECTION_OFF}
-  SectionSetFlags ${sec3} $0
- 
-  SectionGetFlags ${sec4} $0
-  IntOp $0 $0 & ${SECTION_OFF}
-  SectionSetFlags ${sec4} $0
- 
-  Pop $0
-FunctionEnd
-
-Function .onSelChange
-  Push $0
- 
-  ; Turn off old selected section
-  SectionGetFlags $1 $0
-  IntOp $0 $0 & ${SECTION_OFF}
-  SectionSetFlags $1 $0
- 
-  ; Now remember the current selection
-  Push $2
-  StrCpy $2 $1
- 
-  SectionGetFlags ${sec1} $0
-  IntOp $0 $0 & ${SECTION_ON}
-  IntCmp $0 ${SECTION_ON} 0 +2 +2
-    StrCpy $1 ${sec1}
-  SectionGetFlags ${sec2} $0
-  IntOp $0 $0 & ${SECTION_ON}
-  IntCmp $0 ${SECTION_ON} 0 +2 +2
-    StrCpy $1 ${sec2}
-  SectionGetFlags ${sec3} $0
-  IntOp $0 $0 & ${SECTION_ON}
-  IntCmp $0 ${SECTION_ON} 0 +2 +2
-    StrCpy $1 ${sec3}
-  SectionGetFlags ${sec4} $0
-  IntOp $0 $0 & ${SECTION_ON}
-  IntCmp $0 ${SECTION_ON} 0 +2 +2
-    StrCpy $1 ${sec4}
- 
-  StrCmp $2 $1 0 +4 ; selection hasn't changed
-    SectionGetFlags $1 $0
-    IntOp $0 $0 | ${SECTION_ON}
-    SectionSetFlags $1 $0
-  Pop $2
-  Pop $0
-FunctionEnd
-
 # Just three pages - license agreement, install location, and installation
 page license
 page directory
-Page instfiles
+page instfiles
  
 !macro VerifyUserIsAdmin
 UserInfo::GetAccountType
@@ -133,37 +65,35 @@ function .onInit
 	!insertmacro VerifyUserIsAdmin
 functionEnd
  
-section "install" sec1
+section "install"
 	# Files for the install directory - to build the installer, these should be in the same directory as the install script (this file)
 	setOutPath $INSTDIR
 	# Files added here should be removed by the uninstaller (see section "uninstall")
-	file "tapwindows.exe"
-	file "qconnect.exe"
-	file "qconnect.exe.manifest"
+	file "tap-windows.exe"
 	file "logo.ico"
-	file iconv.dll
-	file libEGL.dll
-	file libffi-6.dll
+	file libgcc_s_dw2-1.dll
 	file libgcc_s_sjlj-1.dll
-	file libGLESv2.dll
 	file libgmp-10.dll
 	file libgnutls-28.dll
 	file libhogweed-2-5.dll
-	file libintl-8.dll
 	file libnettle-4-7.dll
 	file libopenconnect-3.dll
-	file libp11-kit-0.dll
-	file libpcre16-0.dll
-	file libpng16-16.dll
 	file libstdc++-6.dll
-	file libtasn1-6.dll
+	file libwinpthread-1.dll
 	file libxml2-2.dll
+	file openconnect.exe
+	file qconnect.exe
+	file qconnect.exe.manifest
+	file qconnect.nsis
 	file Qt5Core.dll
 	file Qt5Gui.dll
 	file Qt5Widgets.dll
 	file vpnc-script-win.js
 	file vpnc-script-win.js.manifest
 	file zlib1.dll
+	file "icudt52.dll"
+	file "icuin52.dll"
+	file "icuuc52.dll"
 
 	# Add any other files for the install directory (license files, app data, etc) here
 	createDirectory "$SMPROGRAMS\${APPNAME}"
@@ -171,7 +101,9 @@ section "install" sec1
  
 	# Uninstaller - See function un.onInit and section "uninstall" for configuration
 	writeUninstaller "$INSTDIR\uninstall.exe"
- 
+
+	createShortCut "$SMPROGRAMS\${APPNAME}\Uninstall.lnk" "$INSTDIR\uninstall.exe" "" ""
+
 	# Start Menu
  
 	# Registry information for add/remove programs
@@ -193,7 +125,19 @@ section "install" sec1
 	# Set the INSTALLSIZE constant (!defined at the top of this script) so Add/Remove Programs can accurately report the size
 	#WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${APPNAME}" "EstimatedSize" ${INSTALLSIZE}
 sectionEnd
+
+Section Required
+  SectionIn RO
+SectionEnd
+
+Section "Windows TAP/TUN driver"
+ SectionIn RO
  
+ DetailPrint "Running TAP/TUN driver setup..."
+ ExecWait "$INSTDIR\tap-windows.exe"
+ DetailPrint "Finished driver setup"
+SectionEnd
+
 # Uninstaller
  
 function un.onInit
@@ -216,35 +160,33 @@ section "uninstall"
 	rmDir "$SMPROGRAMS\${APPNAME}" 
 
 	# Remove files
-	delete $INSTDIR\tapwindows.exe
-	delete $INSTDIR\qconnect.exe
-	delete $INSTDIR\qconnect.exe.manifest
-	delete $INSTDIR\logo.ico
-	delete $INSTDIR\iconv.dll
-	delete $INSTDIR\libEGL.dll
-	delete $INSTDIR\libffi-6.dll
-	delete $INSTDIR\libgcc_s_sjlj-1.dll
-	delete $INSTDIR\libGLESv2.dll
-	delete $INSTDIR\libgmp-10.dll
-	delete $INSTDIR\libgnutls-28.dll
-	delete $INSTDIR\libhogweed-2-5.dll
-	delete $INSTDIR\libintl-8.dll
-	delete $INSTDIR\libnettle-4-7.dll
-	delete $INSTDIR\libopenconnect-3.dll
-	delete $INSTDIR\libp11-kit-0.dll
-	delete $INSTDIR\libpcre16-0.dll
-	delete $INSTDIR\libpng16-16.dll
-	delete $INSTDIR\libstdc++-6.dll
-	delete $INSTDIR\libtasn1-6.dll
-	delete $INSTDIR\libxml2-2.dll
-	delete $INSTDIR\Qt5Core.dll
-	delete $INSTDIR\Qt5Gui.dll
-	delete $INSTDIR\Qt5Widgets.dll
-	delete $INSTDIR\vpnc-script-win.js
-	delete $INSTDIR\vpnc-script-win.js.manifest
-	delete $INSTDIR\zlib1.dll
+	delete "tap-windows.exe"
+	delete "logo.ico"
+	delete "icudt52.dll"
+	delete "icuin52.dll"
+	delete "icuuc52.dll"
+	delete "libgcc_s_dw2-1.dll"
+	delete "libgcc_s_sjlj-1.dll"
+	delete "libgmp-10.dll"
+	delete "libgnutls-28.dll"
+	delete "libhogweed-2-5.dll"
+	delete "libnettle-4-7.dll"
+	delete "libopenconnect-3.dll"
+	delete "libstdc++-6.dll"
+	delete "libwinpthread-1.dll"
+	delete "libxml2-2.dll"
+	delete "openconnect.exe"
+	delete "qconnect.exe"
+	delete "qconnect.exe.manifest"
+	delete "qconnect.nsis"
+	delete "Qt5Core.dll"
+	delete "Qt5Gui.dll"
+	delete "Qt5Widgets.dll"
+	delete "vpnc-script-win.js"
+	delete "vpnc-script-win.js.manifest"
+	delete "zlib1.dll"
  
-	# Always delete uninstaller as the last action
+	# Always delete "uninstaller as the last action
 	delete $INSTDIR\uninstall.exe
  
 	# Try to remove the install directory - this will only happen if it is empty
