@@ -48,7 +48,6 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(timer, SIGNAL(timeout()), this, SLOT(request_update_stats()), Qt::QueuedConnection);
     connect(ui->comboBox->lineEdit(), SIGNAL(returnPressed()), this, SLOT(on_connectBtn_clicked()), Qt::QueuedConnection);
     connect(this, SIGNAL(vpn_status_changed_sig(bool)), this, SLOT(enableDisconnect(bool)), Qt::QueuedConnection);
-
 }
 
 static void term_thread(MainWindow *m, SOCKET *fd)
@@ -60,14 +59,13 @@ static void term_thread(MainWindow *m, SOCKET *fd)
         if (ret < 0)
           m->updateProgressBar(QLatin1String("term_thread: IPC error: ")+WSAGetLastError());
         *fd = INVALID_SOCKET;
-    } else {
-      m->updateProgressBar(QLatin1String("term_thread: invalid socket"));
     }
 }
 
 MainWindow::~MainWindow()
 {
-    timer->stop();
+    if (this->timer->isActive())
+        timer->stop();
     term_thread(this, &this->cmd_fd);
     delete ui;
     delete timer;
@@ -140,7 +138,11 @@ void MainWindow::enableDisconnect(bool val)
         ui->disconnectBtn->setEnabled(true);
         ui->connectBtn->setEnabled(false);
     } else {
-        timer->stop();
+        if (this->timer->isActive())
+            timer->stop();
+        disable_cmd_fd();
+        updateProgressBar(QLatin1String("main loop terminated"));
+
         ui->IPLabel->setText("");
         ui->DNSLabel->setText("");
         ui->IP6Label->setText("");
@@ -154,19 +156,15 @@ void MainWindow::enableDisconnect(bool val)
 static void main_loop(VpnInfo *vpninfo, MainWindow *m)
 {
     vpninfo->mainloop();
-    m->updateProgressBar(vpninfo->last_err);
-
     m->vpn_status_changed(false);
-    m->disable_cmd_fd();
-    m->updateProgressBar(QLatin1String("main loop terminated"));
 
     delete vpninfo;
-    vpninfo = NULL;
 }
 
 void MainWindow::on_disconnectBtn_clicked()
 {
-    this->timer->stop();
+    if (this->timer->isActive())
+	this->timer->stop();
     this->updateProgressBar(QLatin1String("Disconnecting..."));
     term_thread(this, &this->cmd_fd);
 }
@@ -179,6 +177,9 @@ void MainWindow::on_connectBtn_clicked()
     QString name;
     int ret;
     QString ip, ip6, dns;
+
+    if (this->cmd_fd != INVALID_SOCKET)
+        return;
 
     if (ui->comboBox->currentText().isEmpty()) {
         QMessageBox::information(
@@ -299,11 +300,13 @@ void MainWindow::request_update_stats()
         int ret = send(this->cmd_fd, &cmd, 1, 0);
         if (ret < 0) {
             this->updateProgressBar(QLatin1String("update_stats: IPC error: ")+WSAGetLastError());
-            this->timer->stop();
+	    if (this->timer->isActive())
+        	this->timer->stop();
         }
     } else {
     	this->updateProgressBar(QLatin1String("update_stats: invalid socket"));
-        this->timer->stop();
+	if (this->timer->isActive())
+	    this->timer->stop();
     }
 }
 

@@ -347,7 +347,7 @@ void VpnInfo::mainloop()
         ret = openconnect_mainloop(vpninfo, 30, RECONNECT_INTERVAL_MIN);
         if (ret != 0) {
             this->last_err = "Disconnected";
-            this->ss->save();
+            //this->ss->save();
             break;
         }
     }
