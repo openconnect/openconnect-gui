@@ -7,14 +7,33 @@
 // Utilities
 // --------------------------------------------------------------
 
+var fs = WScript.CreateObject("Scripting.FileSystemObject");
+
 function echo(msg)
 {
 	return;
 }
 
 function run(cmd)
+ {
+       var s = "";
+       if (fs.FileExists("%temp%\\vpnc.out")) {
+               fs.DeleteFile("%temp%\\vpnc.out");
+       }
+       ws.Run("cmd.exe /c " +cmd+" > %temp%\\vpnc.out", 0, true);
+
+       if (fs.FileExists("%temp%\\vpnc.out")) {
+               var f = fs.OpenTextFile("%temp%\\vpnc.out", 1);
+               if (f) {
+                       s = f.ReadAll();
+               }       f.Close();
+       }
+       return s;
+}
+  
+function exec(cmd)
 {
-	return (ws.Exec(cmd).StdOut.ReadAll());
+	ws.Run(cmd, 7, true);
 }
 
 function getDefaultGateway()
@@ -76,10 +95,10 @@ case "connect":
 	
 	if (env("INTERNAL_IP4_MTU")) {
 	    echo("MTU: " + env("INTERNAL_IP4_MTU"));
-	    run("netsh interface ipv4 set subinterface \"" + env("TUNDEV") +
+	    exec("netsh interface ipv4 set subinterface \"" + env("TUNDEV") +
 		"\" mtu=" + env("INTERNAL_IP4_MTU") + " store=active");
 	    if (env("INTERNAL_IP6_ADDRESS")) {
-		run("netsh interface ipv6 set subinterface \"" + env("TUNDEV") +
+		exec("netsh interface ipv6 set subinterface \"" + env("TUNDEV") +
 		    "\" mtu=" + env("INTERNAL_IP4_MTU") + " store=active");
 	    }
 	}
@@ -88,26 +107,26 @@ case "connect":
 	
 	if (!env("CISCO_SPLIT_INC") && REDIRECT_GATEWAY_METHOD != 2) {
 		// Interface metric must be set to 1 in order to add a route with metric 1 since Windows Vista
-		run("netsh interface ip set interface \"" + env("TUNDEV") + "\" metric=1");
+		exec("netsh interface ip set interface \"" + env("TUNDEV") + "\" metric=1");
 	}
 	
 	if (env("CISCO_SPLIT_INC") || REDIRECT_GATEWAY_METHOD > 0) {
-		run("netsh interface ip set address \"" + env("TUNDEV") + "\" static " +
+		exec("netsh interface ip set address \"" + env("TUNDEV") + "\" static " +
 			env("INTERNAL_IP4_ADDRESS") + " " + env("INTERNAL_IP4_NETMASK"));
 	} else {
 		// The default route will be added automatically
-		run("netsh interface ip set address \"" + env("TUNDEV") + "\" static " +
+		exec("netsh interface ip set address \"" + env("TUNDEV") + "\" static " +
 			env("INTERNAL_IP4_ADDRESS") + " " + env("INTERNAL_IP4_NETMASK") + " " + internal_gw + " 1");
 	}
 
 	// Add direct route for the VPN gateway to avoid routing loops
-	run("route add " + env("VPNGATEWAY") +
+	exec("route add " + env("VPNGATEWAY") +
             " mask 255.255.255.255 " + gw);
 
     if (env("INTERNAL_IP4_NBNS")) {
 		var wins = env("INTERNAL_IP4_NBNS").split(/ /);
 		for (var i = 0; i < wins.length; i++) {
-	                run("netsh interface ip add wins \"" +
+	                exec("netsh interface ip add wins \"" +
 			    env("TUNDEV") + "\" " + wins[i]
 			    + " index=" + (i+1));
 		}
@@ -116,7 +135,7 @@ case "connect":
     if (env("INTERNAL_IP4_DNS")) {
 		var dns = env("INTERNAL_IP4_DNS").split(/ /);
 		for (var i = 0; i < dns.length; i++) {
-	                run("netsh interface ip add dns \"" +
+	                exec("netsh interface ip add dns \"" +
 			    env("TUNDEV") + "\" " + dns[i]
 			    + " index=" + (i+1));
 		}
@@ -136,7 +155,7 @@ case "connect":
 			var netmask = env("CISCO_SPLIT_INC_" + i + "_MASK");
 			var netmasklen = env("CISCO_SPLIT_INC_" + i +
 					 "_MASKLEN");
-			run("route add " + network + " mask " + netmask +
+			exec("route add " + network + " mask " + netmask +
 			     " " + internal_gw);
 		}
 	} else if (REDIRECT_GATEWAY_METHOD > 0) {
@@ -146,10 +165,10 @@ case "connect":
 		}
 		
 		if (REDIRECT_GATEWAY_METHOD == 1) {
-			run("route add 0.0.0.0 mask 0.0.0.0 " + internal_gw + " metric 1");
+			exec("route add 0.0.0.0 mask 0.0.0.0 " + internal_gw + " metric 1");
 		} else {
-			run("route add 0.0.0.0 mask 128.0.0.0 " + internal_gw);
-			run("route add 128.0.0.0 mask 128.0.0.0 " + internal_gw);
+			exec("route add 0.0.0.0 mask 128.0.0.0 " + internal_gw);
+			exec("route add 128.0.0.0 mask 128.0.0.0 " + internal_gw);
 		}
 	}
 	echo("Route configuration done.");
@@ -157,7 +176,7 @@ case "connect":
         if (env("INTERNAL_IP6_ADDRESS")) {
 		echo("Configuring \"" + env("TUNDEV") + "\" interface for IPv6...");
 
-		run("netsh interface ipv6 set address \"" + env("TUNDEV") + "\" " +
+		exec("netsh interface ipv6 set address \"" + env("TUNDEV") + "\" " +
 		    env("INTERNAL_IP6_ADDRESS") + " store=active");
 
 		echo("done.");
@@ -165,7 +184,7 @@ case "connect":
 		// Add internal network routes
 	        echo("Configuring Legacy IP networks:");
 	        if (env("INTERNAL_IP6_NETMASK") && !env("INTERNAL_IP6_NETMASK").match("/128$")) {
-			run("netsh interface ipv6 add route " + env("INTERNAL_IP6_NETMASK") +
+			exec("netsh interface ipv6 add route " + env("INTERNAL_IP6_NETMASK") +
 			    " \"" + env("TUNDEV") + "\" fe80::8 store=active")
 		}
 
@@ -174,12 +193,12 @@ case "connect":
 				var network = env("CISCO_IPV6_SPLIT_INC_" + i + "_ADDR");
 				var netmasklen = env("CISCO_SPLIT_INC_" + i +
 						 "_MASKLEN");
-				run("netsh interface ipv6 add route " + network + "/" +
+				exec("netsh interface ipv6 add route " + network + "/" +
 				    netmasklen + " \"" + env("TUNDEV") + "\" fe80::8 store=active")
 			}
 		} else {
 			echo("Setting default IPv6 route through VPN.");
-			run("netsh interface ipv6 add route 2000::/3 \"" + env("TUNDEV") +
+			exec("netsh interface ipv6 add route 2000::/3 \"" + env("TUNDEV") +
 			    "\" fe80::8 store=active");
 		}
 		echo("IPv6 route configuration done.");
@@ -193,6 +212,6 @@ case "connect":
 	break;
 case "disconnect":
 	// Delete direct route for the VPN gateway to avoid
-	run("route delete " + env("VPNGATEWAY") + " mask 255.255.255.255");
+	exec("route delete " + env("VPNGATEWAY") + " mask 255.255.255.255");
 }
 
