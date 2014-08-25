@@ -160,6 +160,7 @@ section "uninstall"
 	# Try to remove the Start Menu folder - this will only happen if it is empty
 
 	delete "$SMPROGRAMS\${APPNAME}\${APPNAME}.lnk"
+	delete "$SMPROGRAMS\${APPNAME}\Uninstall.lnk"
 	# Try to remove the Start Menu folder - this will only happen if it is empty
 	rmDir "$SMPROGRAMS\${APPNAME}" 
 
