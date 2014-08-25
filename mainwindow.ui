@@ -66,7 +66,7 @@
          <x>0</x>
          <y>0</y>
          <width>432</width>
-         <height>103</height>
+         <height>125</height>
         </rect>
        </property>
        <attribute name="label">
@@ -248,8 +248,8 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>419</width>
-         <height>149</height>
+         <width>432</width>
+         <height>125</height>
         </rect>
        </property>
        <attribute name="label">
@@ -295,6 +295,9 @@
            <widget class="QLabel" name="IP6Label">
             <property name="text">
              <string/>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignCenter</set>
             </property>
             <property name="wordWrap">
              <bool>true</bool>

@@ -57,7 +57,6 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     void updateProgressBar(QString str);
     void set_settings(QSettings *s);
-    void set_ip_labels(QString ip, QString ip6, QString dns);
     void updateStats(const struct oc_stats *stats);
     void reload_settings();
     ~MainWindow();
@@ -66,6 +65,13 @@ public:
     };
 
     void vpn_status_changed(int connected) {
+        emit vpn_status_changed_sig(connected);
+    };
+
+    void vpn_status_changed(int connected, QString dns, QString ip, QString ip6) {
+        this->dns = dns;
+        this->ip = ip;
+        this->ip6 = ip6;
         emit vpn_status_changed_sig(connected);
     };
 
@@ -101,6 +107,8 @@ private:
     QStringList log;
     QTimer *timer;
     QFutureWatcher<void> futureWatcher; // watches the vpninfo
+    
+    QString dns, ip, ip6;
 };
 
 #endif // MAINWINDOW_H

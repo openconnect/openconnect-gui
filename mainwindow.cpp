@@ -72,7 +72,7 @@ static void term_thread(MainWindow *m, SOCKET *fd)
 
 MainWindow::~MainWindow()
 {
-    int counter = 5;
+    int counter = 10;
     if (this->timer->isActive())
         timer->stop();
 
@@ -164,6 +164,11 @@ void MainWindow::changeStatus(int val)
         ui->iconLabel->setPixmap(ON_ICON);
         ui->disconnectBtn->setEnabled(true);
         ui->connectBtn->setEnabled(false);
+        
+	this->ui->IPLabel->setText(ip);
+    	this->ui->IP6Label->setText(ip6);
+    	this->ui->DNSLabel->setText(dns);
+
         timer->start(UPDATE_TIMER);
     } else if (val == STATUS_CONNECTING) {
         ui->iconLabel->setPixmap(CONNECTING_ICON);
@@ -203,10 +208,9 @@ static void main_loop(VpnInfo *vpninfo, MainWindow *m)
         goto fail;
     }
 
-    m->vpn_status_changed(STATUS_CONNECTED);
 
-    vpninfo->get_info(dns, ip, ip6);;
-    m->set_ip_labels(dns,ip,ip);
+    vpninfo->get_info(dns, ip, ip6);
+    m->vpn_status_changed(STATUS_CONNECTED, dns, ip, ip6);
 
     vpninfo->ss->save();
 
@@ -217,13 +221,6 @@ static void main_loop(VpnInfo *vpninfo, MainWindow *m)
 
     delete vpninfo;
     return;
-}
-
-void MainWindow::set_ip_labels(QString ip, QString ip6, QString dns)
-{
-	this->ui->IPLabel->setText(ip);
-    	this->ui->IP6Label->setText(ip6);
-    	this->ui->DNSLabel->setText(dns);
 }
 
 void MainWindow::on_disconnectBtn_clicked()
