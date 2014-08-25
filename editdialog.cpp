@@ -145,16 +145,21 @@ void EditDialog::on_caCertButton_clicked()
 void EditDialog::on_userCertClear_clicked()
 {
     ss->clear_cert();
+    ui->userCertEdit->clear();
+    ui->userCertHash->clear();
 }
 
 void EditDialog::on_userKeyClear_clicked()
 {
     ss->clear_key();
+    ui->userKeyEdit->clear();
 }
 
 void EditDialog::on_caCertClear_clicked()
 {
     ss->clear_ca();
+    ui->caCertEdit->clear();
+    ui->caCertHash->clear();
 }
 
 void EditDialog::on_serverCertClear_clicked()
