@@ -36,6 +36,7 @@
 
 #define OFF_ICON QPixmap(QString::fromUtf8(":/new/resource/globe.png"))
 #define ON_ICON QPixmap(QString::fromUtf8(":/new/resource/secure_lock.png"))
+#define CONNECTING_ICON QPixmap(QString::fromUtf8(":/new/resource/unsecure_lock.png"))
 
 #define UPDATE_TIMER 10000
 
@@ -53,6 +54,8 @@
 # define SOCKET int
 # define closesocket close
 # define net_errno errno
+# define openconnect_strdup strdup
 #endif
+
 
 #endif // COMMON_H
