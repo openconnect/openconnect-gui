@@ -152,9 +152,9 @@ void MainWindow::updateProgressBar(QString str)
     QMutexLocker locker(&this->progress_mutex);
     if (str.isEmpty() == false) {
         QDateTime now;
+        emit log_changed(str);
         str.prepend(now.currentDateTime().toString("yyyy-MM-dd hh:mm "));
         log.append(str);
-        emit log_changed(str);
     }
 }
 
