@@ -166,14 +166,13 @@ void MainWindow::changeStatus(int val)
         ui->connectBtn->setEnabled(false);
         timer->start(UPDATE_TIMER);
     } else if (val == STATUS_CONNECTING) {
-        ui->iconLabel->setPixmap(ON_ICON);
+        ui->iconLabel->setPixmap(CONNECTING_ICON);
         ui->disconnectBtn->setEnabled(true);
         ui->connectBtn->setEnabled(false);
     } else if (val == STATUS_DISCONNECTED){
         if (this->timer->isActive())
             timer->stop();
         disable_cmd_fd();
-        updateProgressBar(QLatin1String("main loop terminated"));
 
         ui->IPLabel->setText("");
         ui->DNSLabel->setText("");
