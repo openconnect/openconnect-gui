@@ -7,7 +7,7 @@
 # If you change the names "openconnect-gui.exe", "logo.ico", or "COPYING" you should do a search and replace - they
 # show up in a few places.
 # All the other settings can be tweaked by editing the !defines at the top of this script
-!define APPNAME "Qconnect"
+!define APPNAME "OpenConnect"
 !define DESCRIPTION "OpenConnect VPN client for windows"
 # These three must be integers
 !define VERSIONMAJOR 0
@@ -66,7 +66,11 @@ function .onInit
 functionEnd
  
 section "install"
-	# Files for the install directory - to build the installer, these should be in the same directory as the install script (this file)
+	setOutPath $INSTDIR\platforms
+	file "platforms\qminimal.dll"
+	file "platforms\qoffscreen.dll"
+	file "platforms\qwindows.dll"
+
 	setOutPath $INSTDIR
 	# Files added here should be removed by the uninstaller (see section "uninstall")
 	file "tap-windows.exe"
@@ -93,6 +97,7 @@ section "install"
 	file "icudt52.dll"
 	file "icuin52.dll"
 	file "icuuc52.dll"
+
 
 	# Add any other files for the install directory (license files, app data, etc) here
 	createDirectory "$SMPROGRAMS\${APPNAME}"
@@ -183,6 +188,9 @@ section "uninstall"
 	delete "vpnc-script-win.js"
 	delete "vpnc-script-win.js.manifest"
 	delete "zlib1.dll"
+	delete "platforms\qminimal.dll"
+	delete "platforms\qoffscreen.dll"
+	delete "platforms\qwindows.dll"
  
 	# Always delete "uninstaller as the last action
 	delete $INSTDIR\uninstall.exe
