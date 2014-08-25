@@ -44,7 +44,7 @@ void progress_vfn(void *privdata, int level, const char *fmt, ...)
     char buf[512];
     size_t len;
     va_list args;
-    
+
     /* don't spam */
     if (level == PRG_TRACE)
     	return;
@@ -69,7 +69,6 @@ int process_auth_form(void *privdata, struct oc_auth_form *form)
     struct oc_form_opt *opt;
     QStringList gitems;
     int i;
-    MyInputDialog *dialog;
 
     if (form->banner)
         vpn->m->updateProgressBar(form->banner);
@@ -84,6 +83,7 @@ int process_auth_form(void *privdata, struct oc_auth_form *form)
 
     if (form->authgroup_opt) {
         struct oc_form_opt_select *select_opt = form->authgroup_opt;
+        MyInputDialog dialog(vpn->m, QLatin1String(select_opt->form.name), QLatin1String(select_opt->form.label), gitems);
 
         for (i = 0; i < select_opt->nr_choices; i++) {
             gitems << select_opt->choices[i]->label;
@@ -94,10 +94,11 @@ int process_auth_form(void *privdata, struct oc_auth_form *form)
             select_opt->form.value = openconnect_strdup(vpn->ss->get_groupname().toAscii().data());
             return OC_FORM_RESULT_NEWGROUP;
         }
+        dialog.moveToThread( QApplication::instance()->thread());
 
-        text = QInputDialog::getItem(vpn->m, QLatin1String(select_opt->form.name),
-                                        QLatin1String(select_opt->form.label), gitems, 0,
-                                        true, &ok);
+        QCoreApplication::postEvent(&dialog, new QEvent( QEvent::User));
+	ok = dialog.result(text);
+
         if (!ok) goto fail;
 
         vpn->ss->set_groupname(text);
@@ -106,12 +107,14 @@ int process_auth_form(void *privdata, struct oc_auth_form *form)
     }
 
     for (opt = form->opts; opt; opt = opt->next) {
+        text.clear();
         if (opt->flags & OC_FORM_OPT_IGNORE)
             continue;
 
         if (opt->type == OC_FORM_OPT_SELECT) {
             QStringList items;
             struct oc_form_opt_select *select_opt = reinterpret_cast<oc_form_opt_select*>(opt);
+            MyInputDialog dialog(vpn->m, QLatin1String(opt->name), QLatin1String(opt->label), items);
 
             if (select_opt == form->authgroup_opt)
                 continue;
@@ -120,13 +123,10 @@ int process_auth_form(void *privdata, struct oc_auth_form *form)
                 items << select_opt->choices[i]->label;
             }
 
-            dialog = new MyInputDialog(vpn->m, QLatin1String(opt->name), QLatin1String(opt->label), items);
-            dialog->moveToThread( QApplication::instance()->thread());
-            
-            QCoreApplication::postEvent(dialog, new QEvent( QEvent::User));
-	    ok = dialog->result();
-            text = dialog->text;
-            delete dialog;
+            dialog.moveToThread( QApplication::instance()->thread());
+
+            QCoreApplication::postEvent(&dialog, new QEvent( QEvent::User));
+	    ok = dialog.result(text);
 
             if (!ok) goto fail;
 
@@ -138,14 +138,13 @@ int process_auth_form(void *privdata, struct oc_auth_form *form)
                 return OC_FORM_RESULT_OK;
             }
 
+            text.clear();
             do {
-                dialog = new MyInputDialog(vpn->m, QLatin1String(opt->name), QLatin1String(opt->label), QLineEdit::Normal);
-                dialog->moveToThread( QApplication::instance()->thread());
-            
-                QCoreApplication::postEvent(dialog, new QEvent( QEvent::User));
-	        ok = dialog->result();
-                text = dialog->text;
-                delete dialog;
+                MyInputDialog dialog(vpn->m, QLatin1String(opt->name), QLatin1String(opt->label), QLineEdit::Normal);
+                dialog.moveToThread( QApplication::instance()->thread());
+
+                QCoreApplication::postEvent(&dialog, new QEvent( QEvent::User));
+	        ok = dialog.result(text);
 
                 if (!ok) goto fail;
             } while(text.isEmpty());
@@ -162,14 +161,13 @@ int process_auth_form(void *privdata, struct oc_auth_form *form)
                 return OC_FORM_RESULT_OK;
             }
 
+            text.clear();
             do {
-                dialog = new MyInputDialog(vpn->m, QLatin1String(opt->name), QLatin1String(opt->label), QLineEdit::Password);
-                dialog->moveToThread( QApplication::instance()->thread());
-            
-                QCoreApplication::postEvent(dialog, new QEvent( QEvent::User));
-	        ok = dialog->result();
-                text = dialog->text;
-                delete dialog;
+                MyInputDialog dialog(vpn->m, QLatin1String(opt->name), QLatin1String(opt->label), QLineEdit::Password);
+                dialog.moveToThread( QApplication::instance()->thread());
+
+                QCoreApplication::postEvent(&dialog, new QEvent( QEvent::User));
+	        ok = dialog.result(text);
 
                 if (!ok) goto fail;
             } while(text.isEmpty());
@@ -196,7 +194,6 @@ int validate_peer_cert(void *privdata, OPENCONNECT_X509 *cert, const char *reaso
     char sha1_hash[41];
     QString str;
     gtdb tdb(vpn->ss);
-    MyMsgBox * msgBox;
     bool save = false;
     bool ok;
 
@@ -217,17 +214,17 @@ int validate_peer_cert(void *privdata, OPENCONNECT_X509 *cert, const char *reaso
     raw.size = der_size;
 
     ret = gnutls_verify_stored_pubkey(reinterpret_cast<const char*>(&tdb), tdb.tdb, "", "", GNUTLS_CRT_X509, &raw, 0);
+
     if (ret == GNUTLS_E_NO_CERTIFICATE_FOUND) {
         vpn->m->updateProgressBar("peer is unknown");
         str = "Host: "+ vpn->ss->get_servername() + "\nSHA1: " + sha1_hash;
 
-        msgBox = new MyMsgBox(vpn->m, QLatin1String("You are connecting for the first time to this peer. Is the information provided below accurate?"),
+        MyMsgBox msgBox(vpn->m, QLatin1String("You are connecting for the first time to this peer. Is the information provided below accurate?"),
         			str);
 
-        msgBox->moveToThread( QApplication::instance()->thread());
-        QCoreApplication::postEvent(msgBox, new QEvent( QEvent::User));
-        ok = msgBox->result();
-        delete msgBox;
+        msgBox.moveToThread( QApplication::instance()->thread());
+        QCoreApplication::postEvent(&msgBox, new QEvent( QEvent::User));
+        ok = msgBox.result();
 
         if (ok == false)
             return -1;
@@ -237,13 +234,12 @@ int validate_peer_cert(void *privdata, OPENCONNECT_X509 *cert, const char *reaso
         vpn->m->updateProgressBar("peer's key has changed!");
         str = "Host: "+ vpn->ss->get_servername() + "\nSHA1: " + sha1_hash;
 
-        msgBox = new MyMsgBox(vpn->m, QLatin1String("This peer is known and associated with a different key. It may be that the server has multiple keys or you are under attack. Do you want to proceed?"),
+        MyMsgBox msgBox(vpn->m, QLatin1String("This peer is known and associated with a different key. It may be that the server has multiple keys or you are under attack. Do you want to proceed?"),
         			str);
 
-        msgBox->moveToThread( QApplication::instance()->thread());
-        QCoreApplication::postEvent(msgBox, new QEvent( QEvent::User));
-        ok = msgBox->result();
-        delete msgBox;
+        msgBox.moveToThread( QApplication::instance()->thread());
+        QCoreApplication::postEvent(&msgBox, new QEvent( QEvent::User));
+        ok = msgBox.result();
 
         if (ok == false)
             return -1;

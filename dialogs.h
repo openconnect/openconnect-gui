@@ -33,7 +33,7 @@ public:
      	this->t1 = t1;
      	this->t2 = t2;
      	this->list = list;
-        have_list = true;
+        this->have_list = true;
         mutex.lock();
      };
      MyInputDialog(QWidget *w, QString t1, QString t2, QLineEdit::EchoMode type) {
@@ -51,19 +51,20 @@ public:
 	        text = QInputDialog::getItem(w, t1, t2, list, 0, true, &res);
             else
 	        text = QInputDialog::getText(w, t1, t2, type, QString(), &res);
+	    mutex.unlock();
 	}
-        mutex.unlock();
 	return res;
     }
 
-    bool result() {
+    bool result(QString & text) {
         mutex.lock();
         mutex.unlock();
+        text = this->text;
         return res;
     };
 
-     QString text;
 private:
+     QString text;
      bool res;
      QMutex mutex;
      bool have_list;
