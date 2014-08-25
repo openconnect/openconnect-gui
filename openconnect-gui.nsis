@@ -1,10 +1,10 @@
-# This installs two files, qconnect.exe and logo.ico, creates a start menu shortcut, builds an uninstaller, and
+# This installs two files, openconnect-gui.exe and logo.ico, creates a start menu shortcut, builds an uninstaller, and
 # adds uninstall information to the registry for Add/Remove Programs
  
-# To get started, put this script into a folder with the two files (qconnect.exe, logo.ico, and COPYING -
+# To get started, put this script into a folder with the two files (openconnect-gui.exe, logo.ico, and COPYING -
 # You'll have to create these yourself) and run makensis on it
  
-# If you change the names "qconnect.exe", "logo.ico", or "COPYING" you should do a search and replace - they
+# If you change the names "openconnect-gui.exe", "logo.ico", or "COPYING" you should do a search and replace - they
 # show up in a few places.
 # All the other settings can be tweaked by editing the !defines at the top of this script
 !define APPNAME "Qconnect"
@@ -28,8 +28,8 @@ LicenseData "COPYING"
 # This will be in the installer/uninstaller's title bar
 Name "${APPNAME}"
 Icon "logo.ico"
-outFile "qconnect-installer.exe"
- 
+outFile "openconnect-installer.exe"
+
 !include LogicLib.nsh
 
 
@@ -82,9 +82,8 @@ section "install"
 	file libwinpthread-1.dll
 	file libxml2-2.dll
 	file openconnect.exe
-	file qconnect.exe
-	file qconnect.exe.manifest
-	file qconnect.nsis
+	file openconnect-gui.exe
+	file openconnect-gui.exe.manifest
 	file Qt5Core.dll
 	file Qt5Gui.dll
 	file Qt5Widgets.dll
@@ -97,7 +96,7 @@ section "install"
 
 	# Add any other files for the install directory (license files, app data, etc) here
 	createDirectory "$SMPROGRAMS\${APPNAME}"
-	createShortCut "$SMPROGRAMS\${APPNAME}\${APPNAME}.lnk" "$INSTDIR\qconnect.exe" "" "$INSTDIR\logo.ico"
+	createShortCut "$SMPROGRAMS\${APPNAME}\${APPNAME}.lnk" "$INSTDIR\openconnect-gui.exe" "" "$INSTDIR\logo.ico"
  
 	# Uninstaller - See function un.onInit and section "uninstall" for configuration
 	writeUninstaller "$INSTDIR\uninstall.exe"
@@ -176,9 +175,8 @@ section "uninstall"
 	delete "libwinpthread-1.dll"
 	delete "libxml2-2.dll"
 	delete "openconnect.exe"
-	delete "qconnect.exe"
-	delete "qconnect.exe.manifest"
-	delete "qconnect.nsis"
+	delete "openconnect-gui.exe"
+	delete "openconnect-gui.exe.manifest"
 	delete "Qt5Core.dll"
 	delete "Qt5Gui.dll"
 	delete "Qt5Widgets.dll"
