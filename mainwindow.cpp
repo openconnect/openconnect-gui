@@ -53,7 +53,9 @@ MainWindow::MainWindow(QWidget *parent) :
 
     connect(timer, SIGNAL(timeout()), this, SLOT(request_update_stats()), Qt::QueuedConnection);
     connect(ui->comboBox->lineEdit(), SIGNAL(returnPressed()), this, SLOT(on_connectBtn_clicked()), Qt::QueuedConnection);
-    connect(this, SIGNAL(vpn_status_changed_sig(bool)), this, SLOT(enableDisconnect(bool)), Qt::QueuedConnection);
+    connect(this, SIGNAL(vpn_status_changed_sig(int)), this, SLOT(changeStatus(int)), Qt::QueuedConnection);
+    QObject::connect(this, SIGNAL(log_changed(QString)), this, SLOT(writeProgressBar(QString)), Qt::QueuedConnection);
+    QObject::connect(this, SIGNAL(stats_changed_sig(QString, QString)), this, SLOT(statsChanged(QString, QString)), Qt::QueuedConnection);
 }
 
 static void term_thread(MainWindow *m, SOCKET *fd)
@@ -110,10 +112,16 @@ value_to_string(uint64_t bytes)
         return r;
     }
 }
+
+void MainWindow::statsChanged(QString tx, QString rx)
+{
+    ui->lcdDown->setText(tx);
+    ui->lcdUp->setText(rx);
+}
+
 void MainWindow::updateStats(const struct oc_stats *stats)
 {
-    ui->lcdDown->setText(value_to_string(stats->tx_bytes));
-    ui->lcdUp->setText(value_to_string(stats->rx_bytes));
+    emit stats_changed_sig(value_to_string(stats->tx_bytes), value_to_string(stats->rx_bytes));
 }
 
 void MainWindow::reload_settings()
@@ -134,10 +142,14 @@ void MainWindow::set_settings(QSettings *s)
     reload_settings();
 };
 
+void MainWindow::writeProgressBar(QString str)
+{
+    ui->statusBar->showMessage(str, 20*1000);
+}
+
 void MainWindow::updateProgressBar(QString str)
 {
     QMutexLocker locker(&this->progress_mutex);
-    ui->statusBar->showMessage(str, 20*1000);
     if (str.isEmpty() == false) {
         QDateTime now;
         str.prepend(now.currentDateTime().toString("yyyy-MM-dd hh:mm "));
@@ -146,12 +158,18 @@ void MainWindow::updateProgressBar(QString str)
     }
 }
 
-void MainWindow::enableDisconnect(bool val)
+void MainWindow::changeStatus(int val)
 {
-    if (val == true) {
+    if (val == STATUS_CONNECTED) {
+        ui->iconLabel->setPixmap(ON_ICON);
         ui->disconnectBtn->setEnabled(true);
         ui->connectBtn->setEnabled(false);
-    } else {
+        timer->start(UPDATE_TIMER);
+    } else if (val == STATUS_CONNECTING) {
+        ui->iconLabel->setPixmap(ON_ICON);
+        ui->disconnectBtn->setEnabled(true);
+        ui->connectBtn->setEnabled(false);
+    } else if (val == STATUS_DISCONNECTED){
         if (this->timer->isActive())
             timer->stop();
         disable_cmd_fd();
@@ -172,6 +190,8 @@ static void main_loop(VpnInfo *vpninfo, MainWindow *m)
     int ret;
     QString ip, ip6, dns;
 
+    m->vpn_status_changed(STATUS_CONNECTING);
+
     ret = vpninfo->connect();
     if (ret != 0) {
         m->updateProgressBar(vpninfo->last_err);
@@ -184,6 +204,8 @@ static void main_loop(VpnInfo *vpninfo, MainWindow *m)
         goto fail;
     }
 
+    m->vpn_status_changed(STATUS_CONNECTED);
+
     vpninfo->get_info(dns, ip, ip6);;
     m->set_ip_labels(dns,ip,ip);
 
@@ -192,9 +214,10 @@ static void main_loop(VpnInfo *vpninfo, MainWindow *m)
     vpninfo->mainloop();
 
  fail:
-    m->vpn_status_changed(false);
+    m->vpn_status_changed(STATUS_DISCONNECTED);
 
     delete vpninfo;
+    return;
 }
 
 void MainWindow::set_ip_labels(QString ip, QString ip6, QString dns)
@@ -207,7 +230,7 @@ void MainWindow::set_ip_labels(QString ip, QString ip6, QString dns)
 void MainWindow::on_disconnectBtn_clicked()
 {
     if (this->timer->isActive())
-	this->timer->stop();
+        this->timer->stop();
     this->updateProgressBar(QLatin1String("Disconnecting..."));
     term_thread(this, &this->cmd_fd);
 }
@@ -219,8 +242,17 @@ void MainWindow::on_connectBtn_clicked()
     QFuture<void> future;
     QString name;
 
-    if (this->cmd_fd != INVALID_SOCKET || ui->connectBtn->isEnabled() == false)
+    if (ui->connectBtn->isEnabled() == false) {
         return;
+    }
+
+    if (this->cmd_fd != INVALID_SOCKET) {
+        QMessageBox::information(
+            this,
+            tr(APP_NAME),
+            tr("A previous VPN instance is still running (socket is active)") );
+        return;
+    }
 
     if (this->futureWatcher.isRunning() == true) {
         QMessageBox::information(
@@ -237,8 +269,6 @@ void MainWindow::on_connectBtn_clicked()
             tr("You need to specify a gateway. E.g. vpn.example.com:443") );
         return;
     }
-
-    timer->start(UPDATE_TIMER);
 
     name = ui->comboBox->currentText();
     if (ss->load(name) == 0) {
@@ -267,9 +297,6 @@ void MainWindow::on_connectBtn_clicked()
     }
 
     /* XXX openconnect_set_http_proxy */
-    enableDisconnect(true);
-
-    ui->iconLabel->setPixmap(ON_ICON);
 
     future = QtConcurrent::run (main_loop, vpninfo, this);
 
@@ -279,7 +306,6 @@ void MainWindow::on_connectBtn_clicked()
  fail:
     if (vpninfo != NULL)
         delete vpninfo;
-    enableDisconnect(false);
     return;
 }
 
@@ -325,17 +351,13 @@ void MainWindow::request_update_stats()
         int ret = pipe_write(this->cmd_fd, &cmd, 1);
         if (ret < 0) {
             this->updateProgressBar(QLatin1String("update_stats: IPC error: ")+QString::number(net_errno));
-	    if (this->timer->isActive())
-        	this->timer->stop();
+            if (this->timer->isActive())
+                this->timer->stop();
         }
     } else {
     	this->updateProgressBar(QLatin1String("update_stats: invalid socket"));
-	if (this->timer->isActive())
-	    this->timer->stop();
+        if (this->timer->isActive())
+            this->timer->stop();
     }
 }
 
-void MainWindow::stop_timer()
-{
-    timer->stop();
-}

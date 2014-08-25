@@ -88,7 +88,7 @@ int process_auth_form(void *privdata, struct oc_auth_form *form)
 
         /* if the configured exists */
         if (gitems.contains(vpn->ss->get_groupname())) {
-            select_opt->form.value = strdup(vpn->ss->get_groupname().toAscii().data());
+            select_opt->form.value = openconnect_strdup(vpn->ss->get_groupname().toAscii().data());
             return OC_FORM_RESULT_NEWGROUP;
         }
 
@@ -98,7 +98,7 @@ int process_auth_form(void *privdata, struct oc_auth_form *form)
         if (!ok) goto fail;
 
         vpn->ss->set_groupname(text);
-        select_opt->form.value = strdup(text.toAscii().data());
+        select_opt->form.value = openconnect_strdup(text.toAscii().data());
         return OC_FORM_RESULT_NEWGROUP;
     }
 
@@ -121,11 +121,11 @@ int process_auth_form(void *privdata, struct oc_auth_form *form)
                                             QLatin1String(opt->label), items, 0,
                                             true, &ok);
             if (!ok) goto fail;
-            opt->value = strdup(text.toAscii().data());
+            opt->value = openconnect_strdup(text.toAscii().data());
 
         } else if (opt->type == OC_FORM_OPT_TEXT) {
             if (vpn->ss->get_username().isEmpty() == false && strcmp(opt->name, "username") == 0) {
-                opt->value = strdup(vpn->ss->get_username().toAscii().data());
+                opt->value = openconnect_strdup(vpn->ss->get_username().toAscii().data());
                 return OC_FORM_RESULT_OK;
             }
 
@@ -140,11 +140,11 @@ int process_auth_form(void *privdata, struct oc_auth_form *form)
                 vpn->ss->set_username(text);
             }
 
-            opt->value = strdup(text.toAscii().data());
+            opt->value = openconnect_strdup(text.toAscii().data());
 
         } else if (opt->type == OC_FORM_OPT_PASSWORD) {
             if (vpn->ss->get_password().isEmpty() == false && strcmp(opt->name, "password") == 0) {
-                opt->value = strdup(vpn->ss->get_password().toAscii().data());
+                opt->value = openconnect_strdup(vpn->ss->get_password().toAscii().data());
                 return OC_FORM_RESULT_OK;
             }
 
@@ -158,7 +158,7 @@ int process_auth_form(void *privdata, struct oc_auth_form *form)
             if (strcmp(opt->name, "password") == 0) {
                 vpn->ss->set_password(text);
             }
-            opt->value = strdup(text.toAscii().data());
+            opt->value = openconnect_strdup(text.toAscii().data());
         }
     }
 
@@ -310,15 +310,15 @@ int VpnInfo::connect()
         key_file = cert_file;
 
     if (cert_file.isEmpty() != true) {
-        openconnect_set_client_cert(vpninfo, strdup(cert_file.toAscii().data()),
-                                    strdup(key_file.toAscii().data()));
+        openconnect_set_client_cert(vpninfo, openconnect_strdup(cert_file.toAscii().data()),
+                                    openconnect_strdup(key_file.toAscii().data()));
     }
 
     openconnect_set_reported_os(vpninfo, "Windows");
 
     ret = openconnect_obtain_cookie(vpninfo);
     if (ret != 0) {
-        this->last_err = "Error obtaining cookie";
+        this->last_err = "Authentication error; cannot obtain cookie";
         return ret;
     }
 
@@ -328,7 +328,7 @@ int VpnInfo::connect()
         return ret;
     }
 
-    ret = openconnect_setup_tun_device(vpninfo, strdup(DEFAULT_VPNC_SCRIPT), NULL);
+    ret = openconnect_setup_tun_device(vpninfo, openconnect_strdup(DEFAULT_VPNC_SCRIPT), NULL);
     if (ret != 0) {
         this->last_err = "Error setting up the TUN device";
         return ret;
