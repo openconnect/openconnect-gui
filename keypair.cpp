@@ -46,7 +46,7 @@ int load_pkcs12_file(QWidget *w, Key &key, Cert &cert, QString File)
     unsigned int xcert_size;
     unsigned i;
 
-    if (File.startsWith("pkcs11:") || File.startsWith("tpmkey:")) {
+    if (w == NULL || File.startsWith("pkcs11:") || File.startsWith("tpmkey:")) {
         return -1;
     }
 

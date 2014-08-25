@@ -43,6 +43,12 @@ namespace Ui {
 class MainWindow;
 }
 
+enum status_t {
+    STATUS_DISCONNECTED,
+    STATUS_CONNECTING,
+    STATUS_CONNECTED
+};
+
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
@@ -55,17 +61,18 @@ public:
     void updateStats(const struct oc_stats *stats);
     void reload_settings();
     ~MainWindow();
-    void stop_timer();
     void disable_cmd_fd() {
-        cmd_fd = -1;
+        cmd_fd = INVALID_SOCKET;
     };
 
-    void vpn_status_changed(bool connected) {
+    void vpn_status_changed(int connected) {
         emit vpn_status_changed_sig(connected);
     };
 
 private slots:
-    void enableDisconnect(bool);
+    void statsChanged(QString, QString);
+    void writeProgressBar(QString str);
+    void changeStatus(int);
 
     void request_update_stats();
 
@@ -81,7 +88,8 @@ private slots:
 
 signals:
     void log_changed(QString val);
-    void vpn_status_changed_sig(bool connected);
+    void stats_changed_sig(QString, QString);
+    void vpn_status_changed_sig(int);
 
 private:
     /* we keep the fd instead of a pointer to vpninfo to avoid
