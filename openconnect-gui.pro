@@ -5,13 +5,13 @@
 #-------------------------------------------------
 
 QMAKE_CXXFLAGS += -O2 -g
-win32: QMAKE_CXXFLAGS += -I..\qconnect\include\ 
+win32: QMAKE_CXXFLAGS += -I..\openconnect-gui\include\ 
 
 QT       += core gui
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
-TARGET = qconnect
+TARGET = openconnect-gui
 TEMPLATE = app
 
 
@@ -41,7 +41,7 @@ FORMS    += mainwindow.ui \
     editdialog.ui \
     logdialog.ui
 
-unix|win32: LIBS += -L..\qconnect\lib -lopenconnect -lgnutls
+unix|win32: LIBS += -L..\openconnect-gui\lib -lopenconnect -lgnutls
 win32: LIBS += -lwsock32
 
 RESOURCES += \
