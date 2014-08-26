@@ -46,7 +46,7 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     const char *version = openconnect_get_version();
     ui->setupUi(this);
-    this->setWindowTitle(QLatin1String("openconnect "VERSION" (oc ")+QLatin1String(version)+QLatin1String(")"));
+    this->setWindowTitle(QLatin1String("openconnect "VERSION" (lib ")+QLatin1String(version)+QLatin1String(")"));
 
     timer = new QTimer(this);
     this->cmd_fd = INVALID_SOCKET;
