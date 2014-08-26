@@ -15,16 +15,16 @@
 !define VERSIONBUILD 1
 # These will be displayed by the "Click here for support information" link in "Add/Remove Programs"
 # It is possible to use "mailto:" links in here to open the email client
-!define HELPURL "http://www.infradead.org/openconnect/mail.html" # "Support Information" link
-#!define UPDATEURL "http://..." # "Product Updates" link
-!define ABOUTURL "http://www.infradead.org/openconnect" # "Publisher" link
+!define HELPURL "https://github.com/nmav/openconnect-gui/issues" # "Support Information" link
+!define UPDATEURL "https://github.com/nmav/openconnect-gui/wiki" # "Product Updates" link
+!define ABOUTURL "https://github.com/nmav/openconnect-gui/wiki" # "Publisher" link
  
 RequestExecutionLevel admin ;Require admin rights on NT6+ (When UAC is turned on)
  
 InstallDir "$PROGRAMFILES\${APPNAME}"
  
 # rtf or txt file - remember if it is txt, it must be in the DOS text format (\r\n)
-LicenseData "COPYING"
+LicenseData "../COPYING"
 # This will be in the installer/uninstaller's title bar
 Name "${APPNAME}"
 Icon "logo.ico"
