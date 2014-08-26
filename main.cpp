@@ -38,14 +38,14 @@ int pin_callback(void *userdata, int attempt, const char *token_url,
     bool ok;
 
     if (flags & GNUTLS_PIN_SO)
-        type = "security officer";
+        type = QObject::tr("security officer");
 
-    outtext = "Please enter the " + type + " PIN for " + QLatin1String(token_label) + ".";
+    outtext = QObject::tr("Please enter the ") + type + QObject::tr(" PIN for ") + QLatin1String(token_label) + ".";
     if (flags & GNUTLS_PKCS11_PIN_FINAL_TRY)
-        outtext += " This is the FINAL try!";
+        outtext += QObject::tr(" This is the FINAL try!");
 
     if (flags & GNUTLS_PKCS11_PIN_COUNT_LOW)
-        outtext += " Only few tries before token lock!";
+        outtext += QObject::tr(" Only few tries before token lock!");
 
     text = QInputDialog::getText(w, QLatin1String(token_url),
                                     outtext, QLineEdit::Normal,
@@ -96,8 +96,8 @@ int main(int argc, char *argv[])
     w.show();
 
 #if !defined(_WIN32) && !defined(DEVEL)
-    msgBox.setText("This program requires root privileges to fully function.");
-    msgBox.setInformativeText("VPN connection establishment would fail.");
+    msgBox.setText(tr("This program requires root privileges to fully function."));
+    msgBox.setInformativeText(tr("VPN connection establishment would fail."));
     ret = msgBox.exec();
 #endif
 

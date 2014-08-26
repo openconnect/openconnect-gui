@@ -65,7 +65,7 @@ static void term_thread(MainWindow *m, SOCKET *fd)
     if (*fd != INVALID_SOCKET) {
         int ret = pipe_write(*fd, &cmd, 1);
         if (ret < 0)
-          m->updateProgressBar(QLatin1String("term_thread: IPC error: ")+QString::number(net_errno));
+          m->updateProgressBar(QObject::tr("term_thread: IPC error: ")+QString::number(net_errno));
         *fd = INVALID_SOCKET;
     }
 }
@@ -94,21 +94,21 @@ value_to_string(uint64_t bytes)
     if (bytes > 1000 && bytes < 1000 * 1000) {
         bytes /= 1000;
         r = QString::number((int)bytes);
-        r += " KB";
+        r += QObject::tr(" KB");
         return r;
     } else if (bytes >= 1000 * 1000 && bytes < 1000 * 1000 * 1000) {
         bytes /= 1000*1000;
         r = QString::number((int)bytes);
-        r += " MB";
+        r += QObject::tr(" MB");
         return r;
     } else if (bytes >= 1000 * 1000 * 1000) {
         bytes /= 1000*1000*1000;
         r = QString::number((int)bytes);
-        r += " GB";
+        r += QObject::tr(" GB");
         return r;
     } else {
         r = QString::number((int)bytes);
-        r += " bytes";
+        r += QObject::tr(" bytes");
         return r;
     }
 }
@@ -227,7 +227,7 @@ void MainWindow::on_disconnectBtn_clicked()
 {
     if (this->timer->isActive())
         this->timer->stop();
-    this->updateProgressBar(QLatin1String("Disconnecting..."));
+    this->updateProgressBar(QObject::tr("Disconnecting..."));
     term_thread(this, &this->cmd_fd);
 }
 
@@ -320,9 +320,11 @@ void MainWindow::on_toolButton_2_clicked()
         QMessageBox mbox;
         int ret;
 
-        mbox.setText(QLatin1String("Are you sure you want to remove ")+ui->comboBox->currentText()+"?");
+        mbox.setText(QObject::tr("Are you sure you want to remove ")+ui->comboBox->currentText()+"?");
         mbox.setStandardButtons(QMessageBox::Cancel | QMessageBox::Ok);
         mbox.setDefaultButton(QMessageBox::Cancel);
+        mbox.setButtonText(QMessageBox::Ok, tr("Remove"));
+
         ret = mbox.exec();
         if (ret == QMessageBox::Ok) {
             remove_server(settings, ui->comboBox->currentText());
@@ -346,12 +348,12 @@ void MainWindow::request_update_stats()
     if (this->cmd_fd != INVALID_SOCKET) {
         int ret = pipe_write(this->cmd_fd, &cmd, 1);
         if (ret < 0) {
-            this->updateProgressBar(QLatin1String("update_stats: IPC error: ")+QString::number(net_errno));
+            this->updateProgressBar(QObject::tr("update_stats: IPC error: ")+QString::number(net_errno));
             if (this->timer->isActive())
                 this->timer->stop();
         }
     } else {
-    	this->updateProgressBar(QLatin1String("update_stats: invalid socket"));
+    	this->updateProgressBar(QObject::tr("update_stats: invalid socket"));
         if (this->timer->isActive())
             this->timer->stop();
     }

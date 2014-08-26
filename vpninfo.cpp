@@ -200,13 +200,13 @@ int validate_peer_cert(void *privdata, OPENCONNECT_X509 *cert, const char *reaso
     der_size = openconnect_get_cert_DER(vpn->vpninfo,
                                         cert, &der);
     if (der_size <= 0) {
-        vpn->m->updateProgressBar("Peer's certificate has invalid size!");
+        vpn->m->updateProgressBar(QObject::tr("Peer's certificate has invalid size!"));
         return -1;
     }
 
     ret = openconnect_get_cert_sha1(vpn->vpninfo, cert, sha1_hash);
     if (ret != 0) {
-        vpn->m->updateProgressBar("Error getting peer's certificate hash");
+        vpn->m->updateProgressBar(QObject::tr("Error getting peer's certificate hash"));
         return -1;
     }
 
@@ -216,11 +216,11 @@ int validate_peer_cert(void *privdata, OPENCONNECT_X509 *cert, const char *reaso
     ret = gnutls_verify_stored_pubkey(reinterpret_cast<const char*>(&tdb), tdb.tdb, "", "", GNUTLS_CRT_X509, &raw, 0);
 
     if (ret == GNUTLS_E_NO_CERTIFICATE_FOUND) {
-        vpn->m->updateProgressBar("peer is unknown");
-        str = "Host: "+ vpn->ss->get_servername() + "\nSHA1: " + sha1_hash;
+        vpn->m->updateProgressBar(QObject::tr("peer is unknown"));
+        str = QObject::tr("Host: ") + vpn->ss->get_servername() + QObject::tr("\nSHA1: ") + sha1_hash;
 
-        MyMsgBox msgBox(vpn->m, QLatin1String("You are connecting for the first time to this peer. Is the information provided below accurate?"),
-        			str);
+        MyMsgBox msgBox(vpn->m, QObject::tr("You are connecting for the first time to this peer. Is the information provided below accurate?"),
+        			str, QObject::tr("The information is accurate"));
 
         msgBox.moveToThread( QApplication::instance()->thread());
         QCoreApplication::postEvent(&msgBox, new QEvent( QEvent::User));
@@ -231,11 +231,11 @@ int validate_peer_cert(void *privdata, OPENCONNECT_X509 *cert, const char *reaso
 
         save = true;
     } else if (ret == GNUTLS_E_CERTIFICATE_KEY_MISMATCH) {
-        vpn->m->updateProgressBar("peer's key has changed!");
-        str = "Host: "+ vpn->ss->get_servername() + "\nSHA1: " + sha1_hash;
+        vpn->m->updateProgressBar(QObject::tr("peer's key has changed!"));
+        str = QObject::tr("Host: ")+ vpn->ss->get_servername() + QObject::tr("\nSHA1: ") + sha1_hash;
 
-        MyMsgBox msgBox(vpn->m, QLatin1String("This peer is known and associated with a different key. It may be that the server has multiple keys or you are under attack. Do you want to proceed?"),
-        			str);
+        MyMsgBox msgBox(vpn->m, QObject::tr("This peer is known and associated with a different key. It may be that the server has multiple keys or you are (or were in the past) under attack. Do you want to proceed?"),
+        			str, QObject::tr("The key was changed by the administrator"));
 
         msgBox.moveToThread( QApplication::instance()->thread());
         QCoreApplication::postEvent(&msgBox, new QEvent( QEvent::User));
@@ -246,18 +246,18 @@ int validate_peer_cert(void *privdata, OPENCONNECT_X509 *cert, const char *reaso
 
         save = true;
     } else if (ret < 0) {
-        str = "Could not verify certificate: ";
+        str = QObject::tr("Could not verify certificate: ");
         str += gnutls_strerror(ret);
         vpn->m->updateProgressBar(str);
         return -1;
     }
 
     if (save != false) {
-        vpn->m->updateProgressBar("saving peer's public key");
+        vpn->m->updateProgressBar(QObject::tr("saving peer's public key"));
         ret = gnutls_store_pubkey(reinterpret_cast<const char*>(&tdb), tdb.tdb,
                                   "", "", GNUTLS_CRT_X509, &raw, 0, 0);
         if (ret < 0) {
-            str = "Could not store certificate: ";
+            str = QObject::tr("Could not store certificate: ");
             str += gnutls_strerror(ret);
             vpn->m->updateProgressBar(str);
         }
@@ -285,13 +285,13 @@ VpnInfo::VpnInfo(QString name, class StoredServer *ss, class MainWindow *m)
 
     this->cmd_fd = openconnect_setup_cmd_pipe(vpninfo);
     if (this->cmd_fd == INVALID_SOCKET) {
-        m->updateProgressBar("invalid socket");
+        m->updateProgressBar(QObject::tr("invalid socket"));
         throw;
     }
     set_sock_block(this->cmd_fd);
 
-    m->updateProgressBar(QLatin1String("socket ") + QString::number(this->cmd_fd));
-    this->last_err = NULL;
+    m->updateProgressBar(QObject::tr("socket ") + QString::number(this->cmd_fd));
+    this->last_err = "";
     this->ss = ss;
     this->m = m;
     openconnect_set_stats_handler(this->vpninfo, stats_vfn);
@@ -332,19 +332,19 @@ int VpnInfo::connect()
 
     ret = openconnect_obtain_cookie(vpninfo);
     if (ret != 0) {
-        this->last_err = "Authentication error; cannot obtain cookie";
+        this->last_err = QObject::tr("Authentication error; cannot obtain cookie");
         return ret;
     }
 
     ret = openconnect_make_cstp_connection(vpninfo);
     if (ret != 0) {
-        this->last_err = "Error establishing the CSTP channel";
+        this->last_err = QObject::tr("Error establishing the CSTP channel");
         return ret;
     }
 
     ret = openconnect_setup_tun_device(vpninfo, openconnect_strdup(DEFAULT_VPNC_SCRIPT), NULL);
     if (ret != 0) {
-        this->last_err = "Error setting up the TUN device";
+        this->last_err = QObject::tr("Error setting up the TUN device");
         return ret;
     }
 
@@ -357,7 +357,7 @@ int VpnInfo::dtls_connect()
 
     ret = openconnect_setup_dtls(vpninfo, 60);
     if (ret != 0) {
-        this->last_err = "Error setting up DTLS";
+        this->last_err = QObject::tr("Error setting up DTLS");
         return ret;
     }
 
@@ -371,7 +371,7 @@ void VpnInfo::mainloop()
     while(1) {
         ret = openconnect_mainloop(vpninfo, 30, RECONNECT_INTERVAL_MIN);
         if (ret != 0) {
-            this->last_err = "Disconnected";
+            this->last_err = QObject::tr("Disconnected");
             //this->ss->save();
             break;
         }

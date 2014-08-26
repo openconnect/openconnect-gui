@@ -195,6 +195,6 @@ QString Cert::sha1_hash(void)
 
     array.append((const char*)id, len);
     hex = array.toHex();
-    s = QLatin1String("SHA1:") + hex;
+    s = QObject::tr("SHA1:") + hex;
     return s;
 }

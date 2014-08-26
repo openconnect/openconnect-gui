@@ -41,7 +41,7 @@ public:
         return cmd_fd;
     };
 
-    const char *last_err;
+    QString last_err;
     MainWindow *m;
     StoredServer *ss;
     struct openconnect_info *vpninfo;

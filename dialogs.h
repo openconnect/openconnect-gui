@@ -78,10 +78,11 @@ private:
 class MyMsgBox:public QObject {
 
 public:
-     MyMsgBox(QWidget *w, QString t1, QString t2) {
+     MyMsgBox(QWidget *w, QString t1, QString t2, QString oktxt) {
      	this->w = w;
      	this->t1 = t1;
      	this->t2 = t2;
+     	this->oktxt = oktxt;
         mutex.lock();
      };
      virtual bool event(QEvent * ev) {
@@ -94,6 +95,7 @@ public:
 	    msgBox->setInformativeText(t2);
 	    msgBox->setStandardButtons(QMessageBox::Cancel | QMessageBox::Ok);
 	    msgBox->setDefaultButton(QMessageBox::Cancel);
+	    msgBox->setButtonText(QMessageBox::Ok, oktxt);
 	    
 	    ret = msgBox->exec();
 	    if (ret == QMessageBox::Cancel)
@@ -111,13 +113,13 @@ public:
         return res;
     };
 
-     QString text;
 private:
      bool res;
      QMutex mutex;
      QWidget *w;
      QString t1;
      QString t2;
+     QString oktxt;
 };
 
 #endif // DIALOGS_H

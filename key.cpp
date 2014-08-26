@@ -57,8 +57,8 @@ static int import_Key(QWidget *w, gnutls_x509_privkey_t *privkey, gnutls_datum_t
         bool ok;
         QString text;
 
-        text = QInputDialog::getText(w, QLatin1String("This file requires a password"),
-                                        QLatin1String("Please enter your password"), QLineEdit::Normal,
+        text = QInputDialog::getText(w, QObject::tr("This file requires a password"),
+                                        QObject::tr("Please enter your password"), QLineEdit::Normal,
                                         QString(), &ok);
         if (!ok) {
             ret = -1;
