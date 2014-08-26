@@ -90,7 +90,7 @@ void EditDialog::on_userCertButton_clicked()
     if (filename.isEmpty() == false) {
         if (ss->set_client_cert(filename) != 0) {
             QMessageBox mbox;
-            mbox.setText("Cannot import certificate.");
+            mbox.setText(tr("Cannot import certificate."));
             if (ss->last_err.isEmpty() == false)
                 mbox.setInformativeText(ss->last_err);
             mbox.exec();
@@ -111,7 +111,7 @@ void EditDialog::on_userKeyButton_clicked()
     if (filename.isEmpty() == false) {
         if (ss->set_client_key(filename) != 0) {
             QMessageBox mbox;
-            mbox.setText("Cannot import certificate.");
+            mbox.setText(tr("Cannot import certificate."));
             if (ss->last_err.isEmpty() == false)
                 mbox.setInformativeText(ss->last_err);
             mbox.exec();
@@ -131,7 +131,7 @@ void EditDialog::on_caCertButton_clicked()
     if (filename.isEmpty() == false) {
         if (ss->set_ca_cert(filename) != 0) {
             QMessageBox mbox;
-            mbox.setText("Cannot import certificate.");
+            mbox.setText(tr("Cannot import certificate."));
             if (ss->last_err.isEmpty() == false)
                 mbox.setInformativeText(ss->last_err);
             mbox.exec();

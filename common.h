@@ -21,6 +21,7 @@
 #define COMMON_H
 
 #include <iostream>
+#include <QTranslator>
 
 #define VERSION "0.1"
 #define APP_NAME "openconnect-gui"
