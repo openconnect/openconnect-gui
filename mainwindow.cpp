@@ -30,6 +30,10 @@ extern "C" {
 #include <storage.h>
 #include <QLineEdit>
 #include <QFutureWatcher>
+#include <QtNetwork/QNetworkProxyFactory>
+#include <QtNetwork/QNetworkProxy>
+#include <QtNetwork/QNetworkProxyQuery>
+#include <QUrl>
 
 #include "logdialog.h"
 #include "editdialog.h"
@@ -57,6 +61,7 @@ MainWindow::MainWindow(QWidget *parent) :
     QObject::connect(this, SIGNAL(log_changed(QString)), this, SLOT(writeProgressBar(QString)), Qt::QueuedConnection);
     QObject::connect(this, SIGNAL(stats_changed_sig(QString, QString)), this, SLOT(statsChanged(QString, QString)), Qt::QueuedConnection);
     ui->iconLabel->setPixmap(OFF_ICON);
+    QNetworkProxyFactory::setUseSystemConfiguration(true);
 }
 
 static void term_thread(MainWindow *m, SOCKET *fd)
@@ -238,7 +243,10 @@ void MainWindow::on_connectBtn_clicked()
     VpnInfo *vpninfo = NULL;
     StoredServer *ss = new StoredServer(this->settings);
     QFuture<void> future;
-    QString name;
+    QString name, str, url;
+    QList<QNetworkProxy> proxies;
+    QUrl turl("https://" + ss->get_servername());
+    QNetworkProxyQuery query(turl);
 
     if (ui->connectBtn->isEnabled() == false) {
         return;
@@ -296,7 +304,23 @@ void MainWindow::on_connectBtn_clicked()
         goto fail;
     }
 
-    /* XXX openconnect_set_http_proxy */
+    proxies = QNetworkProxyFactory::systemProxyForQuery(query);
+    if (proxies.size() > 0 && proxies.at(0).type() != QNetworkProxy::NoProxy) {
+        if (proxies.at(0).type() == QNetworkProxy::Socks5Proxy)
+            url = "socks5://";
+        else if (proxies.at(0).type() == QNetworkProxy::HttpCachingProxy || proxies.at(0).type() == QNetworkProxy::HttpProxy)
+            url = "http://";
+
+        if (url.isEmpty() == false) {
+
+                str = proxies.at(0).user() + ":" + proxies.at(0).password() + "@" + proxies.at(0).hostName();
+                if (proxies.at(0).port() != 0) {
+                    str += ":" + QString::number(proxies.at(0).port());
+                }
+                this->updateProgressBar(tr("Setting proxy to: ")+str);
+                openconnect_set_http_proxy(vpninfo->vpninfo, str.toAscii().data());
+        }
+    }
 
     future = QtConcurrent::run (main_loop, vpninfo, this);
 

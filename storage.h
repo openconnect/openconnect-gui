@@ -81,29 +81,33 @@ public:
 
     QString get_client_cert_hash() {
         return client.cert.sha1_hash();
-    };
+    }
 
     QString get_ca_cert_hash() {
         return ca_cert.sha1_hash();
-    };
+    }
 
     void set_window(QWidget * w) {
         client.key.set_window(w);
-    };
+    }
 
     int set_ca_cert(QString filename);
     int set_client_cert(QString filename);
     int set_client_key(QString filename);
     void set_batch_mode(bool mode) {
         this->batch_mode = mode;
-    };
+    }
     bool get_batch_mode() {
         return this->batch_mode;
-    };
+    }
 
     bool get_minimize() {
         return this->minimize_on_connect;
-    };
+    }
+
+    bool get_proxy() {
+        return this->proxy;
+    }
 
     bool client_is_complete() {
         return client.is_complete();
@@ -111,17 +115,21 @@ public:
 
     void set_minimize(bool t) {
         this->minimize_on_connect = t;
-    };
+    }
+
+    void set_proxy(bool t) {
+        this->proxy = t;
+    }
 
     void set_server_hash(unsigned algo, QByteArray &hash) {
         this->server_hash_algo = algo;
         this->server_hash = hash;
-    };
+    }
 
     unsigned get_server_hash(QByteArray & hash) {
         hash = this->server_hash;
         return this->server_hash_algo;
-    };
+    }
 
     void get_server_hash(QString & hash);
 
@@ -131,6 +139,7 @@ public:
 private:
     bool batch_mode;
     bool minimize_on_connect;
+    bool proxy;
     QString username;
     QString password;
     QString groupname;

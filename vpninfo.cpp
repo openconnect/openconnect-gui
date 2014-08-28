@@ -290,7 +290,6 @@ VpnInfo::VpnInfo(QString name, class StoredServer *ss, class MainWindow *m)
     }
     set_sock_block(this->cmd_fd);
 
-    m->updateProgressBar(QObject::tr("socket ") + QString::number(this->cmd_fd));
     this->last_err = "";
     this->ss = ss;
     this->m = m;

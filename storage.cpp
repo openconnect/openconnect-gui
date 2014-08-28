@@ -163,6 +163,7 @@ int StoredServer::load(QString &name)
     settings->beginGroup(PREFIX+name);
     this->username = settings->value("username").toString();
     this->batch_mode = settings->value("batch").toBool();
+    this->proxy = settings->value("proxy").toBool();
     this->minimize_on_connect = settings->value("minimize-on-connect").toBool();
 
     if (this->batch_mode == true) {
@@ -194,6 +195,7 @@ int StoredServer::save()
     settings->beginGroup(PREFIX+this->servername);
     settings->setValue("server", this->servername);
     settings->setValue("batch", this->batch_mode);
+    settings->setValue("proxy", this->proxy);
     settings->setValue("minimize-on-connect", this->minimize_on_connect);
     settings->setValue("username", this->username);
 

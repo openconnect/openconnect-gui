@@ -40,6 +40,7 @@ EditDialog::EditDialog(QString server, QSettings *settings, QWidget *parent) :
     ui->caCertHash->setText(ss->get_ca_cert_hash());
     ui->batchModeBox->setChecked(ss->get_batch_mode());
     ui->minimizeBox->setChecked(ss->get_minimize());
+    ui->proxyBox->setChecked(ss->get_proxy());
 
     ss->get_server_hash(hash);
     ui->serverCertHash->setText(hash);
@@ -72,6 +73,7 @@ void EditDialog::on_buttonBox_accepted()
     ss->set_servername(ui->gatewayEdit->text());
     ss->set_batch_mode(ui->batchModeBox->isChecked());
     ss->set_minimize(ui->minimizeBox->isChecked());
+    ss->set_proxy(ui->proxyBox->isChecked());
 
     ss->save();
     this->close();
