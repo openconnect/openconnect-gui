@@ -30,7 +30,7 @@
   </property>
   <property name="windowIcon">
    <iconset resource="resources.qrc">
-    <normaloff>:/new/resource/secure_lock.png</normaloff>:/new/resource/secure_lock.png</iconset>
+    <normaloff>:/new/resource/mono_lock.png</normaloff>:/new/resource/mono_lock.png</iconset>
   </property>
   <property name="autoFillBackground">
    <bool>false</bool>
@@ -66,7 +66,7 @@
          <x>0</x>
          <y>0</y>
          <width>432</width>
-         <height>125</height>
+         <height>103</height>
         </rect>
        </property>
        <attribute name="label">
@@ -246,7 +246,7 @@
          <x>0</x>
          <y>0</y>
          <width>98</width>
-         <height>109</height>
+         <height>149</height>
         </rect>
        </property>
        <attribute name="label">
