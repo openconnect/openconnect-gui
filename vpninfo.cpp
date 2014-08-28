@@ -328,7 +328,7 @@ int VpnInfo::connect()
                                     openconnect_strdup(key_file.toAscii().data()));
     }
 
-    openconnect_set_reported_os(vpninfo, "Windows");
+    openconnect_set_reported_os(vpninfo, "win");
 
     ret = openconnect_obtain_cookie(vpninfo);
     if (ret != 0) {
