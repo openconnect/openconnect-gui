@@ -165,6 +165,8 @@ void MainWindow::changeStatus(int val)
         ui->iconLabel->setPixmap(ON_ICON);
         ui->disconnectBtn->setEnabled(true);
         ui->connectBtn->setEnabled(false);
+        if (this->minimize_on_connect)
+            this->setWindowState(Qt::WindowMinimized);
         
 	this->ui->IPLabel->setText(ip);
     	this->ui->IP6Label->setText(ip6);
@@ -208,7 +210,6 @@ static void main_loop(VpnInfo *vpninfo, MainWindow *m)
         m->updateProgressBar(vpninfo->last_err);
         goto fail;
     }
-
 
     vpninfo->get_info(dns, ip, ip6);
     m->vpn_status_changed(STATUS_CONNECTED, dns, ip, ip6);
@@ -281,6 +282,8 @@ void MainWindow::on_connectBtn_clicked()
             tr("There was an issue initializing the VPN.") );
         goto fail;
     }
+
+    this->minimize_on_connect = vpninfo->get_minimize();
 
     vpninfo->parse_url(ss->get_servername().toLocal8Bit().data());
 
