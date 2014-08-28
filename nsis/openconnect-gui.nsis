@@ -87,12 +87,10 @@ section "install"
 	file libxml2-2.dll
 	file openconnect.exe
 	file openconnect-gui.exe
-	file openconnect-gui.exe.manifest
 	file Qt5Core.dll
 	file Qt5Gui.dll
 	file Qt5Widgets.dll
 	file vpnc-script-win.js
-	file vpnc-script-win.js.manifest
 	file zlib1.dll
 	file "icudt52.dll"
 	file "icuin52.dll"
@@ -182,12 +180,10 @@ section "uninstall"
 	delete "libxml2-2.dll"
 	delete "openconnect.exe"
 	delete "openconnect-gui.exe"
-	delete "openconnect-gui.exe.manifest"
 	delete "Qt5Core.dll"
 	delete "Qt5Gui.dll"
 	delete "Qt5Widgets.dll"
 	delete "vpnc-script-win.js"
-	delete "vpnc-script-win.js.manifest"
 	delete "zlib1.dll"
 	delete "platforms\qminimal.dll"
 	delete "platforms\qoffscreen.dll"
