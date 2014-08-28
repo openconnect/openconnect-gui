@@ -14,6 +14,7 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 TARGET = openconnect-gui
 TEMPLATE = app
 
+win32: RC_FILE = openconnect-gui.rc
 
 SOURCES += main.cpp\
         mainwindow.cpp \
@@ -46,3 +47,4 @@ win32: LIBS += -lwsock32
 
 RESOURCES += \
     resources.qrc
+

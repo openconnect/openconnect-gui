@@ -11,5 +11,6 @@
         <file>traffic_light_green.png</file>
         <file>traffic_light_red.png</file>
         <file>traffic_light_yellow.png</file>
+        <file>mono_lock.png</file>
     </qresource>
 </RCC>
