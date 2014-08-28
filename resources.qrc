@@ -8,5 +8,8 @@
         <file>secure_lock.png</file>
         <file>unsecure_lock.png</file>
         <file>globe.png</file>
+        <file>traffic_light_green.png</file>
+        <file>traffic_light_red.png</file>
+        <file>traffic_light_yellow.png</file>
     </qresource>
 </RCC>

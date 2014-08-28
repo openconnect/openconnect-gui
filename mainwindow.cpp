@@ -56,6 +56,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(this, SIGNAL(vpn_status_changed_sig(int)), this, SLOT(changeStatus(int)), Qt::QueuedConnection);
     QObject::connect(this, SIGNAL(log_changed(QString)), this, SLOT(writeProgressBar(QString)), Qt::QueuedConnection);
     QObject::connect(this, SIGNAL(stats_changed_sig(QString, QString)), this, SLOT(statsChanged(QString, QString)), Qt::QueuedConnection);
+    ui->iconLabel->setPixmap(OFF_ICON);
 }
 
 static void term_thread(MainWindow *m, SOCKET *fd)
@@ -309,7 +310,6 @@ void MainWindow::on_connectBtn_clicked()
 void MainWindow::on_toolButton_clicked()
 {
     EditDialog dialog(ui->comboBox->currentText(), this->settings);
-
     dialog.exec();
     reload_settings();
 }

@@ -103,9 +103,6 @@
               <property name="text">
                <string/>
               </property>
-              <property name="pixmap">
-               <pixmap resource="resources.qrc">:/new/resource/globe.png</pixmap>
-              </property>
               <property name="scaledContents">
                <bool>true</bool>
               </property>
@@ -248,8 +245,8 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>432</width>
-         <height>125</height>
+         <width>98</width>
+         <height>109</height>
         </rect>
        </property>
        <attribute name="label">

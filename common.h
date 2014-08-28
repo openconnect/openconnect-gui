@@ -35,9 +35,9 @@
 #define TMP_CERT_PREFIX "tmp-certXXXXXX"
 #define TMP_KEY_PREFIX "tmp-keyXXXXXX"
 
-#define OFF_ICON QPixmap(QString::fromUtf8(":/new/resource/globe.png"))
-#define ON_ICON QPixmap(QString::fromUtf8(":/new/resource/secure_lock.png"))
-#define CONNECTING_ICON QPixmap(QString::fromUtf8(":/new/resource/unsecure_lock.png"))
+#define OFF_ICON QPixmap(QString::fromUtf8(":/new/resource/traffic_light_red.png"))
+#define ON_ICON QPixmap(QString::fromUtf8(":/new/resource/traffic_light_green.png"))
+#define CONNECTING_ICON QPixmap(QString::fromUtf8(":/new/resource/traffic_light_yellow.png"))
 
 #define UPDATE_TIMER 10000
 
@@ -55,8 +55,8 @@
 # define SOCKET int
 # define closesocket close
 # define net_errno errno
-# define openconnect_strdup strdup
 #endif
+#define openconnect_strdup strdup
 
 
 #endif // COMMON_H

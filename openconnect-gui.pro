@@ -5,7 +5,7 @@
 #-------------------------------------------------
 
 QMAKE_CXXFLAGS += -O2 -g
-win32: QMAKE_CXXFLAGS += -I..\openconnect-gui\include\ 
+win32: QMAKE_CXXFLAGS += -IZ:\openconnect-gui\include\ 
 
 QT       += core gui
 
@@ -41,7 +41,7 @@ FORMS    += mainwindow.ui \
     editdialog.ui \
     logdialog.ui
 
-unix|win32: LIBS += -L..\openconnect-gui\lib -lopenconnect -lgnutls
+unix|win32: LIBS += -LZ:\openconnect-gui\lib -lopenconnect -lgnutls
 win32: LIBS += -lwsock32
 
 RESOURCES += \
