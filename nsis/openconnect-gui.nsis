@@ -89,6 +89,7 @@ section "install"
 	file openconnect-gui.exe
 	file Qt5Core.dll
 	file Qt5Gui.dll
+	file Qt5Network.dll
 	file Qt5Widgets.dll
 	file vpnc-script-win.js
 	file zlib1.dll
@@ -182,6 +183,7 @@ section "uninstall"
 	delete "openconnect-gui.exe"
 	delete "Qt5Core.dll"
 	delete "Qt5Gui.dll"
+	delete "Qt5Network.dll"
 	delete "Qt5Widgets.dll"
 	delete "vpnc-script-win.js"
 	delete "zlib1.dll"
