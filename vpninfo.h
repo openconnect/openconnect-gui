@@ -39,7 +39,10 @@ public:
     void get_info(QString &dns, QString &ip, QString &ip6);
     SOCKET get_cmd_fd() {
         return cmd_fd;
-    };
+    }
+    bool get_minimize() {
+        return ss->get_minimize();
+    }
 
     QString last_err;
     MainWindow *m;

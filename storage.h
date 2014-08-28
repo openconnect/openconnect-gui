@@ -101,8 +101,16 @@ public:
         return this->batch_mode;
     };
 
+    bool get_minimize() {
+        return this->minimize_on_connect;
+    };
+
     bool client_is_complete() {
         return client.is_complete();
+    };
+
+    void set_minimize(bool t) {
+        this->minimize_on_connect = t;
     };
 
     void set_server_hash(unsigned algo, QByteArray &hash) {
@@ -122,6 +130,7 @@ public:
     QString last_err;
 private:
     bool batch_mode;
+    bool minimize_on_connect;
     QString username;
     QString password;
     QString groupname;
