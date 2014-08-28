@@ -7,7 +7,7 @@
 QMAKE_CXXFLAGS += -O2 -g
 win32: QMAKE_CXXFLAGS += -IZ:\openconnect-gui\include\ 
 
-QT       += core gui
+QT       += core gui network
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
