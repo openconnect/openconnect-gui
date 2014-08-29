@@ -30,7 +30,7 @@
 #define toAscii toLatin1
 
 /* undef on normal builds */
-#define DEVEL 1
+/*#define DEVEL 1*/
 
 #define TMP_CERT_PREFIX "tmp-certXXXXXX"
 #define TMP_KEY_PREFIX "tmp-keyXXXXXX"
