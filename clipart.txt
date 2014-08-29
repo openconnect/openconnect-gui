@@ -6,4 +6,5 @@ process-stop.png: CC0: http://openclipart.org/detail/34267/tango-process-stop-by
 traffic_light_green_dan__01.png: CC0: https://openclipart.org/detail/118831/traffic-light-green-dan--01-by-anonymous
 traffic_light_red_dan_ge_01.png: CC0: https://openclipart.org/detail/118825/traffic-light-red-dan-ge-01-by-anonymous
 traffic_light_yellow_dan_01.png: CC0: https://openclipart.org/detail/118819/traffic-light-yellow-dan-01-by-anonymous
+traffic_light_off.png: CC0: https://openclipart.org/detail/159547/traffic-lights-turned-off-by-gr8dan
 logo*.ico: CC0: https://openclipart.org/detail/197887/mono_lock-by-dannya

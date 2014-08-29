@@ -80,6 +80,8 @@ private slots:
     void writeProgressBar(QString str);
     void changeStatus(int);
 
+    void blink_ui(void);
+
     void request_update_stats();
 
     void on_disconnectBtn_clicked();
@@ -96,6 +98,7 @@ signals:
     void log_changed(QString val);
     void stats_changed_sig(QString, QString);
     void vpn_status_changed_sig(int);
+    void timeout(void);
 
 private:
     /* we keep the fd instead of a pointer to vpninfo to avoid
@@ -107,6 +110,7 @@ private:
     QMutex progress_mutex;
     QStringList log;
     QTimer *timer;
+    QTimer *blink_timer;
     QFutureWatcher<void> futureWatcher; // watches the vpninfo
     
     QString dns, ip, ip6;
