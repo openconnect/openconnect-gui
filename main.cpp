@@ -96,8 +96,8 @@ int main(int argc, char *argv[])
     w.show();
 
 #if !defined(_WIN32) && !defined(DEVEL)
-    msgBox.setText(tr("This program requires root privileges to fully function."));
-    msgBox.setInformativeText(tr("VPN connection establishment would fail."));
+    msgBox.setText(QObject::tr("This program requires root privileges to fully function."));
+    msgBox.setInformativeText(QObject::tr("VPN connection establishment would fail."));
     ret = msgBox.exec();
 #endif
 
