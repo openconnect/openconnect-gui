@@ -53,8 +53,10 @@ MainWindow::MainWindow(QWidget *parent) :
     this->setWindowTitle(QLatin1String("openconnect "VERSION" (lib ")+QLatin1String(version)+QLatin1String(")"));
 
     timer = new QTimer(this);
+    blink_timer = new QTimer(this);
     this->cmd_fd = INVALID_SOCKET;
 
+    connect(blink_timer, SIGNAL(timeout(void)), this, SLOT(blink_ui(void)), Qt::QueuedConnection);
     connect(timer, SIGNAL(timeout()), this, SLOT(request_update_stats()), Qt::QueuedConnection);
     connect(ui->comboBox->lineEdit(), SIGNAL(returnPressed()), this, SLOT(on_connectBtn_clicked()), Qt::QueuedConnection);
     connect(this, SIGNAL(vpn_status_changed_sig(int)), this, SLOT(changeStatus(int)), Qt::QueuedConnection);
@@ -164,9 +166,22 @@ void MainWindow::updateProgressBar(QString str)
     }
 }
 
+void MainWindow::blink_ui()
+{
+    static unsigned t = 1;
+
+    if (t % 2 == 0) {
+        ui->iconLabel->setPixmap(CONNECTING_ICON);
+    } else {
+        ui->iconLabel->setPixmap(CONNECTING_ICON2);
+    }
+    t++;
+}
+
 void MainWindow::changeStatus(int val)
 {
     if (val == STATUS_CONNECTED) {
+        blink_timer->stop();
         ui->iconLabel->setPixmap(ON_ICON);
         ui->disconnectBtn->setEnabled(true);
         ui->connectBtn->setEnabled(false);
@@ -182,7 +197,9 @@ void MainWindow::changeStatus(int val)
         ui->iconLabel->setPixmap(CONNECTING_ICON);
         ui->disconnectBtn->setEnabled(true);
         ui->connectBtn->setEnabled(false);
+        blink_timer->start(1500);
     } else if (val == STATUS_DISCONNECTED){
+        blink_timer->stop();
         if (this->timer->isActive())
             timer->stop();
         disable_cmd_fd();
