@@ -31,7 +31,7 @@ Icon "../logo32.ico"
 outFile "openconnect-installer.exe"
 
 !include LogicLib.nsh
-
+!include WinVer.nsh
 
 ComponentText "Please choose one of the available options"
 
@@ -73,7 +73,8 @@ section "install"
 
 	setOutPath $INSTDIR
 	# Files added here should be removed by the uninstaller (see section "uninstall")
-	file "tap-windows.exe"
+	file tap-windows.exe
+	file tap-windows-xp.exe
 	file "../logo32.ico"
 	file libgcc_s_dw2-1.dll
 	file libgcc_s_sjlj-1.dll
@@ -136,8 +137,13 @@ SectionEnd
 Section "Windows TAP/TUN driver"
  SectionIn RO
  
+${If} ${AtLeastWin2003}
  DetailPrint "Running TAP/TUN driver setup..."
  ExecWait "$INSTDIR\tap-windows.exe"
+${Else}
+ DetailPrint "Running TAP/TUN XP driver setup..."
+ ExecWait "$INSTDIR\tap-windows-xp.exe"
+${EndIf}
  DetailPrint "Finished driver setup"
 SectionEnd
 
@@ -165,6 +171,7 @@ section "uninstall"
 
 	# Remove files
 	delete "tap-windows.exe"
+	delete "tap-windows-xp.exe"
 	delete "logo32.ico"
 	delete "icudt52.dll"
 	delete "icuin52.dll"
