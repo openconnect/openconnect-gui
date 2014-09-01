@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>519</width>
-    <height>395</height>
+    <width>516</width>
+    <height>523</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -293,6 +293,17 @@
        </item>
        <item>
         <widget class="QLineEdit" name="tokenEdit"/>
+       </item>
+       <item>
+        <widget class="QToolButton" name="tokenClear">
+         <property name="text">
+          <string>...</string>
+         </property>
+         <property name="icon">
+          <iconset resource="resources.qrc">
+           <normaloff>:/new/resource/trashcan.png</normaloff>:/new/resource/trashcan.png</iconset>
+         </property>
+        </widget>
        </item>
       </layout>
      </item>

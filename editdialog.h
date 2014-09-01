@@ -55,6 +55,8 @@ private slots:
 
     void on_serverCertClear_clicked();
 
+    void on_tokenClear_clicked();
+
 private:
     Ui::EditDialog *ui;
     StoredServer *ss;
