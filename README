@@ -3,6 +3,4 @@ This is the GUI client for openconnect VPN.
 This client is in alpha testing phase. It cannot be assumed to provide
 the required security.
 
-A precompiled version for windows 32-bit is at:
-http://people.redhat.com/~nmavrogi/openconnect/
 
