@@ -1,10 +1,10 @@
-# This installs two files, openconnect-gui.exe and logo32.ico, creates a start menu shortcut, builds an uninstaller, and
+# This installs two files, openconnect-gui.exe and logo64.ico, creates a start menu shortcut, builds an uninstaller, and
 # adds uninstall information to the registry for Add/Remove Programs
  
-# To get started, put this script into a folder with the two files (openconnect-gui.exe, logo32.ico, and COPYING -
+# To get started, put this script into a folder with the two files (openconnect-gui.exe, logo64.ico, and COPYING -
 # You'll have to create these yourself) and run makensis on it
  
-# If you change the names "openconnect-gui.exe", "logo32.ico", or "COPYING" you should do a search and replace - they
+# If you change the names "openconnect-gui.exe", "logo64.ico", or "COPYING" you should do a search and replace - they
 # show up in a few places.
 # All the other settings can be tweaked by editing the !defines at the top of this script
 !define APPNAME "OpenConnect"
@@ -27,7 +27,7 @@ InstallDir "$PROGRAMFILES\${APPNAME}"
 LicenseData "../COPYING"
 # This will be in the installer/uninstaller's title bar
 Name "${APPNAME}"
-Icon "../logo32.ico"
+Icon "../logo64.ico"
 outFile "openconnect-installer.exe"
 
 !include LogicLib.nsh
@@ -75,7 +75,7 @@ section "install"
 	# Files added here should be removed by the uninstaller (see section "uninstall")
 	file tap-windows.exe
 	file tap-windows-xp.exe
-	file "../logo32.ico"
+	file "../logo64.ico"
 	file libgcc_s_dw2-1.dll
 	file libgcc_s_sjlj-1.dll
 	file libgmp-10.dll
@@ -102,7 +102,7 @@ section "install"
 
 	# Add any other files for the install directory (license files, app data, etc) here
 	createDirectory "$SMPROGRAMS\${APPNAME}"
-	createShortCut "$SMPROGRAMS\${APPNAME}\${APPNAME}.lnk" "$INSTDIR\openconnect-gui.exe" "" "$INSTDIR\logo32.ico"
+	createShortCut "$SMPROGRAMS\${APPNAME}\${APPNAME}.lnk" "$INSTDIR\openconnect-gui.exe" "" "$INSTDIR\logo64.ico"
  
 	# Uninstaller - See function un.onInit and section "uninstall" for configuration
 	writeUninstaller "$INSTDIR\uninstall.exe"
@@ -116,7 +116,7 @@ section "install"
 	WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${APPNAME}" "UninstallString" "$\"$INSTDIR\uninstall.exe$\""
 	WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${APPNAME}" "QuietUninstallString" "$\"$INSTDIR\uninstall.exe$\" /S"
 	WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${APPNAME}" "InstallLocation" "$\"$INSTDIR$\""
-	WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${APPNAME}" "DisplayIcon" "$\"$INSTDIR\logo32.ico$\""
+	WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${APPNAME}" "DisplayIcon" "$\"$INSTDIR\logo64.ico$\""
 	WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${APPNAME}" "Publisher" "$\"${APPNAME}$\""
 	WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${APPNAME}" "HelpLink" "$\"${HELPURL}$\""
 	#WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${APPNAME}" "URLUpdateInfo" "$\"${UPDATEURL}$\""
@@ -173,7 +173,7 @@ section "uninstall"
 	# Remove files
 	delete "tap-windows.exe"
 	delete "tap-windows-xp.exe"
-	delete "logo32.ico"
+	delete "logo64.ico"
 	delete "icudt52.dll"
 	delete "icuin52.dll"
 	delete "icuuc52.dll"
