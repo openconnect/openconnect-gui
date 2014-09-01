@@ -107,7 +107,7 @@ section "install"
 	# Uninstaller - See function un.onInit and section "uninstall" for configuration
 	writeUninstaller "$INSTDIR\uninstall.exe"
 
-	createShortCut "$SMPROGRAMS\${APPNAME}\Uninstall.lnk" "$INSTDIR\uninstall.exe" "" ""
+	#createShortCut "$SMPROGRAMS\${APPNAME}\Uninstall.lnk" "$INSTDIR\uninstall.exe" "" ""
 
 	# Start Menu
  
@@ -166,7 +166,7 @@ section "uninstall"
 	# Try to remove the Start Menu folder - this will only happen if it is empty
 
 	delete "$SMPROGRAMS\${APPNAME}\${APPNAME}.lnk"
-	delete "$SMPROGRAMS\${APPNAME}\Uninstall.lnk"
+	#delete "$SMPROGRAMS\${APPNAME}\Uninstall.lnk"
 	# Try to remove the Start Menu folder - this will only happen if it is empty
 	rmDir "$SMPROGRAMS\${APPNAME}" 
 
