@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>519</width>
-    <height>539</height>
+    <height>395</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -259,7 +259,7 @@
      <item row="17" column="0">
       <widget class="QLabel" name="label_10">
        <property name="text">
-        <string>Token</string>
+        <string>OTP Token</string>
        </property>
       </widget>
      </item>
