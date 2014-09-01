@@ -28,6 +28,15 @@
      </item>
      <item row="1" column="1">
       <widget class="QLineEdit" name="gatewayEdit">
+       <property name="toolTip">
+        <string>Specify the hostname to connect to; a port may be specified after the host separated with a colon ':'</string>
+       </property>
+       <property name="statusTip">
+        <string/>
+       </property>
+       <property name="whatsThis">
+        <string/>
+       </property>
        <property name="text">
         <string/>
        </property>
@@ -78,7 +87,11 @@
         </widget>
        </item>
        <item>
-        <widget class="QLineEdit" name="userCertEdit"/>
+        <widget class="QLineEdit" name="userCertEdit">
+         <property name="toolTip">
+          <string>Specify the certificate file if any</string>
+         </property>
+        </widget>
        </item>
        <item>
         <widget class="QToolButton" name="userCertClear">
@@ -127,6 +140,9 @@
          <property name="enabled">
           <bool>true</bool>
          </property>
+         <property name="toolTip">
+          <string>Specify your key file if any; in case of a PKCS #12 file, you only need to set the certificate</string>
+         </property>
         </widget>
        </item>
        <item>
@@ -160,6 +176,9 @@
        </item>
        <item>
         <widget class="QLineEdit" name="caCertEdit">
+         <property name="toolTip">
+          <string>Specify the CA certificate, if any; by default the system CAs will be used</string>
+         </property>
          <property name="whatsThis">
           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If not set, the system's trusted certificate storage will be used.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
          </property>
@@ -196,6 +215,9 @@
       <layout class="QHBoxLayout" name="horizontalLayout_3">
        <item>
         <widget class="QLabel" name="serverCertHash">
+         <property name="toolTip">
+          <string>This is the hash of the server's certificate</string>
+         </property>
          <property name="text">
           <string/>
          </property>
@@ -223,6 +245,9 @@
      </item>
      <item row="14" column="1">
       <widget class="QCheckBox" name="batchModeBox">
+       <property name="toolTip">
+        <string>Enable this to remember passwords for this server</string>
+       </property>
        <property name="text">
         <string/>
        </property>
@@ -237,6 +262,9 @@
      </item>
      <item row="15" column="1">
       <widget class="QCheckBox" name="minimizeBox">
+       <property name="toolTip">
+        <string>Enable this to automatically minimize after connection</string>
+       </property>
        <property name="text">
         <string/>
        </property>
@@ -244,6 +272,9 @@
      </item>
      <item row="16" column="1">
       <widget class="QCheckBox" name="proxyBox">
+       <property name="toolTip">
+        <string>Enable this to use the system's default proxy settings for this server</string>
+       </property>
        <property name="text">
         <string/>
        </property>
@@ -292,7 +323,11 @@
         </widget>
        </item>
        <item>
-        <widget class="QLineEdit" name="tokenEdit"/>
+        <widget class="QLineEdit" name="tokenEdit">
+         <property name="toolTip">
+          <string>This is the token code; should be a hex value (starting with 0x), or a value starting with 'base32:'</string>
+         </property>
+        </widget>
        </item>
        <item>
         <widget class="QToolButton" name="tokenClear">
