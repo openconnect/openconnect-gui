@@ -265,6 +265,24 @@ int validate_peer_cert(void *privdata, OPENCONNECT_X509 *cert, const char *reaso
     return 0;
 }
 
+static int lock_token_vfn(void *privdata)
+{
+    VpnInfo *vpn = static_cast<VpnInfo*>(privdata);
+
+    openconnect_set_token_mode(vpn->vpninfo, (oc_token_mode_t)vpn->ss->get_token_type(), vpn->ss->get_token_str().toAscii().data());
+
+    return 0;
+}
+
+static int unlock_token_vfn(void *privdata, const char *newtok)
+{
+    VpnInfo *vpn = static_cast<VpnInfo*>(privdata);
+
+    vpn->ss->set_token_str(newtok);
+    vpn->ss->save();
+    return 0;
+}
+
 static inline int set_sock_block(int fd)
 {
 #ifdef _WIN32
@@ -294,7 +312,10 @@ VpnInfo::VpnInfo(QString name, class StoredServer *ss, class MainWindow *m)
     this->ss = ss;
     this->m = m;
     openconnect_set_stats_handler(this->vpninfo, stats_vfn);
-
+    if (ss->get_token_str().isEmpty() == false) {
+        openconnect_set_token_callbacks(this->vpninfo, this, lock_token_vfn, unlock_token_vfn);
+        openconnect_set_token_mode(this->vpninfo, (oc_token_mode_t)ss->get_token_type(), ss->get_token_str().toAscii().data());
+    }
 }
 
 VpnInfo::~VpnInfo()
