@@ -35,10 +35,10 @@
 #define TMP_CERT_PREFIX "tmp-certXXXXXX"
 #define TMP_KEY_PREFIX "tmp-keyXXXXXX"
 
-#define OFF_ICON QPixmap(QString::fromUtf8(":/new/resource/traffic_light_red.png"))
-#define ON_ICON QPixmap(QString::fromUtf8(":/new/resource/traffic_light_green.png"))
-#define CONNECTING_ICON QPixmap(QString::fromUtf8(":/new/resource/traffic_light_yellow.png"))
-#define CONNECTING_ICON2 QPixmap(QString::fromUtf8(":/new/resource/traffic_light_off.png"))
+#define OFF_ICON QPixmap(QString::fromLatin1(":/new/resource/traffic_light_red.png"))
+#define ON_ICON QPixmap(QString::fromLatin1(":/new/resource/traffic_light_green.png"))
+#define CONNECTING_ICON QPixmap(QString::fromLatin1(":/new/resource/traffic_light_yellow.png"))
+#define CONNECTING_ICON2 QPixmap(QString::fromLatin1(":/new/resource/traffic_light_off.png"))
 
 #define UPDATE_TIMER 10000
 
