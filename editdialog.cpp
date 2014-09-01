@@ -22,12 +22,30 @@
 #include <QMessageBox>
 #include <QFileDialog>
 
+static int token_tab(int mode)
+{
+    switch(mode) {
+        case OC_TOKEN_MODE_HOTP:
+            return 0;
+        case OC_TOKEN_MODE_TOTP:
+            return 1;
+        default:
+            return -1;
+    }
+}
+
+int token_rtab[] = {
+    [0] = OC_TOKEN_MODE_HOTP,
+    [1] = OC_TOKEN_MODE_TOTP
+};
+
 EditDialog::EditDialog(QString server, QSettings *settings, QWidget *parent) :
     QDialog(parent),
     ui(new Ui::EditDialog)
 {
     QString hash;
     ui->setupUi(this);
+    int type;
 
     this->ss = new StoredServer(settings);
     this->ss->load(server);
@@ -42,6 +60,12 @@ EditDialog::EditDialog(QString server, QSettings *settings, QWidget *parent) :
     ui->minimizeBox->setChecked(ss->get_minimize());
     ui->proxyBox->setChecked(ss->get_proxy());
 
+    type = ss->get_token_type();
+    if (type >= 0) {
+        ui->tokenBox->setCurrentIndex(token_tab(ss->get_token_type()));
+        ui->tokenEdit->setText(ss->get_token_str());
+    }
+
     ss->get_server_hash(hash);
     ui->serverCertHash->setText(hash);
 }
@@ -54,6 +78,7 @@ EditDialog::~EditDialog()
 
 void EditDialog::on_buttonBox_accepted()
 {
+    int type;
     if (ui->gatewayEdit->text().isEmpty() == true) {
         QMessageBox::information(
             this,
@@ -74,6 +99,15 @@ void EditDialog::on_buttonBox_accepted()
     ss->set_batch_mode(ui->batchModeBox->isChecked());
     ss->set_minimize(ui->minimizeBox->isChecked());
     ss->set_proxy(ui->proxyBox->isChecked());
+
+    type = ui->tokenBox->currentIndex();
+    if (type != -1 && ui->tokenEdit->text().isEmpty()==false) {
+        ss->set_token_str(ui->tokenEdit->text());
+        ss->set_token_type(token_rtab[type]);
+    } else {
+        ss->set_token_str("");
+        ss->set_token_type(-1);
+    }
 
     ss->save();
     this->close();

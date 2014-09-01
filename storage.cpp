@@ -183,6 +183,9 @@ int StoredServer::load(QString &name)
     this->server_hash = settings->value("server-hash").toByteArray();
     this->server_hash_algo = settings->value("server-hash-algo").toInt();
 
+    this->token_str = settings->value("token-str").toString();
+    this->token_type = settings->value("token-type").toInt();
+
     settings->endGroup();
     return 0;
 }
@@ -215,6 +218,9 @@ int StoredServer::save()
 
     settings->setValue("server-hash", this->server_hash);
     settings->setValue("server-hash-algo", this->server_hash_algo);
+
+    settings->setValue("token-str", this->token_str);
+    settings->setValue("token-type", this->token_type);
 
     settings->endGroup();
     return 0;

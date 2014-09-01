@@ -79,6 +79,7 @@ section "install"
 	file libgcc_s_dw2-1.dll
 	file libgcc_s_sjlj-1.dll
 	file libgmp-10.dll
+	file liboath-0.dll
 	file libgnutls-28.dll
 	file libhogweed-2-5.dll
 	file libnettle-4-7.dll
@@ -176,6 +177,7 @@ section "uninstall"
 	delete "icudt52.dll"
 	delete "icuin52.dll"
 	delete "icuuc52.dll"
+	delete liboath-0.dll
 	delete "libgcc_s_dw2-1.dll"
 	delete "libgcc_s_sjlj-1.dll"
 	delete "libgmp-10.dll"

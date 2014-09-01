@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>400</width>
-    <height>428</height>
+    <width>519</width>
+    <height>539</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -255,6 +255,46 @@
         <string>Use Proxy</string>
        </property>
       </widget>
+     </item>
+     <item row="17" column="0">
+      <widget class="QLabel" name="label_10">
+       <property name="text">
+        <string>Token</string>
+       </property>
+      </widget>
+     </item>
+     <item row="17" column="1">
+      <layout class="QHBoxLayout" name="horizontalLayout_5">
+       <item>
+        <widget class="QComboBox" name="tokenBox">
+         <property name="minimumSize">
+          <size>
+           <width>140</width>
+           <height>0</height>
+          </size>
+         </property>
+         <property name="currentIndex">
+          <number>-1</number>
+         </property>
+         <property name="maxVisibleItems">
+          <number>3</number>
+         </property>
+         <item>
+          <property name="text">
+           <string notr="true">HOTP (RFC4226)</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string notr="true">TOTP (RFC6238)</string>
+          </property>
+         </item>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLineEdit" name="tokenEdit"/>
+       </item>
+      </layout>
      </item>
     </layout>
    </item>

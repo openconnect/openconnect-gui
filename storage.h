@@ -121,6 +121,22 @@ public:
         this->proxy = t;
     }
 
+    QString get_token_str() {
+        return this->token_str;
+    }
+
+    void set_token_str(QString str) {
+        this->token_str = str;
+    }
+
+    int get_token_type() {
+        return this->token_type;
+    }
+
+    void set_token_type(int type) {
+        this->token_type = type;
+    }
+
     void set_server_hash(unsigned algo, QByteArray &hash) {
         this->server_hash_algo = algo;
         this->server_hash = hash;
@@ -144,6 +160,8 @@ private:
     QString password;
     QString groupname;
     QString servername;
+    QString token_str;
+    int token_type;
     QByteArray server_hash;
     unsigned server_hash_algo;
     Cert ca_cert;
