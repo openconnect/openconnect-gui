@@ -204,3 +204,9 @@ void EditDialog::on_serverCertClear_clicked()
 {
     ss->clear_server_hash();
 }
+
+void EditDialog::on_tokenClear_clicked()
+{
+    ui->tokenBox->setCurrentIndex(-1);
+    ui->tokenEdit->clear();
+}
