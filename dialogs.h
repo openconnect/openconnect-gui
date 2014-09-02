@@ -23,6 +23,7 @@
 #include <mainwindow.h>
 #include <QMessageBox>
 #include <QInputDialog>
+#include <QApplication>
 #include <QMutex>
 
 class MyInputDialog:public QObject {

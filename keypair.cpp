@@ -18,7 +18,7 @@
  */
 
 
-#include <QInputDialog>
+#include <dialogs.h>
 #include <QString>
 #include "keypair.h"
 #include <gnutls/pkcs12.h>
@@ -35,6 +35,7 @@ static
 int load_pkcs12_file(QWidget *w, Key &key, Cert &cert, QString File)
 {
     gnutls_datum_t raw = {NULL, 0};
+    MyInputDialog dialog(w, QLatin1String("This file requires a password"), QLatin1String("Please enter your password"), QLineEdit::Password);
     int ret;
     gnutls_pkcs12_t pkcs12 = NULL;
     bool ok;
@@ -72,9 +73,11 @@ int load_pkcs12_file(QWidget *w, Key &key, Cert &cert, QString File)
     if (ret < 0)
         goto fail;
 
-    pass = QInputDialog::getText(w, QLatin1String("This file requires a password"),
-                                    QLatin1String("Please enter your password"), QLineEdit::Normal,
-                                    QString(), &ok);
+    dialog.moveToThread( QApplication::instance()->thread());
+
+    QCoreApplication::postEvent(&dialog, new QEvent( QEvent::User));
+    ok = dialog.result(text);
+
     if (!ok)
         goto fail;
 
