@@ -20,8 +20,8 @@
 #include "mainwindow.h"
 #include <QApplication>
 #include <QCoreApplication>
-#include <QInputDialog>
 #include <QMessageBox>
+#include <dialogs.h>
 #include "common.h"
 extern "C" {
 #include <stdio.h>
@@ -47,9 +47,11 @@ int pin_callback(void *userdata, int attempt, const char *token_url,
     if (flags & GNUTLS_PKCS11_PIN_COUNT_LOW)
         outtext += QObject::tr(" Only few tries before token lock!");
 
-    text = QInputDialog::getText(w, QLatin1String(token_url),
-                                    outtext, QLineEdit::Normal,
-                                    QString(), &ok);
+    MyInputDialog dialog(w, QLatin1String(token_url), outtext, QLineEdit::Password);
+    dialog.moveToThread( QApplication::instance()->thread());
+    QCoreApplication::postEvent(&dialog, new QEvent( QEvent::User));
+    ok = dialog.result(text);
+
     if (!ok)
         return -1;
 
