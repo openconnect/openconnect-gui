@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>296</width>
-    <height>174</height>
+    <width>284</width>
+    <height>192</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -371,8 +371,15 @@
        <attribute name="title">
         <string>About</string>
        </attribute>
-       <layout class="QGridLayout" name="gridLayout_4">
-        <item row="0" column="0">
+       <layout class="QVBoxLayout" name="verticalLayout_3">
+        <item>
+         <widget class="QLabel" name="versionLabel">
+          <property name="text">
+           <string/>
+          </property>
+         </widget>
+        </item>
+        <item>
          <widget class="QLabel" name="label_3">
           <property name="text">
            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;a href=&quot;https://github.com/nmav/openconnect-gui/wiki&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;Openconnect-gui&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;p&gt;Copyright 2014 Red Hat Inc.&lt;br/&gt;Openconnect-gui comes with ABSOLUTELY NO WARRANTY. This is free software, and you are welcome to redistribute it under the conditions of the GNU General Public License version 3. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
