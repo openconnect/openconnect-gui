@@ -48,8 +48,7 @@ int pin_callback(void *userdata, int attempt, const char *token_url,
         outtext += QObject::tr(" Only few tries before token lock!");
 
     MyInputDialog dialog(w, QLatin1String(token_url), outtext, QLineEdit::Password);
-    dialog.moveToThread( QApplication::instance()->thread());
-    QCoreApplication::postEvent(&dialog, new QEvent( QEvent::User));
+    dialog.show();
     ok = dialog.result(text);
 
     if (!ok)

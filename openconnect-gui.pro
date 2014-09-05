@@ -6,6 +6,7 @@
 
 QMAKE_CXXFLAGS += -O2 -g
 win32: QMAKE_CXXFLAGS += -IZ:\openconnect-gui\include\ 
+unix: QMAKE_CXXFLAGS += -I/usr/local/include
 
 QT       += core gui network
 
@@ -36,14 +37,16 @@ HEADERS  += mainwindow.h \
     key.h \
     cert.h \
     logdialog.h \
-    gtdb.h
+    gtdb.h \
+    dialogs.h
 
 FORMS    += mainwindow.ui \
     editdialog.ui \
     logdialog.ui
 
-unix|win32: LIBS += -LZ:\openconnect-gui\lib -lopenconnect -lgnutls
-win32: LIBS += -lwsock32
+win32: LIBS += -LZ:\openconnect-gui\lib -lwsock32
+unix: LIBS += -L/usr/local/lib
+unix|win32: LIBS += -lopenconnect -lgnutls
 
 RESOURCES += \
     resources.qrc

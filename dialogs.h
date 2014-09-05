@@ -36,6 +36,7 @@ public:
      	this->list = list;
         this->have_list = true;
         mutex.lock();
+        this->moveToThread( QApplication::instance()->thread());
      };
      MyInputDialog(QWidget *w, QString t1, QString t2, QLineEdit::EchoMode type) {
      	this->w = w;
@@ -44,17 +45,25 @@ public:
         have_list = false;
         this->type = type;
         mutex.lock();
+        this->moveToThread( QApplication::instance()->thread());
      };
+     ~MyInputDialog() {
+     	mutex.tryLock();
+     	mutex.unlock();
+     }
+     void show() {
+     	QCoreApplication::postEvent(this, new QEvent( QEvent::User));
+     }
      virtual bool event(QEvent * ev) {
         res = false;
-	if (ev->type() == QEvent::User) {
-	    if (this->have_list)
-	        text = QInputDialog::getItem(w, t1, t2, list, 0, true, &res);
+        if (ev->type() == QEvent::User) {
+            if (this->have_list)
+                text = QInputDialog::getItem(w, t1, t2, list, 0, true, &res);
             else
-	        text = QInputDialog::getText(w, t1, t2, type, QString(), &res);
-	    mutex.unlock();
-	}
-	return res;
+                text = QInputDialog::getText(w, t1, t2, type, QString(), &res);
+            mutex.unlock();
+        }
+        return res;
     }
 
     bool result(QString & text) {
@@ -85,27 +94,37 @@ public:
      	this->t2 = t2;
      	this->oktxt = oktxt;
         mutex.lock();
+        this->moveToThread( QApplication::instance()->thread());
      };
+     ~MyMsgBox() {
+        mutex.tryLock();
+        mutex.unlock();
+     }
+     void show() {
+     	QCoreApplication::postEvent(this, new QEvent( QEvent::User));
+     }
      virtual bool event(QEvent * ev) {
         res = false;
-	if (ev->type() == QEvent::User) {
-	    QMessageBox *msgBox = new QMessageBox(w);
-	    int ret;
-	    
-	    msgBox->setText(t1);
-	    msgBox->setInformativeText(t2);
-	    msgBox->setStandardButtons(QMessageBox::Cancel | QMessageBox::Ok);
-	    msgBox->setDefaultButton(QMessageBox::Cancel);
-	    msgBox->setButtonText(QMessageBox::Ok, oktxt);
-	    
-	    ret = msgBox->exec();
-	    if (ret == QMessageBox::Cancel)
-	    	res = false;
-	    else res = true;
-	    delete msgBox;
+        if (ev->type() == QEvent::User) {
+            QMessageBox *msgBox = new QMessageBox(w);
+            int ret;
+
+            msgBox->setText(t1);
+            msgBox->setInformativeText(t2);
+            msgBox->setStandardButtons(QMessageBox::Cancel | QMessageBox::Ok);
+            msgBox->setDefaultButton(QMessageBox::Cancel);
+            msgBox->setButtonText(QMessageBox::Ok, oktxt);
+
+            ret = msgBox->exec();
+            if (ret == QMessageBox::Cancel)
+                res = false;
+            else
+                res = true;
+
+            delete msgBox;
             mutex.unlock();
-	}
-	return res;
+        }
+        return res;
     }
     
     bool result() {
