@@ -73,9 +73,7 @@ int load_pkcs12_file(QWidget *w, Key &key, Cert &cert, QString File)
     if (ret < 0)
         goto fail;
 
-    dialog.moveToThread( QApplication::instance()->thread());
-
-    QCoreApplication::postEvent(&dialog, new QEvent( QEvent::User));
+    dialog.show();
     ok = dialog.result(text);
 
     if (!ok)

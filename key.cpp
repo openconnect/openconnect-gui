@@ -58,9 +58,7 @@ static int import_Key(QWidget *w, gnutls_x509_privkey_t *privkey, gnutls_datum_t
         QString text;
         MyInputDialog dialog(w, QLatin1String("This file requires a password"), QLatin1String("Please enter your password"), QLineEdit::Password);
 
-        dialog.moveToThread( QApplication::instance()->thread());
-        QCoreApplication::postEvent(&dialog, new QEvent( QEvent::User));
-
+        dialog.show();
         ok = dialog.result(text);
         if (!ok) {
             ret = -1;

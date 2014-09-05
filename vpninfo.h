@@ -48,6 +48,7 @@ public:
     MainWindow *m;
     StoredServer *ss;
     struct openconnect_info *vpninfo;
+    unsigned int authgroup_set;
 private:
     SOCKET cmd_fd;
 };

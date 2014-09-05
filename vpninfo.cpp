@@ -71,19 +71,18 @@ int process_auth_form(void *privdata, struct oc_auth_form *form)
     int i;
 
     if (form->banner)
-        vpn->m->updateProgressBar(form->banner);
+        vpn->m->updateProgressBar(QLatin1String(form->banner));
 
     if (form->message)
-        vpn->m->updateProgressBar(form->message);
+        vpn->m->updateProgressBar(QLatin1String(form->message));
 
     if (form->error) {
-        vpn->m->updateProgressBar(form->error);
+        vpn->m->updateProgressBar(QLatin1String(form->error));
         return -1;
     }
 
-    if (form->authgroup_opt) {
+    if (form->authgroup_opt && vpn->authgroup_set == 0) {
         struct oc_form_opt_select *select_opt = form->authgroup_opt;
-        MyInputDialog dialog(vpn->m, QLatin1String(select_opt->form.name), QLatin1String(select_opt->form.label), gitems);
 
         for (i = 0; i < select_opt->nr_choices; i++) {
             gitems << select_opt->choices[i]->label;
@@ -92,17 +91,21 @@ int process_auth_form(void *privdata, struct oc_auth_form *form)
         /* if the configured exists */
         if (gitems.contains(vpn->ss->get_groupname())) {
             select_opt->form.value = openconnect_strdup(vpn->ss->get_groupname().toAscii().data());
+	    vpn->authgroup_set = 1;
             return OC_FORM_RESULT_NEWGROUP;
         }
-        dialog.moveToThread( QApplication::instance()->thread());
 
-        QCoreApplication::postEvent(&dialog, new QEvent( QEvent::User));
-	ok = dialog.result(text);
+        {
+            MyInputDialog dialog(vpn->m, QLatin1String(select_opt->form.name), QLatin1String(select_opt->form.label), gitems);
+            dialog.show();
+            ok = dialog.result(text);
+        }
 
         if (!ok) goto fail;
 
         vpn->ss->set_groupname(text);
         select_opt->form.value = openconnect_strdup(text.toAscii().data());
+	vpn->authgroup_set = 1;
         return OC_FORM_RESULT_NEWGROUP;
     }
 
@@ -114,7 +117,6 @@ int process_auth_form(void *privdata, struct oc_auth_form *form)
         if (opt->type == OC_FORM_OPT_SELECT) {
             QStringList items;
             struct oc_form_opt_select *select_opt = reinterpret_cast<oc_form_opt_select*>(opt);
-            MyInputDialog dialog(vpn->m, QLatin1String(opt->name), QLatin1String(opt->label), items);
 
             if (select_opt == form->authgroup_opt)
                 continue;
@@ -123,10 +125,11 @@ int process_auth_form(void *privdata, struct oc_auth_form *form)
                 items << select_opt->choices[i]->label;
             }
 
-            dialog.moveToThread( QApplication::instance()->thread());
-
-            QCoreApplication::postEvent(&dialog, new QEvent( QEvent::User));
-	    ok = dialog.result(text);
+            {
+                MyInputDialog dialog(vpn->m, QLatin1String(opt->name), QLatin1String(opt->label), items);
+                dialog.show();
+                ok = dialog.result(text);
+            }
 
             if (!ok) goto fail;
 
@@ -138,13 +141,10 @@ int process_auth_form(void *privdata, struct oc_auth_form *form)
                 return OC_FORM_RESULT_OK;
             }
 
-            text.clear();
             do {
                 MyInputDialog dialog(vpn->m, QLatin1String(opt->name), QLatin1String(opt->label), QLineEdit::Normal);
-                dialog.moveToThread( QApplication::instance()->thread());
-
-                QCoreApplication::postEvent(&dialog, new QEvent( QEvent::User));
-	        ok = dialog.result(text);
+                dialog.show();
+                ok = dialog.result(text);
 
                 if (!ok) goto fail;
             } while(text.isEmpty());
@@ -161,12 +161,9 @@ int process_auth_form(void *privdata, struct oc_auth_form *form)
                 return OC_FORM_RESULT_OK;
             }
 
-            text.clear();
             do {
                 MyInputDialog dialog(vpn->m, QLatin1String(opt->name), QLatin1String(opt->label), QLineEdit::Password);
-                dialog.moveToThread( QApplication::instance()->thread());
-
-                QCoreApplication::postEvent(&dialog, new QEvent( QEvent::User));
+                dialog.show();
 	        ok = dialog.result(text);
 
                 if (!ok) goto fail;
@@ -176,6 +173,8 @@ int process_auth_form(void *privdata, struct oc_auth_form *form)
                 vpn->ss->set_password(text);
             }
             opt->value = openconnect_strdup(text.toAscii().data());
+        } else {
+            vpn->m->updateProgressBar(QLatin1String("unknown type ")+QString::number((int)opt->type));
         }
     }
 
@@ -221,9 +220,7 @@ int validate_peer_cert(void *privdata, OPENCONNECT_X509 *cert, const char *reaso
 
         MyMsgBox msgBox(vpn->m, QObject::tr("You are connecting for the first time to this peer. Is the information provided below accurate?"),
         			str, QObject::tr("The information is accurate"));
-
-        msgBox.moveToThread( QApplication::instance()->thread());
-        QCoreApplication::postEvent(&msgBox, new QEvent( QEvent::User));
+	msgBox.show();
         ok = msgBox.result();
 
         if (ok == false)
@@ -236,9 +233,7 @@ int validate_peer_cert(void *privdata, OPENCONNECT_X509 *cert, const char *reaso
 
         MyMsgBox msgBox(vpn->m, QObject::tr("This peer is known and associated with a different key. It may be that the server has multiple keys or you are (or were in the past) under attack. Do you want to proceed?"),
         			str, QObject::tr("The key was changed by the administrator"));
-
-        msgBox.moveToThread( QApplication::instance()->thread());
-        QCoreApplication::postEvent(&msgBox, new QEvent( QEvent::User));
+        msgBox.show();
         ok = msgBox.result();
 
         if (ok == false)
@@ -311,6 +306,7 @@ VpnInfo::VpnInfo(QString name, class StoredServer *ss, class MainWindow *m)
     this->last_err = "";
     this->ss = ss;
     this->m = m;
+    authgroup_set = 0;
     openconnect_set_stats_handler(this->vpninfo, stats_vfn);
     if (ss->get_token_str().isEmpty() == false) {
         openconnect_set_token_callbacks(this->vpninfo, this, lock_token_vfn, unlock_token_vfn);
