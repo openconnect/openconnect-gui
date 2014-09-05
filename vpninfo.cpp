@@ -138,7 +138,7 @@ int process_auth_form(void *privdata, struct oc_auth_form *form)
         } else if (opt->type == OC_FORM_OPT_TEXT) {
             if (vpn->ss->get_username().isEmpty() == false && strcmp(opt->name, "username") == 0) {
                 opt->value = openconnect_strdup(vpn->ss->get_username().toAscii().data());
-                return OC_FORM_RESULT_OK;
+                continue;
             }
 
             do {
@@ -158,7 +158,7 @@ int process_auth_form(void *privdata, struct oc_auth_form *form)
         } else if (opt->type == OC_FORM_OPT_PASSWORD) {
             if (vpn->ss->get_password().isEmpty() == false && strcmp(opt->name, "password") == 0) {
                 opt->value = openconnect_strdup(vpn->ss->get_password().toAscii().data());
-                return OC_FORM_RESULT_OK;
+                continue;
             }
 
             do {
