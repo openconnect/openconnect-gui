@@ -81,7 +81,7 @@ int process_auth_form(void *privdata, struct oc_auth_form *form)
         return -1;
     }
 
-    if (form->authgroup_opt && vpn->authgroup_set == 0) {
+    if (form->authgroup_opt) {
         struct oc_form_opt_select *select_opt = form->authgroup_opt;
 
         for (i = 0; i < select_opt->nr_choices; i++) {
@@ -91,22 +91,23 @@ int process_auth_form(void *privdata, struct oc_auth_form *form)
         /* if the configured exists */
         if (gitems.contains(vpn->ss->get_groupname())) {
             select_opt->form.value = openconnect_strdup(vpn->ss->get_groupname().toAscii().data());
-            vpn->authgroup_set = 1;
+        } else {
+            {
+                MyInputDialog dialog(vpn->m, QLatin1String(select_opt->form.name), QLatin1String(select_opt->form.label), gitems);
+                dialog.show();
+                ok = dialog.result(text);
+	    }
+
+            if (!ok) goto fail;
+
+            vpn->ss->set_groupname(text);
+            select_opt->form.value = openconnect_strdup(text.toAscii().data());
+	}
+
+        if (vpn->authgroup_set == 0) {
+	    vpn->authgroup_set = 1;
             return OC_FORM_RESULT_NEWGROUP;
-        }
-
-        {
-            MyInputDialog dialog(vpn->m, QLatin1String(select_opt->form.name), QLatin1String(select_opt->form.label), gitems);
-            dialog.show();
-            ok = dialog.result(text);
-        }
-
-        if (!ok) goto fail;
-
-        vpn->ss->set_groupname(text);
-        select_opt->form.value = openconnect_strdup(text.toAscii().data());
-        vpn->authgroup_set = 1;
-        return OC_FORM_RESULT_NEWGROUP;
+	}
     }
 
     for (opt = form->opts; opt; opt = opt->next) {
@@ -118,8 +119,9 @@ int process_auth_form(void *privdata, struct oc_auth_form *form)
             QStringList items;
             struct oc_form_opt_select *select_opt = reinterpret_cast<oc_form_opt_select*>(opt);
 
-            if (select_opt == form->authgroup_opt)
+            if (select_opt == form->authgroup_opt) {
                 continue;
+	    }
 
             for (i = 0; i < select_opt->nr_choices; i++) {
                 items << select_opt->choices[i]->label;
