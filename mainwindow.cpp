@@ -356,9 +356,13 @@ void MainWindow::on_connectBtn_clicked()
 
 void MainWindow::on_toolButton_clicked()
 {
+    int idx;
     EditDialog dialog(ui->comboBox->currentText(), this->settings);
     dialog.exec();
+    idx = ui->comboBox->currentIndex();
     reload_settings();
+    if (idx < ui->comboBox->maxVisibleItems())
+        ui->comboBox->setCurrentIndex(idx);
 }
 
 void MainWindow::on_toolButton_2_clicked()
