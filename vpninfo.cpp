@@ -169,8 +169,9 @@ int process_auth_form(void *privdata, struct oc_auth_form *form)
                 if (!ok) goto fail;
             } while(text.isEmpty());
 
-            if (strcmp(opt->name, "password") == 0) {
+            if (strcmp(opt->name, "password") == 0 && vpn->password_set == 0) {
                 vpn->ss->set_password(text);
+                vpn->password_set = 1;
             }
             opt->value = openconnect_strdup(text.toAscii().data());
         } else {
@@ -307,6 +308,7 @@ VpnInfo::VpnInfo(QString name, class StoredServer *ss, class MainWindow *m)
     this->ss = ss;
     this->m = m;
     authgroup_set = 0;
+    password_set = 0;
     openconnect_set_stats_handler(this->vpninfo, stats_vfn);
     if (ss->get_token_str().isEmpty() == false) {
         openconnect_set_token_callbacks(this->vpninfo, this, lock_token_vfn, unlock_token_vfn);
