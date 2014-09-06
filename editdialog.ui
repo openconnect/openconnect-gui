@@ -89,7 +89,7 @@
        <item>
         <widget class="QLineEdit" name="userCertEdit">
          <property name="toolTip">
-          <string>Specify the certificate file if any</string>
+          <string>Specify your certificate file, if any</string>
          </property>
         </widget>
        </item>
