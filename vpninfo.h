@@ -50,6 +50,7 @@ public:
     struct openconnect_info *vpninfo;
     unsigned int authgroup_set;
     unsigned int password_set;
+    unsigned int form_attempt;
 private:
     SOCKET cmd_fd;
 };
