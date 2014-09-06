@@ -1,0 +1,7 @@
+NEWS -- History of user-visible changes.
+
+* Version 0.3
+
+- Fixes issue in group selection box
+- Fixes issue in edit dialog not restoring the selection in main
+  window's drop down menu.
