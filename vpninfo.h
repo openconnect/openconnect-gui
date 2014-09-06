@@ -49,6 +49,7 @@ public:
     StoredServer *ss;
     struct openconnect_info *vpninfo;
     unsigned int authgroup_set;
+    unsigned int password_set;
 private:
     SOCKET cmd_fd;
 };
