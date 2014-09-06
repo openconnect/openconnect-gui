@@ -257,6 +257,8 @@ int validate_peer_cert(void *privdata, OPENCONNECT_X509 *cert, const char *reaso
             str = QObject::tr("Could not store certificate: ");
             str += gnutls_strerror(ret);
             vpn->m->updateProgressBar(str);
+        } else {
+            vpn->ss->save();
         }
     }
     return 0;
