@@ -57,6 +57,8 @@ private slots:
 
     void on_tokenClear_clicked();
 
+    void on_toolButton_clicked();
+
 private:
     Ui::EditDialog *ui;
     StoredServer *ss;
