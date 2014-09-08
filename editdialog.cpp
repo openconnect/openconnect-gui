@@ -210,3 +210,9 @@ void EditDialog::on_tokenClear_clicked()
     ui->tokenBox->setCurrentIndex(-1);
     ui->tokenEdit->clear();
 }
+
+void EditDialog::on_toolButton_clicked()
+{
+    ss->clear_groupname();
+    ui->groupnameEdit->clear();
+}

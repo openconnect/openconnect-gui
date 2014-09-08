@@ -68,7 +68,8 @@ int process_auth_form(void *privdata, struct oc_auth_form *form)
     QString text;
     struct oc_form_opt *opt;
     QStringList gitems;
-    int i;
+    QStringList ditems;
+    int i, idx;
 
     if (form->banner)
         vpn->m->updateProgressBar(QLatin1String(form->banner));
@@ -85,7 +86,8 @@ int process_auth_form(void *privdata, struct oc_auth_form *form)
         struct oc_form_opt_select *select_opt = form->authgroup_opt;
 
         for (i = 0; i < select_opt->nr_choices; i++) {
-            gitems << select_opt->choices[i]->label;
+            ditems << select_opt->choices[i]->label;
+            gitems << select_opt->choices[i]->name;
         }
 
         /* if the configured exists */
@@ -93,15 +95,20 @@ int process_auth_form(void *privdata, struct oc_auth_form *form)
             select_opt->form.value = openconnect_strdup(vpn->ss->get_groupname().toAscii().data());
         } else {
             {
-                MyInputDialog dialog(vpn->m, QLatin1String(select_opt->form.name), QLatin1String(select_opt->form.label), gitems);
+                MyInputDialog dialog(vpn->m, QLatin1String(select_opt->form.name), QLatin1String(select_opt->form.label), ditems);
                 dialog.show();
                 ok = dialog.result(text);
 	    }
 
             if (!ok) goto fail;
 
+            idx = ditems.indexOf(text);
+            if (idx == -1)
+            	goto fail;
+
+            select_opt->form.value = openconnect_strdup(select_opt->choices[idx]->name);
+            text = QLatin1String(select_opt->choices[idx]->name);
             vpn->ss->set_groupname(text);
-            select_opt->form.value = openconnect_strdup(text.toAscii().data());
 	}
 
         if (vpn->authgroup_set == 0) {
@@ -135,7 +142,11 @@ int process_auth_form(void *privdata, struct oc_auth_form *form)
 
             if (!ok) goto fail;
 
-            opt->value = openconnect_strdup(text.toAscii().data());
+            idx = ditems.indexOf(text);
+            if (idx == -1)
+            	goto fail;
+
+            opt->value = openconnect_strdup(select_opt->choices[idx]->name);
 
         } else if (opt->type == OC_FORM_OPT_TEXT) {
             if (vpn->form_attempt == 0 && vpn->ss->get_username().isEmpty() == false && strcmp(opt->name, "username") == 0) {

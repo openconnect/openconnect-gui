@@ -6,7 +6,7 @@
 
 QMAKE_CXXFLAGS += -O2 -g
 win32: QMAKE_CXXFLAGS += -IZ:\openconnect-gui\include\ 
-unix: QMAKE_CXXFLAGS += -I/usr/local/include
+#unix: QMAKE_CXXFLAGS += -I/usr/local/include
 
 QT       += core gui network
 
