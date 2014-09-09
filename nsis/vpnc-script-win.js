@@ -21,7 +21,7 @@ function echo(msg)
 	return;
 }
 
-function run(cmd)
+function exec(cmd)
  {
        var s = "";
        log.WriteLine("executing: " + cmd);
@@ -42,15 +42,9 @@ function run(cmd)
        return s;
 }
   
-function exec(cmd)
-{
-       log.WriteLine("executing: " + cmd);
-       ws.Run(cmd, 7, true);
-}
-
 function getDefaultGateway()
 {
-	if (run("route print").match(/0\.0\.0\.0 *(0|128)\.0\.0\.0 *([0-9\.]*)/)) {
+	if (exec("route print").match(/0\.0\.0\.0 *(0|128)\.0\.0\.0 *([0-9\.]*)/)) {
 		return (RegExp.$2);
 	}
 	return ("");
@@ -61,7 +55,7 @@ function waitForInterface() {
 	for (var i = 0; i < 5; i++) {
 		echo("Waiting for interface to come up...");
 		WScript.Sleep(2000);
-		if (run("route print").match(if_route)) {
+		if (exec("route print").match(if_route)) {
 			return true;
 		}
 	}
