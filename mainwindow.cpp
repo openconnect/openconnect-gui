@@ -392,11 +392,12 @@ void MainWindow::on_toolButton_2_clicked()
 
 void MainWindow::on_toolButton_3_clicked()
 {
-    LogDialog dialog(this->log);
+    LogDialog *dialog = new LogDialog(this->log);
 
-    QObject::connect(this, SIGNAL(log_changed(QString)), &dialog, SLOT(append(QString)), Qt::QueuedConnection);
-
-    dialog.exec();
+    QObject::connect(this, SIGNAL(log_changed(QString)), dialog, SLOT(append(QString)), Qt::QueuedConnection);
+    dialog->show();
+    dialog->raise();
+    dialog->activateWindow();
 }
 
 void MainWindow::request_update_stats()
