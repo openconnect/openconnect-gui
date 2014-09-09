@@ -8,13 +8,13 @@
 // --------------------------------------------------------------
 
 var fs = WScript.CreateObject("Scripting.FileSystemObject");
-var tmpdir = fs.GetSpecialFolder(2);
+var tmpdir = fs.GetSpecialFolder(2)+"\\";
 
-if (fs.FileExists(tmpdir + "\\vpnc.log")) {
-	fs.DeleteFile(tmpdir + "\\vpnc.log");
+if (fs.FileExists(tmpdir + "vpnc.log")) {
+	fs.DeleteFile(tmpdir + "vpnc.log");
 }
 
-var log = fs.OpenTextFile(tmpdir + "\\vpnc.log", 8);
+var log = fs.OpenTextFile(tmpdir + "vpnc.log", 8, true);
 
 function echo(msg)
 {
@@ -26,13 +26,13 @@ function run(cmd)
        var s = "";
        log.WriteLine("executing: " + cmd);
 
-       if (fs.FileExists(tmpdir + "\\vpnc.out")) {
-               fs.DeleteFile(tmpdir + "\\vpnc.out");
+       if (fs.FileExists(tmpdir + "vpnc.out")) {
+               fs.DeleteFile(tmpdir + "vpnc.out");
        }
-       ws.Run("cmd.exe /c " +cmd+" > " + tmpdir + "\\vpnc.out", 0, true);
+       ws.Run("cmd.exe /c " +cmd+" > " + tmpdir + "vpnc.out", 0, true);
 
-       if (fs.FileExists(tmpdir + "\\vpnc.out")) {
-               var f = fs.OpenTextFile(tmpdir + "\\vpnc.out", 1);
+       if (fs.FileExists(tmpdir + "vpnc.out")) {
+               var f = fs.OpenTextFile(tmpdir + "vpnc.out", 1);
                if (f) {
                        s = f.ReadAll();
                        log.Write(s);
