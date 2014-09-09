@@ -53,8 +53,16 @@ public:
         return this->servername;
     }
 
+    QString &get_label(void) {
+        return this->label;
+    }
+
     void set_servername(QString name) {
         this->servername = name;
+    }
+
+    void set_label(QString name) {
+        this->label = name;
     }
 
     void set_username(QString username) {
@@ -161,6 +169,7 @@ private:
     QString groupname;
     QString servername;
     QString token_str;
+    QString label;
     int token_type;
     QByteArray server_hash;
     unsigned server_hash_algo;

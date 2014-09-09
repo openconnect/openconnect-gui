@@ -43,7 +43,7 @@ EditDialog::EditDialog(QString server, QSettings *settings, QWidget *parent) :
     QDialog(parent),
     ui(new Ui::EditDialog)
 {
-    QString hash;
+    QString hash, txt;
     ui->setupUi(this);
     int type;
 
@@ -51,6 +51,11 @@ EditDialog::EditDialog(QString server, QSettings *settings, QWidget *parent) :
     this->ss->load(server);
     this->ss->set_window(this);
 
+    txt = ss->get_label();
+    ui->labelEdit->setText(txt);
+    if (txt.isEmpty() == true) {
+        ui->labelEdit->setText(server);
+    }
     ui->groupnameEdit->setText(ss->get_groupname());
     ui->usernameEdit->setText(ss->get_username());
     ui->gatewayEdit->setText(ss->get_servername());
@@ -87,6 +92,14 @@ void EditDialog::on_buttonBox_accepted()
         return;
     }
 
+    if (ui->labelEdit->text().isEmpty() == true) {
+        QMessageBox::information(
+            this,
+            tr(APP_NAME),
+            tr("You need to specify a label for this connection. E.g. 'My company'") );
+        return;
+    }
+
     if (ss->client_is_complete() != true) {
         QMessageBox::information(
             this,
@@ -94,6 +107,7 @@ void EditDialog::on_buttonBox_accepted()
             tr("There is a client certificate specified but no key!") );
         return;
     }
+    ss->set_label(ui->labelEdit->text());
     ss->set_username(ui->usernameEdit->text());
     ss->set_servername(ui->gatewayEdit->text());
     ss->set_batch_mode(ui->batchModeBox->isChecked());
