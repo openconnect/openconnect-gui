@@ -159,8 +159,13 @@ int StoredServer::load(QString &name)
 {
     QByteArray data;
 
-    this->servername = name;
+    this->label = name;
     settings->beginGroup(PREFIX+name);
+
+    this->servername = settings->value("server").toString();
+    if (this->servername.isEmpty() == true)
+        this->servername = name;
+
     this->username = settings->value("username").toString();
     this->batch_mode = settings->value("batch").toBool();
     this->proxy = settings->value("proxy").toBool();
@@ -195,7 +200,7 @@ int StoredServer::save()
     QString empty = "";
     QByteArray data;
 
-    settings->beginGroup(PREFIX+this->servername);
+    settings->beginGroup(PREFIX+this->label);
     settings->setValue("server", this->servername);
     settings->setValue("batch", this->batch_mode);
     settings->setValue("proxy", this->proxy);
