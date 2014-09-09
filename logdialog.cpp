@@ -21,6 +21,7 @@
 #include "logdialog.h"
 #include "ui_logdialog.h"
 #include <QClipboard>
+#include <QMessageBox>
 
 LogDialog::LogDialog(QStringList items, QWidget *parent) :
     QDialog(parent),
@@ -53,4 +54,23 @@ void LogDialog::append(QString item)
 {
     this->text.append(item);
     ui->listWidget->addItem(item);
+}
+
+void LogDialog::on_pushButton_2_clicked()
+{
+    if (this->text.isEmpty() == false) {
+        QMessageBox mbox;
+        int ret;
+
+        mbox.setText(QObject::tr("Are you sure you want to clear the log?"));
+        mbox.setStandardButtons(QMessageBox::Cancel | QMessageBox::Ok);
+        mbox.setDefaultButton(QMessageBox::Cancel);
+        mbox.setButtonText(QMessageBox::Ok, tr("Clear"));
+
+        ret = mbox.exec();
+        if (ret == QMessageBox::Ok) {
+            this->text.clear();
+            ui->listWidget->clear();
+        }
+    }
 }
