@@ -28,6 +28,7 @@ extern "C" {
 #include <QInputDialog>
 #include <dialogs.h>
 #include <QApplication>
+#include <QDir>
 
 static void
 stats_vfn (void *privdata, const struct oc_stats *stats)
@@ -350,7 +351,7 @@ void VpnInfo::parse_url(const char *url)
 int VpnInfo::connect()
 {
     int ret;
-    QString cert_file, key_file;
+    QString cert_file, key_file, tfile;
 
     cert_file = ss->get_cert_file();
     key_file = ss->get_key_file();
@@ -381,6 +382,22 @@ int VpnInfo::connect()
     if (ret != 0) {
         this->last_err = QObject::tr("Error setting up the TUN device");
         return ret;
+    }
+
+    /* now read %temp%\\vpnc.log and post it to our log */
+    tfile = QDir::tempPath() + QLatin1String("\\vpnc.log");
+    QFile file(tfile);
+    if(file.open(QIODevice::ReadOnly)) {
+        QTextStream in(&file);
+
+        while(!in.atEnd()) {
+            QString line = in.readLine();
+            this->m->updateProgressBar(line, false);
+        }
+        file.close();
+        QFile::remove(tfile);
+    } else {
+        this->m->updateProgressBar(QLatin1String("Could not open ") + tfile);
     }
 
     return 0;

@@ -56,6 +56,7 @@ class MainWindow : public QMainWindow
 public:
     explicit MainWindow(QWidget *parent = 0);
     void updateProgressBar(QString str);
+    void updateProgressBar(QString str, bool show);
     void set_settings(QSettings *s);
     void updateStats(const struct oc_stats *stats);
     void reload_settings();
