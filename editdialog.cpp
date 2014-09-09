@@ -96,7 +96,7 @@ void EditDialog::on_buttonBox_accepted()
         QMessageBox::information(
             this,
             tr(APP_NAME),
-            tr("You need to specify a label for this connection. E.g. 'My company'") );
+            tr("You need to specify a name for this connection. E.g. 'My company'") );
         return;
     }
 
