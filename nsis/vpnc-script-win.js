@@ -8,6 +8,13 @@
 // --------------------------------------------------------------
 
 var fs = WScript.CreateObject("Scripting.FileSystemObject");
+var tmpdir = fs.GetSpecialFolder(2);
+
+if (fs.FileExists(tmpdir + "\\vpnc.log")) {
+	fs.DeleteFile(tmpdir + "\\vpnc.log");
+}
+
+var log = fs.OpenTextFile(tmpdir + "\\vpnc.log", 8);
 
 function echo(msg)
 {
@@ -17,23 +24,28 @@ function echo(msg)
 function run(cmd)
  {
        var s = "";
-       if (fs.FileExists("%temp%\\vpnc.out")) {
-               fs.DeleteFile("%temp%\\vpnc.out");
-       }
-       ws.Run("cmd.exe /c " +cmd+" > %temp%\\vpnc.out", 0, true);
+       log.WriteLine("executing: " + cmd);
 
-       if (fs.FileExists("%temp%\\vpnc.out")) {
-               var f = fs.OpenTextFile("%temp%\\vpnc.out", 1);
+       if (fs.FileExists(tmpdir + "\\vpnc.out")) {
+               fs.DeleteFile(tmpdir + "\\vpnc.out");
+       }
+       ws.Run("cmd.exe /c " +cmd+" > " + tmpdir + "\\vpnc.out", 0, true);
+
+       if (fs.FileExists(tmpdir + "\\vpnc.out")) {
+               var f = fs.OpenTextFile(tmpdir + "\\vpnc.out", 1);
                if (f) {
                        s = f.ReadAll();
-               }       f.Close();
+                       log.Write(s);
+                       f.Close();
+	       }
        }
        return s;
 }
   
 function exec(cmd)
 {
-	ws.Run(cmd, 7, true);
+       log.WriteLine("executing: " + cmd);
+       ws.Run(cmd, 7, true);
 }
 
 function getDefaultGateway()
@@ -215,3 +227,4 @@ case "disconnect":
 	exec("route delete " + env("VPNGATEWAY") + " mask 255.255.255.255");
 }
 
+log.Close();
