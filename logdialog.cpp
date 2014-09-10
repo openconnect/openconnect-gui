@@ -69,6 +69,7 @@ void LogDialog::on_pushButton_2_clicked()
 
         ret = mbox.exec();
         if (ret == QMessageBox::Ok) {
+            emit clear_log();
             this->text.clear();
             ui->listWidget->clear();
         }
