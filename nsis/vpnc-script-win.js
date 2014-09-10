@@ -18,7 +18,7 @@ var log = fs.OpenTextFile(tmpdir + "vpnc.log", 8, true);
 
 function echo(msg)
 {
-	return;
+       log.WriteLine(msg);
 }
 
 function exec(cmd)
@@ -98,7 +98,11 @@ case "connect":
 	echo("Internal Netmask: " + env("INTERNAL_IP4_NETMASK"));
 	echo("Internal Gateway: " + internal_gw);
 	echo("Interface: \"" + env("TUNDEV") + "\"");
-	
+
+	// Add direct route for the VPN gateway to avoid routing loops
+	exec("route add " + env("VPNGATEWAY") +
+            " mask 255.255.255.255 " + gw);
+
 	if (env("INTERNAL_IP4_MTU")) {
 	    echo("MTU: " + env("INTERNAL_IP4_MTU"));
 	    exec("netsh interface ipv4 set subinterface \"" + env("TUNDEV") +
@@ -124,10 +128,6 @@ case "connect":
 		exec("netsh interface ip set address \"" + env("TUNDEV") + "\" static " +
 			env("INTERNAL_IP4_ADDRESS") + " " + env("INTERNAL_IP4_NETMASK") + " " + internal_gw + " 1");
 	}
-
-	// Add direct route for the VPN gateway to avoid routing loops
-	exec("route add " + env("VPNGATEWAY") +
-            " mask 255.255.255.255 " + gw);
 
     if (env("INTERNAL_IP4_NBNS")) {
 		var wins = env("INTERNAL_IP4_NBNS").split(/ /);
@@ -217,7 +217,7 @@ case "connect":
 	}
 	break;
 case "disconnect":
-	// Delete direct route for the VPN gateway to avoid
+	// Delete direct route for the VPN gateway
 	exec("route delete " + env("VPNGATEWAY") + " mask 255.255.255.255");
 }
 
