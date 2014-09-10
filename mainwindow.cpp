@@ -175,6 +175,11 @@ void MainWindow::updateProgressBar(QString str, bool show)
     }
 }
 
+void MainWindow::clear_log()
+{
+    this->log.clear();
+}
+
 void MainWindow::blink_ui()
 {
     static unsigned t = 1;
@@ -395,6 +400,7 @@ void MainWindow::on_toolButton_3_clicked()
     LogDialog *dialog = new LogDialog(this->log);
 
     QObject::connect(this, SIGNAL(log_changed(QString)), dialog, SLOT(append(QString)), Qt::QueuedConnection);
+    QObject::connect(dialog, SIGNAL(clear_log(void)), this, SLOT(clear_log(void)), Qt::QueuedConnection);
     dialog->show();
     dialog->raise();
     dialog->activateWindow();

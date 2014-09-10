@@ -46,6 +46,9 @@ private slots:
 
     void on_pushButton_2_clicked();
 
+signals:
+    void clear_log(void);
+
 private:
     Ui::LogDialog *ui;
     QStringList text;

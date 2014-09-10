@@ -82,6 +82,7 @@ private slots:
     void changeStatus(int);
 
     void blink_ui(void);
+    void clear_log(void);
 
     void request_update_stats();
 
