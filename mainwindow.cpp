@@ -28,6 +28,7 @@ extern "C" {
 #include <QMessageBox>
 #include <vpninfo.h>
 #include <storage.h>
+#include <gnutls/gnutls.h>
 #include <QLineEdit>
 #include <QFutureWatcher>
 #include <QtNetwork/QNetworkProxyFactory>
@@ -49,11 +50,14 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     const char *version = openconnect_get_version();
+    QString txt;
 
     ui->setupUi(this);
     this->setWindowTitle(QLatin1String("openconnect "VERSION));
 
-    ui->versionLabel->setText(QLatin1String("Based on libopenconnect ")+QLatin1String(version));
+    txt = QLatin1String("Based on libopenconnect ")+QLatin1String(version);
+    txt += QLatin1String("\nGnuTLS: ")+QLatin1String(gnutls_check_version(NULL));
+    ui->versionLabel->setText(txt);
 
     timer = new QTimer(this);
     blink_timer = new QTimer(this);
