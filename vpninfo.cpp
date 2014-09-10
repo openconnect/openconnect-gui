@@ -421,7 +421,7 @@ void VpnInfo::mainloop()
     int ret;
 
     while(1) {
-        ret = openconnect_mainloop(vpninfo, 30, RECONNECT_INTERVAL_MIN);
+        ret = openconnect_mainloop(vpninfo, 15, RECONNECT_INTERVAL_MIN);
         if (ret != 0) {
             this->last_err = QObject::tr("Disconnected");
             //this->ss->save();
