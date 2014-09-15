@@ -172,11 +172,12 @@ int process_auth_form(void *privdata, struct oc_auth_form *form)
             }
 
             opt->value = openconnect_strdup(text.toAscii().data());
+            vpn->form_attempt++;
 
         } else if (opt->type == OC_FORM_OPT_PASSWORD) {
             vpn->m->updateProgressBar(QLatin1String("Password form: ") + QLatin1String(opt->name));
 
-            if (vpn->form_attempt == 0 && vpn->ss->get_password().isEmpty() == false && strcasecmp(opt->name, "password") == 0) {
+            if (vpn->form_pass_attempt == 0 && vpn->ss->get_password().isEmpty() == false && strcasecmp(opt->name, "password") == 0) {
                 opt->value = openconnect_strdup(vpn->ss->get_password().toAscii().data());
                 continue;
             }
@@ -189,17 +190,17 @@ int process_auth_form(void *privdata, struct oc_auth_form *form)
                 if (!ok) goto fail;
             } while(text.isEmpty());
 
-            if (strcasecmp(opt->name, "password") == 0 && (vpn->password_set == 0 || vpn->form_attempt != 0)) {
+            if (strcasecmp(opt->name, "password") == 0 && (vpn->password_set == 0 || vpn->form_pass_attempt != 0)) {
                 vpn->ss->set_password(text);
                 vpn->password_set = 1;
             }
             opt->value = openconnect_strdup(text.toAscii().data());
+	    vpn->form_pass_attempt++;
         } else {
             vpn->m->updateProgressBar(QLatin1String("unknown type ")+QString::number((int)opt->type));
         }
     }
 
-    vpn->form_attempt++;
     return OC_FORM_RESULT_OK;
  fail:
     return OC_FORM_RESULT_CANCELLED;
@@ -333,6 +334,7 @@ VpnInfo::VpnInfo(QString name, class StoredServer *ss, class MainWindow *m)
     authgroup_set = 0;
     password_set = 0;
     form_attempt = 0;
+    form_pass_attempt = 0;
     openconnect_set_stats_handler(this->vpninfo, stats_vfn);
     if (ss->get_token_str().isEmpty() == false) {
         openconnect_set_token_callbacks(this->vpninfo, this, lock_token_vfn, unlock_token_vfn);
