@@ -75,7 +75,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
 static void term_thread(MainWindow *m, SOCKET *fd)
 {
-    char cmd = OC_CMD_CANCEL;
+    char cmd = OC_CMD_DETACH;
 
     if (*fd != INVALID_SOCKET) {
         int ret = pipe_write(*fd, &cmd, 1);
