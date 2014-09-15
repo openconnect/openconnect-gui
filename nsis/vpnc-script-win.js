@@ -222,3 +222,4 @@ case "disconnect":
 }
 
 log.Close();
+return 0;
