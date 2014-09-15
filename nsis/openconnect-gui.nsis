@@ -98,6 +98,8 @@ section "install"
 	file "icudt52.dll"
 	file "icuin52.dll"
 	file "icuuc52.dll"
+	file "msvcr100.dll"
+	file "msvcp100.dll"
 
 
 	# Add any other files for the install directory (license files, app data, etc) here
@@ -199,6 +201,8 @@ section "uninstall"
 	delete "platforms\qminimal.dll"
 	delete "platforms\qoffscreen.dll"
 	delete "platforms\qwindows.dll"
+	delete "msvcr100.dll"
+	delete "msvcp100.dll"
  
 	# Always delete "uninstaller as the last action
 	delete $INSTDIR\uninstall.exe
