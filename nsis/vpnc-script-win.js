@@ -222,4 +222,4 @@ case "disconnect":
 }
 
 log.Close();
-return 0;
+WScript.Quit(0);
