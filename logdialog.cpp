@@ -38,9 +38,15 @@ LogDialog::~LogDialog()
     delete ui;
 }
 
+void LogDialog::reject()
+{
+    emit clear_logdialog();
+    QDialog::reject();
+}
+
 void LogDialog::on_pushButton_clicked()
 {
-    this->close();
+    this->cancel();
 }
 
 void LogDialog::on_copyButton_clicked()
