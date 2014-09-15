@@ -225,6 +225,7 @@ void MainWindow::changeStatus(int val)
         ui->IPLabel->setText("");
         ui->DNSLabel->setText("");
         ui->IP6Label->setText("");
+	this->updateProgressBar(QObject::tr("Disconnected"));
 
         ui->disconnectBtn->setEnabled(false);
         ui->connectBtn->setEnabled(true);
