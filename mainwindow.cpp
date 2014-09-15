@@ -313,9 +313,7 @@ void MainWindow::on_connectBtn_clicked()
     }
 
     name = ui->comboBox->currentText();
-    if (ss->load(name) == 0) {
-        ss->set_servername(name);
-    }
+    ss->load(name);
 
     /* ss is now deallocated by vpninfo */
     vpninfo = new VpnInfo(tr(APP_STRING), ss, this);
