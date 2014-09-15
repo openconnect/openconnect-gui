@@ -51,6 +51,7 @@ public:
     unsigned int authgroup_set;
     unsigned int password_set;
     unsigned int form_attempt;
+    unsigned int form_pass_attempt;
 private:
     SOCKET cmd_fd;
 };
