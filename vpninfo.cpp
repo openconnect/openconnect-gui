@@ -150,7 +150,7 @@ int process_auth_form(void *privdata, struct oc_auth_form *form)
             opt->value = openconnect_strdup(select_opt->choices[idx]->name);
 
         } else if (opt->type == OC_FORM_OPT_TEXT) {
-            if (vpn->form_attempt == 0 && vpn->ss->get_username().isEmpty() == false && strcmp(opt->name, "username") == 0) {
+            if (vpn->form_attempt == 0 && vpn->ss->get_username().isEmpty() == false && strcasecmp(opt->name, "username") == 0) {
                 opt->value = openconnect_strdup(vpn->ss->get_username().toAscii().data());
                 continue;
             }
@@ -163,14 +163,14 @@ int process_auth_form(void *privdata, struct oc_auth_form *form)
                 if (!ok) goto fail;
             } while(text.isEmpty());
 
-            if (strcmp(opt->name, "username") == 0) {
+            if (strcasecmp(opt->name, "username") == 0) {
                 vpn->ss->set_username(text);
             }
 
             opt->value = openconnect_strdup(text.toAscii().data());
 
         } else if (opt->type == OC_FORM_OPT_PASSWORD) {
-            if (vpn->form_attempt == 0 && vpn->ss->get_password().isEmpty() == false && strcmp(opt->name, "password") == 0) {
+            if (vpn->form_attempt == 0 && vpn->ss->get_password().isEmpty() == false && strcasecmp(opt->name, "password") == 0) {
                 opt->value = openconnect_strdup(vpn->ss->get_password().toAscii().data());
                 continue;
             }
@@ -183,7 +183,7 @@ int process_auth_form(void *privdata, struct oc_auth_form *form)
                 if (!ok) goto fail;
             } while(text.isEmpty());
 
-            if (strcmp(opt->name, "password") == 0 && (vpn->password_set == 0 || vpn->form_attempt != 0)) {
+            if (strcasecmp(opt->name, "password") == 0 && (vpn->password_set == 0 || vpn->form_attempt != 0)) {
                 vpn->ss->set_password(text);
                 vpn->password_set = 1;
             }
