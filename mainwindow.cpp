@@ -377,8 +377,11 @@ void MainWindow::on_toolButton_clicked()
     dialog.exec();
     idx = ui->comboBox->currentIndex();
     reload_settings();
-    if (idx < ui->comboBox->maxVisibleItems())
+    if (idx < ui->comboBox->maxVisibleItems() && idx >= 0) {
         ui->comboBox->setCurrentIndex(idx);
+    } else if (ui->comboBox->maxVisibleItems() == 0) {
+        ui->comboBox->setCurrentIndex(0);
+    }
 }
 
 void MainWindow::on_toolButton_2_clicked()
@@ -400,15 +403,35 @@ void MainWindow::on_toolButton_2_clicked()
     }
 }
 
+static LogDialog *logdialog = NULL;
+void MainWindow::clear_logdialog()
+{
+    logdialog = NULL;
+}
+
+void MainWindow::closeEvent(QCloseEvent *bar)
+{
+    if (logdialog) {
+    	logdialog->close();
+    	logdialog = NULL;
+    }
+}
+
 void MainWindow::on_toolButton_3_clicked()
 {
-    LogDialog *dialog = new LogDialog(this->log);
+    if (logdialog == NULL) {
+    	logdialog = new LogDialog(this->log);
 
-    QObject::connect(this, SIGNAL(log_changed(QString)), dialog, SLOT(append(QString)), Qt::QueuedConnection);
-    QObject::connect(dialog, SIGNAL(clear_log(void)), this, SLOT(clear_log(void)), Qt::QueuedConnection);
-    dialog->show();
-    dialog->raise();
-    dialog->activateWindow();
+    	QObject::connect(this, SIGNAL(log_changed(QString)), logdialog, SLOT(append(QString)), Qt::QueuedConnection);
+        QObject::connect(logdialog, SIGNAL(clear_log(void)), this, SLOT(clear_log(void)), Qt::QueuedConnection);
+        QObject::connect(logdialog, SIGNAL(clear_logdialog(void)), this, SLOT(clear_logdialog(void)), Qt::DirectConnection);
+
+    	logdialog->show();
+    	logdialog->raise();
+    	logdialog->activateWindow();
+    } else {
+        logdialog->raise();
+    }
 }
 
 void MainWindow::request_update_stats()

@@ -36,7 +36,9 @@ public:
 
 private slots:
     void append(QString item);
+    void reject();
     void cancel() {
+        emit clear_logdialog();
         this->close();
     };
 
@@ -48,6 +50,7 @@ private slots:
 
 signals:
     void clear_log(void);
+    void clear_logdialog(void);
 
 private:
     Ui::LogDialog *ui;

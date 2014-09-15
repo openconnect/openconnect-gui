@@ -82,6 +82,7 @@ private slots:
     void changeStatus(int);
 
     void blink_ui(void);
+    void clear_logdialog(void);
     void clear_log(void);
 
     void request_update_stats();
@@ -95,6 +96,7 @@ private slots:
     void on_toolButton_2_clicked();
 
     void on_toolButton_3_clicked();
+    void closeEvent(QCloseEvent *bar);
 
 signals:
     void log_changed(QString val);
