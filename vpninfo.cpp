@@ -127,6 +127,8 @@ int process_auth_form(void *privdata, struct oc_auth_form *form)
             QStringList items;
             struct oc_form_opt_select *select_opt = reinterpret_cast<oc_form_opt_select*>(opt);
 
+            vpn->m->updateProgressBar(QLatin1String("Select form: ") + QLatin1String(opt->name));
+
             if (select_opt == form->authgroup_opt) {
                 continue;
 	    }
@@ -150,6 +152,8 @@ int process_auth_form(void *privdata, struct oc_auth_form *form)
             opt->value = openconnect_strdup(select_opt->choices[idx]->name);
 
         } else if (opt->type == OC_FORM_OPT_TEXT) {
+            vpn->m->updateProgressBar(QLatin1String("Text form: ") + QLatin1String(opt->name));
+
             if (vpn->form_attempt == 0 && vpn->ss->get_username().isEmpty() == false && strcasecmp(opt->name, "username") == 0) {
                 opt->value = openconnect_strdup(vpn->ss->get_username().toAscii().data());
                 continue;
@@ -170,6 +174,8 @@ int process_auth_form(void *privdata, struct oc_auth_form *form)
             opt->value = openconnect_strdup(text.toAscii().data());
 
         } else if (opt->type == OC_FORM_OPT_PASSWORD) {
+            vpn->m->updateProgressBar(QLatin1String("Password form: ") + QLatin1String(opt->name));
+
             if (vpn->form_attempt == 0 && vpn->ss->get_password().isEmpty() == false && strcasecmp(opt->name, "password") == 0) {
                 opt->value = openconnect_strdup(vpn->ss->get_password().toAscii().data());
                 continue;
