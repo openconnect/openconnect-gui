@@ -5,5 +5,4 @@ moc_*.cpp
 qrc_*.cpp
 ui_*.h
 qconnect
-*.dll
 *.exe
