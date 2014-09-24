@@ -68,7 +68,7 @@ int Cert::import(QByteArray data)
     gnutls_datum_t raw;
 
     if (this->imported != false)
-        return -1;
+        this->clear();
 
     raw.data = (unsigned char*)data.constData();
     raw.size = data.size();
@@ -109,7 +109,7 @@ int Cert::import(QString File)
     gnutls_datum_t contents = {NULL, 0};
 
     if (this->imported != false)
-        return -1;
+        this->clear();
 
 #ifdef ENABLE_PKCS11
     if (File.startsWith("pkcs11:")) {
