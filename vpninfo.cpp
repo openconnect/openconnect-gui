@@ -360,8 +360,10 @@ int VpnInfo::connect()
 {
     int ret;
     QString cert_file, key_file, tfile;
+    QString ca_file;
 
     cert_file = ss->get_cert_file();
+    ca_file = ss->get_ca_cert_file();
     key_file = ss->get_key_file();
 
     if (key_file.isEmpty() == true)
@@ -370,6 +372,10 @@ int VpnInfo::connect()
     if (cert_file.isEmpty() != true) {
         openconnect_set_client_cert(vpninfo, openconnect_strdup(cert_file.toAscii().data()),
                                     openconnect_strdup(key_file.toAscii().data()));
+    }
+
+    if (ca_file.isEmpty() != true) {
+        openconnect_set_cafile(vpninfo, openconnect_strdup(ca_file.toAscii().data()));
     }
 
     openconnect_set_reported_os(vpninfo, "win");
