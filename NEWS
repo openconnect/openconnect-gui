@@ -1,7 +1,18 @@
 NEWS -- History of user-visible changes.
 
-* Version 0.3
+* version 0.5 (unreleased)
+- Enabled CA certificate verification, when the CA certificate is
+  provided.
+- Corrected issue with saving the CA certificate as server certificate.
 
+
+* Version 0.4 (released 2014-09-16)
+- Fixes reading the saved password in batch mode
+- Fixes issue with missing DLLs in some systems
+- Updated vpnc-script-win.js
+
+
+* Version 0.3 (released 2014-09-09)
 - Fixes issue in group selection box
 - Fixes issue in edit dialog not restoring the selection in main
   window's drop down menu.
