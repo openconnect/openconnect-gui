@@ -81,6 +81,7 @@ section "install"
 	file libgmp-10.dll
 	file liboath-0.dll
 	file libgnutls-28.dll
+	file libp11-kit-0.dll
 	file libhogweed-2-5.dll
 	file libnettle-4-7.dll
 	file libopenconnect-3.dll
@@ -183,6 +184,7 @@ section "uninstall"
 	delete "libgcc_s_dw2-1.dll"
 	delete "libgcc_s_sjlj-1.dll"
 	delete "libgmp-10.dll"
+	delete libp11-kit-0.dll
 	delete "libgnutls-28.dll"
 	delete "libhogweed-2-5.dll"
 	delete "libnettle-4-7.dll"
