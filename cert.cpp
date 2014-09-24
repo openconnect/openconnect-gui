@@ -88,10 +88,11 @@ int Cert::data_export(QByteArray &data)
     int ret;
     gnutls_datum_t raw;
 
+    data.clear();
+
     if (this->imported != true)
         return -1;
 
-    data.clear();
     ret = gnutls_x509_crt_export2(this->crt, GNUTLS_X509_FMT_PEM, &raw);
     if (ret < 0) {
         this->last_err = gnutls_strerror(ret);

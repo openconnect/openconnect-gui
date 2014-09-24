@@ -103,10 +103,11 @@ int Key::data_export(QByteArray &data)
     int ret;
     gnutls_datum_t raw;
 
+    data.clear();
+
     if (imported == false)
         return -1;
 
-    data.clear();
     if (this->url.isEmpty() == false) {
         /* export the URL */
         data.append(this->url);
