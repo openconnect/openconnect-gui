@@ -75,6 +75,7 @@ section "install"
 	# Files added here should be removed by the uninstaller (see section "uninstall")
 	file tap-windows.exe
 	file tap-windows-xp.exe
+	file vcredist_x86.exe
 	file "../logo64.ico"
 	file libgcc_s_dw2-1.dll
 	file libgcc_s_sjlj-1.dll
@@ -99,8 +100,6 @@ section "install"
 	file "icudt52.dll"
 	file "icuin52.dll"
 	file "icuuc52.dll"
-	file "msvcr100.dll"
-	file "msvcp100.dll"
 
 
 	# Add any other files for the install directory (license files, app data, etc) here
@@ -132,6 +131,8 @@ section "install"
 	WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${APPNAME}" "NoRepair" 1
 	# Set the INSTALLSIZE constant (!defined at the top of this script) so Add/Remove Programs can accurately report the size
 	#WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${APPNAME}" "EstimatedSize" ${INSTALLSIZE}
+
+	ExecWait '"$INSTDIR\vcredist_x86.exe"  /passive /norestart'
 sectionEnd
 
 Section Required
@@ -176,6 +177,7 @@ section "uninstall"
 	# Remove files
 	delete "tap-windows.exe"
 	delete "tap-windows-xp.exe"
+	delete vcredist_x86.exe
 	delete "logo64.ico"
 	delete "icudt52.dll"
 	delete "icuin52.dll"
@@ -203,8 +205,6 @@ section "uninstall"
 	delete "platforms\qminimal.dll"
 	delete "platforms\qoffscreen.dll"
 	delete "platforms\qwindows.dll"
-	delete "msvcr100.dll"
-	delete "msvcp100.dll"
  
 	# Always delete "uninstaller as the last action
 	delete $INSTDIR\uninstall.exe
