@@ -23,7 +23,7 @@
 #include <iostream>
 #include <QTranslator>
 
-#define VERSION "0.4"
+#define VERSION "0.5"
 #define APP_NAME "openconnect-gui"
 #define APP_STRING APP_NAME" "VERSION
 
