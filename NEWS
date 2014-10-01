@@ -1,6 +1,6 @@
 NEWS -- History of user-visible changes.
 
-* version 0.5 (unreleased)
+* version 0.5 (released 2014-10-01)
 - Enabled CA certificate verification, when the CA certificate is
   provided.
 - Corrected issue with saving the CA certificate as server certificate.
