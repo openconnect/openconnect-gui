@@ -249,7 +249,6 @@ static void main_loop(VpnInfo *vpninfo, MainWindow *m)
     ret = vpninfo->dtls_connect();
     if (ret != 0) {
         m->updateProgressBar(vpninfo->last_err);
-        goto fail;
     }
 
     vpninfo->get_info(dns, ip, ip6);
