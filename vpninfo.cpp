@@ -214,8 +214,9 @@ int validate_peer_cert(void *privdata, OPENCONNECT_X509 *cert, const char *reaso
     int der_size, ret;
     gnutls_datum_t raw;
     char sha1_hash[41];
-    QString str;
+    QString str, dstr;
     gtdb tdb(vpn->ss);
+    char *details;
     bool save = false;
     bool ok;
 
@@ -237,12 +238,19 @@ int validate_peer_cert(void *privdata, OPENCONNECT_X509 *cert, const char *reaso
 
     ret = gnutls_verify_stored_pubkey(reinterpret_cast<const char*>(&tdb), tdb.tdb, "", "", GNUTLS_CRT_X509, &raw, 0);
 
+    details = openconnect_get_cert_details(vpn->vpninfo, cert);
+    if (details != NULL) {
+      	dstr = QString::fromUtf8(details);
+       	free(details);
+    }
+
     if (ret == GNUTLS_E_NO_CERTIFICATE_FOUND) {
         vpn->m->updateProgressBar(QObject::tr("peer is unknown"));
+
         str = QObject::tr("Host: ") + vpn->ss->get_servername() + QObject::tr("\nSHA1: ") + sha1_hash;
 
-        MyMsgBox msgBox(vpn->m, QObject::tr("You are connecting for the first time to this peer. Is the information provided below accurate?"),
-        			str, QObject::tr("The information is accurate"));
+        MyCertMsgBox msgBox(vpn->m, QObject::tr("You are connecting for the first time to this peer. Is the information provided below accurate?"),
+        			str, QObject::tr("The information is accurate"), dstr);
 	msgBox.show();
         ok = msgBox.result();
 
@@ -254,8 +262,8 @@ int validate_peer_cert(void *privdata, OPENCONNECT_X509 *cert, const char *reaso
         vpn->m->updateProgressBar(QObject::tr("peer's key has changed!"));
         str = QObject::tr("Host: ")+ vpn->ss->get_servername() + QObject::tr("\nSHA1: ") + sha1_hash;
 
-        MyMsgBox msgBox(vpn->m, QObject::tr("This peer is known and associated with a different key. It may be that the server has multiple keys or you are (or were in the past) under attack. Do you want to proceed?"),
-        			str, QObject::tr("The key was changed by the administrator"));
+        MyCertMsgBox msgBox(vpn->m, QObject::tr("This peer is known and associated with a different key. It may be that the server has multiple keys or you are (or were in the past) under attack. Do you want to proceed?"),
+        			str, QObject::tr("The key was changed by the administrator"), dstr);
         msgBox.show();
         ok = msgBox.result();
 

@@ -142,4 +142,75 @@ private:
      QString oktxt;
 };
 
+class MyCertMsgBox:public QObject {
+
+public:
+     MyCertMsgBox(QWidget *w, QString t1, QString t2, QString oktxt, QString details) {
+     	this->w = w;
+     	this->t1 = t1;
+     	this->t2 = t2;
+     	this->oktxt = oktxt;
+     	this->details = details;
+        mutex.lock();
+        this->moveToThread( QApplication::instance()->thread());
+     };
+     ~MyCertMsgBox() {
+        mutex.tryLock();
+        mutex.unlock();
+     }
+     void show() {
+     	QCoreApplication::postEvent(this, new QEvent( QEvent::User));
+     }
+     virtual bool event(QEvent * ev) {
+        res = false;
+        if (ev->type() == QEvent::User) {
+            QMessageBox *msgBox = new QMessageBox(w);
+            int ret;
+
+            msgBox->setText(t1);
+            msgBox->setInformativeText(t2);
+            msgBox->setStandardButtons(QMessageBox::Cancel | QMessageBox::Help | QMessageBox::Ok);
+            msgBox->setDefaultButton(QMessageBox::Cancel);
+            msgBox->setButtonText(QMessageBox::Ok, oktxt);
+            msgBox->setButtonText(QMessageBox::Help, tr("View certificate"));
+
+            do {
+	            ret = msgBox->exec();
+	            if (ret == QMessageBox::Help) {
+	            	QMessageBox helpBox;
+	            	helpBox.setTextInteractionFlags(Qt::TextSelectableByMouse|Qt::TextSelectableByKeyboard|Qt::LinksAccessibleByMouse);
+	            	helpBox.setText(details);
+	            	helpBox.setTextFormat(Qt::PlainText);
+	            	helpBox.setStandardButtons(QMessageBox::Ok);
+	            	helpBox.exec();
+	            }
+	    } while(ret == QMessageBox::Help);
+
+            if (ret == QMessageBox::Cancel)
+                res = false;
+            else
+                res = true;
+
+            delete msgBox;
+            mutex.unlock();
+        }
+        return res;
+    }
+    
+    bool result() {
+        mutex.lock();
+        mutex.unlock();
+        return res;
+    };
+
+private:
+     bool res;
+     QMutex mutex;
+     QWidget *w;
+     QString t1;
+     QString t2;
+     QString oktxt;
+     QString details;
+};
+
 #endif // DIALOGS_H
