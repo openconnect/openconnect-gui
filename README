@@ -1,6 +1,9 @@
 This is the GUI client for openconnect VPN.
 
-This client is in alpha testing phase. It cannot be assumed to provide
+For more information see https://github.com/nmav/openconnect-gui/wiki
+
+
+This client is in beta testing phase. It cannot be assumed to provide
 the required security.
 
 
