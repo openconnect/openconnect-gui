@@ -5,6 +5,8 @@ NEWS -- History of user-visible changes.
   provided.
 - Corrected issue with saving the CA certificate as server certificate.
 - Ship vcredist_x86.exe instead of the needed DLLs
+- Added ability to view a certificate when connecting to a new
+  server.
 
 
 * Version 0.4 (released 2014-09-16)
