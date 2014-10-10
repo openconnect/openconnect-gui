@@ -57,7 +57,5 @@
 # define closesocket close
 # define net_errno errno
 #endif
-#define openconnect_strdup strdup
-
 
 #endif // COMMON_H
