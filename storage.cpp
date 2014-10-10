@@ -169,6 +169,7 @@ int StoredServer::load(QString &name)
     this->username = settings->value("username").toString();
     this->batch_mode = settings->value("batch").toBool();
     this->proxy = settings->value("proxy").toBool();
+    this->disable_udp = settings->value("disable-udp").toBool();
     this->minimize_on_connect = settings->value("minimize-on-connect").toBool();
 
     if (this->batch_mode == true) {
@@ -204,6 +205,7 @@ int StoredServer::save()
     settings->setValue("server", this->servername);
     settings->setValue("batch", this->batch_mode);
     settings->setValue("proxy", this->proxy);
+    settings->setValue("disable-udp", this->disable_udp);
     settings->setValue("minimize-on-connect", this->minimize_on_connect);
     settings->setValue("username", this->username);
 

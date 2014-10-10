@@ -64,6 +64,7 @@ EditDialog::EditDialog(QString server, QSettings *settings, QWidget *parent) :
     ui->batchModeBox->setChecked(ss->get_batch_mode());
     ui->minimizeBox->setChecked(ss->get_minimize());
     ui->proxyBox->setChecked(ss->get_proxy());
+    ui->disableUDP->setChecked(ss->get_disable_udp());
 
     type = ss->get_token_type();
     if (type >= 0) {
@@ -113,6 +114,7 @@ void EditDialog::on_buttonBox_accepted()
     ss->set_batch_mode(ui->batchModeBox->isChecked());
     ss->set_minimize(ui->minimizeBox->isChecked());
     ss->set_proxy(ui->proxyBox->isChecked());
+    ss->set_disable_udp(ui->disableUDP->isChecked());
 
     type = ui->tokenBox->currentIndex();
     if (type != -1 && ui->tokenEdit->text().isEmpty()==false) {
