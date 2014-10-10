@@ -237,14 +237,42 @@ static void main_loop(VpnInfo *vpninfo, MainWindow *m)
 {
     int ret;
     QString ip, ip6, dns;
+    bool retry = false;
+    QString oldpass, oldgroup;
+    bool reset_password = false;
 
     m->vpn_status_changed(STATUS_CONNECTING);
 
-    ret = vpninfo->connect();
-    if (ret != 0) {
-        m->updateProgressBar(vpninfo->last_err);
-        goto fail;
-    }
+    do {
+    	retry = false;
+        ret = vpninfo->connect();
+        if (ret != 0) {
+        if (vpninfo->ss->get_password().isEmpty() != true) {
+        	/* authentication failed in batch mode? switch to non
+        	 * batch and retry */
+        	oldpass = vpninfo->ss->get_password();
+        	oldgroup = vpninfo->ss->get_groupname();
+        	vpninfo->ss->clear_password();
+        	vpninfo->ss->clear_groupname();
+	        retry = true;
+	        reset_password = true;
+		m->updateProgressBar(QObject::tr("Authentication failed in batch mode, retrying with batch mode disabled"));
+	        openconnect_reset_ssl(vpninfo->vpninfo);
+	        continue;
+	    }
+
+	    /* if we didn't manage to connect on a retry, the failure reason
+	     * may not have been a changed password, reset it */
+	    if (reset_password == true) {
+	    	vpninfo->ss->set_password(oldpass);
+	    	vpninfo->ss->set_groupname(oldgroup);
+	    }
+
+	    m->updateProgressBar(vpninfo->last_err);
+	    goto fail;
+	}
+    } while(retry == true);
+
 
     ret = vpninfo->dtls_connect();
     if (ret != 0) {
