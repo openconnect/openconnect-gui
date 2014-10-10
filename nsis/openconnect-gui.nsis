@@ -81,6 +81,7 @@ section "install"
 	file libgcc_s_sjlj-1.dll
 	file libgmp-10.dll
 	file liboath-0.dll
+	file libstoken-1.dll
 	file libgnutls-28.dll
 	file libp11-kit-0.dll
 	file libhogweed-2-5.dll
@@ -183,6 +184,7 @@ section "uninstall"
 	delete "icuin52.dll"
 	delete "icuuc52.dll"
 	delete liboath-0.dll
+	delete libstoken-1.dll
 	delete "libgcc_s_dw2-1.dll"
 	delete "libgcc_s_sjlj-1.dll"
 	delete "libgmp-10.dll"
