@@ -76,6 +76,9 @@ public:
     void set_groupname(QString & groupname) {
         this->groupname = groupname;
     }
+    void set_disable_udp(bool v) {
+        this->disable_udp = v;
+    }
 
     QString get_cert_file();
     QString get_key_file();
@@ -141,6 +144,10 @@ public:
         return this->token_type;
     }
 
+    bool get_disable_udp() {
+        return this->disable_udp;
+    }
+
     void set_token_type(int type) {
         this->token_type = type;
     }
@@ -164,6 +171,7 @@ private:
     bool batch_mode;
     bool minimize_on_connect;
     bool proxy;
+    bool disable_udp;
     QString username;
     QString password;
     QString groupname;

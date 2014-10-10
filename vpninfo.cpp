@@ -429,10 +429,12 @@ int VpnInfo::dtls_connect()
 {
     int ret;
 
-    ret = openconnect_setup_dtls(vpninfo, 60);
-    if (ret != 0) {
-        this->last_err = QObject::tr("Error setting up DTLS");
-        return ret;
+    if (this->ss->get_disable_udp() != true) {
+        ret = openconnect_setup_dtls(vpninfo, 60);
+        if (ret != 0) {
+            this->last_err = QObject::tr("Error setting up DTLS");
+            return ret;
+        }
     }
 
     return 0;

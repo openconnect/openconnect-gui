@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>381</width>
-    <height>438</height>
+    <width>375</width>
+    <height>427</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -32,6 +32,20 @@
      <property name="fieldGrowthPolicy">
       <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
      </property>
+     <item row="1" column="0">
+      <widget class="QLabel" name="label_11">
+       <property name="text">
+        <string>Name</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="1">
+      <widget class="QLineEdit" name="labelEdit">
+       <property name="toolTip">
+        <string>This is a friendly name to distinguish the connection</string>
+       </property>
+      </widget>
+     </item>
      <item row="2" column="0">
       <widget class="QLabel" name="label">
        <property name="text">
@@ -78,6 +92,28 @@
         <string>Groupname</string>
        </property>
       </widget>
+     </item>
+     <item row="6" column="1">
+      <layout class="QHBoxLayout" name="horizontalLayout_6">
+       <item>
+        <widget class="QLabel" name="groupnameEdit">
+         <property name="text">
+          <string/>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QToolButton" name="toolButton">
+         <property name="text">
+          <string/>
+         </property>
+         <property name="icon">
+          <iconset resource="resources.qrc">
+           <normaloff>:/new/resource/trashcan.png</normaloff>:/new/resource/trashcan.png</iconset>
+         </property>
+        </widget>
+       </item>
+      </layout>
      </item>
      <item row="9" column="0">
       <widget class="QLabel" name="label_3">
@@ -246,9 +282,12 @@
       </layout>
      </item>
      <item row="17" column="0">
-      <widget class="QLabel" name="label_7">
+      <widget class="QCheckBox" name="minimizeBox">
+       <property name="toolTip">
+        <string>Enable this to automatically minimize after connection</string>
+       </property>
        <property name="text">
-        <string>Batch Mode</string>
+        <string>Minimize on Connect</string>
        </property>
       </widget>
      </item>
@@ -258,52 +297,35 @@
         <string>Enable this to remember passwords for this server</string>
        </property>
        <property name="text">
-        <string/>
+        <string>Batch mode</string>
        </property>
       </widget>
      </item>
      <item row="18" column="0">
-      <widget class="QLabel" name="label_8">
+      <widget class="QCheckBox" name="disableUDP">
        <property name="text">
-        <string>Minimize on Connect</string>
+        <string>Disable UDP</string>
        </property>
       </widget>
      </item>
      <item row="18" column="1">
-      <widget class="QCheckBox" name="minimizeBox">
-       <property name="toolTip">
-        <string>Enable this to automatically minimize after connection</string>
-       </property>
-       <property name="text">
-        <string/>
-       </property>
-      </widget>
-     </item>
-     <item row="19" column="1">
       <widget class="QCheckBox" name="proxyBox">
        <property name="toolTip">
         <string>Enable this to use the system's default proxy settings for this server</string>
        </property>
        <property name="text">
-        <string/>
-       </property>
-      </widget>
-     </item>
-     <item row="19" column="0">
-      <widget class="QLabel" name="label_9">
-       <property name="text">
         <string>Use Proxy</string>
        </property>
       </widget>
      </item>
-     <item row="20" column="0">
+     <item row="19" column="0">
       <widget class="QLabel" name="label_10">
        <property name="text">
         <string>OTP Token</string>
        </property>
       </widget>
      </item>
-     <item row="20" column="1">
+     <item row="19" column="1">
       <layout class="QHBoxLayout" name="horizontalLayout_5">
        <item>
         <widget class="QComboBox" name="tokenBox">
@@ -350,42 +372,6 @@
         </widget>
        </item>
       </layout>
-     </item>
-     <item row="6" column="1">
-      <layout class="QHBoxLayout" name="horizontalLayout_6">
-       <item>
-        <widget class="QLabel" name="groupnameEdit">
-         <property name="text">
-          <string/>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QToolButton" name="toolButton">
-         <property name="text">
-          <string/>
-         </property>
-         <property name="icon">
-          <iconset resource="resources.qrc">
-           <normaloff>:/new/resource/trashcan.png</normaloff>:/new/resource/trashcan.png</iconset>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </item>
-     <item row="1" column="0">
-      <widget class="QLabel" name="label_11">
-       <property name="text">
-        <string>Name</string>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="1">
-      <widget class="QLineEdit" name="labelEdit">
-       <property name="toolTip">
-        <string>This is a friendly name to distinguish the connection</string>
-       </property>
-      </widget>
      </item>
     </layout>
    </item>
