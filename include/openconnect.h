@@ -24,10 +24,18 @@
 #include <sys/types.h>
 #include <unistd.h>
 
-#define OPENCONNECT_API_VERSION_MAJOR 3
-#define OPENCONNECT_API_VERSION_MINOR 4
+#ifdef _WIN32
+#define uid_t unsigned
+#endif
+
+#define OPENCONNECT_API_VERSION_MAJOR 4
+#define OPENCONNECT_API_VERSION_MINOR 0
 
 /*
+ * API version 4.0:
+ *  - Change string handling to never transfer ownership of allocations.
+ *  - Add openconnect_set_option_value()
+ *
  * API version 3.4:
  *  - Add openconnect_set_token_callbacks()
  *
@@ -137,18 +145,21 @@
 #define OC_FORM_OPT_NUMERIC		0x0002
 
 /* char * fields are static (owned by XML parser) and don't need to be
-   freed by the form handling code -- except for value, which for TEXT
-   and PASSWORD options is allocated by process_form() when
-   interacting with the user and must be freed. */
+   freed by the form handling code — except for value, which for TEXT
+   and PASSWORD options is allocated by openconnect_set_option_value()
+   when process_form() interacts with the user and must be freed. */
 struct oc_form_opt {
 	struct oc_form_opt *next;
 	int type;
 	char *name;
 	char *label;
-	char *value;
+	char *_value; /* Use openconnect_set_option_value() to set this */
 	unsigned int flags;
 	void *reserved;
 };
+
+/* To set the value to a form use the following function */
+int openconnect_set_option_value(struct oc_form_opt *opt, const char *value);
 
 /* All fields are static, owned by the XML parser */
 struct oc_choice {
@@ -263,12 +274,9 @@ typedef enum {
    appropriate to do so. Library functions may (but probably don't yet)
    return -EILSEQ if passed invalid UTF-8 strings. */
 
-/* Unless otherwise specified, all functions which set strings will take
-   ownership of those strings and the library will free them later in
-   openconnect_vpninfo_free() */
+/* Unlike previous versions of openconnect, no functions will take ownership
+   of the provided strings. */
 
-/* This function should be used to allocate memory for openconect */
-char *openconnect_strdup(const char *s);
 
 /* The buffer 'buf' must be at least 41 bytes. It will receive a hex string
    with trailing NUL, representing the SHA1 fingerprint of the certificate. */
@@ -283,16 +291,18 @@ int openconnect_get_cert_DER(struct openconnect_info *vpninfo,
 
 /* Contains a comma-separated list of authentication methods to enabled.
    Currently supported: Negotiate,NTLM,Digest,Basic */
-int openconnect_set_proxy_auth(struct openconnect_info *vpninfo, char *methods);
-int openconnect_set_http_proxy(struct openconnect_info *vpninfo, char *proxy);
+int openconnect_set_proxy_auth(struct openconnect_info *vpninfo,
+			       const char *methods);
+int openconnect_set_http_proxy(struct openconnect_info *vpninfo,
+			       const char *proxy);
 int openconnect_passphrase_from_fsid(struct openconnect_info *vpninfo);
 int openconnect_obtain_cookie(struct openconnect_info *vpninfo);
 void openconnect_init_ssl(void);
 
-char *openconnect_get_hostname(struct openconnect_info *);
-void openconnect_set_hostname(struct openconnect_info *, char *);
+const char *openconnect_get_hostname(struct openconnect_info *);
+int openconnect_set_hostname(struct openconnect_info *, const char *);
 char *openconnect_get_urlpath(struct openconnect_info *);
-void openconnect_set_urlpath(struct openconnect_info *, char *);
+int openconnect_set_urlpath(struct openconnect_info *, const char *);
 
 /* Some software tokens, such as HOTP tokens, include a counter which
  * needs to be stored in persistent storage.
@@ -316,24 +326,17 @@ int openconnect_set_token_callbacks(struct openconnect_info *, void *tokdata,
 				    openconnect_lock_token_vfn,
 				    openconnect_unlock_token_vfn);
 
-/* These functions do *not* take ownership of the string; it is parsed
-   and then discarded. */
 int openconnect_set_token_mode(struct openconnect_info *,
 			       oc_token_mode_t, const char *token_str);
 /* Legacy stoken-only function; do not use */
 int openconnect_set_stoken_mode(struct openconnect_info *, int, const char *);
 
-/* This function does *not* take ownership of the string; it's copied
-   into a static buffer in the vpninfo. The size must be 41 bytes,
-   since that's the size of a 20-byte SHA1 represented as hex with
-   a trailing NUL. */
+/* The size must be 41 bytes, since that's the size of a 20-byte SHA1
+   represented as hex with a trailing NUL. */
 void openconnect_set_xmlsha1(struct openconnect_info *, const char *, int size);
 
-void openconnect_set_cafile(struct openconnect_info *, char *);
-#if defined(_WIN32) && !defined(uid_t)
-# define uid_t int
-#endif
-void openconnect_setup_csd(struct openconnect_info *, uid_t, int silent, char *wrapper);
+int openconnect_set_cafile(struct openconnect_info *, const char *);
+int openconnect_setup_csd(struct openconnect_info *, uid_t, int silent, const char *wrapper);
 void openconnect_set_xmlpost(struct openconnect_info *, int enable);
 
 /* Valid choices are: "linux", "linux-64", "win", "mac-intel",
@@ -341,12 +344,13 @@ void openconnect_set_xmlpost(struct openconnect_info *, int enable);
    trojan binary. */
 int openconnect_set_reported_os(struct openconnect_info *, const char *os);
 
-void openconnect_set_mobile_info(struct openconnect_info *vpninfo,
-				 char *mobile_platform_version,
-				 char *mobile_device_type,
-				 char *mobile_device_uniqueid);
-void openconnect_set_client_cert(struct openconnect_info *, char *cert, char *sslkey);
-void openconnect_set_server_cert_sha1(struct openconnect_info *, char *);
+int openconnect_set_mobile_info(struct openconnect_info *vpninfo,
+				const char *mobile_platform_version,
+				const char *mobile_device_type,
+				const char *mobile_device_uniqueid);
+int openconnect_set_client_cert(struct openconnect_info *, const char *cert,
+				const char *sslkey);
+int openconnect_set_server_cert_sha1(struct openconnect_info *, const char *);
 const char *openconnect_get_ifname(struct openconnect_info *);
 void openconnect_set_reqmtu(struct openconnect_info *, int reqmtu);
 void openconnect_set_dpd(struct openconnect_info *, int min_seconds);
@@ -367,11 +371,11 @@ int openconnect_get_ip_info(struct openconnect_info *,
 OPENCONNECT_X509 *openconnect_get_peer_cert(struct openconnect_info *);
 
 int openconnect_get_port(struct openconnect_info *);
-char *openconnect_get_cookie(struct openconnect_info *);
+const char *openconnect_get_cookie(struct openconnect_info *);
 void openconnect_clear_cookie(struct openconnect_info *);
 
 void openconnect_reset_ssl(struct openconnect_info *vpninfo);
-int openconnect_parse_url(struct openconnect_info *vpninfo, char *url);
+int openconnect_parse_url(struct openconnect_info *vpninfo, const char *url);
 void openconnect_set_cert_expiry_warning(struct openconnect_info *vpninfo,
 					 int seconds);
 void openconnect_set_pfs(struct openconnect_info *vpninfo, unsigned val);
@@ -405,10 +409,12 @@ int openconnect_make_cstp_connection(struct openconnect_info *vpninfo);
 
 /* Create a tun device through the OS kernel (typical use case). Both
    strings are optional and can be NULL if desired. */
-int openconnect_setup_tun_device(struct openconnect_info *vpninfo, char *vpnc_script, char *ifname);
+int openconnect_setup_tun_device(struct openconnect_info *vpninfo,
+				 const char *vpnc_script, const char *ifname);
 
 /* Pass traffic to a script program (no tun device). */
-int openconnect_setup_tun_script(struct openconnect_info *vpninfo, char *tun_script);
+int openconnect_setup_tun_script(struct openconnect_info *vpninfo,
+				 const char *tun_script);
 
 #ifdef _WIN32
 /* Caller will provide an overlap-capable handle for the tunnel traffic. */
@@ -448,7 +454,7 @@ typedef int (*openconnect_validate_peer_cert_vfn) (void *privdata,
    not match the SHA1 set with the openconnect_set_xmlsha1() above. If
    they don't match, or openconnect_set_xmlsha1() has not been called,
    then the new XML is downloaded and this function is invoked. */
-typedef int (*openconnect_write_new_config_vfn) (void *privdata, char *buf,
+typedef int (*openconnect_write_new_config_vfn) (void *privdata, const char *buf,
 						int buflen);
 /* Handle an authentication form, requesting input from the user.
  * Return value:
@@ -462,7 +468,7 @@ typedef int (*openconnect_process_auth_form_vfn) (void *privdata,
 typedef void __attribute__ ((format(printf, 3, 4)))
 		(*openconnect_progress_vfn) (void *privdata, int level,
 					    const char *fmt, ...);
-struct openconnect_info *openconnect_vpninfo_new(char *useragent,
+struct openconnect_info *openconnect_vpninfo_new(const char *useragent,
 						 openconnect_validate_peer_cert_vfn,
 						 openconnect_write_new_config_vfn,
 						 openconnect_process_auth_form_vfn,

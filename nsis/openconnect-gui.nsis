@@ -85,7 +85,7 @@ section "install"
 	file libp11-kit-0.dll
 	file libhogweed-2-5.dll
 	file libnettle-4-7.dll
-	file libopenconnect-3.dll
+	file libopenconnect-4.dll
 	file libstdc++-6.dll
 	file libwinpthread-1.dll
 	file libxml2-2.dll
@@ -96,7 +96,7 @@ section "install"
 	file Qt5Network.dll
 	file Qt5Widgets.dll
 	file vpnc-script-win.js
-	file zlib1.dll
+	file libz-1.dll
 	file "icudt52.dll"
 	file "icuin52.dll"
 	file "icuuc52.dll"
@@ -190,7 +190,7 @@ section "uninstall"
 	delete "libgnutls-28.dll"
 	delete "libhogweed-2-5.dll"
 	delete "libnettle-4-7.dll"
-	delete "libopenconnect-3.dll"
+	delete "libopenconnect-4.dll"
 	delete "libstdc++-6.dll"
 	delete "libwinpthread-1.dll"
 	delete "libxml2-2.dll"
@@ -201,7 +201,7 @@ section "uninstall"
 	delete "Qt5Network.dll"
 	delete "Qt5Widgets.dll"
 	delete "vpnc-script-win.js"
-	delete "zlib1.dll"
+	delete "libz-1.dll"
 	delete "platforms\qminimal.dll"
 	delete "platforms\qoffscreen.dll"
 	delete "platforms\qwindows.dll"
