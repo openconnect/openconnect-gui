@@ -2,6 +2,10 @@ NEWS -- History of user-visible changes.
 
 * version 0.6 (unreleased)
 - Fixes interface issue when a DTLS connection fails.
+- Added option to disable UDP/DTLS and use only TCP/TLS.
+- When password authentication fails in batch mode retry
+  by disabling batch mode.
+- Updated the bundled libopenconnect.
 
 
 * version 0.5 (released 2014-10-01)
