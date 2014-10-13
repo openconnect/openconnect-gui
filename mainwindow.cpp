@@ -257,7 +257,7 @@ static void main_loop(VpnInfo *vpninfo, MainWindow *m)
 	        retry = true;
 	        reset_password = true;
 		m->updateProgressBar(QObject::tr("Authentication failed in batch mode, retrying with batch mode disabled"));
-	        openconnect_reset_ssl(vpninfo->vpninfo);
+		vpninfo->reset_vpn();
 	        continue;
 	    }
 
