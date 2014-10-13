@@ -29,6 +29,8 @@ static int token_tab(int mode)
             return 0;
         case OC_TOKEN_MODE_TOTP:
             return 1;
+        case OC_TOKEN_MODE_STOKEN:
+            return 2;
         default:
             return -1;
     }
@@ -36,7 +38,8 @@ static int token_tab(int mode)
 
 int token_rtab[] = {
     [0] = OC_TOKEN_MODE_HOTP,
-    [1] = OC_TOKEN_MODE_TOTP
+    [1] = OC_TOKEN_MODE_TOTP,
+    [2] = OC_TOKEN_MODE_STOKEN
 };
 
 EditDialog::EditDialog(QString server, QSettings *settings, QWidget *parent) :
