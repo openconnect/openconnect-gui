@@ -40,6 +40,13 @@ public:
     SOCKET get_cmd_fd() {
         return cmd_fd;
     }
+    void reset_vpn() {
+        openconnect_reset_ssl(vpninfo);
+        form_pass_attempt = 0;
+        password_set = 0;
+        authgroup_set = 0;
+        form_attempt = 0;
+    }
     bool get_minimize() {
         return ss->get_minimize();
     }
