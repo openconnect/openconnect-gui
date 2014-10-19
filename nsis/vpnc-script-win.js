@@ -34,7 +34,9 @@ function exec(cmd)
        if (fs.FileExists(tmpdir + "vpnc.out")) {
                var f = fs.OpenTextFile(tmpdir + "vpnc.out", 1);
                if (f) {
-                       s = f.ReadAll();
+                      if (!f.AtEndOfStream) {
+                           s = f.ReadAll();
+                       }
                        log.Write(s);
                        f.Close();
 	       }
@@ -66,7 +68,7 @@ function waitForInterface() {
 // Script starts here
 // --------------------------------------------------------------
 
-var internal_ip4_netmask = "255.255.255.0"
+var internal_ip4_netmask = "255.255.255.0";
 
 var ws = WScript.CreateObject("WScript.Shell");
 var env = ws.Environment("Process");
@@ -191,7 +193,7 @@ case "connect":
 	        echo("Configuring Legacy IP networks:");
 	        if (env("INTERNAL_IP6_NETMASK") && !env("INTERNAL_IP6_NETMASK").match("/128$")) {
 			exec("netsh interface ipv6 add route " + env("INTERNAL_IP6_NETMASK") +
-			    " \"" + env("TUNDEV") + "\" fe80::8 store=active")
+			    " \"" + env("TUNDEV") + "\" fe80::8 store=active");
 		}
 
 	        if (env("CISCO_IPV6_SPLIT_INC")) {
@@ -200,7 +202,7 @@ case "connect":
 				var netmasklen = env("CISCO_SPLIT_INC_" + i +
 						 "_MASKLEN");
 				exec("netsh interface ipv6 add route " + network + "/" +
-				    netmasklen + " \"" + env("TUNDEV") + "\" fe80::8 store=active")
+				    netmasklen + " \"" + env("TUNDEV") + "\" fe80::8 store=active");
 			}
 		} else {
 			echo("Setting default IPv6 route through VPN.");
