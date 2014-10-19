@@ -130,8 +130,8 @@ value_to_string(uint64_t bytes)
 
 void MainWindow::statsChanged(QString tx, QString rx)
 {
-    ui->lcdDown->setText(tx);
-    ui->lcdUp->setText(rx);
+    ui->lcdDown->setText(rx);
+    ui->lcdUp->setText(tx);
 }
 
 void MainWindow::updateStats(const struct oc_stats *stats)
