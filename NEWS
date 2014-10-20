@@ -1,5 +1,10 @@
 NEWS -- History of user-visible changes.
 
+* version 0.7 (unreleased)
+- Fixed Download/Upload statistics report.
+- Fixes in vpnc-script-win.js for windows XP.
+
+
 * version 0.6 (released 2014-10-13)
 - Fixes interface issue when a DTLS connection fails.
 - Added option to disable UDP/DTLS and use only TCP/TLS.
