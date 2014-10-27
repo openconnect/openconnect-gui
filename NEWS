@@ -1,6 +1,6 @@
 NEWS -- History of user-visible changes.
 
-* version 0.7 (unreleased)
+* version 0.7 (released 2014-10-27)
 - Fixed Download/Upload statistics report.
 - Fixes in vpnc-script-win.js for windows XP.
 
