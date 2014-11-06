@@ -28,13 +28,23 @@
 #define uid_t unsigned
 #endif
 
-#define OPENCONNECT_API_VERSION_MAJOR 4
+#define OPENCONNECT_API_VERSION_MAJOR 5
 #define OPENCONNECT_API_VERSION_MINOR 0
 
 /*
+ * API version 5.0:
+ *  - Remove OPENCONNECT_X509 and openconnect_get_peer_cert().
+ *  - Change openconnect_get_cert_der() to openconnect_get_peer_cert_DER() etc.
+ *  - Add openconnect_check_peer_cert_hash().
+ *
+ * API version 4.1:
+ *  - Add openconnect_get_cstp_cipher(), openconnect_get_dtls_cipher(),
+ *    openconnect_set_system_trust(), openconnect_set_csd_environ().
+ *  - Change openconnect_init_ssl() to return int.
+ *
  * API version 4.0:
  *  - Change string handling to never transfer ownership of allocations.
- *  - Add openconnect_set_option_value()
+ *  - Add openconnect_set_option_value(), openconnect_free_cert_info().
  *
  * API version 3.4:
  *  - Add openconnect_set_token_callbacks()
@@ -55,7 +65,7 @@
  *    openconnect_get_ifname(), openconnect_set_reqmtu(),
  *    openconnect_get_ip_info(), openconnect_set_protect_socket_handler(),
  *    openconnect_set_mobile_info(), openconnect_set_xmlpost(),
- *    openconnect_set_stats_handler()
+7 *    openconnect_set_stats_handler()
  *
  * API version 3.0:
  *  - Change oc_form_opt_select->choices to an array of pointers
@@ -258,8 +268,6 @@ struct oc_stats {
 
 struct openconnect_info;
 
-#define OPENCONNECT_X509 void
-
 typedef enum {
 	OC_TOKEN_MODE_NONE,
 	OC_TOKEN_MODE_STOKEN,
@@ -278,17 +286,46 @@ typedef enum {
    of the provided strings. */
 
 
-/* The buffer 'buf' must be at least 41 bytes. It will receive a hex string
-   with trailing NUL, representing the SHA1 fingerprint of the certificate. */
-int openconnect_get_cert_sha1(struct openconnect_info *vpninfo,
-			      OPENCONNECT_X509 *cert, char *buf);
-char *openconnect_get_cert_details(struct openconnect_info *vpninfo,
-				   OPENCONNECT_X509 *cert);
-/* Returns the length of the created DER output, in a newly-allocated buffer
-   that will need to be freed by the caller. */
-int openconnect_get_cert_DER(struct openconnect_info *vpninfo,
-			     OPENCONNECT_X509 *cert, unsigned char **buf);
+/* Provide environment variables to be set in the CSD trojan environment
+   before spawning it. Some callers may need to set $TMPDIR, $PATH and
+   other such things if not running from a standard UNIX-like environment.
+   To ensure that a variable is unset, pass its name with value==NULL.
+   To clear all settings and allow the CSD trojan to inherit an unmodified
+   environment, call with name==NULL. */
 
+int openconnect_set_csd_environ(struct openconnect_info *vpninfo,
+				const char *name, const char *value);
+
+/* This string is static, valid only while the connection lasts. If you
+ * are going to cache this to remember which certs the user has accepted,
+ * make sure you also store the host/port for which it was accepted and
+ * don't just accept this cert from *anywhere*. Also use use the check
+ * function below instead of manually comparing. When this function
+ * returns a string which *doesn't* match the previously-stored hash
+ * matched with openconnect_check_peer_cert_hash(), you should store
+ * the new result from this function in place of the old. It means
+ * we have upgraded to a better hash function. */
+const char *openconnect_get_peer_cert_hash(struct openconnect_info *vpninfo);
+
+/* Check if the current peer certificate matches a hash previously
+ * obtained from openconect_get_peer_cert_hash(). Clients should not
+ * attempt to do this using strcmp() and the *current* result of
+ * openconnect_get_peer_cert_hash() because it might use
+ * a different hash function today. This function will get it right.
+ * Returns 0 on match; 1 on mismatch, -errno on failure. */
+int openconnect_check_peer_cert_hash(struct openconnect_info *vpninfo,
+				     const char *old_hash);
+
+/* The buffers returned by these two functions must be freed with
+   openconnect_free_cert_info(), especially on Windows. */
+char *openconnect_get_peer_cert_details(struct openconnect_info *vpninfo);
+
+/* Returns the length of the created DER output, in a newly-allocated buffer
+   that will need to be freed by openconnect_free_cert_info(). */
+int openconnect_get_peer_cert_DER(struct openconnect_info *vpninfo,
+				  unsigned char **buf);
+void openconnect_free_cert_info(struct openconnect_info *vpninfo,
+				void *buf);
 /* Contains a comma-separated list of authentication methods to enabled.
    Currently supported: Negotiate,NTLM,Digest,Basic */
 int openconnect_set_proxy_auth(struct openconnect_info *vpninfo,
@@ -297,7 +334,15 @@ int openconnect_set_http_proxy(struct openconnect_info *vpninfo,
 			       const char *proxy);
 int openconnect_passphrase_from_fsid(struct openconnect_info *vpninfo);
 int openconnect_obtain_cookie(struct openconnect_info *vpninfo);
-void openconnect_init_ssl(void);
+int openconnect_init_ssl(void);
+
+/* These are strictly cosmetic. The strings differ depending on
+ * whether OpenSSL or GnuTLS is being used. And even depending on the
+ * version of GnuTLS. Do *not* attempt to do anything meaningful based
+ * on matching these strings; if you want to do something like that then
+ * ask for an API that *does* offer you what you need. */
+const char *openconnect_get_cstp_cipher(struct openconnect_info *);
+const char *openconnect_get_dtls_cipher(struct openconnect_info *);
 
 const char *openconnect_get_hostname(struct openconnect_info *);
 int openconnect_set_hostname(struct openconnect_info *, const char *);
@@ -336,6 +381,14 @@ int openconnect_set_stoken_mode(struct openconnect_info *, int, const char *);
 void openconnect_set_xmlsha1(struct openconnect_info *, const char *, int size);
 
 int openconnect_set_cafile(struct openconnect_info *, const char *);
+
+/* call this function to disable the system trust from being used to
+ * verify the server certificate. @val is a boolean value.
+ *
+ * For backwards compatibility reasons this is enabled by default.
+ */
+void openconnect_set_system_trust(struct openconnect_info *vpninfo, unsigned val);
+
 int openconnect_setup_csd(struct openconnect_info *, uid_t, int silent, const char *wrapper);
 void openconnect_set_xmlpost(struct openconnect_info *, int enable);
 
@@ -363,12 +416,6 @@ int openconnect_get_ip_info(struct openconnect_info *,
 			    const struct oc_ip_info **info,
 			    const struct oc_vpn_option **cstp_options,
 			    const struct oc_vpn_option **dtls_options);
-
-/* This is *not* yours and must not be destroyed with X509_free(). It
-   will be valid when a cookie has been obtained successfully, and will
-   be valid until the connection is destroyed or another attempt it made
-   to use it. */
-OPENCONNECT_X509 *openconnect_get_peer_cert(struct openconnect_info *);
 
 int openconnect_get_port(struct openconnect_info *);
 const char *openconnect_get_cookie(struct openconnect_info *);
@@ -445,7 +492,6 @@ int openconnect_mainloop(struct openconnect_info *vpninfo,
    if the certificate is (or has in the past been) explicitly accepted
    by the user, and non-zero to abort the connection. */
 typedef int (*openconnect_validate_peer_cert_vfn) (void *privdata,
-						   OPENCONNECT_X509 *cert,
 						   const char *reason);
 /* On a successful connection, the server may provide us with a new XML
    configuration file. This contains the list of servers that can be
