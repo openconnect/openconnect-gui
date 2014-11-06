@@ -155,6 +155,60 @@ void StoredServer::get_server_hash(QString & hash)
     }
 }
 
+#ifdef _WIN32
+
+# include <dpapi.h>
+static QByteArray encode(QString txt, QString password)
+{
+    BOOL r;
+    DATA_BLOB DataIn;
+    DATA_BLOB Opt;
+    DATA_BLOB DataOut;
+    QByteArray res;
+
+    DataIn.pbData = password.toAscii().data();
+    DataIn.cbData = password.toAscii().size();
+
+    Opt.pbData = txt.toAscii().data();
+    Opt.cbData = txt.toAscii().size();
+
+    r = CryptProtectData(&DataIn, NULL, &Opt, NULL, NULL, 0, &DataOut);
+    if (r == false)
+        return res;
+
+    res.setRawData(DataOut.pbData, DataOut.cbData);
+    return res.toBase64();
+}
+
+static QString decode(QString txt, QByteArray _enc)
+{
+    BOOL r;
+    DATA_BLOB DataIn;
+    DATA_BLOB Opt;
+    DATA_BLOB DataOut;
+    QString res;
+
+    enc = QByteArray::fromBase64(_enc);
+
+    DataIn.pbData = enc.data();
+    DataIn.cbData = enc.size();
+
+    Opt.pbData = txt.toAscii().data();
+    Opt.cbData = txt.toAscii().size();
+
+    r = CryptUnprotectData(&DataIn, NULL, &Opt, NULL, NULL, 0, &DataOut);
+    if (r == false)
+        return res;
+
+    res.fromLocal8Bit(DataOut.pbData, DataOut.cbData);
+    return res;
+}
+
+#else
+# define encode(x,y) y
+# define decode(x,y) y
+#endif
+
 int StoredServer::load(QString &name)
 {
     QByteArray data;
@@ -174,7 +228,7 @@ int StoredServer::load(QString &name)
 
     if (this->batch_mode == true) {
         this->groupname = settings->value("groupname").toString();
-        this->password = settings->value("password").toString();
+        this->password = decode(this->servername, settings->value("password").toString());
     }
 
     data = settings->value("ca-cert").toByteArray();
@@ -209,8 +263,10 @@ int StoredServer::save()
     settings->setValue("minimize-on-connect", this->minimize_on_connect);
     settings->setValue("username", this->username);
 
+
+
     if (this->batch_mode == true) {
-        settings->setValue("password", this->password);
+        settings->setValue("password", encode(this->servername, this->password));
         settings->setValue("groupname", this->groupname);
     }
 
