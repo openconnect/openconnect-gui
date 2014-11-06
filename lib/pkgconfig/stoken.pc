@@ -1,0 +1,11 @@
+prefix=/home/nmavrogi/cvs/openconnect-gui
+exec_prefix=${prefix}
+libdir=/home/nmavrogi/cvs/openconnect-gui/lib
+includedir=/home/nmavrogi/cvs/openconnect-gui/include
+
+Name: stoken
+Description: Software token
+Version: 0.8
+Requires.private: nettle, hogweed
+Libs: -L${libdir} -lstoken -lnettle -lhogweed -lgmp
+Cflags: -I${includedir}

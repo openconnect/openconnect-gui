@@ -1,0 +1,13 @@
+prefix=/usr/i686-w64-mingw32/sys-root/mingw
+exec_prefix=${prefix}
+libdir=/usr/i686-w64-mingw32/sys-root/mingw/lib
+includedir=/usr/i686-w64-mingw32/sys-root/mingw/include
+
+
+Name: openconnect
+Description: OpenConnect VPN client
+Version: 6.00
+Requires.private:  zlib gnutls    libxml-2.0
+Libs: -L${libdir} -lopenconnect
+Libs.private: 
+Cflags: -I${includedir}

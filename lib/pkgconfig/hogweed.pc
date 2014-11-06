@@ -1,0 +1,18 @@
+prefix=/usr/i686-w64-mingw32/sys-root/mingw
+exec_prefix=${prefix}
+libdir=/usr/i686-w64-mingw32/sys-root/mingw/lib
+includedir=/usr/i686-w64-mingw32/sys-root/mingw/include/
+
+# Uses Requires.private and Libs.private, under the assumption that
+# when using shared libraries, the ELF dependencies from libhogweed.so
+# to nettle and gmp work.
+
+Name: Hogweed
+Description: Nettle low-level cryptographic library (public-key algorithms)
+URL: http://www.lysator.liu.se/~nisse/nettle
+Version: 2.7.1
+Requires.private: nettle
+Libs: -L${libdir} -lhogweed
+Libs.private: -lgmp
+Cflags: -I${includedir}
+
