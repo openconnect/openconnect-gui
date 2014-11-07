@@ -207,28 +207,28 @@ int process_auth_form(void *privdata, struct oc_auth_form *form)
 }
 
 static
-int validate_peer_cert(void *privdata, OPENCONNECT_X509 *cert, const char *reason)
+int validate_peer_cert(void *privdata, const char *reason)
 {
     VpnInfo *vpn = static_cast<VpnInfo*>(privdata);
     unsigned char *der;
     int der_size, ret;
     gnutls_datum_t raw;
-    char sha1_hash[41];
+    const char *hash;
     QString str, dstr;
     gtdb tdb(vpn->ss);
     char *details;
     bool save = false;
     bool ok;
 
-    der_size = openconnect_get_cert_DER(vpn->vpninfo,
-                                        cert, &der);
+    der_size = openconnect_get_peer_cert_DER(vpn->vpninfo,
+                                             &der);
     if (der_size <= 0) {
         vpn->m->updateProgressBar(QObject::tr("Peer's certificate has invalid size!"));
         return -1;
     }
 
-    ret = openconnect_get_cert_sha1(vpn->vpninfo, cert, sha1_hash);
-    if (ret != 0) {
+    hash = openconnect_get_peer_cert_hash(vpn->vpninfo);
+    if (hash == 0) {
         vpn->m->updateProgressBar(QObject::tr("Error getting peer's certificate hash"));
         return -1;
     }
@@ -238,7 +238,7 @@ int validate_peer_cert(void *privdata, OPENCONNECT_X509 *cert, const char *reaso
 
     ret = gnutls_verify_stored_pubkey(reinterpret_cast<const char*>(&tdb), tdb.tdb, "", "", GNUTLS_CRT_X509, &raw, 0);
 
-    details = openconnect_get_cert_details(vpn->vpninfo, cert);
+    details = openconnect_get_peer_cert_details(vpn->vpninfo);
     if (details != NULL) {
       	dstr = QString::fromUtf8(details);
        	free(details);
@@ -247,7 +247,7 @@ int validate_peer_cert(void *privdata, OPENCONNECT_X509 *cert, const char *reaso
     if (ret == GNUTLS_E_NO_CERTIFICATE_FOUND) {
         vpn->m->updateProgressBar(QObject::tr("peer is unknown"));
 
-        str = QObject::tr("Host: ") + vpn->ss->get_servername() + QObject::tr("\nSHA1: ") + sha1_hash;
+        str = QObject::tr("Host: ") + vpn->ss->get_servername() + QObject::tr("\n") + hash;
 
         MyCertMsgBox msgBox(vpn->m, QObject::tr("You are connecting for the first time to this peer. Is the information provided below accurate?"),
         			str, QObject::tr("The information is accurate"), dstr);
@@ -260,7 +260,7 @@ int validate_peer_cert(void *privdata, OPENCONNECT_X509 *cert, const char *reaso
         save = true;
     } else if (ret == GNUTLS_E_CERTIFICATE_KEY_MISMATCH) {
         vpn->m->updateProgressBar(QObject::tr("peer's key has changed!"));
-        str = QObject::tr("Host: ")+ vpn->ss->get_servername() + QObject::tr("\nSHA1: ") + sha1_hash;
+        str = QObject::tr("Host: ")+ vpn->ss->get_servername() + QObject::tr("\n") + hash;
 
         MyCertMsgBox msgBox(vpn->m, QObject::tr("This peer is known and associated with a different key. It may be that the server has multiple keys or you are (or were in the past) under attack. Do you want to proceed?"),
         			str, QObject::tr("The key was changed by the administrator"), dstr);
@@ -383,6 +383,7 @@ int VpnInfo::connect()
     }
 
     if (ca_file.isEmpty() != true) {
+        openconnect_set_system_trust(vpninfo, 0);
         openconnect_set_cafile(vpninfo, ca_file.toAscii().data());
     }
 

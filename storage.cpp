@@ -155,7 +155,7 @@ void StoredServer::get_server_hash(QString & hash)
     }
 }
 
-#ifdef _WIN32
+#if defined(_WIN32) && !defined(WINDOWS_XP_TOO)
 
 # include <dpapi.h>
 static QByteArray encode(QString txt, QString password)

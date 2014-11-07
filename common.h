@@ -58,4 +58,6 @@
 # define net_errno errno
 #endif
 
+#define WINDOWS_XP_TOO
+
 #endif // COMMON_H
