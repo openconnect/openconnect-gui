@@ -26,7 +26,8 @@ SOURCES += main.cpp\
     key.cpp \
     cert.cpp \
     logdialog.cpp \
-    gtdb.cpp
+    gtdb.cpp \
+    cryptdata.cpp
 
 HEADERS  += mainwindow.h \
     vpninfo.h \
@@ -38,7 +39,8 @@ HEADERS  += mainwindow.h \
     cert.h \
     logdialog.h \
     gtdb.h \
-    dialogs.h
+    dialogs.h \
+    cryptdata.h
 
 FORMS    += mainwindow.ui \
     editdialog.ui \
