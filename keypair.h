@@ -30,7 +30,9 @@ public:
     ~KeyPair();
 
     /* functions return zero on success */
-    int import(QString File);
+    int import_pfx(QString File);
+    int import_cert(QString File);
+    int import_key(QString File);
     void set_window(QWidget * w) {
         this->w = w;
         key.set_window(w);

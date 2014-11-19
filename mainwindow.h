@@ -76,6 +76,9 @@ public:
         emit vpn_status_changed_sig(connected);
     };
 
+    QStringList *get_log(void) {
+        return &this->log;
+    }
 private slots:
     void statsChanged(QString, QString);
     void writeProgressBar(QString str);

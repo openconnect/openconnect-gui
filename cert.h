@@ -35,7 +35,8 @@ public:
     int import(QByteArray data);
     void set(gnutls_x509_crt_t crt) {
         this->crt = crt;
-    };
+        this->imported = true;
+    }
 
     int data_export(QByteArray &data);
     int tmpfile_export(QString &File);
@@ -45,7 +46,7 @@ public:
         if (imported != false)
             return true;
         return false;
-    };
+    }
     void clear();
 
     Cert();
