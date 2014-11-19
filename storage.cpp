@@ -19,6 +19,8 @@
 
 #include <storage.h>
 #include <stdio.h>
+#include <cryptdata.h>
+
 StoredServer::~StoredServer(void)
 {
 
@@ -169,64 +171,6 @@ void StoredServer::get_server_hash(QString & hash)
     }
 }
 
-#if 0
-
-//# include <dpapi.h>
-WINBOOL WINAPI CryptProtectData (DATA_BLOB *pDataIn, LPCWSTR szDataDescr, DATA_BLOB *pOptionalEntropy, PVOID pvReserved, CRYPTPROTECT_PROMPTSTRUCT *pPromptStruct, DWORD dwFlags, DATA_BLOB *pDataOut);
-WINBOOL WINAPI CryptUnprotectData (DATA_BLOB *pDataIn, LPWSTR *ppszDataDescr, DATA_BLOB *pOptionalEntropy, PVOID pvReserved, CRYPTPROTECT_PROMPTSTRUCT *pPromptStruct, DWORD dwFlags, DATA_BLOB *pDataOut);
-
-static QByteArray encode(QString txt, QString password)
-{
-    BOOL r;
-    DATA_BLOB DataIn;
-    DATA_BLOB Opt;
-    DATA_BLOB DataOut;
-    QByteArray res;
-
-    DataIn.pbData = (BYTE*)password.toAscii().data();
-    DataIn.cbData = password.toAscii().size();
-
-    Opt.pbData = (BYTE*)txt.toAscii().data();
-    Opt.cbData = txt.toAscii().size();
-
-    r = CryptProtectData(&DataIn, NULL, &Opt, NULL, NULL, 0, &DataOut);
-    if (r == false)
-        return res;
-
-    res.setRawData((const char*)DataOut.pbData, DataOut.cbData);
-    return res.toBase64();
-}
-
-static QString decode(QString txt, QByteArray _enc)
-{
-    BOOL r;
-    DATA_BLOB DataIn;
-    DATA_BLOB Opt;
-    DATA_BLOB DataOut;
-    QByteArray enc;
-    QString res;
-
-    enc = QByteArray::fromBase64(_enc);
-
-    DataIn.pbData = (BYTE*)enc.data();
-    DataIn.cbData = enc.size();
-
-    Opt.pbData = (BYTE*)txt.toAscii().data();
-    Opt.cbData = txt.toAscii().size();
-
-    r = CryptUnprotectData(&DataIn, NULL, &Opt, NULL, NULL, 0, &DataOut);
-    if (r == false)
-        return res;
-
-    res.fromLocal8Bit((const char*)DataOut.pbData, DataOut.cbData);
-    return res;
-}
-
-#else
-# define encode(x,y) y
-# define decode(x,y) y
-#endif
-
 int StoredServer::load(QString &name)
 {
     QByteArray data;
@@ -247,7 +191,7 @@ int StoredServer::load(QString &name)
 
     if (this->batch_mode == true) {
         this->groupname = settings->value("groupname").toString();
-        this->password = decode(this->servername, settings->value("password").toString());
+        this->password = CryptData::decode(this->servername, settings->value("password").toString());
     }
 
     data = settings->value("ca-cert").toByteArray();
@@ -288,7 +232,7 @@ int StoredServer::save()
     settings->setValue("username", this->username);
 
     if (this->batch_mode == true) {
-        settings->setValue("password", encode(this->servername, this->password));
+        settings->setValue("password", CryptData::encode(this->servername, this->password));
         settings->setValue("groupname", this->groupname);
     }
 
