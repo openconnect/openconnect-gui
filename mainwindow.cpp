@@ -308,8 +308,8 @@ void MainWindow::on_connectBtn_clicked()
     QFuture<void> future;
     QString name, str, url;
     QList<QNetworkProxy> proxies;
-    QUrl turl("https://" + ss->get_servername());
-    QNetworkProxyQuery query(turl);
+    QUrl turl;
+    QNetworkProxyQuery query;
 
     if (ui->connectBtn->isEnabled() == false) {
         return;
@@ -341,6 +341,8 @@ void MainWindow::on_connectBtn_clicked()
 
     name = ui->comboBox->currentText();
     ss->load(name);
+    turl.setUrl("https://" + ss->get_servername());
+    query.setUrl(turl);
 
     /* ss is now deallocated by vpninfo */
     vpninfo = new VpnInfo(tr(APP_STRING), ss, this);
