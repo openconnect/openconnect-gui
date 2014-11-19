@@ -1,5 +1,11 @@
 NEWS -- History of user-visible changes.
 
+* version 0.8 (unreleased)
+- Fixes issue with Proxy (patch by schenkos)
+- Saved passwords are protected using CryptProtect()
+- Added support for loading certificates from the
+  windows certificate store.
+
 * version 0.7 (released 2014-10-27)
 - Fixed Download/Upload statistics report.
 - Fixes in vpnc-script-win.js for windows XP.
