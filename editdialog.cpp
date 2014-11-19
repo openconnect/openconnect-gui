@@ -17,10 +17,17 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "common.h"
 #include "editdialog.h"
 #include "ui_editdialog.h"
 #include <QMessageBox>
 #include <QFileDialog>
+#include <QListWidget>
+#include <QItemSelectionModel>
+
+#ifdef USE_SYSTEM_KEYS
+# include <gnutls/system-keys.h>
+#endif
 
 static int token_tab(int mode)
 {
@@ -42,6 +49,56 @@ int token_rtab[] = {
     [2] = OC_TOKEN_MODE_STOKEN
 };
 
+void EditDialog::load_win_certs()
+{
+#ifdef USE_SYSTEM_KEYS
+    gnutls_system_key_iter_t iter = NULL;
+    char *label;
+    char *cert_url;
+    char *key_url;
+    int ret, idx = -1;
+    int row = 0;
+    QString prekey = ss->get_key_url();
+
+    if (prekey.isEmpty() == false) {
+        ui->userKeyEdit->setText(prekey);
+    }
+
+    this->winCerts.clear();
+    ui->loadWinCertList->clear();
+
+    do {
+        ret = gnutls_system_key_iter_get_info(&iter, &cert_url, &key_url, &label, NULL, 0);
+        if (ret >= 0) {
+            win_cert_st st;
+            QString l;
+            if (label != NULL)
+                l = QString::fromUtf8(label);
+            else
+                l = QString::fromUtf8(cert_url);
+            ui->loadWinCertList->addItem(l);
+            if (prekey.isEmpty() == false) {
+                if (QString::compare(prekey, QString::fromUtf8(key_url), Qt::CaseSensitive) == 0) {
+                    idx = row;
+                }
+            }
+            row++;
+
+            st.label = l;
+            st.key_url = QString::fromUtf8(key_url);
+            st.cert_url = QString::fromUtf8(cert_url);
+            this->winCerts.push_back(st);
+        }
+    } while(ret >= 0);
+
+    if (idx != -1) {
+        ui->loadWinCertList->setCurrentRow(idx);
+        ui->loadWinCertList->item(idx)->setSelected(true);
+    }
+    gnutls_system_key_iter_deinit(iter);
+#endif
+}
+
 EditDialog::EditDialog(QString server, QSettings *settings, QWidget *parent) :
     QDialog(parent),
     ui(new Ui::EditDialog)
@@ -52,6 +109,7 @@ EditDialog::EditDialog(QString server, QSettings *settings, QWidget *parent) :
 
     this->ss = new StoredServer(settings);
     this->ss->load(server);
+
     this->ss->set_window(this);
 
     txt = ss->get_label();
@@ -68,6 +126,9 @@ EditDialog::EditDialog(QString server, QSettings *settings, QWidget *parent) :
     ui->minimizeBox->setChecked(ss->get_minimize());
     ui->proxyBox->setChecked(ss->get_proxy());
     ui->disableUDP->setChecked(ss->get_disable_udp());
+
+    // Load the windows certificates
+    load_win_certs();
 
     type = ss->get_token_type();
     if (type >= 0) {
@@ -87,7 +148,9 @@ EditDialog::~EditDialog()
 
 void EditDialog::on_buttonBox_accepted()
 {
+    QMessageBox mbox;
     int type;
+
     if (ui->gatewayEdit->text().isEmpty() == true) {
         QMessageBox::information(
             this,
@@ -102,6 +165,41 @@ void EditDialog::on_buttonBox_accepted()
             tr(APP_NAME),
             tr("You need to specify a name for this connection. E.g. 'My company'") );
         return;
+    }
+
+    if (ui->caCertEdit->text().isEmpty() == false) {
+        if (ss->set_ca_cert(ui->caCertEdit->text()) != 0) {
+            mbox.setText(tr("Cannot import CA certificate."));
+            if (ss->last_err.isEmpty() == false)
+                mbox.setInformativeText(ss->last_err);
+            mbox.exec();
+            return;
+        } else {
+            ui->caCertHash->setText(ss->get_ca_cert_hash());
+        }
+    }
+
+    if (ui->userKeyEdit->text().isEmpty() == false) {
+        if (ss->set_client_key(ui->userKeyEdit->text()) != 0) {
+            mbox.setText(tr("Cannot import user key."));
+            if (ss->last_err.isEmpty() == false)
+                mbox.setInformativeText(ss->last_err);
+            mbox.exec();
+            return;
+        }
+    }
+
+    if (ui->userCertEdit->text().isEmpty() == false) {
+        if (ss->set_client_cert(ui->userCertEdit->text()) != 0) {
+
+            mbox.setText(tr("Cannot import user certificate."));
+            if (ss->last_err.isEmpty() == false)
+                mbox.setInformativeText(ss->last_err);
+            mbox.exec();
+            return;
+        } else {
+            ui->userCertHash->setText(ss->get_client_cert_hash());
+        }
     }
 
     if (ss->client_is_complete() != true) {
@@ -144,18 +242,7 @@ void EditDialog::on_userCertButton_clicked()
     filename = QFileDialog::getOpenFileName(this,
         tr("Open certificate"), "", tr("Certificate Files (*.crt *.pem *.der *.p12)"));
 
-    if (filename.isEmpty() == false) {
-        if (ss->set_client_cert(filename) != 0) {
-            QMessageBox mbox;
-            mbox.setText(tr("Cannot import certificate."));
-            if (ss->last_err.isEmpty() == false)
-                mbox.setInformativeText(ss->last_err);
-            mbox.exec();
-        } else {
-            ui->userCertEdit->setText(filename);
-            ui->userCertHash->setText(ss->get_client_cert_hash());
-        }
-    }
+    ui->userCertEdit->setText(filename);
 }
 
 void EditDialog::on_userKeyButton_clicked()
@@ -165,17 +252,7 @@ void EditDialog::on_userKeyButton_clicked()
     filename = QFileDialog::getOpenFileName(this,
         tr("Open private key"), "", tr("Private key Files (*.key *.pem *.der *.p8 *.p12)"));
 
-    if (filename.isEmpty() == false) {
-        if (ss->set_client_key(filename) != 0) {
-            QMessageBox mbox;
-            mbox.setText(tr("Cannot import certificate."));
-            if (ss->last_err.isEmpty() == false)
-                mbox.setInformativeText(ss->last_err);
-            mbox.exec();
-        } else {
-            ui->userKeyEdit->setText(filename);
-        }
-    }
+    ui->userKeyEdit->setText(filename);
 }
 
 void EditDialog::on_caCertButton_clicked()
@@ -185,18 +262,7 @@ void EditDialog::on_caCertButton_clicked()
     filename = QFileDialog::getOpenFileName(this,
         tr("Open certificate"), "", tr("Certificate Files (*.crt *.pem *.der)"));
 
-    if (filename.isEmpty() == false) {
-        if (ss->set_ca_cert(filename) != 0) {
-            QMessageBox mbox;
-            mbox.setText(tr("Cannot import certificate."));
-            if (ss->last_err.isEmpty() == false)
-                mbox.setInformativeText(ss->last_err);
-            mbox.exec();
-        } else {
-            ui->caCertEdit->setText(filename);
-            ui->caCertHash->setText(ss->get_client_cert_hash());
-        }
-    }
+    ui->caCertEdit->setText(filename);
 }
 
 void EditDialog::on_userCertClear_clicked()
@@ -234,4 +300,16 @@ void EditDialog::on_toolButton_clicked()
 {
     ss->clear_groupname();
     ui->groupnameEdit->clear();
+}
+
+void EditDialog::on_loadWinCert_clicked()
+{
+    int idx = ui->loadWinCertList->currentRow();
+    win_cert_st st;
+    if (idx < 0 || this->winCerts.size() <= (unsigned)idx)
+        return;
+
+    st = this->winCerts.at(idx);
+    ui->userCertEdit->setText(st.cert_url);
+    ui->userKeyEdit->setText(st.key_url);
 }

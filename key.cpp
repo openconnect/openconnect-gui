@@ -129,13 +129,17 @@ int Key::import(QString File)
     int ret;
     gnutls_datum_t contents = {NULL, 0};
 
-#ifdef ENABLE_PKCS11
-    if (File.startsWith("pkcs11:") || File.startsWith("tpmkey:")) {
+    if (File.isEmpty() == true)
+        return -1;
+
+    if (this->imported != false)
+        this->clear();
+
+    if (is_url(File) == true) {
         this->url = File;
         imported = true;
         return 0;
     }
-#endif
 
     /* normal file */
     ret = gnutls_load_file(File.toAscii().data(), &contents);

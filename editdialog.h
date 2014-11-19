@@ -22,7 +22,14 @@
 
 #include <storage.h>
 #include <QDialog>
+#include <vector>
 #include "common.h"
+
+struct win_cert_st {
+    QString label;
+    QString key_url;
+    QString cert_url;
+};
 
 namespace Ui {
 class EditDialog;
@@ -37,6 +44,7 @@ public:
     ~EditDialog();
 
 private slots:
+    void load_win_certs();
     void on_buttonBox_accepted();
 
     void on_buttonBox_rejected();
@@ -59,8 +67,11 @@ private slots:
 
     void on_toolButton_clicked();
 
+    void on_loadWinCert_clicked();
+    
 private:
     Ui::EditDialog *ui;
+    std::vector<win_cert_st> winCerts;
     StoredServer *ss;
 };
 

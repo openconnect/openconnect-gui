@@ -30,6 +30,8 @@ extern "C" {
 #include <gnutls/pkcs11.h>
 }
 
+static QStringList *log = NULL;
+
 int pin_callback(void *userdata, int attempt, const char *token_url,
                  const char *token_label, unsigned flags, char *pin, size_t pin_max)
 {
@@ -56,6 +58,14 @@ int pin_callback(void *userdata, int attempt, const char *token_url,
 
     snprintf(pin, pin_max, "%s", text.toAscii().data());
     return 0;
+}
+
+static void log_func(int level, const char *str)
+{
+    if (log != NULL) {
+        QString s = QLatin1String(str);
+        log->append(s.trimmed());
+    }
 }
 
 int main(int argc, char *argv[])
@@ -104,6 +114,13 @@ int main(int argc, char *argv[])
     }
 #endif
 
+#ifdef DEVEL
+    gnutls_global_set_log_function(log_func);
+    gnutls_global_set_log_level(3);
+    log = w.get_log();
+    log_func(1, "started logging");
+#endif
+
     ret = a.exec();
 
     settings.beginGroup("mainwindow");
@@ -111,5 +128,6 @@ int main(int argc, char *argv[])
     settings.setValue("pos", w.pos());
     settings.setValue("fullscreen", w.isFullScreen());
     settings.endGroup();
+
     return ret;
 }

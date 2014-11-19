@@ -47,7 +47,7 @@ int load_pkcs12_file(QWidget *w, Key &key, Cert &cert, QString File)
     unsigned int xcert_size;
     unsigned i;
 
-    if (w == NULL || File.startsWith("pkcs11:") || File.startsWith("tpmkey:")) {
+    if (w == NULL || is_url(File)) {
         return -1;
     }
 
@@ -107,31 +107,34 @@ int load_pkcs12_file(QWidget *w, Key &key, Cert &cert, QString File)
     return ret;
 }
 
-int KeyPair::import(QString File)
+int KeyPair::import_pfx(QString File)
 {
-int ret1 = 0, ret2 = 0;
+    return load_pkcs12_file(this->w, this->key, this->cert, File);
+}
 
-    ret1 = this->key.import(File);
-    if (ret1 != 0) {
-        last_err = key.last_err;
-    } else {
-        std::cerr << "Key imported\n";
-    }
+int KeyPair::import_cert(QString File)
+{
+int ret2 = 0;
 
     ret2 = this->cert.import(File);
     if (ret2 != 0) {
         last_err = cert.last_err;
-    } else {
-        std::cerr << "Certificate imported\n";
+        return -1;
+    }
+    return 0;
+}
+
+int KeyPair::import_key(QString File)
+{
+int ret1 = 0;
+
+    ret1 = this->key.import(File);
+    if (ret1 != 0) {
+        last_err = key.last_err;
+        return -1;
     }
 
-    if (ret1 != 0 && ret2 != 0)
-        goto fallback;
     return 0;
-
-fallback:
-    /* try PKCS #12 last */
-    return load_pkcs12_file(this->w, this->key, this->cert, File);
 }
 
 int KeyPair::cert_export(QByteArray &data)

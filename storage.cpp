@@ -114,6 +114,15 @@ QString StoredServer::get_key_file()
     return File;
 }
 
+QString StoredServer::get_key_url()
+{
+    QString File;
+    if (this->client.key.is_ok()) {
+        this->client.key.get_url(File);
+    }
+    return File;
+}
+
 QString StoredServer::get_ca_cert_file()
 {
     QString File;
@@ -132,14 +141,19 @@ int StoredServer::set_ca_cert(QString filename)
 
 int StoredServer::set_client_cert(QString filename)
 {
-    int ret = this->client.import(filename);
+    int ret = this->client.import_cert(filename);
     this->last_err = this->client.last_err;
+
+    if (ret != 0 && this->client.key.is_ok() == false) {
+       ret = this->client.import_pfx(filename);
+       this->last_err = this->client.last_err;
+    }
     return ret;
 }
 
 int StoredServer::set_client_key(QString filename)
 {
-    int ret = this->client.import(filename);
+    int ret = this->client.import_key(filename);
     this->last_err = this->client.last_err;
     return ret;
 }
@@ -155,9 +169,12 @@ void StoredServer::get_server_hash(QString & hash)
     }
 }
 
-#if defined(_WIN32) && !defined(WINDOWS_XP_TOO)
+#if 0
 
-# include <dpapi.h>
+//# include <dpapi.h>
+WINBOOL WINAPI CryptProtectData (DATA_BLOB *pDataIn, LPCWSTR szDataDescr, DATA_BLOB *pOptionalEntropy, PVOID pvReserved, CRYPTPROTECT_PROMPTSTRUCT *pPromptStruct, DWORD dwFlags, DATA_BLOB *pDataOut);
+WINBOOL WINAPI CryptUnprotectData (DATA_BLOB *pDataIn, LPWSTR *ppszDataDescr, DATA_BLOB *pOptionalEntropy, PVOID pvReserved, CRYPTPROTECT_PROMPTSTRUCT *pPromptStruct, DWORD dwFlags, DATA_BLOB *pDataOut);
+
 static QByteArray encode(QString txt, QString password)
 {
     BOOL r;
@@ -166,17 +183,17 @@ static QByteArray encode(QString txt, QString password)
     DATA_BLOB DataOut;
     QByteArray res;
 
-    DataIn.pbData = password.toAscii().data();
+    DataIn.pbData = (BYTE*)password.toAscii().data();
     DataIn.cbData = password.toAscii().size();
 
-    Opt.pbData = txt.toAscii().data();
+    Opt.pbData = (BYTE*)txt.toAscii().data();
     Opt.cbData = txt.toAscii().size();
 
     r = CryptProtectData(&DataIn, NULL, &Opt, NULL, NULL, 0, &DataOut);
     if (r == false)
         return res;
 
-    res.setRawData(DataOut.pbData, DataOut.cbData);
+    res.setRawData((const char*)DataOut.pbData, DataOut.cbData);
     return res.toBase64();
 }
 
@@ -186,21 +203,22 @@ static QString decode(QString txt, QByteArray _enc)
     DATA_BLOB DataIn;
     DATA_BLOB Opt;
     DATA_BLOB DataOut;
+    QByteArray enc;
     QString res;
 
     enc = QByteArray::fromBase64(_enc);
 
-    DataIn.pbData = enc.data();
+    DataIn.pbData = (BYTE*)enc.data();
     DataIn.cbData = enc.size();
 
-    Opt.pbData = txt.toAscii().data();
+    Opt.pbData = (BYTE*)txt.toAscii().data();
     Opt.cbData = txt.toAscii().size();
 
     r = CryptUnprotectData(&DataIn, NULL, &Opt, NULL, NULL, 0, &DataOut);
     if (r == false)
         return res;
 
-    res.fromLocal8Bit(DataOut.pbData, DataOut.cbData);
+    res.fromLocal8Bit((const char*)DataOut.pbData, DataOut.cbData);
     return res;
 }
 
@@ -212,6 +230,7 @@ static QString decode(QString txt, QByteArray _enc)
 int StoredServer::load(QString &name)
 {
     QByteArray data;
+    QString str;
 
     this->label = name;
     settings->beginGroup(PREFIX+name);
@@ -238,7 +257,12 @@ int StoredServer::load(QString &name)
     this->client.cert.import(data);
 
     data = settings->value("client-key").toByteArray();
-    this->client.key.import(data);
+    str = data;
+    if (is_url(str) == true) {
+        this->client.key.import(str);
+    } else {
+        this->client.key.import(data);
+    }
 
     this->server_hash = settings->value("server-hash").toByteArray();
     this->server_hash_algo = settings->value("server-hash-algo").toInt();
@@ -262,8 +286,6 @@ int StoredServer::save()
     settings->setValue("disable-udp", this->disable_udp);
     settings->setValue("minimize-on-connect", this->minimize_on_connect);
     settings->setValue("username", this->username);
-
-
 
     if (this->batch_mode == true) {
         settings->setValue("password", encode(this->servername, this->password));

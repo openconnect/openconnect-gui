@@ -109,11 +109,15 @@ int Cert::import(QString File)
     int ret;
     gnutls_datum_t contents = {NULL, 0};
 
+    if (File.isEmpty() == true)
+        return -1;
+
     if (this->imported != false)
         this->clear();
 
-#ifdef ENABLE_PKCS11
-    if (File.startsWith("pkcs11:")) {
+    if (is_url(File)) {
+        gnutls_x509_crt_init(&this->crt);
+
         ret = gnutls_x509_crt_import_pkcs11_url(this->crt, File.toAscii().data(), 0);
         if (ret < 0)
             ret = gnutls_x509_crt_import_pkcs11_url(this->crt, File.toAscii().data(), GNUTLS_PKCS11_OBJ_FLAG_LOGIN);
@@ -125,7 +129,7 @@ int Cert::import(QString File)
         this->imported = true;
         return 0;
     }
-#endif
+
     /* normal file */
     ret = gnutls_load_file(File.toAscii().data(), &contents);
     if (ret < 0) {

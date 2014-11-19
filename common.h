@@ -30,7 +30,7 @@
 #define toAscii toLatin1
 
 /* undef on normal builds */
-//#define DEVEL 1
+#define DEVEL 1
 
 #define TMP_CERT_PREFIX "tmp-certXXXXXX"
 #define TMP_KEY_PREFIX "tmp-keyXXXXXX"
@@ -58,6 +58,18 @@
 # define net_errno errno
 #endif
 
-#define WINDOWS_XP_TOO
+#define USE_SYSTEM_KEYS
+
+#include <QString>
+
+inline bool is_url(QString &str)
+{
+    if (str.startsWith("system:") ||
+        str.startsWith("pkcs11:") ||
+        str.startsWith("system:")) {
+            return true;
+    }
+    return false;
+}
 
 #endif // COMMON_H

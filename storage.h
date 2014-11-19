@@ -82,6 +82,7 @@ public:
 
     QString get_cert_file();
     QString get_key_file();
+    QString get_key_url();
     QString get_ca_cert_file();
     void clear_cert();
     void clear_key();
@@ -167,6 +168,7 @@ public:
     int save();
 
     QString last_err;
+
 private:
     bool batch_mode;
     bool minimize_on_connect;

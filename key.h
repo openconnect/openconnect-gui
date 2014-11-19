@@ -34,6 +34,7 @@ public:
     int import(QByteArray data);
     void set(gnutls_x509_privkey_t privkey) {
         this->privkey = privkey;
+        this->imported = true;
     };
 
     void set_window(QWidget * w) {
@@ -47,7 +48,11 @@ public:
         if (imported != false)
             return true;
         return false;
-    };
+    }
+    void get_url(QString & url) {
+        url = this->url;
+    }
+
     void clear();
 
     Key();
