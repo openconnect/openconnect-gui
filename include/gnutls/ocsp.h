@@ -46,7 +46,7 @@ extern "C" {
  */
 typedef enum gnutls_ocsp_print_formats_t {
 	GNUTLS_OCSP_PRINT_FULL = 0,
-	GNUTLS_OCSP_PRINT_COMPACT = 1,
+	GNUTLS_OCSP_PRINT_COMPACT = 1
 } gnutls_ocsp_print_formats_t;
 
 /**
@@ -211,6 +211,16 @@ int gnutls_ocsp_resp_get_response(gnutls_ocsp_resp_t resp,
 int gnutls_ocsp_resp_get_version(gnutls_ocsp_resp_t resp);
 int gnutls_ocsp_resp_get_responder(gnutls_ocsp_resp_t resp,
 				   gnutls_datum_t * dn);
+
+/* the raw key ID of the responder */
+#define GNUTLS_OCSP_RESP_ID_KEY 1
+/* the raw DN of the responder */
+#define GNUTLS_OCSP_RESP_ID_DN 2
+int
+gnutls_ocsp_resp_get_responder_raw_id(gnutls_ocsp_resp_t resp,
+				      unsigned type,
+				      gnutls_datum_t * raw);
+
 time_t gnutls_ocsp_resp_get_produced(gnutls_ocsp_resp_t resp);
 int gnutls_ocsp_resp_get_single(gnutls_ocsp_resp_t resp,
 				unsigned indx,

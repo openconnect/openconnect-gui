@@ -113,6 +113,9 @@ typedef gnutls_datum_t gnutls_datum _GNUTLS_GCC_ATTR_DEPRECATED;
 typedef gnutls_transport_ptr_t gnutls_transport_ptr
     _GNUTLS_GCC_ATTR_DEPRECATED;
 
+/* Old verification flags */
+#define GNUTLS_VERIFY_ALLOW_X509_V1_CA_CRT  (0)
+
 /* Old SRP alerts removed in 2.1.x because the TLS-SRP RFC was
    modified to use the PSK alert. */
 #define GNUTLS_A_MISSING_SRP_USERNAME GNUTLS_A_UNKNOWN_PSK_IDENTITY
@@ -391,6 +394,12 @@ static inline const void
 }
 #endif
 
+void
+gnutls_global_set_mem_functions(gnutls_alloc_function alloc_func,
+				gnutls_alloc_function secure_alloc_func,
+				gnutls_is_secure_function is_secure_func,
+				gnutls_realloc_function realloc_func,
+				gnutls_free_function free_func) _GNUTLS_GCC_ATTR_DEPRECATED;
 
 /* *INDENT-OFF* */
 #ifdef __cplusplus

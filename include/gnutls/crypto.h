@@ -60,6 +60,32 @@ int gnutls_cipher_get_block_size(gnutls_cipher_algorithm_t algorithm);
 int gnutls_cipher_get_iv_size(gnutls_cipher_algorithm_t algorithm);
 int gnutls_cipher_get_tag_size(gnutls_cipher_algorithm_t algorithm);
 
+/* AEAD API
+ */
+typedef struct api_aead_cipher_hd_st *gnutls_aead_cipher_hd_t;
+
+int gnutls_aead_cipher_init(gnutls_aead_cipher_hd_t * handle,
+			    gnutls_cipher_algorithm_t cipher,
+			    const gnutls_datum_t * key,
+			    unsigned tag_size);
+int gnutls_aead_cipher_decrypt(gnutls_aead_cipher_hd_t handle,
+			       const void *ciphertext,
+			       size_t ciphertextlen, void *text,
+			       size_t *textlen);
+int gnutls_aead_cipher_encrypt(gnutls_aead_cipher_hd_t handle,
+			       const void *text, size_t textlen,
+			       void *ciphertext, size_t *ciphertextlen);
+
+int
+gnutls_aead_cipher_set_nonce(gnutls_aead_cipher_hd_t handle, void *nonce, size_t nonce_len);
+
+int gnutls_aead_cipher_add_auth(gnutls_aead_cipher_hd_t handle,
+			   	const void *text, size_t text_size);
+
+void gnutls_aead_cipher_deinit(gnutls_aead_cipher_hd_t handle);
+
+/* Hash - MAC API */
+
 typedef struct hash_hd_st *gnutls_hash_hd_t;
 typedef struct hmac_hd_st *gnutls_hmac_hd_t;
 
