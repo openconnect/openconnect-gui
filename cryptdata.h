@@ -27,8 +27,8 @@
 class CryptData
 {
 public:
-    static QString encode(QString &txt, QString password);
-    static QString decode(QString &txt, QString encoded);
+    static QByteArray encode(QString &txt, QString password);
+    static bool decode(QString &txt, QByteArray encoded, QString & res);
 private:
 
 };

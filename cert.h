@@ -31,8 +31,8 @@ class Cert
 
 public:
     /* functions return zero on success */
-    int import(QString File);
-    int import(QByteArray data);
+    int import_file(QString & File);
+    int import_pem(QByteArray & data);
     void set(gnutls_x509_crt_t crt) {
         this->crt = crt;
         this->imported = true;

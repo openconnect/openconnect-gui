@@ -116,7 +116,7 @@ int KeyPair::import_cert(QString File)
 {
 int ret2 = 0;
 
-    ret2 = this->cert.import(File);
+    ret2 = this->cert.import_file(File);
     if (ret2 != 0) {
         last_err = cert.last_err;
         return -1;
@@ -128,7 +128,7 @@ int KeyPair::import_key(QString File)
 {
 int ret1 = 0;
 
-    ret1 = this->key.import(File);
+    ret1 = this->key.import_file(File);
     if (ret1 != 0) {
         last_err = key.last_err;
         return -1;

@@ -105,10 +105,17 @@ EditDialog::EditDialog(QString server, QSettings *settings, QWidget *parent) :
 {
     QString hash, txt;
     ui->setupUi(this);
-    int type;
+    int type, ret;
 
     this->ss = new StoredServer(settings);
-    this->ss->load(server);
+
+    ret = this->ss->load(server);
+    if (ret < 0) {
+        QMessageBox::information(
+            this,
+            tr(APP_NAME),
+            ss->last_err.isEmpty()?tr("Some server information failed to load"):ss->last_err);
+    }
 
     this->ss->set_window(this);
 
