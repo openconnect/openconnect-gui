@@ -40,7 +40,7 @@ void Cert::clear()
     }
 }
 
-static int import_cert(gnutls_x509_crt_t *crt, gnutls_datum_t *raw)
+static int import_cert(gnutls_x509_crt_t *crt, gnutls_datum_t *raw, unsigned pem)
 {
     int ret;
 
@@ -50,7 +50,7 @@ static int import_cert(gnutls_x509_crt_t *crt, gnutls_datum_t *raw)
     gnutls_x509_crt_init(crt);
 
     ret = gnutls_x509_crt_import(*crt, raw, GNUTLS_X509_FMT_PEM);
-    if (ret == GNUTLS_E_BASE64_DECODING_ERROR || ret == GNUTLS_E_BASE64_UNEXPECTED_HEADER_ERROR)
+    if (pem == 0 && (ret == GNUTLS_E_BASE64_DECODING_ERROR || ret == GNUTLS_E_BASE64_UNEXPECTED_HEADER_ERROR))
         ret = gnutls_x509_crt_import(*crt, raw, GNUTLS_X509_FMT_DER);
     if (ret < 0) {
         goto fail;
@@ -62,7 +62,7 @@ static int import_cert(gnutls_x509_crt_t *crt, gnutls_datum_t *raw)
     return ret;
 }
 
-int Cert::import(QByteArray data)
+int Cert::import_pem(QByteArray & data)
 {
     int ret;
     gnutls_datum_t raw;
@@ -73,7 +73,7 @@ int Cert::import(QByteArray data)
     raw.data = (unsigned char*)data.constData();
     raw.size = data.size();
 
-    ret = import_cert(&this->crt, &raw);
+    ret = import_cert(&this->crt, &raw, 1);
     if (ret < 0) {
         this->last_err = gnutls_strerror(ret);
         return -1;
@@ -99,12 +99,12 @@ int Cert::data_export(QByteArray &data)
         return -1;
     }
 
-    data.append((char*)raw.data, raw.size);
+    data = QByteArray((char*)raw.data, raw.size);
     gnutls_free(raw.data);
     return 0;
 }
 
-int Cert::import(QString File)
+int Cert::import_file(QString &File)
 {
     int ret;
     gnutls_datum_t contents = {NULL, 0};
@@ -137,7 +137,7 @@ int Cert::import(QString File)
         return -1;
     }
 
-    ret = import_cert(&this->crt, &contents);
+    ret = import_cert(&this->crt, &contents, 0);
     gnutls_free(contents.data);
     if (ret < 0) {
         this->last_err = gnutls_strerror(ret);

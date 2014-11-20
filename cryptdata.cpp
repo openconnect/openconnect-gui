@@ -47,16 +47,16 @@ static void __attribute__((constructor)) init(void)
     lib_init = 1;
 }
 
-QString CryptData::encode(QString &txt, QString password)
+QByteArray CryptData::encode(QString &txt, QString password)
 {
     BOOL r;
     DATA_BLOB DataIn;
     DATA_BLOB Opt;
     DATA_BLOB DataOut;
-    QByteArray res;
+    QByteArray res, data;
 
     if (lib_init == 0)
-        return password;
+        return password.toUtf8();
 
     DataIn.pbData = (BYTE*)password.toUtf8().data();
     DataIn.cbData = password.toUtf8().size();
@@ -68,23 +68,32 @@ QString CryptData::encode(QString &txt, QString password)
     if (r == false)
         return res;
 
-    res.setRawData((const char*)DataOut.pbData, DataOut.cbData);
-    return QLatin1String(res.toBase64());
+    data.setRawData((const char*)DataOut.pbData, DataOut.cbData);
+
+    res.clear();
+    res.append("xxxx");
+    res.append(data.toBase64());
+
+    LocalFree(DataOut.pbData);
+    return res;
 }
 
-QString CryptData::decode(QString &txt, QString _enc)
+bool CryptData::decode(QString &txt, QByteArray _enc, QString & res)
 {
     BOOL r;
     DATA_BLOB DataIn;
     DATA_BLOB Opt;
     DATA_BLOB DataOut;
     QByteArray enc;
-    QString res;
 
-    if (lib_init == 0)
-        return _enc;
+    res.clear();
 
-    enc = QByteArray::fromBase64(_enc.toLatin1());
+    if (lib_init == 0 || _enc.startsWith("xxxx") == false) {
+        res = QString::fromUtf8(_enc);
+        return true;
+    }
+
+    enc = QByteArray::fromBase64(_enc.mid(4));
 
     DataIn.pbData = (BYTE*)enc.data();
     DataIn.cbData = enc.size();
@@ -94,22 +103,24 @@ QString CryptData::decode(QString &txt, QString _enc)
 
     r = pCryptUnprotectData(&DataIn, NULL, &Opt, NULL, NULL, 0, &DataOut);
     if (r == false)
-        return res;
+        return false;
 
-    res.fromUtf8((const char*)DataOut.pbData, DataOut.cbData);
-    return res;
+    res = QString::fromUtf8((const char*)DataOut.pbData, DataOut.cbData);
+    LocalFree(DataOut.pbData);
+    return true;
 }
 
 #else
 
-static QString CryptData::encode(QString& str, QString &password)
+QByteArray CryptData::encode(QString &txt, QString password)
 {
-    return password;
+    return password.toUtf8();
 }
 
-static QString CryptData::decode(QString& str, QString &_enc)
+bool CryptData::decode(QString &txt, QByteArray _enc, QString & res)
 {
-    return _enc;
+    res = QString::fromUtf8(_enc);
+    return true;
 }
 
 #endif

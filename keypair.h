@@ -52,7 +52,6 @@ public:
     Cert cert;
 private:
     QWidget * w;
-
 };
 
 #endif // KEYPAIR_H

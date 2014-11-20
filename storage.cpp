@@ -136,7 +136,7 @@ QString StoredServer::get_ca_cert_file()
 
 int StoredServer::set_ca_cert(QString filename)
 {
-    int ret = this->ca_cert.import(filename);
+    int ret = this->ca_cert.import_file(filename);
     this->last_err = this->ca_cert.last_err;
     return ret;
 }
@@ -175,6 +175,8 @@ int StoredServer::load(QString &name)
 {
     QByteArray data;
     QString str;
+    bool ret;
+    int rval = 0;
 
     this->label = name;
     settings->beginGroup(PREFIX+name);
@@ -191,36 +193,51 @@ int StoredServer::load(QString &name)
 
     if (this->batch_mode == true) {
         this->groupname = settings->value("groupname").toString();
-        this->password = CryptData::decode(this->servername, settings->value("password").toString());
+        ret = CryptData::decode(this->servername, settings->value("password").toByteArray(), this->password);
+        if (ret == false)
+            rval = -1;
     }
 
     data = settings->value("ca-cert").toByteArray();
-    this->ca_cert.import(data);
+    if (data.isEmpty() == false && this->ca_cert.import_pem(data) < 0) {
+        this->last_err = this->ca_cert.last_err;
+        rval = -1;
+    }
 
     data = settings->value("client-cert").toByteArray();
-    this->client.cert.import(data);
+    if (data.isEmpty() == false && this->client.cert.import_pem(data) < 0) {
+        this->last_err = this->client.cert.last_err;
+        rval = -1;
+    }
 
-    data = settings->value("client-key").toByteArray();
-    str = data;
+    ret = CryptData::decode(this->servername, settings->value("client-key").toByteArray(), str);
+    if (ret == false)
+        rval = -1;
+
     if (is_url(str) == true) {
-        this->client.key.import(str);
+        this->client.key.import_file(str);
     } else {
-        this->client.key.import(data);
+        data = str.toLatin1();
+        this->client.key.import_pem(data);
     }
 
     this->server_hash = settings->value("server-hash").toByteArray();
     this->server_hash_algo = settings->value("server-hash-algo").toInt();
 
-    this->token_str = settings->value("token-str").toString();
+    ret = CryptData::decode(this->servername, settings->value("token-str").toByteArray(), this->token_str);
+    if (ret == false)
+        rval = -1;
+
     this->token_type = settings->value("token-type").toInt();
 
     settings->endGroup();
-    return 0;
+    return rval;
 }
 
 int StoredServer::save()
 {
     QString empty = "";
+    QString str;
     QByteArray data;
 
     settings->beginGroup(PREFIX+this->label);
@@ -243,12 +260,13 @@ int StoredServer::save()
     settings->setValue("client-cert", data);
 
     this->client.key_export(data);
-    settings->setValue("client-key", data);
+    str = QString::fromLatin1(data);
+    settings->setValue("client-key", CryptData::encode(this->servername, str));
 
     settings->setValue("server-hash", this->server_hash);
     settings->setValue("server-hash-algo", this->server_hash_algo);
 
-    settings->setValue("token-str", this->token_str);
+    settings->setValue("token-str", CryptData::encode(this->servername, this->token_str));
     settings->setValue("token-type", this->token_type);
 
     settings->endGroup();

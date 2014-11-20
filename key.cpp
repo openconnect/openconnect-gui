@@ -81,7 +81,7 @@ static int import_Key(QWidget *w, gnutls_x509_privkey_t *privkey, gnutls_datum_t
     return ret;
 }
 
-int Key::import(QByteArray data)
+int Key::import_pem(QByteArray &data)
 {
     int ret;
     gnutls_datum_t raw;
@@ -119,12 +119,13 @@ int Key::data_export(QByteArray &data)
         this->last_err = gnutls_strerror(ret);
         return -1;
     }
-    data.append((char*)raw.data, raw.size);
+
+    data = QByteArray((char*)raw.data, raw.size);
     gnutls_free(raw.data);
     return 0;
 }
 
-int Key::import(QString File)
+int Key::import_file(QString &File)
 {
     int ret;
     gnutls_datum_t contents = {NULL, 0};
