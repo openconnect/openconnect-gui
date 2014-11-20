@@ -110,6 +110,8 @@ int gnutls_openpgp_crt_get_key_id(gnutls_openpgp_crt_t key,
 
 int gnutls_openpgp_crt_check_hostname(gnutls_openpgp_crt_t key,
 				      const char *hostname);
+int gnutls_openpgp_crt_check_hostname2(gnutls_openpgp_crt_t key,
+				      const char *hostname, unsigned int flags);
 
 int gnutls_openpgp_crt_get_revoked_status(gnutls_openpgp_crt_t key);
 
@@ -329,6 +331,16 @@ gnutls_openpgp_set_recv_key_function(gnutls_session_t session,
 int gnutls_certificate_set_openpgp_key
     (gnutls_certificate_credentials_t res,
      gnutls_openpgp_crt_t crt, gnutls_openpgp_privkey_t pkey);
+
+int
+gnutls_certificate_get_openpgp_key(gnutls_certificate_credentials_t res,
+                                   unsigned index,
+                                   gnutls_openpgp_privkey_t *key);
+int
+gnutls_certificate_get_openpgp_crt(gnutls_certificate_credentials_t res,
+                                   unsigned index,
+                                   gnutls_openpgp_crt_t **crt_list,
+                                   unsigned *crt_list_size);
 
 int
  gnutls_certificate_set_openpgp_key_file

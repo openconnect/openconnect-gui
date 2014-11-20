@@ -56,11 +56,19 @@ int gnutls_pkcs12_get_bag(gnutls_pkcs12_t pkcs12,
 int gnutls_pkcs12_set_bag(gnutls_pkcs12_t pkcs12, gnutls_pkcs12_bag_t bag);
 
 int gnutls_pkcs12_generate_mac(gnutls_pkcs12_t pkcs12, const char *pass);
+int gnutls_pkcs12_generate_mac2(gnutls_pkcs12_t pkcs12, gnutls_mac_algorithm_t mac, const char *pass);
 int gnutls_pkcs12_verify_mac(gnutls_pkcs12_t pkcs12, const char *pass);
 
 int gnutls_pkcs12_bag_decrypt(gnutls_pkcs12_bag_t bag, const char *pass);
 int gnutls_pkcs12_bag_encrypt(gnutls_pkcs12_bag_t bag,
 			      const char *pass, unsigned int flags);
+
+int
+gnutls_pkcs12_bag_enc_info(gnutls_pkcs12_bag_t bag, unsigned int *schema, unsigned int *cipher,
+	void *salt, unsigned int *salt_size, unsigned int *iter_count, char **oid);
+int
+gnutls_pkcs12_mac_info(gnutls_pkcs12_t pkcs12, unsigned int *mac,
+	void *salt, unsigned int *salt_size, unsigned int *iter_count, char **oid);
 
 #define GNUTLS_PKCS12_SP_INCLUDE_SELF_SIGNED 1
 int gnutls_pkcs12_simple_parse(gnutls_pkcs12_t p12,
@@ -112,6 +120,11 @@ int gnutls_pkcs12_bag_set_crl(gnutls_pkcs12_bag_t bag,
 			      gnutls_x509_crl_t crl);
 int gnutls_pkcs12_bag_set_crt(gnutls_pkcs12_bag_t bag,
 			      gnutls_x509_crt_t crt);
+
+int
+gnutls_pkcs12_bag_set_privkey(gnutls_pkcs12_bag_t bag,
+			      gnutls_x509_privkey_t privkey,
+			      const char *password, unsigned flags);
 
 int gnutls_pkcs12_bag_init(gnutls_pkcs12_bag_t * bag);
 void gnutls_pkcs12_bag_deinit(gnutls_pkcs12_bag_t bag);
