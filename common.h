@@ -23,14 +23,14 @@
 #include <iostream>
 #include <QTranslator>
 
-#define VERSION "0.7"
+#define VERSION "0.8"
 #define APP_NAME "openconnect-gui"
 #define APP_STRING APP_NAME" "VERSION
 
 #define toAscii toLatin1
 
 /* undef on normal builds */
-#define DEVEL 1
+#undef DEVEL
 
 #define TMP_CERT_PREFIX "tmp-certXXXXXX"
 #define TMP_KEY_PREFIX "tmp-keyXXXXXX"
