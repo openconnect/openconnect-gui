@@ -1,6 +1,6 @@
 NEWS -- History of user-visible changes.
 
-* version 0.8 (unreleased)
+* version 0.8 (released 2014-11-21)
 - Fixes issue with Proxy (patch by schenkos)
 - Saved passwords are protected using CryptProtect()
 - Added support for loading certificates from the
