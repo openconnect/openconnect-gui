@@ -58,7 +58,7 @@ public:
     void updateProgressBar(QString str);
     void updateProgressBar(QString str, bool show);
     void set_settings(QSettings *s);
-    void updateStats(const struct oc_stats *stats);
+    void updateStats(const struct oc_stats *stats, QString dtls);
     void reload_settings();
     ~MainWindow();
     void disable_cmd_fd() {
@@ -69,10 +69,13 @@ public:
         emit vpn_status_changed_sig(connected);
     };
 
-    void vpn_status_changed(int connected, QString dns, QString ip, QString ip6) {
+    void vpn_status_changed(int connected, QString &dns, QString &ip, QString &ip6,
+    			    QString &cstp_cipher, QString &dtls_cipher) {
         this->dns = dns;
         this->ip = ip;
         this->ip6 = ip6;
+        this->dtls_cipher = dtls_cipher;
+        this->cstp_cipher = cstp_cipher;
         emit vpn_status_changed_sig(connected);
     };
 
@@ -80,7 +83,7 @@ public:
         return &this->log;
     }
 private slots:
-    void statsChanged(QString, QString);
+    void statsChanged(QString, QString, QString);
     void writeProgressBar(QString str);
     void changeStatus(int);
 
@@ -103,7 +106,7 @@ private slots:
 
 signals:
     void log_changed(QString val);
-    void stats_changed_sig(QString, QString);
+    void stats_changed_sig(QString, QString, QString);
     void vpn_status_changed_sig(int);
     void timeout(void);
 
@@ -121,6 +124,8 @@ private:
     QFutureWatcher<void> futureWatcher; // watches the vpninfo
     
     QString dns, ip, ip6;
+    QString cstp_cipher;
+    QString dtls_cipher;
 };
 
 #endif // MAINWINDOW_H

@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>284</width>
-    <height>192</height>
+    <width>392</width>
+    <height>285</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -375,6 +375,34 @@
             </property>
             <property name="textInteractionFlags">
              <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+            </property>
+           </widget>
+          </item>
+          <item row="5" column="0">
+           <widget class="QLabel" name="CSTPLabelTxt">
+            <property name="text">
+             <string>Cipher:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="5" column="1">
+           <widget class="QLabel" name="CSTPLabel">
+            <property name="text">
+             <string/>
+            </property>
+           </widget>
+          </item>
+          <item row="6" column="0">
+           <widget class="QLabel" name="DTLSLabelTxt">
+            <property name="text">
+             <string>DTLS Cipher:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="6" column="1">
+           <widget class="QLabel" name="DTLSLabel">
+            <property name="text">
+             <string/>
             </property>
            </widget>
           </item>

@@ -34,8 +34,15 @@ static void
 stats_vfn (void *privdata, const struct oc_stats *stats)
 {
     VpnInfo *vpn = static_cast<VpnInfo*>(privdata);
+    const char *cipher;
+    QString dtls;
 
-    vpn->m->updateStats(stats);
+    cipher = openconnect_get_dtls_cipher(vpn->vpninfo);
+    if (cipher != NULL) {
+    	dtls = QLatin1String(cipher);
+    }
+
+    vpn->m->updateStats(stats, dtls);
 }
 
 static
@@ -446,14 +453,12 @@ void VpnInfo::mainloop()
     int ret;
 
     while(1) {
-        ret = openconnect_mainloop(vpninfo, 15, RECONNECT_INTERVAL_MIN);
-        if (ret != 0) {
-            this->last_err = QObject::tr("Disconnected");
-            //this->ss->save();
-            break;
-        }
+	ret = openconnect_mainloop(vpninfo, 15, RECONNECT_INTERVAL_MIN);
+	if (ret != 0) {
+	    this->last_err = QObject::tr("Disconnected");
+	    break;
+	}
     }
-
 }
 
 void VpnInfo::get_info(QString &dns, QString &ip, QString &ip6)
@@ -486,6 +491,20 @@ void VpnInfo::get_info(QString &dns, QString &ip, QString &ip6)
             dns += " ";
             dns += info->dns[2];
         }
+    }
+    return;
+}
+
+void VpnInfo::get_cipher_info(QString &cstp, QString &dtls)
+{
+    const char *cipher;
+    cipher = openconnect_get_cstp_cipher(this->vpninfo);
+    if (cipher != NULL) {
+    	cstp = QLatin1String(cipher);
+    }
+    cipher = openconnect_get_dtls_cipher(this->vpninfo);
+    if (cipher != NULL) {
+    	dtls = QLatin1String(cipher);
     }
     return;
 }
