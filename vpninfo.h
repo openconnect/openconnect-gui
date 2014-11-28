@@ -37,6 +37,7 @@ public:
     int dtls_connect();
     void mainloop();
     void get_info(QString &dns, QString &ip, QString &ip6);
+    void get_cipher_info(QString &cstp, QString &dtls);
     SOCKET get_cmd_fd() {
         return cmd_fd;
     }

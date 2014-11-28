@@ -68,7 +68,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->comboBox->lineEdit(), SIGNAL(returnPressed()), this, SLOT(on_connectBtn_clicked()), Qt::QueuedConnection);
     connect(this, SIGNAL(vpn_status_changed_sig(int)), this, SLOT(changeStatus(int)), Qt::QueuedConnection);
     QObject::connect(this, SIGNAL(log_changed(QString)), this, SLOT(writeProgressBar(QString)), Qt::QueuedConnection);
-    QObject::connect(this, SIGNAL(stats_changed_sig(QString, QString)), this, SLOT(statsChanged(QString, QString)), Qt::QueuedConnection);
+    QObject::connect(this, SIGNAL(stats_changed_sig(QString, QString, QString)), this, SLOT(statsChanged(QString, QString, QString)), Qt::QueuedConnection);
     ui->iconLabel->setPixmap(OFF_ICON);
     QNetworkProxyFactory::setUseSystemConfiguration(true);
 }
@@ -128,15 +128,16 @@ value_to_string(uint64_t bytes)
     }
 }
 
-void MainWindow::statsChanged(QString tx, QString rx)
+void MainWindow::statsChanged(QString tx, QString rx, QString dtls)
 {
     ui->lcdDown->setText(rx);
     ui->lcdUp->setText(tx);
+    ui->DTLSLabel->setText(dtls);
 }
 
-void MainWindow::updateStats(const struct oc_stats *stats)
+void MainWindow::updateStats(const struct oc_stats *stats, QString dtls)
 {
-    emit stats_changed_sig(value_to_string(stats->tx_bytes), value_to_string(stats->rx_bytes));
+    emit stats_changed_sig(value_to_string(stats->tx_bytes), value_to_string(stats->rx_bytes), dtls);
 }
 
 void MainWindow::reload_settings()
@@ -199,6 +200,7 @@ void MainWindow::blink_ui()
 void MainWindow::changeStatus(int val)
 {
     if (val == STATUS_CONNECTED) {
+
         blink_timer->stop();
         ui->iconLabel->setPixmap(ON_ICON);
         ui->disconnectBtn->setEnabled(true);
@@ -209,6 +211,8 @@ void MainWindow::changeStatus(int val)
 	this->ui->IPLabel->setText(ip);
     	this->ui->IP6Label->setText(ip6);
     	this->ui->DNSLabel->setText(dns);
+    	this->ui->CSTPLabel->setText(cstp_cipher);
+    	this->ui->DTLSLabel->setText(dtls_cipher);
 
         timer->start(UPDATE_TIMER);
     } else if (val == STATUS_CONNECTING) {
@@ -222,6 +226,8 @@ void MainWindow::changeStatus(int val)
             timer->stop();
         disable_cmd_fd();
 
+        ui->CSTPLabel->setText("");
+        ui->DTLSLabel->setText("");
         ui->IPLabel->setText("");
         ui->DNSLabel->setText("");
         ui->IP6Label->setText("");
@@ -236,7 +242,7 @@ void MainWindow::changeStatus(int val)
 static void main_loop(VpnInfo *vpninfo, MainWindow *m)
 {
     int ret;
-    QString ip, ip6, dns;
+    QString ip, ip6, dns, cstp, dtls;
     bool retry = false;
     QString oldpass, oldgroup;
     bool reset_password = false;
@@ -273,14 +279,14 @@ static void main_loop(VpnInfo *vpninfo, MainWindow *m)
 	}
     } while(retry == true);
 
-
     ret = vpninfo->dtls_connect();
     if (ret != 0) {
         m->updateProgressBar(vpninfo->last_err);
     }
 
     vpninfo->get_info(dns, ip, ip6);
-    m->vpn_status_changed(STATUS_CONNECTED, dns, ip, ip6);
+    vpninfo->get_cipher_info(cstp, dtls);
+    m->vpn_status_changed(STATUS_CONNECTED, dns, ip, ip6, cstp, dtls);
 
     vpninfo->ss->save();
 
