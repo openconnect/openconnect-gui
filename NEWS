@@ -1,5 +1,10 @@
 NEWS -- History of user-visible changes.
 
+* version 0.9 (released 2014-11-28)
+- Print the ciphersuite information.
+- Updated to libopenconnect 7.00.
+
+
 * version 0.8 (released 2014-11-21)
 - Fixes issue with Proxy (patch by schenkos)
 - Saved passwords are protected using CryptProtect()
