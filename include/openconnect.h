@@ -36,6 +36,9 @@
  *  - Remove OPENCONNECT_X509 and openconnect_get_peer_cert().
  *  - Change openconnect_get_cert_der() to openconnect_get_peer_cert_DER() etc.
  *  - Add openconnect_check_peer_cert_hash().
+ *  - Remove openconnect_set_server_cert_sha1().
+ *  - Add openconnect_has_yubioath_support() and OC_TOKEN_MODE_YUBIOATH.
+ *  - Add openconnect_has_system_key_support().
  *
  * API version 4.1:
  *  - Add openconnect_get_cstp_cipher(), openconnect_get_dtls_cipher(),
@@ -273,6 +276,7 @@ typedef enum {
 	OC_TOKEN_MODE_STOKEN,
 	OC_TOKEN_MODE_TOTP,
 	OC_TOKEN_MODE_HOTP,
+	OC_TOKEN_MODE_YUBIOATH,
 } oc_token_mode_t;
 
 /* All strings are UTF-8. If operating in a legacy environment where
@@ -403,7 +407,6 @@ int openconnect_set_mobile_info(struct openconnect_info *vpninfo,
 				const char *mobile_device_uniqueid);
 int openconnect_set_client_cert(struct openconnect_info *, const char *cert,
 				const char *sslkey);
-int openconnect_set_server_cert_sha1(struct openconnect_info *, const char *);
 const char *openconnect_get_ifname(struct openconnect_info *);
 void openconnect_set_reqmtu(struct openconnect_info *, int reqmtu);
 void openconnect_set_dpd(struct openconnect_info *, int min_seconds);
@@ -547,5 +550,7 @@ int openconnect_has_tss_blob_support(void);
 /* Software token capabilities. */
 int openconnect_has_stoken_support(void);
 int openconnect_has_oath_support(void);
+int openconnect_has_yubioath_support(void);
+int openconnect_has_system_key_support(void);
 
 #endif /* __OPENCONNECT_H__ */
