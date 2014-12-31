@@ -34,7 +34,7 @@ static int lib_init = 0;
 static void __attribute__((constructor)) init(void)
 {
     static HMODULE lib;
-    lib = LoadLibrary(L"crypt32.dll");
+    lib = LoadLibraryA("crypt32.dll");
     if (lib == NULL)
         return;
 
