@@ -58,7 +58,11 @@
 # define net_errno errno
 #endif
 
+#include <gnutls/gnutls.h>
+
+#if !defined(__MACH__) && GNUTLS_VERSION_NUMBER >= 0x030400
 #define USE_SYSTEM_KEYS
+#endif
 
 #include <QString>
 
