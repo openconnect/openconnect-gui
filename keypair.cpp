@@ -35,10 +35,9 @@ static
 int load_pkcs12_file(QWidget *w, Key &key, Cert &cert, QString File)
 {
     gnutls_datum_t raw = {NULL, 0};
-    MyInputDialog dialog(w, QLatin1String("This file requires a password"), QLatin1String("Please enter your password"), QLineEdit::Password);
     int ret;
     gnutls_pkcs12_t pkcs12 = NULL;
-    bool ok;
+    bool ok = 0;
     QString text, pass;
     int pem = 0;
     char *p;
@@ -73,8 +72,11 @@ int load_pkcs12_file(QWidget *w, Key &key, Cert &cert, QString File)
     if (ret < 0)
         goto fail;
 
-    dialog.show();
-    ok = dialog.result(text);
+    if (w) {
+	MyInputDialog dialog(w, QLatin1String("This file requires a password"), QLatin1String("Please enter your password"), QLineEdit::Password);
+	dialog.show();
+	ok = dialog.result(text);
+    }
 
     if (!ok)
         goto fail;
