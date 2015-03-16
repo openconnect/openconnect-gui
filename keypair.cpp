@@ -38,7 +38,7 @@ int load_pkcs12_file(QWidget *w, Key &key, Cert &cert, QString File)
     int ret;
     gnutls_pkcs12_t pkcs12 = NULL;
     bool ok = 0;
-    QString text, pass;
+    QString pass;
     int pem = 0;
     char *p;
     gnutls_x509_privkey_t xkey;
@@ -75,7 +75,7 @@ int load_pkcs12_file(QWidget *w, Key &key, Cert &cert, QString File)
     {
 	MyInputDialog dialog(w, QLatin1String("This file requires a password"), QLatin1String("Please enter your password"), QLineEdit::Password);
 	dialog.show();
-	ok = dialog.result(text);
+	ok = dialog.result(pass);
     }
 
     if (!ok)
