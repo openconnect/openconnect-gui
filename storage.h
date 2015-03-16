@@ -100,7 +100,7 @@ public:
     }
 
     void set_window(QWidget * w) {
-        client.key.set_window(w);
+        client.set_window(w);
     }
 
     int set_ca_cert(QString filename);
