@@ -35,8 +35,10 @@ public:
      	this->t2 = t2;
      	this->list = list;
         this->have_list = true;
-        mutex.lock();
-        this->moveToThread( QApplication::instance()->thread());
+        if (this->thread() != QApplication::instance()->thread()) {
+	        mutex.lock();
+	        this->moveToThread( QApplication::instance()->thread());
+	}
      };
      MyInputDialog(QWidget *w, QString t1, QString t2, QLineEdit::EchoMode type) {
      	this->w = w;
@@ -44,16 +46,26 @@ public:
      	this->t2 = t2;
         have_list = false;
         this->type = type;
-        mutex.lock();
-        this->moveToThread( QApplication::instance()->thread());
+        if (this->thread() != QApplication::instance()->thread()) {
+	        mutex.lock();
+	        this->moveToThread( QApplication::instance()->thread());
+	}
      };
      ~MyInputDialog() {
-     	mutex.tryLock();
-     	mutex.unlock();
+     	if (this->thread() != QApplication::instance()->thread()) {
+       	    mutex.tryLock();
+     	    mutex.unlock();
+     	}
      }
+
      void show() {
-     	QCoreApplication::postEvent(this, new QEvent( QEvent::User));
+     	if (this->thread() == QApplication::instance()->thread()) {
+	    event(new QEvent( QEvent::User));
+	} else {
+     	    QCoreApplication::postEvent(this, new QEvent( QEvent::User));
+     	}
      }
+
      virtual bool event(QEvent * ev) {
         res = false;
         if (ev->type() == QEvent::User) {
@@ -61,14 +73,18 @@ public:
                 text = QInputDialog::getItem(w, t1, t2, list, 0, true, &res);
             else
                 text = QInputDialog::getText(w, t1, t2, type, QString(), &res);
-            mutex.unlock();
+
+            if (this->thread() != QApplication::instance()->thread())
+                mutex.unlock();
         }
         return res;
     }
 
     bool result(QString & text) {
-        mutex.lock();
-        mutex.unlock();
+     	if (this->thread() != QApplication::instance()->thread()) {
+            mutex.lock();
+            mutex.unlock();
+        }
         text = this->text;
         return res;
     };
