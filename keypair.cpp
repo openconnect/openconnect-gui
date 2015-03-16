@@ -72,7 +72,7 @@ int load_pkcs12_file(QWidget *w, Key &key, Cert &cert, QString File)
     if (ret < 0)
         goto fail;
 
-    if (w) {
+    {
 	MyInputDialog dialog(w, QLatin1String("This file requires a password"), QLatin1String("Please enter your password"), QLineEdit::Password);
 	dialog.show();
 	ok = dialog.result(text);
