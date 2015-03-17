@@ -34,6 +34,7 @@ public:
     int import_file(QString & File);
     int import_pem(QByteArray & data);
     void set(gnutls_x509_crt_t crt) {
+        clear();
         this->crt = crt;
         this->imported = true;
     }

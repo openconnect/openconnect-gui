@@ -33,6 +33,7 @@ public:
     int import_file(QString &File);
     int import_pem(QByteArray &data);
     void set(gnutls_x509_privkey_t privkey) {
+        clear();
         this->privkey = privkey;
         this->imported = true;
     };
