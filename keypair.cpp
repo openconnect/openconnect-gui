@@ -32,7 +32,7 @@ KeyPair::~KeyPair()
 }
 
 static
-int load_pkcs12_file(QWidget *w, Key &key, Cert &cert, QString File)
+int load_pkcs12_file(QWidget *w, Key &key, Cert &cert, QString File, QString &last_err)
 {
     gnutls_datum_t raw = {NULL, 0};
     int ret;
@@ -52,7 +52,7 @@ int load_pkcs12_file(QWidget *w, Key &key, Cert &cert, QString File)
 
     ret = gnutls_load_file(File.toAscii().data(), &raw);
     if (ret < 0) {
-        this->last_err = gnutls_strerror(ret);
+        last_err = gnutls_strerror(ret);
         goto fail;
     }
 
@@ -66,13 +66,13 @@ int load_pkcs12_file(QWidget *w, Key &key, Cert &cert, QString File)
 
     ret = gnutls_pkcs12_init(&pkcs12);
     if (ret < 0) {
-        this->last_err = gnutls_strerror(ret);
+        last_err = gnutls_strerror(ret);
         goto fail;
     }
 
     ret = gnutls_pkcs12_import(pkcs12, &raw, (pem!=0)?GNUTLS_X509_FMT_PEM:GNUTLS_X509_FMT_DER, 0);
     if (ret < 0) {
-        this->last_err = gnutls_strerror(ret);
+        last_err = gnutls_strerror(ret);
         goto fail;
     }
 
@@ -87,14 +87,14 @@ int load_pkcs12_file(QWidget *w, Key &key, Cert &cert, QString File)
 
     ret = gnutls_pkcs12_verify_mac(pkcs12, pass.toAscii().data());
     if (ret < 0) {
-        this->last_err = gnutls_strerror(ret);
+        last_err = gnutls_strerror(ret);
         goto fail;
     }
 
 
     ret = gnutls_pkcs12_simple_parse(pkcs12, pass.toAscii().data(), &xkey, &xcert, &xcert_size, NULL, NULL, NULL, 0);
     if (ret < 0) {
-        this->last_err = gnutls_strerror(ret);
+        last_err = gnutls_strerror(ret);
         goto fail;
     }
 
@@ -119,7 +119,7 @@ int load_pkcs12_file(QWidget *w, Key &key, Cert &cert, QString File)
 
 int KeyPair::import_pfx(QString File)
 {
-    return load_pkcs12_file(this->w, this->key, this->cert, File);
+    return load_pkcs12_file(this->w, this->key, this->cert, File, this->last_err);
 }
 
 int KeyPair::import_cert(QString File)
