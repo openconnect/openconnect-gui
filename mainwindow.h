@@ -27,6 +27,8 @@
 #include <QMutex>
 #include "common.h"
 #include <QTimer>
+#include <QMenu>
+#include <QSystemTrayIcon>
 #ifndef _WIN32
 # include <sys/types.h>
 # include <sys/socket.h>
@@ -60,6 +62,10 @@ public:
     void set_settings(QSettings *s);
     void updateStats(const struct oc_stats *stats, QString dtls);
     void reload_settings();
+    void toggleWindow();
+    void setVisible(bool visible);
+    void createActions();
+
     ~MainWindow();
     void disable_cmd_fd() {
         cmd_fd = INVALID_SOCKET;
@@ -83,6 +89,7 @@ public:
         return &this->log;
     }
 private slots:
+    void iconActivated(QSystemTrayIcon::ActivationReason reason);
     void statsChanged(QString, QString, QString);
     void writeProgressBar(QString str);
     void changeStatus(int);
@@ -111,6 +118,8 @@ signals:
     void timeout(void);
 
 private:
+    void createTrayIcon();
+    bool shown;
     /* we keep the fd instead of a pointer to vpninfo to avoid
      * any multithread issues */
     SOCKET cmd_fd;
@@ -126,6 +135,12 @@ private:
     QString dns, ip, ip6;
     QString cstp_cipher;
     QString dtls_cipher;
+
+    QSystemTrayIcon *trayIcon;
+    QMenu *trayIconMenu;
+    QAction *minimizeAction;
+    QAction *restoreAction;
+    QAction *quitAction;
 };
 
 #endif // MAINWINDOW_H
