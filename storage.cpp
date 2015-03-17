@@ -147,7 +147,7 @@ int StoredServer::set_client_cert(QString filename)
     int ret = this->client.import_cert(filename);
     this->last_err = this->client.last_err;
 
-    if (ret != 0 && this->client.key.is_ok() == false) {
+    if (ret != 0) {
        ret = this->client.import_pfx(filename);
        this->last_err = this->client.last_err;
     }
