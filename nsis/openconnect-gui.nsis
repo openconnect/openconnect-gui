@@ -98,9 +98,9 @@ section "install"
 	file Qt5Widgets.dll
 	file vpnc-script-win.js
 	file libz-1.dll
-	file "icudt52.dll"
-	file "icuin52.dll"
-	file "icuuc52.dll"
+	file "icudt53.dll"
+	file "icuin53.dll"
+	file "icuuc53.dll"
 
 
 	# Add any other files for the install directory (license files, app data, etc) here
