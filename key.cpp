@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Red Hat
+ * Copyright (C) 2014, 2015 Red Hat
  *
  * This file is part of openconnect-gui.
  *
@@ -56,10 +56,7 @@ static int import_Key(QWidget *w, gnutls_x509_privkey_t *privkey, gnutls_datum_t
     if (ret == GNUTLS_E_DECRYPTION_FAILED && w != NULL) {
         bool ok;
         QString text;
-        MyInputDialog dialog(w, QLatin1String("This file requires a password"), QLatin1String("Please enter your password"), QLineEdit::Password);
-
-        dialog.show();
-        ok = dialog.result(text);
+        text = QInputDialog::getText(w, QLatin1String("This file requires a password"), QLatin1String("Please enter your password"), QLineEdit::Password, QString(), &ok);
         if (!ok) {
             ret = -1;
             goto fail;
