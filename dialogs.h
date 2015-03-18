@@ -26,6 +26,7 @@
 #include <QApplication>
 #include <QMutex>
 
+/* These input dialogs work from a different to main thread */
 class MyInputDialog:public QObject {
 
 public:
@@ -35,10 +36,8 @@ public:
      	this->t2 = t2;
      	this->list = list;
         this->have_list = true;
-        if (this->thread() != QApplication::instance()->thread()) {
-	        mutex.lock();
-	        this->moveToThread( QApplication::instance()->thread());
-	}
+	mutex.lock();
+	this->moveToThread( QApplication::instance()->thread());
      };
      MyInputDialog(QWidget *w, QString t1, QString t2, QLineEdit::EchoMode type) {
      	this->w = w;
@@ -46,24 +45,16 @@ public:
      	this->t2 = t2;
         have_list = false;
         this->type = type;
-        if (this->thread() != QApplication::instance()->thread()) {
-	        mutex.lock();
-	        this->moveToThread( QApplication::instance()->thread());
-	}
+	mutex.lock();
+	this->moveToThread( QApplication::instance()->thread());
      };
      ~MyInputDialog() {
-     	if (this->thread() != QApplication::instance()->thread()) {
-       	    mutex.tryLock();
-     	    mutex.unlock();
-     	}
+       	mutex.tryLock();
+     	mutex.unlock();
      }
 
      void show() {
-     	if (this->thread() == QApplication::instance()->thread()) {
-	    event(new QEvent( QEvent::User));
-	} else {
-     	    QCoreApplication::postEvent(this, new QEvent( QEvent::User));
-     	}
+     	QCoreApplication::postEvent(this, new QEvent( QEvent::User));
      }
 
      virtual bool event(QEvent * ev) {
@@ -74,17 +65,14 @@ public:
             else
                 text = QInputDialog::getText(w, t1, t2, type, QString(), &res);
 
-            if (this->thread() != QApplication::instance()->thread())
-                mutex.unlock();
+            mutex.unlock();
         }
         return res;
     }
 
     bool result(QString & text) {
-     	if (this->thread() != QApplication::instance()->thread()) {
-            mutex.lock();
-            mutex.unlock();
-        }
+        mutex.lock();
+        mutex.unlock();
         text = this->text;
         return res;
     };

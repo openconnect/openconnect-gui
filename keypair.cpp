@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Red Hat
+ * Copyright (C) 2014, 2015 Red Hat
  *
  * This file is part of openconnect-gui.
  *
@@ -76,11 +76,7 @@ int load_pkcs12_file(QWidget *w, Key &key, Cert &cert, QString File, QString &la
         goto fail;
     }
 
-    {
-	MyInputDialog dialog(w, QLatin1String("This file requires a password"), QLatin1String("Please enter your password"), QLineEdit::Password);
-	dialog.show();
-	ok = dialog.result(pass);
-    }
+    pass = QInputDialog::getText(w, QLatin1String("This file requires a password"), QLatin1String("Please enter your password"), QLineEdit::Password, QString(), &ok);
 
     if (!ok)
         goto fail;
