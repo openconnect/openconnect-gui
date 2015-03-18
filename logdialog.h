@@ -23,23 +23,18 @@
 #include <QDialog>
 
 namespace Ui {
-class LogDialog;
+    class LogDialog;
 }
-
-class LogDialog : public QDialog
-{
-    Q_OBJECT
-
-public:
-    explicit LogDialog(QStringList items, QWidget *parent = 0);
+class LogDialog:public QDialog {
+ Q_OBJECT public:
+     explicit LogDialog(QStringList items, QWidget * parent = 0);
     ~LogDialog();
 
-private slots:
-    void append(QString item);
+    private slots:void append(QString item);
     void reject();
     void cancel() {
         emit clear_logdialog();
-        this->close();
+         this->close();
     };
 
     void on_pushButton_clicked();
@@ -48,13 +43,13 @@ private slots:
 
     void on_pushButton_2_clicked();
 
-signals:
+ signals:
     void clear_log(void);
     void clear_logdialog(void);
 
-private:
-    Ui::LogDialog *ui;
+ private:
+    Ui::LogDialog * ui;
     QStringList text;
 };
 
-#endif // LOGDIALOG_H
+#endif                          // LOGDIALOG_H

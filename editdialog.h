@@ -32,19 +32,14 @@ struct win_cert_st {
 };
 
 namespace Ui {
-class EditDialog;
-}
-
-class EditDialog : public QDialog
-{
-    Q_OBJECT
-
-public:
-    explicit EditDialog(QString server, QSettings *settings, QWidget *parent = 0);
+    class EditDialog;
+} class EditDialog:public QDialog {
+ Q_OBJECT public:
+     explicit EditDialog(QString server, QSettings * settings,
+                         QWidget * parent = 0);
     ~EditDialog();
 
-private slots:
-    void load_win_certs();
+    private slots:void load_win_certs();
     void on_buttonBox_accepted();
 
     void on_buttonBox_rejected();
@@ -68,11 +63,11 @@ private slots:
     void on_toolButton_clicked();
 
     void on_loadWinCert_clicked();
-    
-private:
-    Ui::EditDialog *ui;
-    std::vector<win_cert_st> winCerts;
+
+ private:
+     Ui::EditDialog * ui;
+     std::vector < win_cert_st > winCerts;
     StoredServer *ss;
 };
 
-#endif // EDITDIALOG_H
+#endif                          // EDITDIALOG_H

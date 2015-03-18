@@ -24,13 +24,12 @@
 #include <QString>
 #include <QByteArray>
 
-class CryptData
-{
-public:
-    static QByteArray encode(QString &txt, QString password);
-    static bool decode(QString &txt, QByteArray encoded, QString & res);
-private:
+class CryptData {
+ public:
+    static QByteArray encode(QString & txt, QString password);
+    static bool decode(QString & txt, QByteArray encoded, QString & res);
+ private:
 
 };
 
-#endif // CRYPTDATA_H
+#endif                          // CRYPTDATA_H

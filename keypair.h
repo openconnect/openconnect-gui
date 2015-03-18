@@ -23,9 +23,8 @@
 #include "key.h"
 #include "cert.h"
 
-class KeyPair
-{
-public:
+class KeyPair {
+ public:
     KeyPair();
     ~KeyPair();
 
@@ -38,8 +37,8 @@ public:
         key.set_window(w);
     };
 
-    int cert_export(QByteArray &data);
-    int key_export(QByteArray &data);
+    int cert_export(QByteArray & data);
+    int key_export(QByteArray & data);
     bool is_complete() {
         if (key.is_ok() == cert.is_ok())
             return true;
@@ -50,8 +49,8 @@ public:
 
     Key key;
     Cert cert;
-private:
+ private:
     QWidget * w;
 };
 
-#endif // KEYPAIR_H
+#endif                          // KEYPAIR_H

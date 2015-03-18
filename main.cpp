@@ -28,33 +28,35 @@ extern "C" {
 #include <signal.h>
 #include <openconnect.h>
 #include <gnutls/pkcs11.h>
-}
-
-static QStringList *log = NULL;
+} static QStringList *log = NULL;
 
 int pin_callback(void *userdata, int attempt, const char *token_url,
-                 const char *token_label, unsigned flags, char *pin, size_t pin_max)
+		 const char *token_label, unsigned flags, char *pin,
+		 size_t pin_max)
 {
-    MainWindow *w = (MainWindow*)userdata;
+    MainWindow *w = (MainWindow *) userdata;
     QString text, outtext, type = "user";
     bool ok;
 
     if (flags & GNUTLS_PIN_SO)
-        type = QObject::tr("security officer");
+	type = QObject::tr("security officer");
 
-    outtext = QObject::tr("Please enter the ") + type + QObject::tr(" PIN for ") + QLatin1String(token_label) + ".";
+    outtext =
+	QObject::tr("Please enter the ") + type + QObject::tr(" PIN for ") +
+	QLatin1String(token_label) + ".";
     if (flags & GNUTLS_PKCS11_PIN_FINAL_TRY)
-        outtext += QObject::tr(" This is the FINAL try!");
+	outtext += QObject::tr(" This is the FINAL try!");
 
     if (flags & GNUTLS_PKCS11_PIN_COUNT_LOW)
-        outtext += QObject::tr(" Only few tries before token lock!");
+	outtext += QObject::tr(" Only few tries before token lock!");
 
-    MyInputDialog dialog(w, QLatin1String(token_url), outtext, QLineEdit::Password);
+    MyInputDialog dialog(w, QLatin1String(token_url), outtext,
+			 QLineEdit::Password);
     dialog.show();
     ok = dialog.result(text);
 
     if (!ok)
-        return -1;
+	return -1;
 
     snprintf(pin, pin_max, "%s", text.toAscii().data());
     return 0;
@@ -63,8 +65,8 @@ int pin_callback(void *userdata, int attempt, const char *token_url,
 static void log_func(int level, const char *str)
 {
     if (log != NULL) {
-        QString s = QLatin1String(str);
-        log->append(s.trimmed());
+	QString s = QLatin1String(str);
+	log->append(s.trimmed());
     }
 }
 
@@ -91,15 +93,15 @@ int main(int argc, char *argv[])
 #if !defined(DEVEL)
     v = settings.value("mainwindow/size");
     if (v.isNull() == false)
-        w.resize(v.toSize());
+	w.resize(v.toSize());
 
     v = settings.value("mainwindow/pos");
     if (v.isNull() == false)
-        w.move(v.toPoint());
+	w.move(v.toPoint());
 
     v = settings.value("mainwindow/fullscreen");
     if (v.isNull() == false && v.toInt() != 0) {
-        w.setWindowState(Qt::WindowMaximized);
+	w.setWindowState(Qt::WindowMaximized);
     }
 #endif
 
@@ -108,9 +110,14 @@ int main(int argc, char *argv[])
 
 #if !defined(_WIN32) && !defined(DEVEL)
     if (getuid() != 0) {
-	    msgBox.setText(QObject::tr("This program requires root privileges to fully function."));
-	    msgBox.setInformativeText(QObject::tr("VPN connection establishment would fail."));
-	    ret = msgBox.exec();
+	msgBox.
+	    setText(QObject::
+		    tr
+		    ("This program requires root privileges to fully function."));
+	msgBox.
+	    setInformativeText(QObject::
+			       tr("VPN connection establishment would fail."));
+	ret = msgBox.exec();
     }
 #endif
 

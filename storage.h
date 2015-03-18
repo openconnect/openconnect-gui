@@ -27,33 +27,31 @@
 #include <gnutls/gnutls.h>
 #include "keypair.h"
 
-QStringList get_server_list(QSettings *settings);
-void remove_server(QSettings *settings, QString server);
+QStringList get_server_list(QSettings * settings);
+void remove_server(QSettings * settings, QString server);
 
-class StoredServer
-{
-public:
-    StoredServer(QSettings *settings);
+class StoredServer {
+ public:
+    StoredServer(QSettings * settings);
     ~StoredServer();
 
     int load(QString & name);
-    QString &get_username(void) {
+     QString & get_username(void) {
         return this->username;
     }
-
-    QString &get_password(void) {
+    QString & get_password(void) {
         return this->password;
     }
 
-    QString &get_groupname(void) {
+    QString & get_groupname(void) {
         return this->groupname;
     }
 
-    QString &get_servername(void) {
+    QString & get_servername(void) {
         return this->servername;
     }
 
-    QString &get_label(void) {
+    QString & get_label(void) {
         return this->label;
     }
 
@@ -153,7 +151,7 @@ public:
         this->token_type = type;
     }
 
-    void set_server_hash(unsigned algo, QByteArray &hash) {
+    void set_server_hash(unsigned algo, QByteArray & hash) {
         this->server_hash_algo = algo;
         this->server_hash = hash;
     }
@@ -169,7 +167,7 @@ public:
 
     QString last_err;
 
-private:
+ private:
     bool batch_mode;
     bool minimize_on_connect;
     bool proxy;
@@ -188,4 +186,4 @@ private:
     QSettings *settings;
 };
 
-#endif // STORAGE_H
+#endif                          // STORAGE_H
