@@ -271,6 +271,7 @@ static void main_loop(VpnInfo *vpninfo, MainWindow *m)
     bool retry = false;
     QString oldpass, oldgroup;
     bool reset_password = false;
+    int retries = 2;
 
     m->vpn_status_changed(STATUS_CONNECTING);
 
@@ -302,6 +303,10 @@ static void main_loop(VpnInfo *vpninfo, MainWindow *m)
 	    m->updateProgressBar(vpninfo->last_err);
 	    goto fail;
 	}
+
+	if (retries-- <= 0)
+            goto fail;
+
     } while(retry == true);
 
     ret = vpninfo->dtls_connect();
