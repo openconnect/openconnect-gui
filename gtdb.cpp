@@ -17,7 +17,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
 #include "gtdb.h"
 #include <gnutls/crypto.h>
 
@@ -26,18 +25,17 @@
 #define MAX_HASH_LEN 64
 
 static int
-store_cb(const char* db_name, const char* host, const char* service,
-              time_t expiration,
-              const gnutls_datum_t* pubkey)
+store_cb(const char *db_name, const char *host, const char *service,
+	 time_t expiration, const gnutls_datum_t * pubkey)
 {
-    const gtdb *tdb = reinterpret_cast<const gtdb*>(db_name);
+    const gtdb *tdb = reinterpret_cast < const gtdb * >(db_name);
     char output[MAX_HASH_LEN];
     QByteArray ahash;
     int ret;
 
     ret = gnutls_hash_fast(HASH, pubkey->data, pubkey->size, output);
     if (ret < 0) {
-        return -1;
+	return -1;
     }
 
     ahash.append(output, HASH_LEN);
@@ -47,10 +45,10 @@ store_cb(const char* db_name, const char* host, const char* service,
 }
 
 static int
-verify_cb(const char* db_name, const char* host, const char* service,
-                       const gnutls_datum_t* pubkey)
+verify_cb(const char *db_name, const char *host, const char *service,
+	  const gnutls_datum_t * pubkey)
 {
-    const gtdb *tdb = reinterpret_cast<const gtdb*>(db_name);
+    const gtdb *tdb = reinterpret_cast < const gtdb * >(db_name);
     QByteArray ahash;
     unsigned algo;
     int len;
@@ -58,21 +56,23 @@ verify_cb(const char* db_name, const char* host, const char* service,
     char output[MAX_HASH_LEN];
 
     algo = tdb->ss->get_server_hash(ahash);
-    len = gnutls_hash_get_len((gnutls_digest_algorithm_t)algo);
+    len = gnutls_hash_get_len((gnutls_digest_algorithm_t) algo);
 
     if (algo == 0 || len > (int)sizeof(output))
-        return -1;
+	return -1;
 
     if (ahash.size() != len)
-        return -1;
+	return -1;
 
-    ret = gnutls_hash_fast((gnutls_digest_algorithm_t)algo, pubkey->data, pubkey->size, output);
+    ret =
+	gnutls_hash_fast((gnutls_digest_algorithm_t) algo, pubkey->data,
+			 pubkey->size, output);
     if (ret < 0) {
-        return -1;
+	return -1;
     }
 
     if (memcmp(ahash.constData(), output, len) == 0)
-        return 0;
+	return 0;
     return GNUTLS_E_CERTIFICATE_KEY_MISMATCH;
 }
 

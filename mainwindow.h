@@ -30,36 +30,29 @@
 #include <QMenu>
 #include <QSystemTrayIcon>
 #ifndef _WIN32
-# include <sys/types.h>
-# include <sys/socket.h>
-# include <errno.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <errno.h>
 #else
-# include <winsock2.h>
+#include <winsock2.h>
 #endif
 
 extern "C" {
 #include <openconnect.h>
-}
-
-namespace Ui {
-class MainWindow;
-}
-
-enum status_t {
+} namespace Ui {
+    class MainWindow;
+} enum status_t {
     STATUS_DISCONNECTED,
     STATUS_CONNECTING,
     STATUS_CONNECTED
 };
 
-class MainWindow : public QMainWindow
-{
-    Q_OBJECT
-
-public:
-    explicit MainWindow(QWidget *parent = 0);
+class MainWindow:public QMainWindow {
+ Q_OBJECT public:
+     explicit MainWindow(QWidget * parent = 0);
     void updateProgressBar(QString str);
     void updateProgressBar(QString str, bool show);
-    void set_settings(QSettings *s);
+    void set_settings(QSettings * s);
     void updateStats(const struct oc_stats *stats, QString dtls);
     void reload_settings();
     void toggleWindow();
@@ -75,8 +68,9 @@ public:
         emit vpn_status_changed_sig(connected);
     };
 
-    void vpn_status_changed(int connected, QString &dns, QString &ip, QString &ip6,
-    			    QString &cstp_cipher, QString &dtls_cipher) {
+    void vpn_status_changed(int connected, QString & dns, QString & ip,
+                            QString & ip6, QString & cstp_cipher,
+                            QString & dtls_cipher) {
         this->dns = dns;
         this->ip = ip;
         this->ip6 = ip6;
@@ -88,8 +82,7 @@ public:
     QStringList *get_log(void) {
         return &this->log;
     }
-private slots:
-    void iconActivated(QSystemTrayIcon::ActivationReason reason);
+    private slots:void iconActivated(QSystemTrayIcon::ActivationReason reason);
     void statsChanged(QString, QString, QString);
     void writeProgressBar(QString str);
     void changeStatus(int);
@@ -109,29 +102,29 @@ private slots:
     void on_toolButton_2_clicked();
 
     void on_toolButton_3_clicked();
-    void closeEvent(QCloseEvent *bar);
+    void closeEvent(QCloseEvent * bar);
 
-signals:
+ signals:
     void log_changed(QString val);
     void stats_changed_sig(QString, QString, QString);
     void vpn_status_changed_sig(int);
     void timeout(void);
 
-private:
+ private:
     void createTrayIcon();
     bool shown;
     /* we keep the fd instead of a pointer to vpninfo to avoid
      * any multithread issues */
     SOCKET cmd_fd;
     bool minimize_on_connect;
-    Ui::MainWindow *ui;
+    Ui::MainWindow * ui;
     QSettings *settings;
     QMutex progress_mutex;
     QStringList log;
     QTimer *timer;
     QTimer *blink_timer;
-    QFutureWatcher<void> futureWatcher; // watches the vpninfo
-    
+    QFutureWatcher < void >futureWatcher;       // watches the vpninfo
+
     QString dns, ip, ip6;
     QString cstp_cipher;
     QString dtls_cipher;
@@ -143,4 +136,4 @@ private:
     QAction *quitAction;
 };
 
-#endif // MAINWINDOW_H
+#endif                          // MAINWINDOW_H

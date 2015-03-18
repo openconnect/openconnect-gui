@@ -26,12 +26,11 @@
 #include "mainwindow.h"
 #include <gnutls/x509.h>
 
-class Key
-{
-public:
+class Key {
+ public:
     /* functions return zero on success */
-    int import_file(QString &File);
-    int import_pem(QByteArray &data);
+    int import_file(QString & File);
+    int import_pem(QByteArray & data);
     void set(gnutls_x509_privkey_t privkey) {
         clear();
         this->privkey = privkey;
@@ -42,8 +41,8 @@ public:
         this->w = w;
     };
 
-    int data_export(QByteArray &data);
-    int tmpfile_export(QString &File);
+    int data_export(QByteArray & data);
+    int tmpfile_export(QString & File);
 
     bool is_ok() {
         if (imported != false)
@@ -59,7 +58,7 @@ public:
     Key();
     ~Key();
     QString last_err;
-private:
+ private:
     gnutls_x509_privkey_t privkey;
     QTemporaryFile tmpfile;
     QString url;
@@ -67,5 +66,4 @@ private:
     bool imported;
 };
 
-
-#endif // KEY_H
+#endif                          // KEY_H

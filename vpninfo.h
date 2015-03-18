@@ -25,19 +25,17 @@
 
 extern "C" {
 #include <openconnect.h>
-}
-
-class VpnInfo
-{
-public:
-    explicit VpnInfo(QString name, class StoredServer *ss, class MainWindow *m);
+} class VpnInfo {
+ public:
+    explicit VpnInfo(QString name, class StoredServer * ss,
+                     class MainWindow * m);
     ~VpnInfo();
     void parse_url(const char *url);
     int connect();
     int dtls_connect();
     void mainloop();
-    void get_info(QString &dns, QString &ip, QString &ip6);
-    void get_cipher_info(QString &cstp, QString &dtls);
+    void get_info(QString & dns, QString & ip, QString & ip6);
+    void get_cipher_info(QString & cstp, QString & dtls);
     SOCKET get_cmd_fd() {
         return cmd_fd;
     }
@@ -60,8 +58,8 @@ public:
     unsigned int password_set;
     unsigned int form_attempt;
     unsigned int form_pass_attempt;
-private:
+ private:
     SOCKET cmd_fd;
 };
 
-#endif // VPNINFO_H
+#endif                          // VPNINFO_H
