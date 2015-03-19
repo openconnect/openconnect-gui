@@ -63,19 +63,19 @@ void LogDialog::append(QString item)
 void LogDialog::on_pushButton_2_clicked()
 {
     if (this->text.isEmpty() == false) {
-	QMessageBox mbox;
-	int ret;
+        QMessageBox mbox;
+        int ret;
 
-	mbox.setText(QObject::tr("Are you sure you want to clear the log?"));
-	mbox.setStandardButtons(QMessageBox::Cancel | QMessageBox::Ok);
-	mbox.setDefaultButton(QMessageBox::Cancel);
-	mbox.setButtonText(QMessageBox::Ok, tr("Clear"));
+        mbox.setText(QObject::tr("Are you sure you want to clear the log?"));
+        mbox.setStandardButtons(QMessageBox::Cancel | QMessageBox::Ok);
+        mbox.setDefaultButton(QMessageBox::Cancel);
+        mbox.setButtonText(QMessageBox::Ok, tr("Clear"));
 
-	ret = mbox.exec();
-	if (ret == QMessageBox::Ok) {
-	    emit clear_log();
-	    this->text.clear();
-	    ui->listWidget->clear();
-	}
+        ret = mbox.exec();
+        if (ret == QMessageBox::Ok) {
+            emit clear_log();
+            this->text.clear();
+            ui->listWidget->clear();
+        }
     }
 }
