@@ -109,6 +109,8 @@ static void term_thread(MainWindow * m, SOCKET * fd)
                                  QString::number(net_errno));
         *fd = INVALID_SOCKET;
         ms_sleep(200);
+    } else {
+        m->vpn_status_changed(STATUS_DISCONNECTED);
     }
 }
 
@@ -283,13 +285,14 @@ void MainWindow::changeStatus(int val)
         ui->connectBtn->setEnabled(true);
         ui->iconLabel->setPixmap(OFF_ICON);
 
-        if (trayIcon && this->isHidden() == true) {
+        if (trayIcon) {
             icon.addPixmap(TRAY_OFF_ICON, QIcon::Normal, QIcon::Off);
             trayIcon->setIcon(icon);
 
-            trayIcon->showMessage(QLatin1String("Disconnected"), QLatin1String("You were disconnected from the VPN"),
-                                  QSystemTrayIcon::Warning,
-                                  10000);
+            if (this->isHidden() == true)
+                trayIcon->showMessage(QLatin1String("Disconnected"), QLatin1String("You were disconnected from the VPN"),
+                                      QSystemTrayIcon::Warning,
+                                      10000);
         }
     }
 }
@@ -578,7 +581,7 @@ void MainWindow::toggleWindow()
     if (this->isHidden()) {
         setVisible(true);
     } else {
-        setVisible(true);
+        setVisible(false);
     }
 }
 
