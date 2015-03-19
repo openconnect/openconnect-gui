@@ -1,9 +1,11 @@
 NEWS -- History of user-visible changes.
 
 * version 1.0 (unreleased)
-- Corrected issue with certain popup dialogs freezing the UI
-- Corrected import of PKCS #12 files
-- Added tray icon in UI
+- Corrected issue with certain popup dialogs freezing the UI.
+- Corrected import of PKCS #12 files.
+- Added tray icon in UI.
+- updated to libopenconnect 7.06.
+- updated to latest prerelease of nettle and GnuTLS 3.4.0.
 
 
 * version 0.9 (released 2014-11-28)
