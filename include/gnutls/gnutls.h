@@ -90,8 +90,12 @@ extern "C" {
  * @GNUTLS_CIPHER_DES_CBC: DES in CBC mode (56-bit keys).
  * @GNUTLS_CIPHER_AES_128_GCM: AES in GCM mode with 128-bit keys.
  * @GNUTLS_CIPHER_AES_256_GCM: AES in GCM mode with 256-bit keys.
+ * @GNUTLS_CIPHER_AES_128_CCM: AES in CCM mode with 128-bit keys.
+ * @GNUTLS_CIPHER_AES_256_CCM: AES in CCM mode with 256-bit keys.
  * @GNUTLS_CIPHER_CAMELLIA_128_GCM: CAMELLIA in GCM mode with 128-bit keys.
  * @GNUTLS_CIPHER_CAMELLIA_256_GCM: CAMELLIA in GCM mode with 256-bit keys.
+ * @GNUTLS_CIPHER_SALSA20_256: Salsa20 with 256-bit keys.
+ * @GNUTLS_CIPHER_ESTREAM_SALSA20_256: Estream's Salsa20 variant with 256-bit keys.
  * @GNUTLS_CIPHER_IDEA_PGP_CFB: IDEA in CFB mode.
  * @GNUTLS_CIPHER_3DES_PGP_CFB: 3DES in CFB mode.
  * @GNUTLS_CIPHER_CAST5_PGP_CFB: CAST5 in CFB mode.
@@ -114,16 +118,18 @@ typedef enum gnutls_cipher_algorithm {
 	GNUTLS_CIPHER_ARCFOUR_40 = 6,
 	GNUTLS_CIPHER_CAMELLIA_128_CBC = 7,
 	GNUTLS_CIPHER_CAMELLIA_256_CBC = 8,
-	GNUTLS_CIPHER_RC2_40_CBC = 90,
-	GNUTLS_CIPHER_DES_CBC = 91,
-	GNUTLS_CIPHER_AES_192_CBC = 92,
-	GNUTLS_CIPHER_AES_128_GCM = 93,
-	GNUTLS_CIPHER_AES_256_GCM = 94,
-	GNUTLS_CIPHER_CAMELLIA_192_CBC = 95,
-	GNUTLS_CIPHER_SALSA20_256 = 96,
-	GNUTLS_CIPHER_ESTREAM_SALSA20_256 = 97,
-	GNUTLS_CIPHER_CAMELLIA_128_GCM = 98,
-	GNUTLS_CIPHER_CAMELLIA_256_GCM = 99,
+	GNUTLS_CIPHER_AES_192_CBC = 9,
+	GNUTLS_CIPHER_AES_128_GCM = 10,
+	GNUTLS_CIPHER_AES_256_GCM = 11,
+	GNUTLS_CIPHER_CAMELLIA_192_CBC = 12,
+	GNUTLS_CIPHER_SALSA20_256 = 13,
+	GNUTLS_CIPHER_ESTREAM_SALSA20_256 = 14,
+	GNUTLS_CIPHER_CAMELLIA_128_GCM = 15,
+	GNUTLS_CIPHER_CAMELLIA_256_GCM = 16,
+	GNUTLS_CIPHER_RC2_40_CBC = 17,
+	GNUTLS_CIPHER_DES_CBC = 18,
+	GNUTLS_CIPHER_AES_128_CCM = 19,
+	GNUTLS_CIPHER_AES_256_CCM = 20,
 
 	/* used only for PGP internals. Ignored in TLS/SSL
 	 */
@@ -367,6 +373,8 @@ typedef enum {
  *   recognized.
  * @GNUTLS_A_UNKNOWN_PSK_IDENTITY: The SRP/PSK username is missing
  *   or not known.
+ * @GNUTLS_A_NO_APPLICATION_PROTOCOL: The ALPN protocol requested is
+ *   not supported by the peer.
  *
  * Enumeration of different TLS alerts.
  */
@@ -554,8 +562,9 @@ typedef enum {
 	GNUTLS_TLS1 = GNUTLS_TLS1_0,
 	GNUTLS_TLS1_1 = 3,
 	GNUTLS_TLS1_2 = 4,
-	GNUTLS_DTLS0_9 = 6,	/* FIXME: at some point change it to 200 */
-	GNUTLS_DTLS1_0 = 5,	/* 201 */
+
+	GNUTLS_DTLS0_9 = 200,
+	GNUTLS_DTLS1_0 = 201,	/* 201 */
 	GNUTLS_DTLS1_2 = 202,
 	GNUTLS_DTLS_VERSION_MIN = GNUTLS_DTLS1_0,
 	GNUTLS_DTLS_VERSION_MAX = GNUTLS_DTLS1_2,
@@ -638,6 +647,8 @@ const char *gnutls_pk_algorithm_get_name(gnutls_pk_algorithm_t algorithm);
  * @GNUTLS_SIGN_DSA_SHA1: Digital signature algorithm DSA with SHA-1
  * @GNUTLS_SIGN_DSA_SHA224: Digital signature algorithm DSA with SHA-224
  * @GNUTLS_SIGN_DSA_SHA256: Digital signature algorithm DSA with SHA-256
+ * @GNUTLS_SIGN_DSA_SHA384: Digital signature algorithm DSA with SHA-384
+ * @GNUTLS_SIGN_DSA_SHA512: Digital signature algorithm DSA with SHA-512
  * @GNUTLS_SIGN_DSA_SHA: Same as %GNUTLS_SIGN_DSA_SHA1.
  * @GNUTLS_SIGN_RSA_MD5: Digital signature algorithm RSA with MD5.
  * @GNUTLS_SIGN_RSA_MD2: Digital signature algorithm RSA with MD2.
@@ -700,9 +711,9 @@ typedef enum {
 
 /* macros to allow specifying a specific curve in gnutls_privkey_generate()
  * and gnutls_x509_privkey_generate() */
-#define GNUTLS_CURVE_TO_BITS(curve) (unsigned int)((1<<31)|(curve))
-#define GNUTLS_BITS_TO_CURVE(bits) ((bits) & 0x7FFFFFFF)
-#define GNUTLS_BITS_ARE_CURVE(bits) ((bits) & 0x80000000)
+#define GNUTLS_CURVE_TO_BITS(curve) (unsigned int)((1<<31)|((unsigned int)(curve)))
+#define GNUTLS_BITS_TO_CURVE(bits) (((unsigned int)(bits)) & 0x7FFFFFFF)
+#define GNUTLS_BITS_ARE_CURVE(bits) (((unsigned int)(bits)) & 0x80000000)
 
 /**
  * gnutls_sec_param_t:
@@ -720,16 +731,16 @@ typedef enum {
  * Enumeration of security parameters for passive attacks.
  */
 typedef enum {
-	GNUTLS_SEC_PARAM_INSECURE = -20,
-	GNUTLS_SEC_PARAM_EXPORT = -15,
-	GNUTLS_SEC_PARAM_VERY_WEAK = -12,
-	GNUTLS_SEC_PARAM_WEAK = -10,
 	GNUTLS_SEC_PARAM_UNKNOWN = 0,
-	GNUTLS_SEC_PARAM_LOW = 1,
-	GNUTLS_SEC_PARAM_LEGACY = 2,
-	GNUTLS_SEC_PARAM_MEDIUM = 3,
-	GNUTLS_SEC_PARAM_HIGH = 4,
-	GNUTLS_SEC_PARAM_ULTRA = 5
+	GNUTLS_SEC_PARAM_INSECURE = 5,
+	GNUTLS_SEC_PARAM_EXPORT = 10,
+	GNUTLS_SEC_PARAM_VERY_WEAK = 15,
+	GNUTLS_SEC_PARAM_WEAK = 20,
+	GNUTLS_SEC_PARAM_LOW = 25,
+	GNUTLS_SEC_PARAM_LEGACY = 30,
+	GNUTLS_SEC_PARAM_MEDIUM = 35,
+	GNUTLS_SEC_PARAM_HIGH = 40,
+	GNUTLS_SEC_PARAM_ULTRA = 45
 } gnutls_sec_param_t;
 
 /* old name */
@@ -923,6 +934,19 @@ void gnutls_record_cork(gnutls_session_t session);
 int gnutls_record_uncork(gnutls_session_t session, unsigned int flags);
 size_t gnutls_record_discard_queued(gnutls_session_t session);
 
+int
+gnutls_record_get_state(gnutls_session_t session,
+			unsigned read,
+			gnutls_datum_t *mac_key,
+			gnutls_datum_t *IV,
+			gnutls_datum_t *cipher_key,
+			unsigned char seq_number[8]);
+
+int
+gnutls_record_set_state(gnutls_session_t session,
+			unsigned read,
+			unsigned char seq_number[8]);
+
 typedef struct {
 	size_t low;
 	size_t high;
@@ -1107,8 +1131,10 @@ int gnutls_priority_get_cipher_suite_index(gnutls_priority_t pcache,
 					   unsigned int idx,
 					   unsigned int *sidx);
 
+#define GNUTLS_PRIORITY_LIST_INIT_KEYWORDS 1
+#define GNUTLS_PRIORITY_LIST_SPECIAL 2
 const char *
-gnutls_priority_string_list(unsigned iter);
+gnutls_priority_string_list(unsigned iter, unsigned int flags);
 
 int gnutls_priority_set(gnutls_session_t session,
 			gnutls_priority_t priority);
@@ -1222,6 +1248,7 @@ time_t gnutls_db_check_entry_time(gnutls_datum_t * entry);
    * @htype: the type of the handshake message (%gnutls_handshake_description_t)
    * @post: non zero if this is a post-process/generation call and zero otherwise
    * @incoming: non zero if this is an incoming message and zero if this is an outgoing message
+   * @msg: the (const) data of the handshake message without the handshake headers.
    *
    * Function prototype for handshake hooks. It is set using
    * gnutls_handshake_set_hook_function().
@@ -1235,7 +1262,8 @@ time_t gnutls_db_check_entry_time(gnutls_datum_t * entry);
 typedef int (*gnutls_handshake_hook_func) (gnutls_session_t,
 					   unsigned int htype,
 					   unsigned post,
-					   unsigned int incoming);
+					   unsigned int incoming,
+					   const gnutls_datum_t *msg);
 void gnutls_handshake_set_hook_function(gnutls_session_t session,
 					unsigned int htype, int post,
 					gnutls_handshake_hook_func func);
@@ -1341,6 +1369,17 @@ gnutls_certificate_get_issuer(gnutls_certificate_credentials_t sc,
 int gnutls_certificate_get_crt_raw(gnutls_certificate_credentials_t sc,
 				   unsigned idx1, unsigned idx2,
 				   gnutls_datum_t * cert);
+
+int
+gnutls_certificate_get_x509_crt(gnutls_certificate_credentials_t res,
+                                unsigned index,
+                                gnutls_x509_crt_t **crt_list,
+                                unsigned *crt_list_size);
+
+int
+gnutls_certificate_get_x509_key(gnutls_certificate_credentials_t res,
+                                unsigned index,
+                                gnutls_x509_privkey_t *key);
 
 void gnutls_certificate_free_keys(gnutls_certificate_credentials_t sc);
 void gnutls_certificate_free_cas(gnutls_certificate_credentials_t sc);
@@ -1570,6 +1609,7 @@ typedef ssize_t(*gnutls_pull_func) (gnutls_transport_ptr_t, void *,
 typedef ssize_t(*gnutls_push_func) (gnutls_transport_ptr_t, const void *,
 				    size_t);
 
+int gnutls_system_recv_timeout(gnutls_transport_ptr_t ptr, unsigned int ms);
 typedef int (*gnutls_pull_timeout_func) (gnutls_transport_ptr_t,
 					 unsigned int ms);
 

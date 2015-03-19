@@ -1,33 +1,41 @@
 /* pkcs1.h
- *
- * PKCS1 embedding.
- */
 
-/* nettle, low-level cryptographics library
- *
- * Copyright (C) 2003 Niels Möller
- *  
- * The nettle library is free software; you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as published by
- * the Free Software Foundation; either version 2.1 of the License, or (at your
- * option) any later version.
- * 
- * The nettle library is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
- * License for more details.
- * 
- * You should have received a copy of the GNU Lesser General Public License
- * along with the nettle library; see the file COPYING.LIB.  If not, write to
- * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
- * MA 02111-1301, USA.
- */
+   PKCS1 embedding.
+
+   Copyright (C) 2003 Niels Möller
+
+   This file is part of GNU Nettle.
+
+   GNU Nettle is free software: you can redistribute it and/or
+   modify it under the terms of either:
+
+     * the GNU Lesser General Public License as published by the Free
+       Software Foundation; either version 3 of the License, or (at your
+       option) any later version.
+
+   or
+
+     * the GNU General Public License as published by the Free
+       Software Foundation; either version 2 of the License, or (at your
+       option) any later version.
+
+   or both in parallel, as here.
+
+   GNU Nettle is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+   General Public License for more details.
+
+   You should have received copies of the GNU General Public License and
+   the GNU Lesser General Public License along with this program.  If
+   not, see http://www.gnu.org/licenses/.
+*/
 
 #ifndef NETTLE_PKCS1_H_INCLUDED
 #define NETTLE_PKCS1_H_INCLUDED
 
-#include <gmp.h>
 #include "nettle-types.h"
+#include "bignum.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -60,44 +68,44 @@ _pkcs1_signature_prefix(unsigned key_size,
 			unsigned digest_size);
 
 int
-pkcs1_encrypt (unsigned key_size,
+pkcs1_encrypt (size_t key_size,
 	       /* For padding */
 	       void *random_ctx, nettle_random_func *random,
-	       unsigned length, const uint8_t *message,
+	       size_t length, const uint8_t *message,
 	       mpz_t m);
 
 int
-pkcs1_decrypt (unsigned key_size,
+pkcs1_decrypt (size_t key_size,
 	       const mpz_t m,
-	       unsigned *length, uint8_t *message);
+	       size_t *length, uint8_t *message);
 
 int
-pkcs1_rsa_digest_encode(mpz_t m, unsigned key_size,
-			unsigned di_length, const uint8_t *digest_info);
+pkcs1_rsa_digest_encode(mpz_t m, size_t key_size,
+			size_t di_length, const uint8_t *digest_info);
 
 int
-pkcs1_rsa_md5_encode(mpz_t m, unsigned length, struct md5_ctx *hash);
+pkcs1_rsa_md5_encode(mpz_t m, size_t length, struct md5_ctx *hash);
 
 int
-pkcs1_rsa_md5_encode_digest(mpz_t m, unsigned length, const uint8_t *digest);
+pkcs1_rsa_md5_encode_digest(mpz_t m, size_t length, const uint8_t *digest);
 
 int
-pkcs1_rsa_sha1_encode(mpz_t m, unsigned length, struct sha1_ctx *hash);
+pkcs1_rsa_sha1_encode(mpz_t m, size_t length, struct sha1_ctx *hash);
 
 int
-pkcs1_rsa_sha1_encode_digest(mpz_t m, unsigned length, const uint8_t *digest);
+pkcs1_rsa_sha1_encode_digest(mpz_t m, size_t length, const uint8_t *digest);
 
 int
-pkcs1_rsa_sha256_encode(mpz_t m, unsigned length, struct sha256_ctx *hash);
+pkcs1_rsa_sha256_encode(mpz_t m, size_t length, struct sha256_ctx *hash);
 
 int
-pkcs1_rsa_sha256_encode_digest(mpz_t m, unsigned length, const uint8_t *digest);
+pkcs1_rsa_sha256_encode_digest(mpz_t m, size_t length, const uint8_t *digest);
 
 int
-pkcs1_rsa_sha512_encode(mpz_t m, unsigned length, struct sha512_ctx *hash);
+pkcs1_rsa_sha512_encode(mpz_t m, size_t length, struct sha512_ctx *hash);
 
 int
-pkcs1_rsa_sha512_encode_digest(mpz_t m, unsigned length, const uint8_t *digest);
+pkcs1_rsa_sha512_encode_digest(mpz_t m, size_t length, const uint8_t *digest);
 
 #ifdef __cplusplus
 }

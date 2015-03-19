@@ -1,27 +1,35 @@
 /* base64.h
- *
- * "ASCII armor" codecs.
- */
+   
+   Base-64 encoding and decoding.
 
-/* nettle, low-level cryptographics library
- *
- * Copyright (C) 2002 Niels Möller, Dan Egnor
- *  
- * The nettle library is free software; you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as published by
- * the Free Software Foundation; either version 2.1 of the License, or (at your
- * option) any later version.
- * 
- * The nettle library is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
- * License for more details.
- * 
- * You should have received a copy of the GNU Lesser General Public License
- * along with the nettle library; see the file COPYING.LIB.  If not, write to
- * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
- * MA 02111-1301, USA.
- */
+   Copyright (C) 2002 Niels Möller, Dan Egnor
+
+   This file is part of GNU Nettle.
+
+   GNU Nettle is free software: you can redistribute it and/or
+   modify it under the terms of either:
+
+     * the GNU Lesser General Public License as published by the Free
+       Software Foundation; either version 3 of the License, or (at your
+       option) any later version.
+
+   or
+
+     * the GNU General Public License as published by the Free
+       Software Foundation; either version 2 of the License, or (at your
+       option) any later version.
+
+   or both in parallel, as here.
+
+   GNU Nettle is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+   General Public License for more details.
+
+   You should have received copies of the GNU General Public License and
+   the GNU Lesser General Public License along with this program.  If
+   not, see http://www.gnu.org/licenses/.
+*/
  
 #ifndef NETTLE_BASE64_H_INCLUDED
 #define NETTLE_BASE64_H_INCLUDED
@@ -34,12 +42,14 @@ extern "C" {
 
 /* Name mangling */
 #define base64_encode_init nettle_base64_encode_init
+#define base64url_encode_init nettle_base64url_encode_init
 #define base64_encode_single nettle_base64_encode_single
 #define base64_encode_update nettle_base64_encode_update
 #define base64_encode_final nettle_base64_encode_final
 #define base64_encode_raw nettle_base64_encode_raw
 #define base64_encode_group nettle_base64_encode_group
 #define base64_decode_init nettle_base64_decode_init
+#define base64url_decode_init nettle_base64url_decode_init
 #define base64_decode_single nettle_base64_decode_single
 #define base64_decode_update nettle_base64_decode_update
 #define base64_decode_final nettle_base64_decode_final
@@ -63,30 +73,36 @@ extern "C" {
 
 struct base64_encode_ctx
 {
-  unsigned word;   /* Leftover bits */
-  unsigned bits;  /* Number of bits, always 0, 2, or 4. */
+  const uint8_t *alphabet; /* Alphabet to use for encoding */
+  unsigned short word;     /* Leftover bits */
+  unsigned char bits;      /* Number of bits, always 0, 2, or 4. */
 };
 
+/* Initialize encoding context for base-64 */
 void
 base64_encode_init(struct base64_encode_ctx *ctx);
 
+/* Initialize encoding context for URL safe alphabet, RFC 4648. */
+void
+base64url_encode_init(struct base64_encode_ctx *ctx);
+
 /* Encodes a single byte. Returns amount of output (always 1 or 2). */
-unsigned
+size_t
 base64_encode_single(struct base64_encode_ctx *ctx,
 		     uint8_t *dst,
 		     uint8_t src);
 
 /* Returns the number of output characters. DST should point to an
  * area of size at least BASE64_ENCODE_LENGTH(length). */
-unsigned
+size_t
 base64_encode_update(struct base64_encode_ctx *ctx,
 		     uint8_t *dst,
-		     unsigned length,
+		     size_t length,
 		     const uint8_t *src);
 
 /* DST should point to an area of size at least
  * BASE64_ENCODE_FINAL_LENGTH */
-unsigned
+size_t
 base64_encode_final(struct base64_encode_ctx *ctx,
 		    uint8_t *dst);
 
@@ -96,7 +112,7 @@ base64_encode_final(struct base64_encode_ctx *ctx,
  * Generates exactly BASE64_ENCODE_RAW_LENGTH(length) bytes of output.
  * Supports overlapped operation, if src <= dst. */
 void
-base64_encode_raw(uint8_t *dst, unsigned length, const uint8_t *src);
+base64_encode_raw(uint8_t *dst, size_t length, const uint8_t *src);
 
 void
 base64_encode_group(uint8_t *dst, uint32_t group);
@@ -110,15 +126,21 @@ base64_encode_group(uint8_t *dst, uint32_t group);
 
 struct base64_decode_ctx
 {
-  unsigned word;   /* Leftover bits */
-  unsigned bits;   /* Number buffered bits */
+  const signed char *table; /* Decoding table */
+  unsigned short word;      /* Leftover bits */
+  unsigned char bits;       /* Number buffered bits */
 
   /* Number of padding characters encountered */
-  unsigned padding;
+  unsigned char padding;
 };
 
+/* Initialize decoding context for base-64 */
 void
 base64_decode_init(struct base64_decode_ctx *ctx);
+
+/* Initialize encoding context for URL safe alphabet, RFC 4648. */
+void
+base64url_decode_init(struct base64_decode_ctx *ctx);
 
 /* Decodes a single byte. Returns amount of output (0 or 1), or -1 on
  * errors. */
@@ -128,18 +150,13 @@ base64_decode_single(struct base64_decode_ctx *ctx,
 		     uint8_t src);
 
 /* Returns 1 on success, 0 on error. DST should point to an area of
- * size at least BASE64_DECODE_LENGTH(length), and for sanity
- * checking, *DST_LENGTH should be initialized to the size of that
- * area before the call. *DST_LENGTH is updated to the amount of
- * decoded output. */
-
-/* Currently results in an assertion failure if *DST_LENGTH is
- * too small. FIXME: Return some error instead? */
+ * size at least BASE64_DECODE_LENGTH(length). The amount of data
+ * generated is returned in *DST_LENGTH. */
 int
 base64_decode_update(struct base64_decode_ctx *ctx,
-		     unsigned *dst_length,
+		     size_t *dst_length,
 		     uint8_t *dst,
-		     unsigned src_length,
+		     size_t src_length,
 		     const uint8_t *src);
 
 /* Returns 1 on success. */

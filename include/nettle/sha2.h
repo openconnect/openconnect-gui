@@ -1,27 +1,35 @@
 /* sha2.h
- *
- * The sha2 family of hash functions.
- */
 
-/* nettle, low-level cryptographics library
- *
- * Copyright (C) 2001, 2012 Niels Möller
- *  
- * The nettle library is free software; you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as published by
- * the Free Software Foundation; either version 2.1 of the License, or (at your
- * option) any later version.
- * 
- * The nettle library is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
- * License for more details.
- * 
- * You should have received a copy of the GNU Lesser General Public License
- * along with the nettle library; see the file COPYING.LIB.  If not, write to
- * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
- * MA 02111-1301, USA.
- */
+   The sha2 family of hash functions.
+
+   Copyright (C) 2001, 2012 Niels Möller
+
+   This file is part of GNU Nettle.
+
+   GNU Nettle is free software: you can redistribute it and/or
+   modify it under the terms of either:
+
+     * the GNU Lesser General Public License as published by the Free
+       Software Foundation; either version 3 of the License, or (at your
+       option) any later version.
+
+   or
+
+     * the GNU General Public License as published by the Free
+       Software Foundation; either version 2 of the License, or (at your
+       option) any later version.
+
+   or both in parallel, as here.
+
+   GNU Nettle is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+   General Public License for more details.
+
+   You should have received copies of the GNU General Public License and
+   the GNU Lesser General Public License along with this program.  If
+   not, see http://www.gnu.org/licenses/.
+*/
  
 #ifndef NETTLE_SHA2_H_INCLUDED
 #define NETTLE_SHA2_H_INCLUDED
@@ -43,11 +51,21 @@ extern "C" {
 #define sha512_init nettle_sha512_init
 #define sha512_update nettle_sha512_update
 #define sha512_digest nettle_sha512_digest
+#define sha512_224_init   nettle_sha512_224_init
+#define sha512_224_digest nettle_sha512_224_digest
+#define sha512_256_init   nettle_sha512_256_init
+#define sha512_256_digest nettle_sha512_256_digest
+
+/* For backwards compatibility */
+#define SHA224_DATA_SIZE SHA256_BLOCK_SIZE
+#define SHA256_DATA_SIZE SHA256_BLOCK_SIZE
+#define SHA512_DATA_SIZE SHA512_BLOCK_SIZE
+#define SHA384_DATA_SIZE SHA512_BLOCK_SIZE
 
 /* SHA256 */
 
 #define SHA256_DIGEST_SIZE 32
-#define SHA256_DATA_SIZE 64
+#define SHA256_BLOCK_SIZE 64
 
 /* Digest is kept internally as 8 32-bit words. */
 #define _SHA256_DIGEST_LENGTH 8
@@ -55,8 +73,8 @@ extern "C" {
 struct sha256_ctx
 {
   uint32_t state[_SHA256_DIGEST_LENGTH];    /* State variables */
-  uint32_t count_low, count_high;           /* 64-bit block count */
-  uint8_t block[SHA256_DATA_SIZE];          /* SHA256 data buffer */
+  uint64_t count;                           /* 64-bit block count */
+  uint8_t block[SHA256_BLOCK_SIZE];          /* SHA256 data buffer */
   unsigned int index;                       /* index into buffer */
 };
 
@@ -65,12 +83,12 @@ sha256_init(struct sha256_ctx *ctx);
 
 void
 sha256_update(struct sha256_ctx *ctx,
-	      unsigned length,
+	      size_t length,
 	      const uint8_t *data);
 
 void
 sha256_digest(struct sha256_ctx *ctx,
-	      unsigned length,
+	      size_t length,
 	      uint8_t *digest);
 
 /* Internal compression function. STATE points to 8 uint32_t words,
@@ -83,7 +101,7 @@ _nettle_sha256_compress(uint32_t *state, const uint8_t *data, const uint32_t *k)
 /* SHA224, a truncated SHA256 with different initial state. */
 
 #define SHA224_DIGEST_SIZE 28
-#define SHA224_DATA_SIZE SHA256_DATA_SIZE
+#define SHA224_BLOCK_SIZE SHA256_BLOCK_SIZE
 #define sha224_ctx sha256_ctx
 
 void
@@ -93,14 +111,14 @@ sha224_init(struct sha256_ctx *ctx);
 
 void
 sha224_digest(struct sha256_ctx *ctx,
-	      unsigned length,
+	      size_t length,
 	      uint8_t *digest);
 
 
 /* SHA512 */
 
 #define SHA512_DIGEST_SIZE 64
-#define SHA512_DATA_SIZE 128
+#define SHA512_BLOCK_SIZE 128
 
 /* Digest is kept internally as 8 64-bit words. */
 #define _SHA512_DIGEST_LENGTH 8
@@ -109,7 +127,7 @@ struct sha512_ctx
 {
   uint64_t state[_SHA512_DIGEST_LENGTH];    /* State variables */
   uint64_t count_low, count_high;           /* 128-bit block count */
-  uint8_t block[SHA512_DATA_SIZE];          /* SHA512 data buffer */
+  uint8_t block[SHA512_BLOCK_SIZE];          /* SHA512 data buffer */
   unsigned int index;                       /* index into buffer */
 };
 
@@ -118,12 +136,12 @@ sha512_init(struct sha512_ctx *ctx);
 
 void
 sha512_update(struct sha512_ctx *ctx,
-	      unsigned length,
+	      size_t length,
 	      const uint8_t *data);
 
 void
 sha512_digest(struct sha512_ctx *ctx,
-	      unsigned length,
+	      size_t length,
 	      uint8_t *digest);
 
 /* Internal compression function. STATE points to 8 uint64_t words,
@@ -136,7 +154,7 @@ _nettle_sha512_compress(uint64_t *state, const uint8_t *data, const uint64_t *k)
 /* SHA384, a truncated SHA512 with different initial state. */
 
 #define SHA384_DIGEST_SIZE 48
-#define SHA384_DATA_SIZE SHA512_DATA_SIZE
+#define SHA384_BLOCK_SIZE SHA512_BLOCK_SIZE
 #define sha384_ctx sha512_ctx
 
 void
@@ -146,9 +164,41 @@ sha384_init(struct sha512_ctx *ctx);
 
 void
 sha384_digest(struct sha512_ctx *ctx,
-	      unsigned length,
+	      size_t length,
 	      uint8_t *digest);
 
+
+/* SHA512_224 and SHA512_256, two truncated versions of SHA512 
+   with different initial states. */
+
+#define SHA512_224_DIGEST_SIZE 28
+#define SHA512_224_BLOCK_SIZE SHA512_BLOCK_SIZE
+#define sha512_224_ctx sha512_ctx
+
+void
+sha512_224_init(struct sha512_224_ctx *ctx);
+
+#define sha512_224_update nettle_sha512_update
+
+void
+sha512_224_digest(struct sha512_224_ctx *ctx,
+                  size_t length,
+                  uint8_t *digest);
+
+#define SHA512_256_DIGEST_SIZE 32
+#define SHA512_256_BLOCK_SIZE SHA512_BLOCK_SIZE
+#define sha512_256_ctx sha512_ctx
+
+void
+sha512_256_init(struct sha512_256_ctx *ctx);
+
+#define sha512_256_update nettle_sha512_update
+
+void
+sha512_256_digest(struct sha512_256_ctx *ctx,
+                  size_t length,
+                  uint8_t *digest);
+  
 #ifdef __cplusplus
 }
 #endif

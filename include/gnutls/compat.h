@@ -160,67 +160,6 @@ typedef gnutls_openpgp_crt_t gnutls_openpgp_key_t
 #define LIBGNUTLS_VERSION_NUMBER GNUTLS_VERSION_NUMBER
 #define LIBGNUTLS_EXTRA_VERSION GNUTLS_VERSION
 
-/* The gnutls_retr_st was deprecated by gnutls_certificate_retrieve_function()
- * and gnutls_retr2_st.
- */
-typedef struct gnutls_retr_st {
-	gnutls_certificate_type_t type;
-	union {
-		gnutls_x509_crt_t *x509;
-		gnutls_openpgp_crt_t pgp;
-	} cert;
-	unsigned int ncerts;	/* one for pgp keys */
-
-	union {
-		gnutls_x509_privkey_t x509;
-		gnutls_openpgp_privkey_t pgp;
-	} key;
-
-	unsigned int deinit_all;	/* if non zero all keys will be deinited */
-} gnutls_retr_st;
-
-typedef int
-gnutls_certificate_client_retrieve_function(gnutls_session_t,
-					    const
-					    gnutls_datum_t *
-					    req_ca_rdn,
-					    int nreqs, const
-					    gnutls_pk_algorithm_t
-					    * pk_algos, int
-					    pk_algos_length,
-					    gnutls_retr_st *);
-typedef int
-gnutls_certificate_server_retrieve_function(gnutls_session_t,
-					    gnutls_retr_st *);
-
-void gnutls_certificate_client_set_retrieve_function
-    (gnutls_certificate_credentials_t cred,
-     gnutls_certificate_client_retrieve_function *
-     func) _GNUTLS_GCC_ATTR_DEPRECATED;
-void
- gnutls_certificate_server_set_retrieve_function
-    (gnutls_certificate_credentials_t cred,
-     gnutls_certificate_server_retrieve_function *
-     func) _GNUTLS_GCC_ATTR_DEPRECATED;
-
-	/* External signing callback.  No longer supported because it
-	 * was deprecated by the PKCS #11 API or gnutls_privkey_import_ext. */
-typedef int (*gnutls_sign_func) (gnutls_session_t session,
-				 void *userdata,
-				 gnutls_certificate_type_t
-				 cert_type,
-				 const gnutls_datum_t * cert,
-				 const gnutls_datum_t * hash,
-				 gnutls_datum_t * signature);
-
-void
-gnutls_sign_callback_set(gnutls_session_t session,
-			 gnutls_sign_func sign_func,
-			 void *userdata) _GNUTLS_GCC_ATTR_DEPRECATED;
-gnutls_sign_func
-gnutls_sign_callback_get(gnutls_session_t session,
-			 void **userdata) _GNUTLS_GCC_ATTR_DEPRECATED;
-
 /* This is a very dangerous and error-prone function.
  * Use gnutls_privkey_sign_hash() instead.
  */
@@ -244,29 +183,6 @@ int gnutls_x509_privkey_sign_data(gnutls_x509_privkey_t key,
 				  size_t * signature_size)
     _GNUTLS_GCC_ATTR_DEPRECATED;
 
-	/* gnutls_pubkey_verify_data() */
-int gnutls_x509_crt_verify_data(gnutls_x509_crt_t crt,
-				unsigned int flags,
-				const gnutls_datum_t * data,
-				const gnutls_datum_t * signature)
-    _GNUTLS_GCC_ATTR_DEPRECATED;
-
-
-	/* gnutls_pubkey_verify_hash() */
-int gnutls_x509_crt_verify_hash(gnutls_x509_crt_t crt,
-				unsigned int flags,
-				const gnutls_datum_t * hash,
-				const gnutls_datum_t * signature)
-    _GNUTLS_GCC_ATTR_DEPRECATED;
-
-	/* gnutls_pubkey_get_verify_algorithm() */
-int gnutls_x509_crt_get_verify_algorithm(gnutls_x509_crt_t crt,
-					 const gnutls_datum_t *
-					 signature,
-					 gnutls_digest_algorithm_t
-					 * hash)
-    _GNUTLS_GCC_ATTR_DEPRECATED;
-
 	/* gnutls_pubkey_get_preferred_hash_algorithm() */
 int gnutls_x509_crt_get_preferred_hash_algorithm(gnutls_x509_crt_t
 						 crt,
@@ -287,78 +203,6 @@ int gnutls_x509_crl_sign(gnutls_x509_crl_t crl,
 			 gnutls_x509_crt_t issuer,
 			 gnutls_x509_privkey_t issuer_key)
     _GNUTLS_GCC_ATTR_DEPRECATED;
-
-	/* functions to set priority of cipher suites
-	 */
-int gnutls_cipher_set_priority(gnutls_session_t session,
-			       const int *list)
-    _GNUTLS_GCC_ATTR_DEPRECATED;
-int gnutls_mac_set_priority(gnutls_session_t session,
-			    const int *list) _GNUTLS_GCC_ATTR_DEPRECATED;
-int gnutls_compression_set_priority(gnutls_session_t session,
-				    const int *list)
-    _GNUTLS_GCC_ATTR_DEPRECATED;
-int gnutls_kx_set_priority(gnutls_session_t session,
-			   const int *list) _GNUTLS_GCC_ATTR_DEPRECATED;
-int gnutls_protocol_set_priority(gnutls_session_t session,
-				 const int *list)
-    _GNUTLS_GCC_ATTR_DEPRECATED;
-int gnutls_certificate_type_set_priority(gnutls_session_t session,
-					 const int *list)
-    _GNUTLS_GCC_ATTR_DEPRECATED;
-
-/* RSA params 
- */
-int gnutls_rsa_params_init(gnutls_rsa_params_t *
-			   rsa_params) _GNUTLS_GCC_ATTR_DEPRECATED;
-void gnutls_rsa_params_deinit(gnutls_rsa_params_t rsa_params)
-    _GNUTLS_GCC_ATTR_DEPRECATED;
-int gnutls_rsa_params_cpy(gnutls_rsa_params_t dst,
-			  gnutls_rsa_params_t src)
-    _GNUTLS_GCC_ATTR_DEPRECATED;
-int gnutls_rsa_params_import_raw(gnutls_rsa_params_t rsa_params,
-				 const gnutls_datum_t * m,
-				 const gnutls_datum_t * e,
-				 const gnutls_datum_t * d,
-				 const gnutls_datum_t * p,
-				 const gnutls_datum_t * q,
-				 const gnutls_datum_t * u);
-int gnutls_rsa_params_generate2(gnutls_rsa_params_t params,
-				unsigned int bits)
-    _GNUTLS_GCC_ATTR_DEPRECATED;
-int gnutls_rsa_params_export_raw(gnutls_rsa_params_t rsa,
-				 gnutls_datum_t * m,
-				 gnutls_datum_t * e,
-				 gnutls_datum_t * d,
-				 gnutls_datum_t * p,
-				 gnutls_datum_t * q,
-				 gnutls_datum_t * u,
-				 unsigned int *bits)
-    _GNUTLS_GCC_ATTR_DEPRECATED;
-int gnutls_rsa_params_export_pkcs1(gnutls_rsa_params_t params,
-				   gnutls_x509_crt_fmt_t format,
-				   unsigned char *params_data,
-				   size_t *
-				   params_data_size)
-    _GNUTLS_GCC_ATTR_DEPRECATED;
-int gnutls_rsa_params_import_pkcs1(gnutls_rsa_params_t params,
-				   const gnutls_datum_t *
-				   pkcs1_params,
-				   gnutls_x509_crt_fmt_t format)
-    _GNUTLS_GCC_ATTR_DEPRECATED;
-
-int gnutls_rsa_export_get_pubkey(gnutls_session_t session,
-				 gnutls_datum_t * exponent,
-				 gnutls_datum_t *
-				 modulus) _GNUTLS_GCC_ATTR_DEPRECATED;
-int gnutls_rsa_export_get_modulus_bits(gnutls_session_t session)
-    _GNUTLS_GCC_ATTR_DEPRECATED;
-int gnutls_set_default_export_priority(gnutls_session_t session)
-    _GNUTLS_GCC_ATTR_DEPRECATED;
-
-void gnutls_certificate_set_rsa_export_params
-    (gnutls_certificate_credentials_t res,
-     gnutls_rsa_params_t rsa_params) _GNUTLS_GCC_ATTR_DEPRECATED;
 
 	/* use gnutls_privkey_sign_hash() with the GNUTLS_PRIVKEY_SIGN_FLAG_TLS1_RSA flag */
 int gnutls_privkey_sign_raw_data(gnutls_privkey_t key,

@@ -112,12 +112,14 @@ extern "C" {
  * @GNUTLS_X509_CRT_LIST_FAIL_IF_UNSORTED: Fail if the certificates
  *   in the buffer are not ordered starting from subject to issuer.
  *   The error code will be %GNUTLS_E_CERTIFICATE_LIST_UNSORTED.
+ * @GNUTLS_X509_CRT_LIST_SORT: Sort the certificate chain if unsorted.
  *
  * Enumeration of different certificate import flags.
  */
 typedef enum gnutls_certificate_import_flags {
 	GNUTLS_X509_CRT_LIST_IMPORT_FAIL_IF_EXCEED = 1,
-	GNUTLS_X509_CRT_LIST_FAIL_IF_UNSORTED = 2
+	GNUTLS_X509_CRT_LIST_FAIL_IF_UNSORTED = 1<<1,
+	GNUTLS_X509_CRT_LIST_SORT = 1<<2
 } gnutls_certificate_import_flags;
 
 int gnutls_x509_crt_init(gnutls_x509_crt_t * cert);
@@ -136,11 +138,11 @@ int gnutls_x509_crt_list_import(gnutls_x509_crt_t * certs,
 				gnutls_x509_crt_fmt_t format,
 				unsigned int flags);
 
-int gnutls_x509_crt_import_pkcs11_url(gnutls_x509_crt_t crt,
+#define gnutls_x509_crt_import_pkcs11_url gnutls_x509_crt_import_url
+int gnutls_x509_crt_import_url(gnutls_x509_crt_t crt,
 				      const char *url, unsigned int flags
 				      /* GNUTLS_PKCS11_OBJ_FLAG_* */
     );
-#define gnutls_x509_crt_import_url gnutls_x509_crt_import_pkcs11_url
 
 int gnutls_x509_crt_export(gnutls_x509_crt_t cert,
 			   gnutls_x509_crt_fmt_t format,

@@ -6,14 +6,17 @@
 #define NETTLE_MEMXOR_H_INCLUDED
 
 #include <stdlib.h>
-#include "nettle-types.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-uint8_t *memxor(uint8_t *dst, const uint8_t *src, size_t n);
-uint8_t *memxor3(uint8_t *dst, const uint8_t *a, const uint8_t *b, size_t n);
+/* Name mangling */
+#define memxor nettle_memxor
+#define memxor3 nettle_memxor3
+
+void *memxor(void *dst, const void *src, size_t n);
+void *memxor3(void *dst, const void *a, const void *b, size_t n);
 
 #ifdef __cplusplus
 }

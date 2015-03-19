@@ -2,7 +2,7 @@
 #define __NETTLE_STDINT_H 1
 #ifndef _GENERATED_STDINT_H
 #define _GENERATED_STDINT_H " "
-/* generated using gnu compiler i686-w64-mingw32-gcc (GCC) 4.8.2 */
+/* generated using gnu compiler i686-w64-mingw32-gcc (GCC) 4.9.2 20141030 (Fedora MinGW 4.9.2-1.fc21) */
 #define _STDINT_HAVE_STDINT_H 1
 
 /* ................... shortcircuit part ........................... */
@@ -264,7 +264,7 @@ typedef unsigned long uintmax_t;
 #define __intptr_t_defined
 /* we encourage using "long" to store pointer values, never use "int" ! */
 #if   _STDINT_LONG_MODEL+0 == 242 || _STDINT_LONG_MODEL+0 == 484
-typedef  unsinged int   uintptr_t;
+typedef  unsigned int   uintptr_t;
 typedef           int    intptr_t;
 #elif _STDINT_LONG_MODEL+0 == 244 || _STDINT_LONG_MODEL+0 == 444
 typedef  unsigned long  uintptr_t;

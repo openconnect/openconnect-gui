@@ -225,12 +225,6 @@ gnutls_pubkey_verify_hash2(gnutls_pubkey_t key,
 			   const gnutls_datum_t * signature);
 
 int
-gnutls_pubkey_get_verify_algorithm(gnutls_pubkey_t key,
-				   const gnutls_datum_t *
-				   signature,
-				   gnutls_digest_algorithm_t * hash);
-
-int
 gnutls_pubkey_verify_data2(gnutls_pubkey_t pubkey,
 			   gnutls_sign_algorithm_t algo,
 			   unsigned int flags,
@@ -462,6 +456,10 @@ typedef struct gnutls_pcert_st {
 int gnutls_pcert_import_x509(gnutls_pcert_st * pcert,
 			     gnutls_x509_crt_t crt, unsigned int flags);
 
+int gnutls_pcert_import_x509_list(gnutls_pcert_st * pcert,
+			     	  gnutls_x509_crt_t *crt, unsigned *ncrt,
+			     	  unsigned int flags);
+
 int gnutls_pcert_export_x509(gnutls_pcert_st * pcert,
                              gnutls_x509_crt_t * crt);
 
@@ -518,20 +516,6 @@ gnutls_certificate_set_key(gnutls_certificate_credentials_t res,
 			   int names_size,
 			   gnutls_pcert_st * pcert_list,
 			   int pcert_list_size, gnutls_privkey_t key);
-
-#include <gnutls/compat.h>
-
-int gnutls_pubkey_verify_data(gnutls_pubkey_t pubkey,
-			      unsigned int flags,
-			      const gnutls_datum_t * data,
-			      const gnutls_datum_t *
-			      signature) _GNUTLS_GCC_ATTR_DEPRECATED;
-
-int gnutls_pubkey_verify_hash(gnutls_pubkey_t key,
-			      unsigned int flags,
-			      const gnutls_datum_t * hash,
-			      const gnutls_datum_t *
-			      signature) _GNUTLS_GCC_ATTR_DEPRECATED;
 
 int
 gnutls_pubkey_print(gnutls_pubkey_t pubkey,
