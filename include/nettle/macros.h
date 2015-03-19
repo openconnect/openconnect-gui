@@ -1,26 +1,33 @@
 /* macros.h
- *
- */
 
-/* nettle, low-level cryptographics library
- *
- * Copyright (C) 2001, 2010 Niels Möller
- *  
- * The nettle library is free software; you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as published by
- * the Free Software Foundation; either version 2.1 of the License, or (at your
- * option) any later version.
- * 
- * The nettle library is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
- * License for more details.
- * 
- * You should have received a copy of the GNU Lesser General Public License
- * along with the nettle library; see the file COPYING.LIB.  If not, write to
- * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
- * MA 02111-1301, USA.
- */
+   Copyright (C) 2001, 2010 Niels Möller
+
+   This file is part of GNU Nettle.
+
+   GNU Nettle is free software: you can redistribute it and/or
+   modify it under the terms of either:
+
+     * the GNU Lesser General Public License as published by the Free
+       Software Foundation; either version 3 of the License, or (at your
+       option) any later version.
+
+   or
+
+     * the GNU General Public License as published by the Free
+       Software Foundation; either version 2 of the License, or (at your
+       option) any later version.
+
+   or both in parallel, as here.
+
+   GNU Nettle is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+   General Public License for more details.
+
+   You should have received copies of the GNU General Public License and
+   the GNU Lesser General Public License along with this program.  If
+   not, see http://www.gnu.org/licenses/.
+*/
 
 #ifndef NETTLE_MACROS_H_INCLUDED
 #define NETTLE_MACROS_H_INCLUDED
@@ -108,7 +115,7 @@ do {						\
   (p)[1] = ((i) >> 8) & 0xff;			\
   (p)[0] = (i) & 0xff;				\
 } while (0)
-    
+
 #define LE_READ_UINT32(p)			\
 (  (((uint32_t) (p)[3]) << 24)			\
  | (((uint32_t) (p)[2]) << 16)			\
@@ -141,9 +148,12 @@ do {						\
 		  (dst) += (blocksize),		\
 		  (src) += (blocksize)) )
 
-#define ROTL32(n,x) (((x)<<(n)) | ((x)>>(32-(n))))
+/* The masking of the right shift is needed to allow n == 0 (using
+   just 32 - n and 64 - n results in undefined behaviour). Most uses
+   of these macros use a constant and non-zero rotation count. */
+#define ROTL32(n,x) (((x)<<(n)) | ((x)>>((-(n)&31))))
 
-#define ROTL64(n,x) (((x)<<(n)) | ((x)>>(64-(n))))
+#define ROTL64(n,x) (((x)<<(n)) | ((x)>>((-(n))&63)))
 
 /* Requires that size > 0 */
 #define INCREMENT(size, ctr)			\
@@ -159,14 +169,11 @@ do {						\
 /* Helper macro for Merkle-Damgård hash functions. Assumes the context
    structs includes the following fields:
 
-     xxx count_low, count_high;		// Two word block count
      uint8_t block[...];		// Buffer holding one block
      unsigned int index;		// Index into block
 */
 
-/* FIXME: Should probably switch to using uint64_t for the count, but
-   due to alignment and byte order that may be an ABI change. */
-
+/* Currently used by sha512 (and sha384) only. */
 #define MD_INCR(ctx) ((ctx)->count_high += !++(ctx)->count_low)
 
 /* Takes the compression function f as argument. NOTE: also clobbers
@@ -219,10 +226,10 @@ do {						\
     /* Set the first char of padding to 0x80. This is safe since there	\
        is always at least one byte free */				\
 									\
-    assert(__md_i < sizeof((ctx)->block));					\
-    (ctx)->block[__md_i++] = 0x80;						\
+    assert(__md_i < sizeof((ctx)->block));				\
+    (ctx)->block[__md_i++] = 0x80;					\
 									\
-    if (__md_i > (sizeof((ctx)->block) - 2*sizeof((ctx)->count_low)))	\
+    if (__md_i > (sizeof((ctx)->block) - (size)))			\
       { /* No room for length in this block. Process it and		\
 	   pad with another one */					\
 	memset((ctx)->block + __md_i, 0, sizeof((ctx)->block) - __md_i); \
@@ -232,7 +239,7 @@ do {						\
       }									\
     memset((ctx)->block + __md_i, 0,					\
 	   sizeof((ctx)->block) - (size) - __md_i);			\
-    									\
+									\
   } while (0)
 
 #endif /* NETTLE_MACROS_H_INCLUDED */

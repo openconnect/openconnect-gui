@@ -1,35 +1,63 @@
 /* bignum.h
- *
- * bignum operations that are missing from gmp.
- */
 
-/* nettle, low-level cryptographics library
- *
- * Copyright (C) 2001 Niels Möller
- *  
- * The nettle library is free software; you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as published by
- * the Free Software Foundation; either version 2.1 of the License, or (at your
- * option) any later version.
- * 
- * The nettle library is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
- * License for more details.
- * 
- * You should have received a copy of the GNU Lesser General Public License
- * along with the nettle library; see the file COPYING.LIB.  If not, write to
- * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
- * MA 02111-1301, USA.
- */
+   Bignum operations that are missing from gmp.
+
+   Copyright (C) 2001 Niels Möller
+
+   This file is part of GNU Nettle.
+
+   GNU Nettle is free software: you can redistribute it and/or
+   modify it under the terms of either:
+
+     * the GNU Lesser General Public License as published by the Free
+       Software Foundation; either version 3 of the License, or (at your
+       option) any later version.
+
+   or
+
+     * the GNU General Public License as published by the Free
+       Software Foundation; either version 2 of the License, or (at your
+       option) any later version.
+
+   or both in parallel, as here.
+
+   GNU Nettle is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+   General Public License for more details.
+
+   You should have received copies of the GNU General Public License and
+   the GNU Lesser General Public License along with this program.  If
+   not, see http://www.gnu.org/licenses/.
+*/
  
 #ifndef NETTLE_BIGNUM_H_INCLUDED
 #define NETTLE_BIGNUM_H_INCLUDED
 
 #include "nettle-meta.h"
 
-#include <gmp.h>
 #include "nettle-types.h"
+
+#define NETTLE_USE_MINI_GMP 0
+
+#if NETTLE_USE_MINI_GMP
+# include "mini-gmp.h"
+
+/* We need a preprocessor constant for GMP_NUMB_BITS, simply using
+   sizeof(mp_limb_t) * CHAR_BIT is not good enough. */
+# define GMP_NUMB_BITS 32
+# define GMP_NUMB_MASK (~(mp_limb_t) 0)
+
+/* Functions missing in older gmp versions, and checked for with ifdef */
+# define mpz_limbs_read mpz_limbs_read
+# define mpn_copyd mpn_copyd
+# define mpn_sqr mpn_sqr
+# define mpz_combit mpz_combit
+# define mpz_import mpz_import
+# define mpz_export mpz_export
+#else
+# include <gmp.h>
+#endif
 
 #ifdef __cplusplus
 extern "C" {
@@ -37,36 +65,36 @@ extern "C" {
 
 /* Size needed for signed encoding, including extra sign byte if
  * necessary. */
-unsigned
+size_t
 nettle_mpz_sizeinbase_256_s(const mpz_t x);
 
 /* Size needed for unsigned encoding */
-unsigned
+size_t
 nettle_mpz_sizeinbase_256_u(const mpz_t x);
 
 /* Writes an integer as length octets, using big endian byte order,
  * and two's complement for negative numbers. */
 void
-nettle_mpz_get_str_256(unsigned length, uint8_t *s, const mpz_t x);
+nettle_mpz_get_str_256(size_t length, uint8_t *s, const mpz_t x);
 
 /* Reads a big endian, two's complement, integer. */
 void
 nettle_mpz_set_str_256_s(mpz_t x,
-			 unsigned length, const uint8_t *s);
+			 size_t length, const uint8_t *s);
 
 void
 nettle_mpz_init_set_str_256_s(mpz_t x,
-			      unsigned length, const uint8_t *s);
+			      size_t length, const uint8_t *s);
 
 /* Similar, but for unsigned format. These function don't interpret
  * the most significant bit as the sign. */
 void
 nettle_mpz_set_str_256_u(mpz_t x,
-			 unsigned length, const uint8_t *s);
+			 size_t length, const uint8_t *s);
 
 void
 nettle_mpz_init_set_str_256_u(mpz_t x,
-			      unsigned length, const uint8_t *s);
+			      size_t length, const uint8_t *s);
 
 /* Returns a uniformly distributed random number 0 <= x < 2^n */
 void
@@ -80,10 +108,6 @@ void
 nettle_mpz_random(mpz_t x, 
 		  void *ctx, nettle_random_func *random,
 		  const mpz_t n);
-
-void
-nettle_next_prime(mpz_t p, mpz_t n, unsigned count, unsigned prime_limit,
-		  void *progress_ctx, nettle_progress_func *progress);
 
 void
 nettle_random_prime(mpz_t p, unsigned bits, int top_bits_set,

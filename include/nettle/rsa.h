@@ -1,33 +1,41 @@
 /* rsa.h
- *
- * The RSA publickey algorithm.
- */
 
-/* nettle, low-level cryptographics library
- *
- * Copyright (C) 2001, 2002 Niels Möller
- *  
- * The nettle library is free software; you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as published by
- * the Free Software Foundation; either version 2.1 of the License, or (at your
- * option) any later version.
- * 
- * The nettle library is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
- * License for more details.
- * 
- * You should have received a copy of the GNU Lesser General Public License
- * along with the nettle library; see the file COPYING.LIB.  If not, write to
- * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
- * MA 02111-1301, USA.
- */
+   The RSA publickey algorithm.
+
+   Copyright (C) 2001, 2002 Niels Möller
+
+   This file is part of GNU Nettle.
+
+   GNU Nettle is free software: you can redistribute it and/or
+   modify it under the terms of either:
+
+     * the GNU Lesser General Public License as published by the Free
+       Software Foundation; either version 3 of the License, or (at your
+       option) any later version.
+
+   or
+
+     * the GNU General Public License as published by the Free
+       Software Foundation; either version 2 of the License, or (at your
+       option) any later version.
+
+   or both in parallel, as here.
+
+   GNU Nettle is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+   General Public License for more details.
+
+   You should have received copies of the GNU General Public License and
+   the GNU Lesser General Public License along with this program.  If
+   not, see http://www.gnu.org/licenses/.
+*/
  
 #ifndef NETTLE_RSA_H_INCLUDED
 #define NETTLE_RSA_H_INCLUDED
 
-#include <gmp.h>
 #include "nettle-types.h"
+#include "bignum.h"
 
 #include "md5.h"
 #include "sha1.h"
@@ -95,7 +103,7 @@ struct rsa_public_key
 {
   /* Size of the modulo, in octets. This is also the size of all
    * signatures that are created or verified with this key. */
-  unsigned size;
+  size_t size;
   
   /* Modulo */
   mpz_t n;
@@ -106,7 +114,7 @@ struct rsa_public_key
 
 struct rsa_private_key
 {
-  unsigned size;
+  size_t size;
 
   /* d is filled in by the key generation function; otherwise it's
    * completely unused. */
@@ -174,18 +182,18 @@ rsa_private_key_prepare(struct rsa_private_key *key);
 /* PKCS#1 style signatures */
 int
 rsa_pkcs1_sign(const struct rsa_private_key *key,
-	       unsigned length, const uint8_t *digest_info,
+	       size_t length, const uint8_t *digest_info,
 	       mpz_t s);
 
 int
 rsa_pkcs1_sign_tr(const struct rsa_public_key *pub,
   	          const struct rsa_private_key *key,
 	          void *random_ctx, nettle_random_func *random,
-	          unsigned length, const uint8_t *digest_info,
+	          size_t length, const uint8_t *digest_info,
    	          mpz_t s);
 int
 rsa_pkcs1_verify(const struct rsa_public_key *key,
-		 unsigned length, const uint8_t *digest_info,
+		 size_t length, const uint8_t *digest_info,
 		 const mpz_t signature);
 
 int
@@ -281,7 +289,7 @@ int
 rsa_encrypt(const struct rsa_public_key *key,
 	    /* For padding */
 	    void *random_ctx, nettle_random_func *random,
-	    unsigned length, const uint8_t *cleartext,
+	    size_t length, const uint8_t *cleartext,
 	    mpz_t cipher);
 
 /* Message must point to a buffer of size *LENGTH. KEY->size is enough
@@ -291,7 +299,7 @@ rsa_encrypt(const struct rsa_public_key *key,
  * didn't fit. */
 int
 rsa_decrypt(const struct rsa_private_key *key,
-	    unsigned *length, uint8_t *cleartext,
+	    size_t *length, uint8_t *cleartext,
 	    const mpz_t ciphertext);
 
 /* Timing-resistant version, using randomized RSA blinding. */
@@ -299,7 +307,7 @@ int
 rsa_decrypt_tr(const struct rsa_public_key *pub,
 	       const struct rsa_private_key *key,
 	       void *random_ctx, nettle_random_func *random,	       
-	       unsigned *length, uint8_t *message,
+	       size_t *length, uint8_t *message,
 	       const mpz_t gibberish);
 
 /* Compute x, the e:th root of m. Calling it with x == m is allowed. */
@@ -364,7 +372,7 @@ int
 rsa_keypair_from_sexp(struct rsa_public_key *pub,
 		      struct rsa_private_key *priv,
 		      unsigned limit,
-		      unsigned length, const uint8_t *expr);
+		      size_t length, const uint8_t *expr);
 
 
 /* Keys in PKCS#1 format. */
@@ -386,7 +394,7 @@ int
 rsa_keypair_from_der(struct rsa_public_key *pub,
 		     struct rsa_private_key *priv,
 		     unsigned limit, 
-		     unsigned length, const uint8_t *data);
+		     size_t length, const uint8_t *data);
 
 /* OpenPGP format. Experimental interface, subject to change. */
 int
@@ -402,7 +410,7 @@ _rsa_verify(const struct rsa_public_key *key,
 	    const mpz_t m,
 	    const mpz_t s);
 
-unsigned
+size_t
 _rsa_check_size(mpz_t n);
 
 void

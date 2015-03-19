@@ -82,10 +82,10 @@ section "install"
 	file libgmp-10.dll
 	file liboath-0.dll
 	file libstoken-1.dll
-	file libgnutls-28.dll
+	file libgnutls-30.dll
 	file libp11-kit-0.dll
-	file libhogweed-2-5.dll
-	file libnettle-4-7.dll
+	file libhogweed-4-0.dll
+	file libnettle-6-0.dll
 	file libopenconnect-5.dll
 	file libstdc++-6.dll
 	file libwinpthread-1.dll

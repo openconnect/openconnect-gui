@@ -1,29 +1,34 @@
 /* knuth-lfib.h
- *
- * A "lagged fibonacci" pseudorandomness generator.
- *
- * Described in Knuth, TAOCP, 3.6
- */
 
-/* nettle, low-level cryptographics library
- *
- * Copyright (C) 2002 Niels Möller
- *  
- * The nettle library is free software; you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as published by
- * the Free Software Foundation; either version 2.1 of the License, or (at your
- * option) any later version.
- * 
- * The nettle library is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
- * License for more details.
- * 
- * You should have received a copy of the GNU Lesser General Public License
- * along with the nettle library; see the file COPYING.LIB.  If not, write to
- * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
- * MA 02111-1301, USA.
- */
+   The "lagged fibonacci" pseudorandomness generator, described in
+   Knuth, TAoCP, 3.6
+
+   This file is part of GNU Nettle.
+
+   GNU Nettle is free software: you can redistribute it and/or
+   modify it under the terms of either:
+
+     * the GNU Lesser General Public License as published by the Free
+       Software Foundation; either version 3 of the License, or (at your
+       option) any later version.
+
+   or
+
+     * the GNU General Public License as published by the Free
+       Software Foundation; either version 2 of the License, or (at your
+       option) any later version.
+
+   or both in parallel, as here.
+
+   GNU Nettle is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+   General Public License for more details.
+
+   You should have received copies of the GNU General Public License and
+   the GNU Lesser General Public License along with this program.  If
+   not, see http://www.gnu.org/licenses/.
+*/
 
 /* NOTE: This generator is totally inappropriate for cryptographic
  * applications. It is useful for generating deterministic but
@@ -61,12 +66,12 @@ knuth_lfib_get(struct knuth_lfib_ctx *ctx);
 /* Get an array of numbers */
 void
 knuth_lfib_get_array(struct knuth_lfib_ctx *ctx,
-		     unsigned n, uint32_t *a);
+		     size_t n, uint32_t *a);
 
 /* Get an array of octets. */
 void
 knuth_lfib_random(struct knuth_lfib_ctx *ctx,
-		  unsigned n, uint8_t *dst);
+		  size_t n, uint8_t *dst);
 
 #ifdef __cplusplus
 }

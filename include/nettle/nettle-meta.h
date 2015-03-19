@@ -1,27 +1,35 @@
 /* nettle-meta.h
- *
- * Information about algorithms.
- */
 
-/* nettle, low-level cryptographics library
- *
- * Copyright (C) 2002 Niels Möller
- *  
- * The nettle library is free software; you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as published by
- * the Free Software Foundation; either version 2.1 of the License, or (at your
- * option) any later version.
- * 
- * The nettle library is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
- * License for more details.
- * 
- * You should have received a copy of the GNU Lesser General Public License
- * along with the nettle library; see the file COPYING.LIB.  If not, write to
- * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
- * MA 02111-1301, USA.
- */
+   Information about algorithms.
+
+   Copyright (C) 2002, 2014 Niels Möller
+
+   This file is part of GNU Nettle.
+
+   GNU Nettle is free software: you can redistribute it and/or
+   modify it under the terms of either:
+
+     * the GNU Lesser General Public License as published by the Free
+       Software Foundation; either version 3 of the License, or (at your
+       option) any later version.
+
+   or
+
+     * the GNU General Public License as published by the Free
+       Software Foundation; either version 2 of the License, or (at your
+       option) any later version.
+
+   or both in parallel, as here.
+
+   GNU Nettle is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+   General Public License for more details.
+
+   You should have received copies of the GNU General Public License and
+   the GNU Lesser General Public License along with this program.  If
+   not, see http://www.gnu.org/licenses/.
+*/
 
 #ifndef NETTLE_META_H_INCLUDED
 #define NETTLE_META_H_INCLUDED
@@ -48,53 +56,9 @@ struct nettle_cipher
   nettle_set_key_func *set_encrypt_key;
   nettle_set_key_func *set_decrypt_key;
 
-  nettle_crypt_func *encrypt;
-  nettle_crypt_func *decrypt;
+  nettle_cipher_func *encrypt;
+  nettle_cipher_func *decrypt;
 };
-
-#define _NETTLE_CIPHER(name, NAME, key_size) {	\
-  #name #key_size,				\
-  sizeof(struct name##_ctx),			\
-  NAME##_BLOCK_SIZE,				\
-  key_size / 8,					\
-  (nettle_set_key_func *) name##_set_key,	\
-  (nettle_set_key_func *) name##_set_key,	\
-  (nettle_crypt_func *) name##_encrypt,		\
-  (nettle_crypt_func *) name##_decrypt,		\
-}
-
-#define _NETTLE_CIPHER_SEP(name, NAME, key_size) {	\
-  #name #key_size,					\
-  sizeof(struct name##_ctx),				\
-  NAME##_BLOCK_SIZE,					\
-  key_size / 8,						\
-  (nettle_set_key_func *) name##_set_encrypt_key,	\
-  (nettle_set_key_func *) name##_set_decrypt_key,	\
-  (nettle_crypt_func *) name##_encrypt,			\
-  (nettle_crypt_func *) name##_decrypt,			\
-}
-
-#define _NETTLE_CIPHER_SEP_SET_KEY(name, NAME, key_size) {\
-  #name #key_size,					\
-  sizeof(struct name##_ctx),				\
-  NAME##_BLOCK_SIZE,					\
-  key_size / 8,						\
-  (nettle_set_key_func *) name##_set_encrypt_key,	\
-  (nettle_set_key_func *) name##_set_decrypt_key,	\
-  (nettle_crypt_func *) name##_crypt,			\
-  (nettle_crypt_func *) name##_crypt,			\
-}
-
-#define _NETTLE_CIPHER_FIX(name, NAME) {	\
-  #name,						\
-  sizeof(struct name##_ctx),				\
-  NAME##_BLOCK_SIZE,					\
-  NAME##_KEY_SIZE,					\
-  (nettle_set_key_func *) name##_set_key,		\
-  (nettle_set_key_func *) name##_set_key,		\
-  (nettle_crypt_func *) name##_encrypt,			\
-  (nettle_crypt_func *) name##_decrypt,			\
-}
 
 /* null-terminated list of ciphers implemented by this version of nettle */
 extern const struct nettle_cipher * const nettle_ciphers[];
@@ -102,8 +66,6 @@ extern const struct nettle_cipher * const nettle_ciphers[];
 extern const struct nettle_cipher nettle_aes128;
 extern const struct nettle_cipher nettle_aes192;
 extern const struct nettle_cipher nettle_aes256;
-
-extern const struct nettle_cipher nettle_arcfour128;
 
 extern const struct nettle_cipher nettle_camellia128;
 extern const struct nettle_cipher nettle_camellia192;
@@ -146,7 +108,7 @@ struct nettle_hash
  #name,						\
  sizeof(struct name##_ctx),			\
  NAME##_DIGEST_SIZE,				\
- NAME##_DATA_SIZE,				\
+ NAME##_BLOCK_SIZE,				\
  (nettle_hash_init_func *) name##_init,		\
  (nettle_hash_update_func *) name##_update,	\
  (nettle_hash_digest_func *) name##_digest	\
@@ -165,10 +127,45 @@ extern const struct nettle_hash nettle_sha224;
 extern const struct nettle_hash nettle_sha256;
 extern const struct nettle_hash nettle_sha384;
 extern const struct nettle_hash nettle_sha512;
+extern const struct nettle_hash nettle_sha512_224;
+extern const struct nettle_hash nettle_sha512_256;
 extern const struct nettle_hash nettle_sha3_224;
 extern const struct nettle_hash nettle_sha3_256;
 extern const struct nettle_hash nettle_sha3_384;
 extern const struct nettle_hash nettle_sha3_512;
+
+struct nettle_aead
+{
+  const char *name;
+  
+  unsigned context_size;
+  /* Block size for encrypt and decrypt. */
+  unsigned block_size;
+  unsigned key_size;
+  unsigned nonce_size;
+  unsigned digest_size;
+
+  nettle_set_key_func *set_encrypt_key;
+  nettle_set_key_func *set_decrypt_key;
+  nettle_set_key_func *set_nonce;
+  nettle_hash_update_func *update;
+  nettle_crypt_func *encrypt;
+  nettle_crypt_func *decrypt;
+  /* FIXME: Drop length argument? */
+  nettle_hash_digest_func *digest;
+};
+
+/* null-terminated list of aead constructions implemented by this
+   version of nettle */
+extern const struct nettle_aead * const nettle_aeads[];
+
+extern const struct nettle_aead nettle_gcm_aes128;
+extern const struct nettle_aead nettle_gcm_aes192;
+extern const struct nettle_aead nettle_gcm_aes256;
+extern const struct nettle_aead nettle_gcm_camellia128;
+extern const struct nettle_aead nettle_gcm_camellia256;
+extern const struct nettle_aead nettle_eax_aes128;
+extern const struct nettle_aead nettle_chacha_poly1305;
 
 struct nettle_armor
 {
@@ -223,6 +220,7 @@ struct nettle_armor
 extern const struct nettle_armor * const nettle_armors[];
 
 extern const struct nettle_armor nettle_base64;
+extern const struct nettle_armor nettle_base64url;
 extern const struct nettle_armor nettle_base16;
 
 #ifdef __cplusplus

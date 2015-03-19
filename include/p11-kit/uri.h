@@ -122,6 +122,11 @@ int                 p11_kit_uri_match_attributes            (P11KitUri *uri,
                                                              CK_ATTRIBUTE_PTR attrs,
                                                              CK_ULONG n_attrs);
 
+const char*         p11_kit_uri_get_pin_value              (P11KitUri *uri);
+
+void                p11_kit_uri_set_pin_value              (P11KitUri *uri,
+                                                             const char *pin);
+
 const char*         p11_kit_uri_get_pin_source              (P11KitUri *uri);
 
 void                p11_kit_uri_set_pin_source              (P11KitUri *uri,

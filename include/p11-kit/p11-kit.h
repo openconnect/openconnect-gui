@@ -102,13 +102,13 @@ size_t                 p11_kit_space_strlen                 (const unsigned char
 char*                  p11_kit_space_strdup                 (const unsigned char *string,
                                                              size_t max_length);
 
-#ifdef P11_KIT_FUTURE_UNSTABLE_API
-
-void                   p11_kit_set_progname                 (const char *progname);
-
 void                   p11_kit_be_quiet                     (void);
 
 void                   p11_kit_be_loud                      (void);
+
+#ifdef P11_KIT_FUTURE_UNSTABLE_API
+
+void                   p11_kit_set_progname                 (const char *progname);
 
 #endif
 

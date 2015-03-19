@@ -1,28 +1,36 @@
 /* ctr.h
- *
- * Counter mode, using an network byte order incremented counter,
- * matching the testcases of NIST 800-38A.
- */
 
-/* nettle, low-level cryptographics library
- *
- * Copyright (C) 2005 Niels Möller
- *  
- * The nettle library is free software; you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as published by
- * the Free Software Foundation; either version 2.1 of the License, or (at your
- * option) any later version.
- * 
- * The nettle library is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
- * License for more details.
- * 
- * You should have received a copy of the GNU Lesser General Public License
- * along with the nettle library; see the file COPYING.LIB.  If not, write to
- * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
- * MA 02111-1301, USA.
- */
+   Counter mode, using an network byte order incremented counter,
+   matching the testcases of NIST 800-38A.
+
+   Copyright (C) 2005 Niels Möller
+
+   This file is part of GNU Nettle.
+
+   GNU Nettle is free software: you can redistribute it and/or
+   modify it under the terms of either:
+
+     * the GNU Lesser General Public License as published by the Free
+       Software Foundation; either version 3 of the License, or (at your
+       option) any later version.
+
+   or
+
+     * the GNU General Public License as published by the Free
+       Software Foundation; either version 2 of the License, or (at your
+       option) any later version.
+
+   or both in parallel, as here.
+
+   GNU Nettle is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+   General Public License for more details.
+
+   You should have received copies of the GNU General Public License and
+   the GNU Lesser General Public License along with this program.  If
+   not, see http://www.gnu.org/licenses/.
+*/
 
 #ifndef NETTLE_CTR_H_INCLUDED
 #define NETTLE_CTR_H_INCLUDED
@@ -37,9 +45,9 @@ extern "C" {
 #define ctr_crypt nettle_ctr_crypt
 
 void
-ctr_crypt(void *ctx, nettle_crypt_func *f,
-	  unsigned block_size, uint8_t *ctr,
-	  unsigned length, uint8_t *dst,
+ctr_crypt(const void *ctx, nettle_cipher_func *f,
+	  size_t block_size, uint8_t *ctr,
+	  size_t length, uint8_t *dst,
 	  const uint8_t *src);
 
 #define CTR_CTX(type, size) \
@@ -49,11 +57,12 @@ ctr_crypt(void *ctx, nettle_crypt_func *f,
 memcpy((ctx)->ctr, (data), sizeof((ctx)->ctr))
 
 #define CTR_CRYPT(self, f, length, dst, src)		\
-(0 ? ((f)(&(self)->ctx, 0, NULL, NULL))			\
+  (0 ? ((f)(&(self)->ctx, ~(size_t) 0,			\
+	  (uint8_t *) 0, (const uint8_t *) 0))		\
    : ctr_crypt((void *) &(self)->ctx,			\
-               (nettle_crypt_func *) (f),		\
+	       (nettle_cipher_func *) (f),		\
 	       sizeof((self)->ctr), (self)->ctr,	\
-               (length), (dst), (src)))
+	       (length), (dst), (src)))
 
 #ifdef __cplusplus
 }

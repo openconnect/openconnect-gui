@@ -1,27 +1,35 @@
 /* serpent.h
- *
- * The serpent block cipher.
- */
 
-/* nettle, low-level cryptographics library
- *
- * Copyright (C) 2001 Niels Möller
- *  
- * The nettle library is free software; you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as published by
- * the Free Software Foundation; either version 2.1 of the License, or (at your
- * option) any later version.
- * 
- * The nettle library is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
- * License for more details.
- * 
- * You should have received a copy of the GNU Lesser General Public License
- * along with the nettle library; see the file COPYING.LIB.  If not, write to
- * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
- * MA 02111-1301, USA.
- */
+   The serpent block cipher.
+
+   Copyright (C) 2001 Niels Möller
+
+   This file is part of GNU Nettle.
+
+   GNU Nettle is free software: you can redistribute it and/or
+   modify it under the terms of either:
+
+     * the GNU Lesser General Public License as published by the Free
+       Software Foundation; either version 3 of the License, or (at your
+       option) any later version.
+
+   or
+
+     * the GNU General Public License as published by the Free
+       Software Foundation; either version 2 of the License, or (at your
+       option) any later version.
+
+   or both in parallel, as here.
+
+   GNU Nettle is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+   General Public License for more details.
+
+   You should have received copies of the GNU General Public License and
+   the GNU Lesser General Public License along with this program.  If
+   not, see http://www.gnu.org/licenses/.
+*/
 
 /* Serpent is a 128-bit block cipher that accepts a key size of 256
  * bits, designed by Ross Anderson, Eli Biham, and Lars Knudsen. See
@@ -39,6 +47,9 @@ extern "C" {
 
 /* Name mangling */
 #define serpent_set_key nettle_serpent_set_key
+#define serpent128_set_key nettle_serpent128_set_key
+#define serpent192_set_key nettle_serpent192_set_key
+#define serpent256_set_key nettle_serpent256_set_key
 #define serpent_encrypt nettle_serpent_encrypt
 #define serpent_decrypt nettle_serpent_decrypt
 
@@ -56,6 +67,10 @@ extern "C" {
 #define SERPENT_MIN_KEY_SIZE 16
 #define SERPENT_MAX_KEY_SIZE 32
 
+#define SERPENT128_KEY_SIZE 16
+#define SERPENT192_KEY_SIZE 24
+#define SERPENT256_KEY_SIZE 32
+
 struct serpent_ctx
 {
   uint32_t keys[33][4];  /* key schedule */
@@ -63,15 +78,21 @@ struct serpent_ctx
 
 void
 serpent_set_key(struct serpent_ctx *ctx,
-                unsigned length, const uint8_t *key);
+                size_t length, const uint8_t *key);
+void
+serpent128_set_key(struct serpent_ctx *ctx, const uint8_t *key);
+void
+serpent192_set_key(struct serpent_ctx *ctx, const uint8_t *key);
+void
+serpent256_set_key(struct serpent_ctx *ctx, const uint8_t *key);
 
 void
 serpent_encrypt(const struct serpent_ctx *ctx,
-                unsigned length, uint8_t *dst,
+                size_t length, uint8_t *dst,
                 const uint8_t *src);
 void
 serpent_decrypt(const struct serpent_ctx *ctx,
-                unsigned length, uint8_t *dst,
+                size_t length, uint8_t *dst,
                 const uint8_t *src);
 
 #ifdef __cplusplus

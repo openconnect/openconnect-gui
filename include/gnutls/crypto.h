@@ -66,21 +66,21 @@ typedef struct api_aead_cipher_hd_st *gnutls_aead_cipher_hd_t;
 
 int gnutls_aead_cipher_init(gnutls_aead_cipher_hd_t * handle,
 			    gnutls_cipher_algorithm_t cipher,
-			    const gnutls_datum_t * key,
-			    unsigned tag_size);
-int gnutls_aead_cipher_decrypt(gnutls_aead_cipher_hd_t handle,
-			       const void *ciphertext,
-			       size_t ciphertextlen, void *text,
-			       size_t *textlen);
-int gnutls_aead_cipher_encrypt(gnutls_aead_cipher_hd_t handle,
-			       const void *text, size_t textlen,
-			       void *ciphertext, size_t *ciphertextlen);
-
+			    const gnutls_datum_t * key);
 int
-gnutls_aead_cipher_set_nonce(gnutls_aead_cipher_hd_t handle, void *nonce, size_t nonce_len);
-
-int gnutls_aead_cipher_add_auth(gnutls_aead_cipher_hd_t handle,
-			   	const void *text, size_t text_size);
+gnutls_aead_cipher_decrypt(gnutls_aead_cipher_hd_t handle,
+			   const void *nonce, size_t nonce_len,
+			   const void *auth, size_t auth_len,
+			   size_t tag_size,
+			   const void *ctext, size_t ctext_len,
+			   void *ptext, size_t *ptext_len);
+int
+gnutls_aead_cipher_encrypt(gnutls_aead_cipher_hd_t handle,
+			   const void *nonce, size_t nonce_len,
+			   const void *auth, size_t auth_len,
+			   size_t tag_size,
+			   const void *ptext, size_t ptext_len,
+			   void *ctext, size_t *ctext_len);
 
 void gnutls_aead_cipher_deinit(gnutls_aead_cipher_hd_t handle);
 
@@ -134,6 +134,93 @@ typedef enum gnutls_rnd_level {
 int gnutls_rnd(gnutls_rnd_level_t level, void *data, size_t len);
 
 void gnutls_rnd_refresh(void);
+
+
+/* API to override ciphers and MAC algorithms 
+ */
+
+typedef int (*gnutls_cipher_init_func) (gnutls_cipher_algorithm_t, void **ctx, int enc);
+typedef int (*gnutls_cipher_setkey_func) (void *ctx, const void *key, size_t keysize);
+/* old style ciphers */
+typedef int (*gnutls_cipher_setiv_func) (void *ctx, const void *iv, size_t ivsize);
+typedef int (*gnutls_cipher_encrypt_func) (void *ctx, const void *plain, size_t plainsize,
+				void *encr, size_t encrsize);
+typedef int (*gnutls_cipher_decrypt_func) (void *ctx, const void *encr, size_t encrsize,
+			void *plain, size_t plainsize);
+
+/* aead ciphers */
+typedef int (*gnutls_cipher_auth_func) (void *ctx, const void *data, size_t datasize);
+typedef void (*gnutls_cipher_tag_func) (void *ctx, void *tag, size_t tagsize);
+
+typedef int (*gnutls_cipher_aead_encrypt_func) (void *ctx,
+ 			     const void *nonce, size_t noncesize,
+			     const void *auth, size_t authsize,
+			     size_t tag_size,
+			     const void *plain, size_t plainsize,
+			     void *encr, size_t encrsize);
+typedef int (*gnutls_cipher_aead_decrypt_func) (void *ctx,
+ 			     const void *nonce, size_t noncesize,
+			     const void *auth, size_t authsize,
+			     size_t tag_size,
+			     const void *encr, size_t encrsize,
+			     void *plain, size_t plainsize);
+typedef void (*gnutls_cipher_deinit_func) (void *ctx);
+
+int
+gnutls_crypto_register_cipher(gnutls_cipher_algorithm_t algorithm,
+			      int priority,
+			      gnutls_cipher_init_func init,
+			      gnutls_cipher_setkey_func setkey,
+			      gnutls_cipher_setiv_func setiv,
+			      gnutls_cipher_encrypt_func encrypt,
+			      gnutls_cipher_decrypt_func decrypt,
+			      gnutls_cipher_deinit_func deinit);
+
+int
+gnutls_crypto_register_aead_cipher(gnutls_cipher_algorithm_t algorithm,
+			      int priority,
+			      gnutls_cipher_init_func init,
+			      gnutls_cipher_setkey_func setkey,
+			      gnutls_cipher_aead_encrypt_func aead_encrypt,
+			      gnutls_cipher_aead_decrypt_func aead_decrypt,
+			      gnutls_cipher_deinit_func deinit);
+
+typedef int (*gnutls_mac_init_func) (gnutls_mac_algorithm_t, void **ctx);
+typedef int (*gnutls_mac_setkey_func) (void *ctx, const void *key, size_t keysize);
+typedef int (*gnutls_mac_setnonce_func) (void *ctx, const void *nonce, size_t noncesize);
+typedef int (*gnutls_mac_hash_func) (void *ctx, const void *text, size_t textsize);
+typedef int (*gnutls_mac_output_func) (void *src_ctx, void *digest, size_t digestsize);
+typedef void (*gnutls_mac_deinit_func) (void *ctx);
+typedef int (*gnutls_mac_fast_func) (gnutls_mac_algorithm_t, const void *nonce,
+		     size_t nonce_size, const void *key, size_t keysize,
+		     const void *text, size_t textsize, void *digest);
+
+int
+gnutls_crypto_register_mac(gnutls_mac_algorithm_t mac,
+			   int priority,
+			   gnutls_mac_init_func init,
+			   gnutls_mac_setkey_func setkey,
+			   gnutls_mac_setnonce_func setnonce,
+			   gnutls_mac_hash_func hash,
+			   gnutls_mac_output_func output,
+			   gnutls_mac_deinit_func deinit,
+			   gnutls_mac_fast_func hash_fast);
+
+typedef int (*gnutls_digest_init_func) (gnutls_digest_algorithm_t, void **ctx);
+typedef int (*gnutls_digest_hash_func) (void *ctx, const void *text, size_t textsize);
+typedef int (*gnutls_digest_output_func) (void *src_ctx, void *digest, size_t digestsize);
+typedef void (*gnutls_digest_deinit_func) (void *ctx);
+typedef int (*gnutls_digest_fast_func) (gnutls_digest_algorithm_t,
+		     const void *text, size_t textsize, void *digest);
+
+int
+gnutls_crypto_register_digest(gnutls_digest_algorithm_t digest,
+			   int priority,
+			   gnutls_digest_init_func init,
+			   gnutls_digest_hash_func hash,
+			   gnutls_digest_output_func output,
+			   gnutls_digest_deinit_func deinit,
+			   gnutls_digest_fast_func hash_fast);
 
 /* *INDENT-OFF* */
 #ifdef __cplusplus
