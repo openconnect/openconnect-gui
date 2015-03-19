@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Red Hat
+ * Copyright (C) 2014, 2015 Red Hat
  *
  * This file is part of openconnect-gui.
  *
@@ -30,6 +30,7 @@ extern "C" {
 #include <storage.h>
 #include <gnutls/gnutls.h>
 #include <QLineEdit>
+#include <QCloseEvent>
 #include <QDialog>
 #include <QFutureWatcher>
 #include <QtNetwork/QNetworkProxyFactory>
@@ -61,6 +62,8 @@ QMainWindow(parent), ui(new Ui::MainWindow)
     blink_timer = new QTimer(this);
     this->cmd_fd = INVALID_SOCKET;
 
+    connect(ui->actionQuit, SIGNAL(triggered()), qApp, SLOT(quit()));
+
     connect(blink_timer, SIGNAL(timeout(void)), this, SLOT(blink_ui(void)),
             Qt::QueuedConnection);
     connect(timer, SIGNAL(timeout()), this, SLOT(request_update_stats()),
@@ -85,14 +88,14 @@ QMainWindow(parent), ui(new Ui::MainWindow)
         connect(trayIcon, SIGNAL(activated(QSystemTrayIcon::ActivationReason)),
                 this, SLOT(iconActivated(QSystemTrayIcon::ActivationReason)));
 
-        trayIcon->setIcon(TRAY_OFF_ICON);
+        icon.addPixmap(TRAY_OFF_ICON, QIcon::Normal, QIcon::Off);
+        trayIcon->setIcon(icon);
         trayIcon->show();
     } else {
         updateProgressBar(QLatin1String("System doesn't support tray icon"),
                           false);
         trayIcon = NULL;
     }
-    this->shown = true;
 }
 
 static void term_thread(MainWindow * m, SOCKET * fd)
@@ -105,6 +108,7 @@ static void term_thread(MainWindow * m, SOCKET * fd)
             m->updateProgressBar(QObject::tr("term_thread: IPC error: ") +
                                  QString::number(net_errno));
         *fd = INVALID_SOCKET;
+        ms_sleep(200);
     }
 }
 
@@ -222,12 +226,16 @@ void MainWindow::blink_ui()
 
 void MainWindow::changeStatus(int val)
 {
+    QIcon icon;
     if (val == STATUS_CONNECTED) {
 
         blink_timer->stop();
         ui->iconLabel->setPixmap(ON_ICON);
         ui->disconnectBtn->setEnabled(true);
         ui->connectBtn->setEnabled(false);
+
+        icon.addPixmap(TRAY_ON_ICON, QIcon::Normal, QIcon::Off);
+        trayIcon->setIcon(icon);
 
         this->ui->IPLabel->setText(ip);
         this->ui->IP6Label->setText(ip6);
@@ -239,12 +247,21 @@ void MainWindow::changeStatus(int val)
 
         if (this->minimize_on_connect) {
             if (trayIcon) {
-                this->toggleWindow();
+                this->hideWindow();
+                trayIcon->showMessage(QLatin1String("Connected"), QLatin1String("You were connected to ")+ui->comboBox->currentText(),
+                                      QSystemTrayIcon::Information,
+                                      10000);
             } else {
                 this->setWindowState(Qt::WindowMinimized);
             }
         }
+
     } else if (val == STATUS_CONNECTING) {
+
+        if (trayIcon) {
+            icon.addPixmap(TRAY_OFF_ICON, QIcon::Normal, QIcon::Off);
+            trayIcon->setIcon(icon);
+        }
         ui->iconLabel->setPixmap(CONNECTING_ICON);
         ui->disconnectBtn->setEnabled(true);
         ui->connectBtn->setEnabled(false);
@@ -265,6 +282,15 @@ void MainWindow::changeStatus(int val)
         ui->disconnectBtn->setEnabled(false);
         ui->connectBtn->setEnabled(true);
         ui->iconLabel->setPixmap(OFF_ICON);
+
+        if (trayIcon && this->isHidden() == true) {
+            icon.addPixmap(TRAY_OFF_ICON, QIcon::Normal, QIcon::Off);
+            trayIcon->setIcon(icon);
+
+            trayIcon->showMessage(QLatin1String("Disconnected"), QLatin1String("You were disconnected from the VPN"),
+                                  QSystemTrayIcon::Warning,
+                                  10000);
+        }
     }
 }
 
@@ -480,15 +506,29 @@ void MainWindow::clear_logdialog()
     logdialog = NULL;
 }
 
-void MainWindow::closeEvent(QCloseEvent * bar)
+void MainWindow::closeEvent(QCloseEvent * event)
 {
     if (logdialog) {
         logdialog->close();
         logdialog = NULL;
     }
+
+    if (trayIcon && trayIcon->isVisible()) {
+    	static int shown = 0;
+
+    	if (shown == 0) {
+	        QMessageBox::information(this, tr("Systray"),
+        	                         tr("The program will keep running in the "
+                	                    "system tray. To terminate the program, "
+                        	            "choose <b>Quit</b> in the system tray entry."));
+		shown = 1;
+	}
+        hideWindow();
+        event->ignore();
+    }
 }
 
-void MainWindow::on_toolButton_3_clicked()
+void MainWindow::on_pushButton_3_clicked()
 {
     if (logdialog == NULL) {
         logdialog = new LogDialog(this->log);
@@ -531,15 +571,23 @@ void MainWindow::toggleWindow()
     if (trayIcon == NULL)
         return;
 
-    if (this->shown) {
-        setVisible(false);
-        this->shown = false;
+    if (this->isHidden()) {
+        setVisible(true);
     } else {
         setVisible(true);
-        this->shown = true;
     }
-
 }
+
+void MainWindow::hideWindow()
+{
+    if (trayIcon == NULL)
+        return;
+
+    if (this->isHidden() == false) {
+        setVisible(false);
+    }
+}
+
 
 /****************************************************************************
  **
@@ -622,3 +670,5 @@ void MainWindow::createActions()
     quitAction = new QAction(tr("&Quit"), this);
     connect(quitAction, SIGNAL(triggered()), qApp, SLOT(quit()));
 }
+
+

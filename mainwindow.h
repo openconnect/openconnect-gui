@@ -56,6 +56,7 @@ class MainWindow:public QMainWindow {
     void updateStats(const struct oc_stats *stats, QString dtls);
     void reload_settings();
     void toggleWindow();
+    void hideWindow();
     void setVisible(bool visible);
     void createActions();
 
@@ -82,7 +83,8 @@ class MainWindow:public QMainWindow {
     QStringList *get_log(void) {
         return &this->log;
     }
-    private slots:void iconActivated(QSystemTrayIcon::ActivationReason reason);
+ private slots:
+    void iconActivated(QSystemTrayIcon::ActivationReason reason);
     void statsChanged(QString, QString, QString);
     void writeProgressBar(QString str);
     void changeStatus(int);
@@ -101,10 +103,11 @@ class MainWindow:public QMainWindow {
 
     void on_toolButton_2_clicked();
 
-    void on_toolButton_3_clicked();
     void closeEvent(QCloseEvent * bar);
 
- signals:
+    void on_pushButton_3_clicked();
+
+signals:
     void log_changed(QString val);
     void stats_changed_sig(QString, QString, QString);
     void vpn_status_changed_sig(int);
@@ -112,7 +115,6 @@ class MainWindow:public QMainWindow {
 
  private:
     void createTrayIcon();
-    bool shown;
     /* we keep the fd instead of a pointer to vpninfo to avoid
      * any multithread issues */
     SOCKET cmd_fd;
