@@ -95,7 +95,7 @@ section "install"
 	file Qt5Gui.dll
 	file Qt5Network.dll
 	file Qt5Widgets.dll
-	file vpnc-script-win.js
+	file vpnc-script.js
 	file zlib1.dll
 	file "icudt53.dll"
 	file "icuin53.dll"
@@ -200,7 +200,7 @@ section "uninstall"
 	delete "Qt5Gui.dll"
 	delete "Qt5Network.dll"
 	delete "Qt5Widgets.dll"
-	delete "vpnc-script-win.js"
+	delete "vpnc-script.js"
 	delete "zlib1.dll"
 	delete "platforms\qminimal.dll"
 	delete "platforms\qoffscreen.dll"
