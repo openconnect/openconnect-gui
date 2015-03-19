@@ -1,6 +1,6 @@
 NEWS -- History of user-visible changes.
 
-* version 1.0 (unreleased)
+* version 1.0 (released 2015-03-19)
 - Corrected issue with certain popup dialogs freezing the UI.
 - Corrected import of PKCS #12 files.
 - Added tray icon in UI.
