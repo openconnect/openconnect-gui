@@ -1,7 +1,7 @@
 /*
  * OpenConnect (SSL + DTLS) VPN client
  *
- * Copyright © 2008-2014 Intel Corporation.
+ * Copyright © 2008-2015 Intel Corporation.
  * Copyright © 2008 Nick Andrew <nick@nick-andrew.net>
  * Copyright © 2013 John Morrissey <jwm@horde.net>
  *
@@ -29,9 +29,15 @@
 #endif
 
 #define OPENCONNECT_API_VERSION_MAJOR 5
-#define OPENCONNECT_API_VERSION_MINOR 0
+#define OPENCONNECT_API_VERSION_MINOR 1
 
 /*
+ * API version 5.2:
+ *  - Add openconnect_set_http_auth(), openconnect_set_protocol().
+ *
+ * API version 5.1:
+ *  - Add openconnect_set_compression_mode(), openconnect_set_loglevel()
+ *
  * API version 5.0:
  *  - Remove OPENCONNECT_X509 and openconnect_get_peer_cert().
  *  - Change openconnect_get_cert_der() to openconnect_get_peer_cert_DER() etc.
@@ -209,7 +215,7 @@ struct oc_auth_form {
 };
 
 struct oc_split_include {
-	char *route;
+	const char *route;
 	struct oc_split_include *next;
 };
 
@@ -279,6 +285,12 @@ typedef enum {
 	OC_TOKEN_MODE_YUBIOATH,
 } oc_token_mode_t;
 
+typedef enum {
+	OC_COMPRESSION_MODE_NONE,
+	OC_COMPRESSION_MODE_STATELESS,
+	OC_COMPRESSION_MODE_ALL,
+} oc_compression_mode_t;
+
 /* All strings are UTF-8. If operating in a legacy environment where
    nl_langinfo(CODESET) returns anything other than UTF-8, or on Windows,
    the library will take appropriate steps to convert back to the legacy
@@ -332,6 +344,8 @@ void openconnect_free_cert_info(struct openconnect_info *vpninfo,
 				void *buf);
 /* Contains a comma-separated list of authentication methods to enabled.
    Currently supported: Negotiate,NTLM,Digest,Basic */
+int openconnect_set_http_auth(struct openconnect_info *vpninfo,
+			      const char *methods);
 int openconnect_set_proxy_auth(struct openconnect_info *vpninfo,
 			       const char *methods);
 int openconnect_set_http_proxy(struct openconnect_info *vpninfo,
@@ -379,6 +393,9 @@ int openconnect_set_token_mode(struct openconnect_info *,
 			       oc_token_mode_t, const char *token_str);
 /* Legacy stoken-only function; do not use */
 int openconnect_set_stoken_mode(struct openconnect_info *, int, const char *);
+
+int openconnect_set_compression_mode(struct openconnect_info *,
+				     oc_compression_mode_t);
 
 /* The size must be 41 bytes, since that's the size of a 20-byte SHA1
    represented as hex with a trailing NUL. */
@@ -532,6 +549,9 @@ typedef void (*openconnect_protect_socket_vfn) (void *privdata, int fd);
 void openconnect_set_protect_socket_handler(struct openconnect_info *vpninfo,
 					    openconnect_protect_socket_vfn protect_socket);
 
+void openconnect_set_loglevel(struct openconnect_info *vpninfo,
+			      int level);
+
 /* Callback for obtaining traffic stats via OC_CMD_STATS.
  */
 typedef void (*openconnect_stats_vfn) (void *privdata, const struct oc_stats *stats);
@@ -552,5 +572,7 @@ int openconnect_has_stoken_support(void);
 int openconnect_has_oath_support(void);
 int openconnect_has_yubioath_support(void);
 int openconnect_has_system_key_support(void);
+
+int openconnect_set_protocol(struct openconnect_info *vpninfo, const char *protocol);
 
 #endif /* __OPENCONNECT_H__ */
