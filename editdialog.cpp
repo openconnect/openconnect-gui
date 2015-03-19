@@ -33,13 +33,13 @@ static int token_tab(int mode)
 {
     switch (mode) {
     case OC_TOKEN_MODE_HOTP:
-	return 0;
+        return 0;
     case OC_TOKEN_MODE_TOTP:
-	return 1;
+        return 1;
     case OC_TOKEN_MODE_STOKEN:
-	return 2;
+        return 2;
     default:
-	return -1;
+        return -1;
     }
 }
 
@@ -61,43 +61,42 @@ void EditDialog::load_win_certs()
     QString prekey = ss->get_key_url();
 
     if (prekey.isEmpty() == false) {
-	ui->userKeyEdit->setText(prekey);
+        ui->userKeyEdit->setText(prekey);
     }
 
     this->winCerts.clear();
     ui->loadWinCertList->clear();
 
     do {
-	ret =
-	    gnutls_system_key_iter_get_info(&iter, &cert_url, &key_url, &label,
-					    NULL, 0);
-	if (ret >= 0) {
-	    win_cert_st st;
-	    QString l;
-	    if (label != NULL)
-		l = QString::fromUtf8(label);
-	    else
-		l = QString::fromUtf8(cert_url);
-	    ui->loadWinCertList->addItem(l);
-	    if (prekey.isEmpty() == false) {
-		if (QString::
-		    compare(prekey, QString::fromUtf8(key_url),
-			    Qt::CaseSensitive) == 0) {
-		    idx = row;
-		}
-	    }
-	    row++;
+        ret =
+            gnutls_system_key_iter_get_info(&iter, &cert_url, &key_url, &label,
+                                            NULL, 0);
+        if (ret >= 0) {
+            win_cert_st st;
+            QString l;
+            if (label != NULL)
+                l = QString::fromUtf8(label);
+            else
+                l = QString::fromUtf8(cert_url);
+            ui->loadWinCertList->addItem(l);
+            if (prekey.isEmpty() == false) {
+                if (QString::compare(prekey, QString::fromUtf8(key_url),
+                                     Qt::CaseSensitive) == 0) {
+                    idx = row;
+                }
+            }
+            row++;
 
-	    st.label = l;
-	    st.key_url = QString::fromUtf8(key_url);
-	    st.cert_url = QString::fromUtf8(cert_url);
-	    this->winCerts.push_back(st);
-	}
+            st.label = l;
+            st.key_url = QString::fromUtf8(key_url);
+            st.cert_url = QString::fromUtf8(cert_url);
+            this->winCerts.push_back(st);
+        }
     } while (ret >= 0);
 
     if (idx != -1) {
-	ui->loadWinCertList->setCurrentRow(idx);
-	ui->loadWinCertList->item(idx)->setSelected(true);
+        ui->loadWinCertList->setCurrentRow(idx);
+        ui->loadWinCertList->item(idx)->setSelected(true);
     }
     gnutls_system_key_iter_deinit(iter);
 #endif
@@ -115,12 +114,11 @@ ui(new Ui::EditDialog)
 
     ret = this->ss->load(server);
     if (ret < 0) {
-	QMessageBox::information(this,
-				 tr(APP_NAME),
-				 ss->last_err.
-				 isEmpty()?
-				 tr("Some server information failed to load") :
-				 ss->last_err);
+        QMessageBox::information(this,
+                                 tr(APP_NAME),
+                                 ss->last_err.isEmpty()?
+                                 tr("Some server information failed to load") :
+                                 ss->last_err);
     }
 
     this->ss->set_window(this);
@@ -128,7 +126,7 @@ ui(new Ui::EditDialog)
     txt = ss->get_label();
     ui->labelEdit->setText(txt);
     if (txt.isEmpty() == true) {
-	ui->labelEdit->setText(server);
+        ui->labelEdit->setText(server);
     }
     ui->groupnameEdit->setText(ss->get_groupname());
     ui->usernameEdit->setText(ss->get_username());
@@ -145,8 +143,8 @@ ui(new Ui::EditDialog)
 
     type = ss->get_token_type();
     if (type >= 0) {
-	ui->tokenBox->setCurrentIndex(token_tab(ss->get_token_type()));
-	ui->tokenEdit->setText(ss->get_token_str());
+        ui->tokenBox->setCurrentIndex(token_tab(ss->get_token_type()));
+        ui->tokenEdit->setText(ss->get_token_str());
     }
 
     ss->get_server_hash(hash);
@@ -165,62 +163,62 @@ void EditDialog::on_buttonBox_accepted()
     int type;
 
     if (ui->gatewayEdit->text().isEmpty() == true) {
-	QMessageBox::information(this,
-				 tr(APP_NAME),
-				 tr
-				 ("You need to specify a gateway. E.g. vpn.example.com:443"));
-	return;
+        QMessageBox::information(this,
+                                 tr(APP_NAME),
+                                 tr
+                                 ("You need to specify a gateway. E.g. vpn.example.com:443"));
+        return;
     }
 
     if (ui->labelEdit->text().isEmpty() == true) {
-	QMessageBox::information(this,
-				 tr(APP_NAME),
-				 tr
-				 ("You need to specify a name for this connection. E.g. 'My company'"));
-	return;
+        QMessageBox::information(this,
+                                 tr(APP_NAME),
+                                 tr
+                                 ("You need to specify a name for this connection. E.g. 'My company'"));
+        return;
     }
 
     if (ui->caCertEdit->text().isEmpty() == false) {
-	if (ss->set_ca_cert(ui->caCertEdit->text()) != 0) {
-	    mbox.setText(tr("Cannot import CA certificate."));
-	    if (ss->last_err.isEmpty() == false)
-		mbox.setInformativeText(ss->last_err);
-	    mbox.exec();
-	    return;
-	} else {
-	    ui->caCertHash->setText(ss->get_ca_cert_hash());
-	}
+        if (ss->set_ca_cert(ui->caCertEdit->text()) != 0) {
+            mbox.setText(tr("Cannot import CA certificate."));
+            if (ss->last_err.isEmpty() == false)
+                mbox.setInformativeText(ss->last_err);
+            mbox.exec();
+            return;
+        } else {
+            ui->caCertHash->setText(ss->get_ca_cert_hash());
+        }
     }
 
     if (ui->userKeyEdit->text().isEmpty() == false) {
-	if (ss->set_client_key(ui->userKeyEdit->text()) != 0) {
-	    mbox.setText(tr("Cannot import user key."));
-	    if (ss->last_err.isEmpty() == false)
-		mbox.setInformativeText(ss->last_err);
-	    mbox.exec();
-	    return;
-	}
+        if (ss->set_client_key(ui->userKeyEdit->text()) != 0) {
+            mbox.setText(tr("Cannot import user key."));
+            if (ss->last_err.isEmpty() == false)
+                mbox.setInformativeText(ss->last_err);
+            mbox.exec();
+            return;
+        }
     }
 
     if (ui->userCertEdit->text().isEmpty() == false) {
-	if (ss->set_client_cert(ui->userCertEdit->text()) != 0) {
+        if (ss->set_client_cert(ui->userCertEdit->text()) != 0) {
 
-	    mbox.setText(tr("Cannot import user certificate."));
-	    if (ss->last_err.isEmpty() == false)
-		mbox.setInformativeText(ss->last_err);
-	    mbox.exec();
-	    return;
-	} else {
-	    ui->userCertHash->setText(ss->get_client_cert_hash());
-	}
+            mbox.setText(tr("Cannot import user certificate."));
+            if (ss->last_err.isEmpty() == false)
+                mbox.setInformativeText(ss->last_err);
+            mbox.exec();
+            return;
+        } else {
+            ui->userCertHash->setText(ss->get_client_cert_hash());
+        }
     }
 
     if (ss->client_is_complete() != true) {
-	QMessageBox::information(this,
-				 tr(APP_NAME),
-				 tr
-				 ("There is a client certificate specified but no key!"));
-	return;
+        QMessageBox::information(this,
+                                 tr(APP_NAME),
+                                 tr
+                                 ("There is a client certificate specified but no key!"));
+        return;
     }
     ss->set_label(ui->labelEdit->text());
     ss->set_username(ui->usernameEdit->text());
@@ -232,11 +230,11 @@ void EditDialog::on_buttonBox_accepted()
 
     type = ui->tokenBox->currentIndex();
     if (type != -1 && ui->tokenEdit->text().isEmpty() == false) {
-	ss->set_token_str(ui->tokenEdit->text());
-	ss->set_token_type(token_rtab[type]);
+        ss->set_token_str(ui->tokenEdit->text());
+        ss->set_token_type(token_rtab[type]);
     } else {
-	ss->set_token_str("");
-	ss->set_token_type(-1);
+        ss->set_token_str("");
+        ss->set_token_type(-1);
     }
 
     ss->save();
@@ -253,9 +251,9 @@ void EditDialog::on_userCertButton_clicked()
     QString filename;
 
     filename = QFileDialog::getOpenFileName(this,
-					    tr("Open certificate"), "",
-					    tr
-					    ("Certificate Files (*.crt *.pem *.der *.p12)"));
+                                            tr("Open certificate"), "",
+                                            tr
+                                            ("Certificate Files (*.crt *.pem *.der *.p12)"));
 
     ui->userCertEdit->setText(filename);
 }
@@ -265,9 +263,9 @@ void EditDialog::on_userKeyButton_clicked()
     QString filename;
 
     filename = QFileDialog::getOpenFileName(this,
-					    tr("Open private key"), "",
-					    tr
-					    ("Private key Files (*.key *.pem *.der *.p8 *.p12)"));
+                                            tr("Open private key"), "",
+                                            tr
+                                            ("Private key Files (*.key *.pem *.der *.p8 *.p12)"));
 
     ui->userKeyEdit->setText(filename);
 }
@@ -277,9 +275,9 @@ void EditDialog::on_caCertButton_clicked()
     QString filename;
 
     filename = QFileDialog::getOpenFileName(this,
-					    tr("Open certificate"), "",
-					    tr
-					    ("Certificate Files (*.crt *.pem *.der)"));
+                                            tr("Open certificate"), "",
+                                            tr
+                                            ("Certificate Files (*.crt *.pem *.der)"));
 
     ui->caCertEdit->setText(filename);
 }
@@ -326,7 +324,7 @@ void EditDialog::on_loadWinCert_clicked()
     int idx = ui->loadWinCertList->currentRow();
     win_cert_st st;
     if (idx < 0 || this->winCerts.size() <= (unsigned)idx)
-	return;
+        return;
 
     st = this->winCerts.at(idx);
     ui->userCertEdit->setText(st.cert_url);

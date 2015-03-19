@@ -26,7 +26,7 @@
 
 static int
 store_cb(const char *db_name, const char *host, const char *service,
-	 time_t expiration, const gnutls_datum_t * pubkey)
+         time_t expiration, const gnutls_datum_t * pubkey)
 {
     const gtdb *tdb = reinterpret_cast < const gtdb * >(db_name);
     char output[MAX_HASH_LEN];
@@ -35,7 +35,7 @@ store_cb(const char *db_name, const char *host, const char *service,
 
     ret = gnutls_hash_fast(HASH, pubkey->data, pubkey->size, output);
     if (ret < 0) {
-	return -1;
+        return -1;
     }
 
     ahash.append(output, HASH_LEN);
@@ -46,7 +46,7 @@ store_cb(const char *db_name, const char *host, const char *service,
 
 static int
 verify_cb(const char *db_name, const char *host, const char *service,
-	  const gnutls_datum_t * pubkey)
+          const gnutls_datum_t * pubkey)
 {
     const gtdb *tdb = reinterpret_cast < const gtdb * >(db_name);
     QByteArray ahash;
@@ -59,20 +59,20 @@ verify_cb(const char *db_name, const char *host, const char *service,
     len = gnutls_hash_get_len((gnutls_digest_algorithm_t) algo);
 
     if (algo == 0 || len > (int)sizeof(output))
-	return -1;
+        return -1;
 
     if (ahash.size() != len)
-	return -1;
+        return -1;
 
     ret =
-	gnutls_hash_fast((gnutls_digest_algorithm_t) algo, pubkey->data,
-			 pubkey->size, output);
+        gnutls_hash_fast((gnutls_digest_algorithm_t) algo, pubkey->data,
+                         pubkey->size, output);
     if (ret < 0) {
-	return -1;
+        return -1;
     }
 
     if (memcmp(ahash.constData(), output, len) == 0)
-	return 0;
+        return 0;
     return GNUTLS_E_CERTIFICATE_KEY_MISMATCH;
 }
 
