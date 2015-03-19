@@ -80,7 +80,6 @@ section "install"
 	file libgcc_s_dw2-1.dll
 	file libgcc_s_sjlj-1.dll
 	file libgmp-10.dll
-	file liboath-0.dll
 	file libstoken-1.dll
 	file libgnutls-30.dll
 	file libp11-kit-0.dll
@@ -97,7 +96,7 @@ section "install"
 	file Qt5Network.dll
 	file Qt5Widgets.dll
 	file vpnc-script-win.js
-	file libz-1.dll
+	file zlib1.dll
 	file "icudt53.dll"
 	file "icuin53.dll"
 	file "icuuc53.dll"
@@ -180,18 +179,17 @@ section "uninstall"
 	delete "tap-windows-xp.exe"
 	delete vcredist_x86.exe
 	delete "logo64.ico"
-	delete "icudt52.dll"
-	delete "icuin52.dll"
-	delete "icuuc52.dll"
-	delete liboath-0.dll
+	delete "icudt53.dll"
+	delete "icuin53.dll"
+	delete "icuuc53.dll"
 	delete libstoken-1.dll
 	delete "libgcc_s_dw2-1.dll"
 	delete "libgcc_s_sjlj-1.dll"
 	delete "libgmp-10.dll"
 	delete libp11-kit-0.dll
-	delete "libgnutls-28.dll"
-	delete "libhogweed-2-5.dll"
-	delete "libnettle-4-7.dll"
+	delete "libgnutls-30.dll"
+	delete "libhogweed-4-0.dll"
+	delete "libnettle-6-0.dll"
 	delete "libopenconnect-5.dll"
 	delete "libstdc++-6.dll"
 	delete "libwinpthread-1.dll"
@@ -203,7 +201,7 @@ section "uninstall"
 	delete "Qt5Network.dll"
 	delete "Qt5Widgets.dll"
 	delete "vpnc-script-win.js"
-	delete "libz-1.dll"
+	delete "zlib1.dll"
 	delete "platforms\qminimal.dll"
 	delete "platforms\qoffscreen.dll"
 	delete "platforms\qwindows.dll"

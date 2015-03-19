@@ -48,6 +48,14 @@ extern "C" {
 
 #define STOKEN_MAX_TOKENCODE	8
 
+#if defined(_WIN32) && defined(LIBSTOKEN_BUILD)
+#define STOKEN_EXPORT		__declspec(dllexport)
+#elif defined(_WIN32)
+#define STOKEN_EXPORT		__declspec(dllimport)
+#else
+#define STOKEN_EXPORT
+#endif
+
 struct stoken_ctx;
 
 struct stoken_info {
@@ -68,8 +76,8 @@ struct stoken_guid {
  * Create/destroy library context.
  * stoken_new() returns NULL on error.
  */
-struct stoken_ctx *stoken_new(void);
-void stoken_destroy(struct stoken_ctx *ctx);
+STOKEN_EXPORT struct stoken_ctx *stoken_new(void);
+STOKEN_EXPORT void stoken_destroy(struct stoken_ctx *ctx);
 
 /*
  * Load a token from an existing .stokenrc file (PATH can be NULL to use
@@ -82,7 +90,8 @@ void stoken_destroy(struct stoken_ctx *ctx);
  *   -EINVAL: invalid input file format
  *   -EIO:    any other failure (e.g. ran out of memory)
  */
-int stoken_import_rcfile(struct stoken_ctx *ctx, const char *path);
+STOKEN_EXPORT int stoken_import_rcfile(struct stoken_ctx *ctx,
+				       const char *path);
 
 /*
  * Parse a token string (nominally a string of ~71 digits, starting with
@@ -94,7 +103,8 @@ int stoken_import_rcfile(struct stoken_ctx *ctx, const char *path);
  *   -EINVAL: invalid input string format
  *   -EIO:    any other failure (e.g. ran out of memory)
  */
-int stoken_import_string(struct stoken_ctx *ctx, const char *token_string);
+STOKEN_EXPORT int stoken_import_string(struct stoken_ctx *ctx,
+				       const char *token_string);
 
 /*
  * Retrieve metadata for the currently imported token.  This returns a
@@ -109,13 +119,15 @@ int stoken_import_string(struct stoken_ctx *ctx, const char *token_string);
  *   ptr:     success
  *   NULL:    any failure (e.g. ran out of memory)
  */
-struct stoken_info *stoken_get_info(struct stoken_ctx *ctx);
+STOKEN_EXPORT struct stoken_info *stoken_get_info(struct stoken_ctx *ctx);
 
 /*
  * Set *MIN_PIN and *MAX_PIN to reflect the valid range of PIN lengths
  * (e.g. 4-8).
  */
-void stoken_pin_range(struct stoken_ctx *ctx, int *min_pin, int *max_pin);
+STOKEN_EXPORT void stoken_pin_range(struct stoken_ctx *ctx,
+				    int *min_pin,
+				    int *max_pin);
 
 /*
  * Returns nonzero if the token in CTX requires a PIN, and doesn't have one
@@ -125,13 +137,13 @@ void stoken_pin_range(struct stoken_ctx *ctx, int *min_pin, int *max_pin);
  * request and concatenate a PIN in order to log in to a protected resource:
  * PASSCODE = PIN + TOKENCODE
  */
-int stoken_pin_required(struct stoken_ctx *ctx);
+STOKEN_EXPORT int stoken_pin_required(struct stoken_ctx *ctx);
 
 /* returns nonzero if the token in CTX needs a password to decrypt the seed */
-int stoken_pass_required(struct stoken_ctx *ctx);
+STOKEN_EXPORT int stoken_pass_required(struct stoken_ctx *ctx);
 
 /* returns nonzero if the token in CTX needs a device ID to decrypt the seed */
-int stoken_devid_required(struct stoken_ctx *ctx);
+STOKEN_EXPORT int stoken_devid_required(struct stoken_ctx *ctx);
 
 /*
  * Check the PIN for proper format.  This does not validate whether the PIN
@@ -142,13 +154,13 @@ int stoken_devid_required(struct stoken_ctx *ctx);
  *   0:       success
  *   -EINVAL: invalid format
  */
-int stoken_check_pin(struct stoken_ctx *ctx, const char *pin);
+STOKEN_EXPORT int stoken_check_pin(struct stoken_ctx *ctx, const char *pin);
 
 /*
  * Obtain the list of known "class GUIDs" used to bind a token to a specific
  * type of device (e.g. iPhone).
  */
-const struct stoken_guid *stoken_get_guid_list(void);
+STOKEN_EXPORT const struct stoken_guid *stoken_get_guid_list(void);
 
 /*
  * Check the device ID by performing a partial seed decrypt.  This helps
@@ -160,7 +172,8 @@ const struct stoken_guid *stoken_get_guid_list(void);
  *   -EINVAL: DEVID MAC failed
  *   -EIO:    any other failure (e.g. ran out of memory)
  */
-int stoken_check_devid(struct stoken_ctx *ctx, const char *devid);
+STOKEN_EXPORT int stoken_check_devid(struct stoken_ctx *ctx,
+				     const char *devid);
 
 /*
  * Try to decrypt the seed stored in CTX, and compare the MAC to see if
@@ -175,8 +188,9 @@ int stoken_check_devid(struct stoken_ctx *ctx, const char *devid);
  *   -EINVAL: MAC failed (PASS or DEVID is probably incorrect)
  *   -EIO:    any other failure (e.g. ran out of memory)
  */
-int stoken_decrypt_seed(struct stoken_ctx *ctx, const char *pass,
-	const char *devid);
+STOKEN_EXPORT int stoken_decrypt_seed(struct stoken_ctx *ctx,
+				      const char *pass,
+				      const char *devid);
 
 /*
  * Generate a new token string for the previously-decrypted seed stored
@@ -188,8 +202,9 @@ int stoken_decrypt_seed(struct stoken_ctx *ctx, const char *pass,
  *   ptr:     on success, a pointer to a new string
  *   NULL:    on failure
  */
-char *stoken_encrypt_seed(struct stoken_ctx *ctx, const char *pass,
-	const char *devid);
+STOKEN_EXPORT char *stoken_encrypt_seed(struct stoken_ctx *ctx,
+					const char *pass,
+					const char *devid);
 
 /*
  * Generate a tokencode from the decrypted seed, for UNIX time WHEN.
@@ -210,8 +225,10 @@ char *stoken_encrypt_seed(struct stoken_ctx *ctx, const char *pass,
  *   -EINVAL: invalid PIN format
  *   -EIO:    general failure
  */
-int stoken_compute_tokencode(struct stoken_ctx *ctx, time_t when,
-	const char *pin, char *out);
+STOKEN_EXPORT int stoken_compute_tokencode(struct stoken_ctx *ctx,
+					   time_t when,
+					   const char *pin,
+					   char *out);
 
 /*
  * Inject a space in the middle of the code, e.g. "1234 5678".
@@ -222,7 +239,7 @@ int stoken_compute_tokencode(struct stoken_ctx *ctx, time_t when,
  * The returned string must be freed by the caller.  Returns NULL on malloc
  * failure.
  */
-char *stoken_format_tokencode(const char *tokencode);
+STOKEN_EXPORT char *stoken_format_tokencode(const char *tokencode);
 
 #ifdef __cplusplus
 }
