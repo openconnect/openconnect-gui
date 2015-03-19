@@ -302,14 +302,20 @@ static void main_loop(VpnInfo * vpninfo, MainWindow * m)
     QString oldpass, oldgroup;
     bool reset_password = false;
     int retries = 2;
+    bool pass_was_empty;
 
     m->vpn_status_changed(STATUS_CONNECTING);
+
+    pass_was_empty = vpninfo->ss->get_password().isEmpty();
 
     do {
         retry = false;
         ret = vpninfo->connect();
         if (ret != 0) {
-            if (vpninfo->ss->get_password().isEmpty() != true) {
+	    if (retries-- <= 0)
+               goto fail;
+
+            if (pass_was_empty != true) {
                 /* authentication failed in batch mode? switch to non
                  * batch and retry */
                 oldpass = vpninfo->ss->get_password();
@@ -335,8 +341,6 @@ static void main_loop(VpnInfo * vpninfo, MainWindow * m)
             goto fail;
         }
 
-        if (retries-- <= 0)
-            goto fail;
 
     } while (retry == true);
 
