@@ -29,6 +29,7 @@ extern "C" {
 #include <dialogs.h>
 #include <QApplication>
 #include <QDir>
+
 static void stats_vfn(void *privdata, const struct oc_stats *stats)
 {
     VpnInfo *vpn = static_cast < VpnInfo * >(privdata);
@@ -426,6 +427,7 @@ int VpnInfo::connect()
     int ret;
     QString cert_file, key_file, tfile;
     QString ca_file;
+    bool status;
 
     cert_file = ss->get_cert_file();
     ca_file = ss->get_ca_cert_file();
@@ -466,9 +468,17 @@ int VpnInfo::connect()
     }
 
     /* now read %temp%\\vpnc.log and post it to our log */
-    tfile = QDir::tempPath() + QLatin1String("\\vpnc.log");
+    tfile = QDir::tempPath() + QLatin1String("/vpnc.log");
     QFile file(tfile);
-    if (file.open(QIODevice::ReadOnly)) {
+
+    status = file.open(QIODevice::ReadOnly);
+    if (!status) {
+        tfile = QDir::tempPath() + QLatin1String("\\vpnc.log");
+        file.setFileName(tfile);
+        status = file.open(QIODevice::ReadOnly);
+    }
+
+    if (status) {
         QTextStream in(&file);
 
         while (!in.atEnd()) {
@@ -478,7 +488,7 @@ int VpnInfo::connect()
         file.close();
         QFile::remove(tfile);
     } else {
-        this->m->updateProgressBar(QLatin1String("Could not open ") + tfile);
+        this->m->updateProgressBar(QLatin1String("Could not open ") + tfile + ": " + QString::number((int)file.error()));
     }
 
     return 0;

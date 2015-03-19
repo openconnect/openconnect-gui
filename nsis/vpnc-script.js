@@ -9,11 +9,6 @@
 
 var fs = WScript.CreateObject("Scripting.FileSystemObject");
 var tmpdir = fs.GetSpecialFolder(2)+"\\";
-
-if (fs.FileExists(tmpdir + "vpnc.log")) {
-	fs.DeleteFile(tmpdir + "vpnc.log");
-}
-
 var log = fs.OpenTextFile(tmpdir + "vpnc.log", 8, true);
 
 function echo(msg)
