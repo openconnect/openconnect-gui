@@ -420,7 +420,7 @@
        </widget>
        <widget class="QWidget" name="tab_6">
         <attribute name="title">
-         <string>Windows Certificate</string>
+         <string>System Store</string>
         </attribute>
         <layout class="QFormLayout" name="formLayout_3">
          <property name="fieldGrowthPolicy">
