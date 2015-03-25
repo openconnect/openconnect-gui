@@ -122,6 +122,8 @@ int process_auth_form(void *privdata, struct oc_auth_form *form)
             openconnect_set_option_value(&select_opt->form,
                                          select_opt->choices[idx]->name);
             text = QLatin1String(select_opt->choices[idx]->name);
+
+            vpn->m->updateProgressBar(QLatin1String("Saving group: ") + text);
             vpn->ss->set_groupname(text);
         }
 
