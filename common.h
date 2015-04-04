@@ -46,7 +46,7 @@
 #define UPDATE_TIMER 10000
 
 #ifdef _WIN32
-#define DEFAULT_VPNC_SCRIPT "vpnc-script-win.js"
+#define DEFAULT_VPNC_SCRIPT "vpnc-script.js"
 #define net_errno WSAGetLastError()
 #define ms_sleep Sleep
 #else
