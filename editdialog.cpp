@@ -69,7 +69,7 @@ void EditDialog::load_win_certs()
 
     do {
         ret =
-            gnutls_system_key_iter_get_info(&iter, &cert_url, &key_url, &label,
+            gnutls_system_key_iter_get_info(&iter, GNUTLS_CRT_X509, &cert_url, &key_url, &label,
                                             NULL, 0);
         if (ret >= 0) {
             win_cert_st st;
