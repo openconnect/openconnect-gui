@@ -100,7 +100,7 @@ QMainWindow(parent), ui(new Ui::MainWindow)
 
 static void term_thread(MainWindow * m, SOCKET * fd)
 {
-    char cmd = OC_CMD_DETACH;
+    char cmd = OC_CMD_CANCEL;
 
     if (*fd != INVALID_SOCKET) {
         int ret = pipe_write(*fd, &cmd, 1);
