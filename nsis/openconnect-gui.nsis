@@ -175,36 +175,37 @@ section "uninstall"
 	rmDir "$SMPROGRAMS\${APPNAME}" 
 
 	# Remove files
-	delete "tap-windows.exe"
-	delete "tap-windows-xp.exe"
-	delete vcredist_x86.exe
-	delete "logo64.ico"
-	delete "icudt53.dll"
-	delete "icuin53.dll"
-	delete "icuuc53.dll"
-	delete libstoken-1.dll
-	delete "libgcc_s_dw2-1.dll"
-	delete "libgcc_s_sjlj-1.dll"
-	delete "libgmp-10.dll"
-	delete libp11-kit-0.dll
-	delete "libgnutls-30.dll"
-	delete "libhogweed-4-0.dll"
-	delete "libnettle-6-0.dll"
-	delete "libopenconnect-5.dll"
-	delete "libstdc++-6.dll"
-	delete "libwinpthread-1.dll"
-	delete "libxml2-2.dll"
-	delete "openconnect.exe"
-	delete "openconnect-gui.exe"
-	delete "Qt5Core.dll"
-	delete "Qt5Gui.dll"
-	delete "Qt5Network.dll"
-	delete "Qt5Widgets.dll"
-	delete "vpnc-script.js"
-	delete "zlib1.dll"
-	delete "platforms\qminimal.dll"
-	delete "platforms\qoffscreen.dll"
-	delete "platforms\qwindows.dll"
+	delete $INSTDIR\tap-windows.exe
+	delete $INSTDIR\tap-windows-xp.exe
+	delete $INSTDIR\vcredist_x86.exe
+	delete $INSTDIR\logo64.ico
+	delete $INSTDIR\icudt53.dll
+	delete $INSTDIR\icuin53.dll
+	delete $INSTDIR\icuuc53.dll
+	delete $INSTDIR\libstoken-1.dll
+	delete $INSTDIR\libgcc_s_dw2-1.dll
+	delete $INSTDIR\libgcc_s_sjlj-1.dll
+	delete $INSTDIR\libgmp-10.dll
+	delete $INSTDIR\libp11-kit-0.dll
+	delete $INSTDIR\libgnutls-30.dll
+	delete $INSTDIR\libhogweed-4-0.dll
+	delete $INSTDIR\libnettle-6-0.dll
+	delete $INSTDIR\libopenconnect-5.dll
+	delete $INSTDIR\libstdc++-6.dll
+	delete $INSTDIR\libwinpthread-1.dll
+	delete $INSTDIR\libxml2-2.dll
+	delete $INSTDIR\openconnect.exe
+	delete $INSTDIR\openconnect-gui.exe
+	delete $INSTDIR\Qt5Core.dll
+	delete $INSTDIR\Qt5Gui.dll
+	delete $INSTDIR\Qt5Network.dll
+	delete $INSTDIR\Qt5Widgets.dll
+	delete $INSTDIR\vpnc-script.js
+	delete $INSTDIR\zlib1.dll
+	delete $INSTDIR\platforms\qminimal.dll
+	delete $INSTDIR\platforms\qoffscreen.dll
+	delete $INSTDIR\platforms\qwindows.dll
+	rmDir $INSTDIR\platforms
  
 	# Always delete "uninstaller as the last action
 	delete $INSTDIR\uninstall.exe
