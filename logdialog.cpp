@@ -58,6 +58,9 @@ void LogDialog::append(QString item)
 {
     this->text.append(item);
     ui->listWidget->addItem(item);
+    if (ui->checkBox_autoScroll->checkState() == Qt::Checked) {
+        ui->listWidget->scrollToBottom();
+    }
 }
 
 void LogDialog::on_pushButton_2_clicked()
