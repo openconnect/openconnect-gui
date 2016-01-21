@@ -74,6 +74,7 @@ int main(int argc, char *argv[])
 {
     int ret;
     QApplication a(argc, argv);
+    a.setQuitOnLastWindowClosed(false);
     QVariant v;
     MainWindow w;
     QCoreApplication::setOrganizationDomain("redhat.com");
