@@ -264,7 +264,7 @@
              <string/>
             </property>
             <property name="alignment">
-             <set>Qt::AlignCenter</set>
+             <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
             </property>
             <property name="wordWrap">
              <bool>true</bool>
@@ -287,7 +287,7 @@
              <string/>
             </property>
             <property name="alignment">
-             <set>Qt::AlignCenter</set>
+             <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
             </property>
             <property name="wordWrap">
              <bool>true</bool>
@@ -313,7 +313,7 @@
              <string/>
             </property>
             <property name="alignment">
-             <set>Qt::AlignCenter</set>
+             <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
             </property>
             <property name="wordWrap">
              <bool>true</bool>
@@ -326,7 +326,7 @@
           <item row="3" column="0">
            <widget class="QLabel" name="label">
             <property name="text">
-             <string>Up:</string>
+             <string>Upload:</string>
             </property>
             <property name="alignment">
              <set>Qt::AlignCenter</set>
@@ -339,7 +339,7 @@
              <string/>
             </property>
             <property name="alignment">
-             <set>Qt::AlignCenter</set>
+             <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
             </property>
             <property name="wordWrap">
              <bool>true</bool>
@@ -352,7 +352,7 @@
           <item row="4" column="0">
            <widget class="QLabel" name="DownLabel">
             <property name="text">
-             <string>Down:</string>
+             <string>Download:</string>
             </property>
             <property name="alignment">
              <set>Qt::AlignCenter</set>
@@ -365,7 +365,7 @@
              <string/>
             </property>
             <property name="alignment">
-             <set>Qt::AlignCenter</set>
+             <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
             </property>
             <property name="wordWrap">
              <bool>true</bool>
@@ -387,6 +387,9 @@
             <property name="text">
              <string/>
             </property>
+            <property name="alignment">
+             <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+            </property>
            </widget>
           </item>
           <item row="6" column="0">
@@ -400,6 +403,9 @@
            <widget class="QLabel" name="DTLSLabel">
             <property name="text">
              <string/>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
             </property>
            </widget>
           </item>
@@ -451,7 +457,7 @@
      <x>0</x>
      <y>0</y>
      <width>349</width>
-     <height>21</height>
+     <height>20</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
