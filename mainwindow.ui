@@ -462,7 +462,7 @@
    </property>
    <widget class="QMenu" name="menuFile">
     <property name="title">
-     <string>Options</string>
+     <string>&amp;File</string>
     </property>
     <addaction name="actionQuit"/>
    </widget>
@@ -470,7 +470,10 @@
   </widget>
   <action name="actionQuit">
    <property name="text">
-    <string>Quit</string>
+    <string>&amp;Quit</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Q</string>
    </property>
   </action>
  </widget>
