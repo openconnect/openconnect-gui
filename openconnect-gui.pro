@@ -1,24 +1,28 @@
 #-------------------------------------------------
 #
-# Project created by QtCreator 2014-08-12T09:53:42
+# Project created by QtCreator
 #
 #-------------------------------------------------
-
-QMAKE_CXXFLAGS += -O2 -g
-win32: QMAKE_CXXFLAGS += -IZ:\openconnect-gui\include\ 
-#unix: QMAKE_CXXFLAGS += -I/usr/local/include
-
-QT       += core gui network
-
-greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 TARGET = openconnect-gui
 TEMPLATE = app
 
-win32: RC_FILE = openconnect-gui.rc
+CONFIG += qt
+CONFIG += debug_and_release
+CONFIG += warn_on
+win32:debug {
+    CONFIG += console
+}
 
-SOURCES += main.cpp\
-        mainwindow.cpp \
+QT += \
+    core \
+    gui \
+    widgets \
+    network
+
+SOURCES += \
+    main.cpp\
+    mainwindow.cpp \
     vpninfo.cpp \
     storage.cpp \
     editdialog.cpp \
@@ -29,7 +33,8 @@ SOURCES += main.cpp\
     gtdb.cpp \
     cryptdata.cpp
 
-HEADERS  += mainwindow.h \
+HEADERS += \
+    mainwindow.h \
     vpninfo.h \
     storage.h \
     editdialog.h \
@@ -42,14 +47,24 @@ HEADERS  += mainwindow.h \
     dialogs.h \
     cryptdata.h
 
-FORMS    += mainwindow.ui \
+FORMS += \
+    mainwindow.ui \
     editdialog.ui \
     logdialog.ui
 
-win32: LIBS += -LZ:\openconnect-gui\lib -lwsock32
-unix: LIBS += -L/usr/local/lib
-unix|win32: LIBS += -lopenconnect -lgnutls
-
 RESOURCES += \
     resources.qrc
+
+# we can generate RC file, but we can't generate 'manifest' file on mingw
+win32: RC_FILE = openconnect-gui.rc
+
+win32 {
+    INCLUDEPATH += Z:/openconnect-gui/include
+    LIBS += -LZ:\openconnect-gui\lib -lwsock32
+}
+unix {
+    INCLUDEPATH += /usr/local/include
+    LIBS += -L/usr/local/lib
+}
+unix|win32: LIBS += -lopenconnect -lgnutls
 
