@@ -6,3 +6,5 @@ qrc_*.cpp
 ui_*.h
 qconnect
 *.exe
+
+/*.pro.user
