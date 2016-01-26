@@ -8,3 +8,4 @@ qconnect
 *.exe
 
 /*.pro.user
+/CMakeLists.txt.user
