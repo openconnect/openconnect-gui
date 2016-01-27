@@ -20,7 +20,7 @@
 #ifndef DIALOGS_H
 #define DIALOGS_H
 
-#include <mainwindow.h>
+#include <dialog/mainwindow.h>
 #include <QMessageBox>
 #include <QInputDialog>
 #include <QApplication>

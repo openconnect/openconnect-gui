@@ -23,7 +23,7 @@
 #include <QString>
 #include <QByteArray>
 #include <QTemporaryFile>
-#include "mainwindow.h"
+#include "dialog/mainwindow.h"
 #include <gnutls/x509.h>
 
 class Key {
