@@ -20,7 +20,7 @@
 #ifndef VPNINFO_H
 #define VPNINFO_H
 
-#include <mainwindow.h>
+#include <dialog/mainwindow.h>
 #include <storage.h>
 
 extern "C" {

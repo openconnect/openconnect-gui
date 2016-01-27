@@ -35,13 +35,13 @@
 #define TMP_CERT_PREFIX "tmp-certXXXXXX"
 #define TMP_KEY_PREFIX "tmp-keyXXXXXX"
 
-#define OFF_ICON QPixmap(QString::fromLatin1(":/new/resource/traffic_light_red.png"))
-#define ON_ICON QPixmap(QString::fromLatin1(":/new/resource/traffic_light_green.png"))
-#define CONNECTING_ICON QPixmap(QString::fromLatin1(":/new/resource/traffic_light_yellow.png"))
-#define CONNECTING_ICON2 QPixmap(QString::fromLatin1(":/new/resource/traffic_light_off.png"))
+#define OFF_ICON QPixmap(QString::fromLatin1(":/new/resource/images/traffic_light_red.png"))
+#define ON_ICON QPixmap(QString::fromLatin1(":/new/resource/images/traffic_light_green.png"))
+#define CONNECTING_ICON QPixmap(QString::fromLatin1(":/new/resource/images/traffic_light_yellow.png"))
+#define CONNECTING_ICON2 QPixmap(QString::fromLatin1(":/new/resource/images/traffic_light_off.png"))
 
-#define TRAY_OFF_ICON QPixmap(QString::fromLatin1(":/new/resource/network-disconnected.png"))
-#define TRAY_ON_ICON QPixmap(QString::fromLatin1(":/new/resource/network-connected.png"))
+#define TRAY_OFF_ICON QPixmap(QString::fromLatin1(":/new/resource/images/network-disconnected.png"))
+#define TRAY_ON_ICON QPixmap(QString::fromLatin1(":/new/resource/images/network-connected.png"))
 
 #define UPDATE_TIMER 10000
 
