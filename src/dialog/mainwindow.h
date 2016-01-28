@@ -115,6 +115,10 @@ signals:
 
  private:
     void createTrayIcon();
+
+    void readSettings();
+    void writeSettings();
+
     /* we keep the fd instead of a pointer to vpninfo to avoid
      * any multithread issues */
     SOCKET cmd_fd;

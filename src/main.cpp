@@ -90,7 +90,6 @@ int main(int argc, char *argv[])
     QVariant v;
     MainWindow w;
     QMessageBox msgBox;
-    QSettings settings("Red Hat", "openconnect-gui");
 
     gnutls_global_init();
 #ifndef _WIN32
@@ -102,22 +101,6 @@ int main(int argc, char *argv[])
     gnutls_pkcs11_set_pin_function(pin_callback, &w);
 #endif
 
-#if !defined(DEVEL)
-    v = settings.value("mainwindow/size");
-    if (v.isNull() == false)
-        w.resize(v.toSize());
-
-    v = settings.value("mainwindow/pos");
-    if (v.isNull() == false)
-        w.move(v.toPoint());
-
-    v = settings.value("mainwindow/fullscreen");
-    if (v.isNull() == false && v.toInt() != 0) {
-        w.setWindowState(Qt::WindowMaximized);
-    }
-#endif
-
-    w.set_settings(&settings);
     w.show();
 
 #if !defined(_WIN32) && !defined(DEVEL)
@@ -138,12 +121,6 @@ int main(int argc, char *argv[])
 #endif
 
     ret = a.exec();
-
-    settings.beginGroup("mainwindow");
-    settings.setValue("size", w.size());
-    settings.setValue("pos", w.pos());
-    settings.setValue("fullscreen", w.isFullScreen());
-    settings.endGroup();
 
     return ret;
 }
