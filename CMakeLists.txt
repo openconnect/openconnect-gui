@@ -16,10 +16,10 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTORCC ON)
 
-find_package(Qt5Core REQUIRED)
-find_package(Qt5Gui REQUIRED)
-find_package(Qt5Widgets REQUIRED)
-find_package(Qt5Network REQUIRED)
+find_package(Qt5Core 5.5 REQUIRED)
+find_package(Qt5Gui 5.5 REQUIRED)
+find_package(Qt5Widgets 5.5 REQUIRED)
+find_package(Qt5Network 5.5 REQUIRED)
 
 # paths to 3rd party libraries
 include_directories(SYSTEM ${CMAKE_SOURCE_DIR}/include)
