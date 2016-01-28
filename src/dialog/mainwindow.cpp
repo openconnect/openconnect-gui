@@ -44,6 +44,7 @@ extern "C" {
 #else
 #define pipe_write(x,y,z) write(x,y,z)
 #endif
+
 MainWindow::MainWindow(QWidget * parent):
 QMainWindow(parent), ui(new Ui::MainWindow)
 {
@@ -96,6 +97,8 @@ QMainWindow(parent), ui(new Ui::MainWindow)
                           false);
         trayIcon = NULL;
     }
+
+    readSettings();
 }
 
 static void term_thread(MainWindow * m, SOCKET * fd)
@@ -129,6 +132,8 @@ MainWindow::~MainWindow()
     }
     delete ui;
     delete timer;
+
+    writeSettings();
 }
 
 QString value_to_string(uint64_t bytes)
@@ -645,6 +650,26 @@ void MainWindow::createTrayIcon()
 
     trayIcon = new QSystemTrayIcon(this);
     trayIcon->setContextMenu(trayIconMenu);
+}
+
+void MainWindow::readSettings()
+{
+    QSettings settings;
+    settings.beginGroup("MainWindow");
+    resize(settings.value("size").toSize());
+    if (settings.contains("pos")) {
+        move(settings.value("pos").toPoint());
+    }
+    settings.endGroup();
+}
+
+void MainWindow::writeSettings()
+{
+    QSettings settings;
+    settings.beginGroup("MainWindow");
+    settings.setValue("size", size());
+    settings.setValue("pos", pos());
+    settings.endGroup();
 }
 
 void MainWindow::setVisible(bool visible)
