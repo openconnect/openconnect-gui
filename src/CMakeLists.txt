@@ -1,5 +1,3 @@
-project(openconnect-gui)
-
 set(${PROJECT_NAME}_HDRS
     dialog/mainwindow.h
     vpninfo.h
@@ -34,11 +32,30 @@ set(${PROJECT_NAME}_FORMS
 )
 
 set(${PROJECT_NAME}_RESOURCES
-    openconnect-gui.qrc
+    ${PROJECT_NAME}.qrc
+)
+
+configure_file(
+    config.cpp.in
+    ${CMAKE_CURRENT_BINARY_DIR}/config.cpp
+    @ONLY
+)
+list(APPEND ${PROJECT_NAME}_SRCS
+    ${CMAKE_CURRENT_BINARY_DIR}/config.cpp
+    config.cpp.in
+    config.h
 )
 
 if(WIN32 AND MINGW)
-	list(APPEND ${PROJECT_NAME}_RESOURCES openconnect-gui.rc)
+    configure_file(
+        ${PROJECT_NAME}.rc.in
+        ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.rc
+        @ONLY
+    )
+    list(APPEND ${PROJECT_NAME}_RESOURCES
+        ${PROJECT_NAME}.rc.in
+        ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.rc
+    )
 endif()
 
 add_executable(${PROJECT_NAME} WIN32
