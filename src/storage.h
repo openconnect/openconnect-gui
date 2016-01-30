@@ -20,63 +20,32 @@
 #ifndef STORAGE_H
 #define STORAGE_H
 
-#include <QString>
-#include <QStringList>
-#include <QCoreApplication>
-#include <QSettings>
-#include <gnutls/gnutls.h>
 #include "keypair.h"
 
-QStringList get_server_list(QSettings * settings);
-void remove_server(QSettings * settings, QString server);
+class QSettings;
+
+QStringList get_server_list(QSettings* settings);
+void remove_server(QSettings* settings, QString server);
 
 class StoredServer {
- public:
-    StoredServer(QSettings * settings);
+public:
+    explicit StoredServer(QSettings* settings);
     ~StoredServer();
 
-    int load(QString & name);
-     QString & get_username(void) {
-        return this->username;
-    }
-    QString & get_password(void) {
-        return this->password;
-    }
+    int load(QString& name);
 
-    QString & get_groupname(void) {
-        return this->groupname;
-    }
+    QString& get_username(void);
+    QString& get_password(void);
+    QString& get_groupname(void);
+    QString& get_servername(void);
+    QString& get_label(void);
 
-    QString & get_servername(void) {
-        return this->servername;
-    }
-
-    QString & get_label(void) {
-        return this->label;
-    }
-
-    void set_servername(QString name) {
-        this->servername = name;
-    }
-
-    void set_label(QString name) {
-        this->label = name;
-    }
-
-    void set_username(QString username) {
-        this->username = username;
-    }
-
-    void set_password(QString p) {
-        this->password = p;
-    }
-
-    void set_groupname(QString & groupname) {
-        this->groupname = groupname;
-    }
-    void set_disable_udp(bool v) {
-        this->disable_udp = v;
-    }
+    void set_servername(QString name);
+    void set_label(QString name);
+    void set_username(QString username);
+    void set_password(QString p);
+    void set_groupname(QString& groupname);
+    void set_disable_udp(bool v);
 
     QString get_cert_file();
     QString get_key_file();
@@ -89,85 +58,36 @@ class StoredServer {
     void clear_groupname();
     void clear_server_hash();
 
-    QString get_client_cert_hash() {
-        return client.cert.sha1_hash();
-    }
+    QString get_client_cert_hash();
 
-    QString get_ca_cert_hash() {
-        return ca_cert.sha1_hash();
-    }
+    QString get_ca_cert_hash();
 
-    void set_window(QWidget * w) {
-        client.set_window(w);
-    }
+    void set_window(QWidget* w);
 
     int set_ca_cert(QString filename);
     int set_client_cert(QString filename);
     int set_client_key(QString filename);
-    void set_batch_mode(bool mode) {
-        this->batch_mode = mode;
-    }
-    bool get_batch_mode() {
-        return this->batch_mode;
-    }
+    void set_batch_mode(bool mode);
+    bool get_batch_mode();
 
-    bool get_minimize() {
-        return this->minimize_on_connect;
-    }
-
-    bool get_proxy() {
-        return this->proxy;
-    }
-
-    bool client_is_complete() {
-        return client.is_complete();
-    };
-
-    void set_minimize(bool t) {
-        this->minimize_on_connect = t;
-    }
-
-    void set_proxy(bool t) {
-        this->proxy = t;
-    }
-
-    QString get_token_str() {
-        return this->token_str;
-    }
-
-    void set_token_str(QString str) {
-        this->token_str = str;
-    }
-
-    int get_token_type() {
-        return this->token_type;
-    }
-
-    bool get_disable_udp() {
-        return this->disable_udp;
-    }
-
-    void set_token_type(int type) {
-        this->token_type = type;
-    }
-
-    void set_server_hash(unsigned algo, QByteArray & hash) {
-        this->server_hash_algo = algo;
-        this->server_hash = hash;
-    }
-
-    unsigned get_server_hash(QByteArray & hash) {
-        hash = this->server_hash;
-        return this->server_hash_algo;
-    }
-
-    void get_server_hash(QString & hash);
-
+    bool get_minimize();
+    bool get_proxy();
+    bool client_is_complete();
+    void set_minimize(bool t);
+    void set_proxy(bool t);
+    QString get_token_str();
+    void set_token_str(QString str);
+    int get_token_type();
+    bool get_disable_udp();
+    void set_token_type(int type);
+    void set_server_hash(unsigned algo, QByteArray& hash);
+    unsigned get_server_hash(QByteArray& hash);
+    void get_server_hash(QString& hash);
     int save();
 
     QString last_err;
 
- private:
+private:
     bool batch_mode;
     bool minimize_on_connect;
     bool proxy;
@@ -183,7 +103,7 @@ class StoredServer {
     unsigned server_hash_algo;
     Cert ca_cert;
     KeyPair client;
-    QSettings *settings;
+    QSettings* settings;
 };
 
-#endif                          // STORAGE_H
+#endif // STORAGE_H

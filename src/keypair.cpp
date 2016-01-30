@@ -17,9 +17,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <dialogs.h>
-#include <QString>
 #include "keypair.h"
+#include "dialogs.h"
+#include <QString>
 #include <gnutls/pkcs12.h>
 
 KeyPair::KeyPair()
@@ -30,9 +30,11 @@ KeyPair::~KeyPair()
 {
 }
 
-static
-int load_pkcs12_file(QWidget * w, Key & key, Cert & cert, QString File,
-                     QString & last_err)
+static int load_pkcs12_file(QWidget* w,
+                            Key& key,
+                            Cert& cert,
+                            QString File,
+                            QString& last_err)
 {
     gnutls_datum_t raw = { NULL, 0 };
     int ret;
@@ -40,9 +42,9 @@ int load_pkcs12_file(QWidget * w, Key & key, Cert & cert, QString File,
     bool ok = 0;
     QString pass;
     int pem = 0;
-    char *p;
+    char* p;
     gnutls_x509_privkey_t xkey;
-    gnutls_x509_crt_t *xcert;
+    gnutls_x509_crt_t* xcert;
     unsigned int xcert_size;
     unsigned i;
 
@@ -50,14 +52,14 @@ int load_pkcs12_file(QWidget * w, Key & key, Cert & cert, QString File,
         return -1;
     }
 
-    ret = gnutls_load_file(File.toAscii().data(), &raw);
+    ret = gnutls_load_file(File.toLatin1().data(), &raw);
     if (ret < 0) {
         last_err = gnutls_strerror(ret);
         goto fail;
     }
 
     /* check if the file data contain BEGIN PKCS12 */
-    p = strstr((char *)raw.data, "--- BEGIN ");
+    p = strstr((char*)raw.data, "--- BEGIN ");
     if (p != NULL) {
         pem = 1;
         if (strstr(p, "--- BEGIN PKCS12") == 0)
@@ -70,33 +72,29 @@ int load_pkcs12_file(QWidget * w, Key & key, Cert & cert, QString File,
         goto fail;
     }
 
-    ret =
-        gnutls_pkcs12_import(pkcs12, &raw,
-                             (pem !=
-                              0) ? GNUTLS_X509_FMT_PEM : GNUTLS_X509_FMT_DER,
-                             0);
+    ret = gnutls_pkcs12_import(pkcs12, &raw,
+                               (pem != 0) ? GNUTLS_X509_FMT_PEM : GNUTLS_X509_FMT_DER,
+                               0);
     if (ret < 0) {
         last_err = gnutls_strerror(ret);
         goto fail;
     }
 
-    pass =
-        QInputDialog::getText(w, QLatin1String("This file requires a password"),
-                              QLatin1String("Please enter your password"),
-                              QLineEdit::Password, QString(), &ok);
+    pass = QInputDialog::getText(w, QLatin1String("This file requires a password"),
+                                 QLatin1String("Please enter your password"),
+                                 QLineEdit::Password, QString(), &ok);
 
     if (!ok)
         goto fail;
 
-    ret = gnutls_pkcs12_verify_mac(pkcs12, pass.toAscii().data());
+    ret = gnutls_pkcs12_verify_mac(pkcs12, pass.toLatin1().data());
     if (ret < 0) {
         last_err = gnutls_strerror(ret);
         goto fail;
     }
 
-    ret =
-        gnutls_pkcs12_simple_parse(pkcs12, pass.toAscii().data(), &xkey, &xcert,
-                                   &xcert_size, NULL, NULL, NULL, 0);
+    ret = gnutls_pkcs12_simple_parse(pkcs12, pass.toLatin1().data(), &xkey, &xcert,
+                                     &xcert_size, NULL, NULL, NULL, 0);
     if (ret < 0) {
         last_err = gnutls_strerror(ret);
         goto fail;
@@ -112,9 +110,9 @@ int load_pkcs12_file(QWidget * w, Key & key, Cert & cert, QString File,
     ret = 0;
     goto cleanup;
 
- fail:
+fail:
     ret = -1;
- cleanup:
+cleanup:
     gnutls_free(raw.data);
     if (pkcs12)
         gnutls_pkcs12_deinit(pkcs12);
@@ -152,12 +150,25 @@ int KeyPair::import_key(QString File)
     return 0;
 }
 
-int KeyPair::cert_export(QByteArray & data)
+void KeyPair::set_window(QWidget* w)
+{
+    this->w = w;
+    key.set_window(w);
+}
+
+int KeyPair::cert_export(QByteArray& data)
 {
     return cert.data_export(data);
 }
 
-int KeyPair::key_export(QByteArray & data)
+int KeyPair::key_export(QByteArray& data)
 {
     return key.data_export(data);
+}
+
+bool KeyPair::is_complete()
+{
+    if (key.is_ok() == cert.is_ok())
+        return true;
+    return false;
 }

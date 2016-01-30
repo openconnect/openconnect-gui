@@ -18,8 +18,8 @@
  */
 
 #include "key.h"
+#include "dialogs.h"
 #include <QTemporaryFile>
-#include <dialogs.h>
 #include <gnutls/pkcs11.h>
 
 Key::Key()
@@ -42,8 +42,8 @@ void Key::clear()
     }
 }
 
-static int import_Key(QWidget * w, gnutls_x509_privkey_t * privkey,
-                      gnutls_datum_t * raw)
+static int import_Key(QWidget* w, gnutls_x509_privkey_t* privkey,
+                      gnutls_datum_t* raw)
 {
     int ret;
 
@@ -52,26 +52,22 @@ static int import_Key(QWidget * w, gnutls_x509_privkey_t * privkey,
 
     gnutls_x509_privkey_init(privkey);
 
-    ret =
-        gnutls_x509_privkey_import2(*privkey, raw, GNUTLS_X509_FMT_PEM, NULL,
-                                    0);
+    ret = gnutls_x509_privkey_import2(*privkey, raw, GNUTLS_X509_FMT_PEM, NULL,
+                                      0);
     if (ret == GNUTLS_E_DECRYPTION_FAILED && w != NULL) {
         bool ok;
         QString text;
-        text =
-            QInputDialog::getText(w,
-                                  QLatin1String
-                                  ("This file requires a password"),
-                                  QLatin1String("Please enter your password"),
-                                  QLineEdit::Password, QString(), &ok);
+        text = QInputDialog::getText(w,
+                                     QLatin1String("This file requires a password"),
+                                     QLatin1String("Please enter your password"),
+                                     QLineEdit::Password, QString(), &ok);
         if (!ok) {
             ret = -1;
             goto fail;
         }
 
-        ret =
-            gnutls_x509_privkey_import2(*privkey, raw, GNUTLS_X509_FMT_PEM,
-                                        text.toAscii().data(), 0);
+        ret = gnutls_x509_privkey_import2(*privkey, raw, GNUTLS_X509_FMT_PEM,
+                                          text.toLatin1().data(), 0);
     }
 
     if (ret == GNUTLS_E_BASE64_DECODING_ERROR
@@ -82,18 +78,18 @@ static int import_Key(QWidget * w, gnutls_x509_privkey_t * privkey,
     }
 
     return 0;
- fail:
+fail:
     gnutls_x509_privkey_deinit(*privkey);
     *privkey = NULL;
     return ret;
 }
 
-int Key::import_pem(QByteArray & data)
+int Key::import_pem(QByteArray& data)
 {
     int ret;
     gnutls_datum_t raw;
 
-    raw.data = (unsigned char *)data.constData();
+    raw.data = (unsigned char*)data.constData();
     raw.size = data.size();
 
     ret = import_Key(this->w, &this->privkey, &raw);
@@ -105,7 +101,19 @@ int Key::import_pem(QByteArray & data)
     return 0;
 }
 
-int Key::data_export(QByteArray & data)
+void Key::set(gnutls_x509_privkey_t privkey)
+{
+    clear();
+    this->privkey = privkey;
+    this->imported = true;
+}
+
+void Key::set_window(QWidget* w)
+{
+    this->w = w;
+}
+
+int Key::data_export(QByteArray& data)
 {
     int ret;
     gnutls_datum_t raw;
@@ -127,12 +135,12 @@ int Key::data_export(QByteArray & data)
         return -1;
     }
 
-    data = QByteArray((char *)raw.data, raw.size);
+    data = QByteArray((char*)raw.data, raw.size);
     gnutls_free(raw.data);
     return 0;
 }
 
-int Key::import_file(QString & File)
+int Key::import_file(QString& File)
 {
     int ret;
     gnutls_datum_t contents = { NULL, 0 };
@@ -150,7 +158,7 @@ int Key::import_file(QString & File)
     }
 
     /* normal file */
-    ret = gnutls_load_file(File.toAscii().data(), &contents);
+    ret = gnutls_load_file(File.toLatin1().data(), &contents);
     if (ret < 0) {
         this->last_err = gnutls_strerror(ret);
         return -1;
@@ -167,7 +175,7 @@ int Key::import_file(QString & File)
     return 0;
 }
 
-int Key::tmpfile_export(QString & filename)
+int Key::tmpfile_export(QString& filename)
 {
     int ret;
     gnutls_datum_t out;
@@ -192,7 +200,7 @@ int Key::tmpfile_export(QString & filename)
         return -1;
     }
 
-    qa.append((const char *)out.data, out.size);
+    qa.append((const char*)out.data, out.size);
     gnutls_free(out.data);
 
     tmpfile.open();
@@ -203,4 +211,16 @@ int Key::tmpfile_export(QString & filename)
     }
     filename = tmpfile.fileName();
     return 0;
+}
+
+bool Key::is_ok()
+{
+    if (imported != false)
+        return true;
+    return false;
+}
+
+void Key::get_url(QString& url)
+{
+    url = this->url;
 }

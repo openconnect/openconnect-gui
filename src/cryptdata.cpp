@@ -18,42 +18,42 @@
  */
 
 #include "cryptdata.h"
-#include <QByteArray>
 
 #if defined(_WIN32)
+// FIXME: these 2 files have to be in this order: windows.h, winbsae.h ???
 #include <windows.h>
 #include <winbase.h>
 
-typedef WINBOOL(WINAPI * CryptProtectDataFunc) (DATA_BLOB * pDataIn,
-                                                LPCWSTR szDataDescr,
-                                                DATA_BLOB * pOptionalEntropy,
+typedef WINBOOL(WINAPI* CryptProtectDataFunc)(DATA_BLOB* pDataIn,
+                                              LPCWSTR szDataDescr,
+                                              DATA_BLOB* pOptionalEntropy,
+                                              PVOID pvReserved,
+                                              CRYPTPROTECT_PROMPTSTRUCT*
+                                                  pPromptStruct,
+                                              DWORD dwFlags,
+                                              DATA_BLOB* pDataOut);
+typedef WINBOOL(WINAPI* CryptUnprotectDataFunc)(DATA_BLOB* pDataIn,
+                                                LPWSTR* ppszDataDescr,
+                                                DATA_BLOB* pOptionalEntropy,
                                                 PVOID pvReserved,
-                                                CRYPTPROTECT_PROMPTSTRUCT *
-                                                pPromptStruct, DWORD dwFlags,
-                                                DATA_BLOB * pDataOut);
-typedef WINBOOL(WINAPI * CryptUnprotectDataFunc) (DATA_BLOB * pDataIn,
-                                                  LPWSTR * ppszDataDescr,
-                                                  DATA_BLOB * pOptionalEntropy,
-                                                  PVOID pvReserved,
-                                                  CRYPTPROTECT_PROMPTSTRUCT *
-                                                  pPromptStruct, DWORD dwFlags,
-                                                  DATA_BLOB * pDataOut);
+                                                CRYPTPROTECT_PROMPTSTRUCT*
+                                                    pPromptStruct,
+                                                DWORD dwFlags,
+                                                DATA_BLOB* pDataOut);
 
 static CryptProtectDataFunc pCryptProtectData;
 static CryptUnprotectDataFunc pCryptUnprotectData;
 static int lib_init = 0;
 
-static void __attribute__ ((constructor)) init(void)
+static void __attribute__((constructor)) init(void)
 {
     static HMODULE lib;
     lib = LoadLibraryA("crypt32.dll");
     if (lib == NULL)
         return;
 
-    pCryptProtectData =
-        (CryptProtectDataFunc) GetProcAddress(lib, "CryptProtectData");
-    pCryptUnprotectData =
-        (CryptUnprotectDataFunc) GetProcAddress(lib, "CryptUnprotectData");
+    pCryptProtectData = (CryptProtectDataFunc)GetProcAddress(lib, "CryptProtectData");
+    pCryptUnprotectData = (CryptUnprotectDataFunc)GetProcAddress(lib, "CryptUnprotectData");
     if (pCryptProtectData == NULL || pCryptUnprotectData == NULL) {
         FreeLibrary(lib);
         return;
@@ -61,7 +61,7 @@ static void __attribute__ ((constructor)) init(void)
     lib_init = 1;
 }
 
-QByteArray CryptData::encode(QString & txt, QString password)
+QByteArray CryptData::encode(QString& txt, QString password)
 {
     BOOL r;
     DATA_BLOB DataIn;
@@ -72,17 +72,17 @@ QByteArray CryptData::encode(QString & txt, QString password)
     if (lib_init == 0)
         return password.toUtf8();
 
-    DataIn.pbData = (BYTE *) password.toUtf8().data();
+    DataIn.pbData = (BYTE*)password.toUtf8().data();
     DataIn.cbData = password.toUtf8().size();
 
-    Opt.pbData = (BYTE *) txt.toUtf8().data();
+    Opt.pbData = (BYTE*)txt.toUtf8().data();
     Opt.cbData = txt.toUtf8().size();
 
     r = pCryptProtectData(&DataIn, NULL, &Opt, NULL, NULL, 0, &DataOut);
     if (r == false)
         return res;
 
-    data.setRawData((const char *)DataOut.pbData, DataOut.cbData);
+    data.setRawData((const char*)DataOut.pbData, DataOut.cbData);
 
     res.clear();
     res.append("xxxx");
@@ -92,7 +92,7 @@ QByteArray CryptData::encode(QString & txt, QString password)
     return res;
 }
 
-bool CryptData::decode(QString & txt, QByteArray _enc, QString & res)
+bool CryptData::decode(QString& txt, QByteArray _enc, QString& res)
 {
     BOOL r;
     DATA_BLOB DataIn;
@@ -109,29 +109,29 @@ bool CryptData::decode(QString & txt, QByteArray _enc, QString & res)
 
     enc = QByteArray::fromBase64(_enc.mid(4));
 
-    DataIn.pbData = (BYTE *) enc.data();
+    DataIn.pbData = (BYTE*)enc.data();
     DataIn.cbData = enc.size();
 
-    Opt.pbData = (BYTE *) txt.toAscii().data();
-    Opt.cbData = txt.toAscii().size();
+    Opt.pbData = (BYTE*)txt.toLatin1().data();
+    Opt.cbData = txt.toLatin1().size();
 
     r = pCryptUnprotectData(&DataIn, NULL, &Opt, NULL, NULL, 0, &DataOut);
     if (r == false)
         return false;
 
-    res = QString::fromUtf8((const char *)DataOut.pbData, DataOut.cbData);
+    res = QString::fromUtf8((const char*)DataOut.pbData, DataOut.cbData);
     LocalFree(DataOut.pbData);
     return true;
 }
 
 #else
 
-QByteArray CryptData::encode(QString & txt, QString password)
+QByteArray CryptData::encode(QString& txt, QString password)
 {
     return password.toUtf8();
 }
 
-bool CryptData::decode(QString & txt, QByteArray _enc, QString & res)
+bool CryptData::decode(QString& txt, QByteArray _enc, QString& res)
 {
     res = QString::fromUtf8(_enc);
     return true;

@@ -20,50 +20,40 @@
 #ifndef KEY_H
 #define KEY_H
 
-#include <QString>
 #include <QByteArray>
+#include <QString>
 #include <QTemporaryFile>
-#include "dialog/mainwindow.h"
 #include <gnutls/x509.h>
 
 class Key {
- public:
+public:
     /* functions return zero on success */
-    int import_file(QString & File);
-    int import_pem(QByteArray & data);
-    void set(gnutls_x509_privkey_t privkey) {
-        clear();
-        this->privkey = privkey;
-        this->imported = true;
-    };
+    int import_file(QString& File);
+    int import_pem(QByteArray& data);
+    void set(gnutls_x509_privkey_t privkey);
+    ;
 
-    void set_window(QWidget * w) {
-        this->w = w;
-    };
+    void set_window(QWidget* w);
+    ;
 
-    int data_export(QByteArray & data);
-    int tmpfile_export(QString & File);
+    int data_export(QByteArray& data);
+    int tmpfile_export(QString& File);
 
-    bool is_ok() {
-        if (imported != false)
-            return true;
-        return false;
-    }
-    void get_url(QString & url) {
-        url = this->url;
-    }
+    bool is_ok();
+    void get_url(QString& url);
 
     void clear();
 
     Key();
     ~Key();
     QString last_err;
- private:
+
+private:
     gnutls_x509_privkey_t privkey;
     QTemporaryFile tmpfile;
     QString url;
-    QWidget *w;
+    QWidget* w;
     bool imported;
 };
 
-#endif                          // KEY_H
+#endif // KEY_H

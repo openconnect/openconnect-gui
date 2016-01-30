@@ -18,37 +18,35 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "common.h"
+#include "config.h"
+#include "dialogs.h"
 #include "dialog/mainwindow.h"
 #include <QApplication>
 #include <QCoreApplication>
 #include <QMessageBox>
-#include <dialogs.h>
-#include "common.h"
-#include "config.h"
 
 extern "C" {
-#include <stdio.h>
-#include <signal.h>
-#include <openconnect.h>
 #include <gnutls/pkcs11.h>
+#include <openconnect.h>
+#include <signal.h>
+#include <stdio.h>
 }
 
-static QStringList *log = NULL;
+static QStringList* log = NULL;
 
-int pin_callback(void *userdata, int attempt, const char *token_url,
-                 const char *token_label, unsigned flags, char *pin,
+int pin_callback(void* userdata, int attempt, const char* token_url,
+                 const char* token_label, unsigned flags, char* pin,
                  size_t pin_max)
 {
-    MainWindow *w = (MainWindow *) userdata;
+    MainWindow* w = (MainWindow*)userdata;
     QString text, outtext, type = "user";
     bool ok;
 
     if (flags & GNUTLS_PIN_SO)
         type = QObject::tr("security officer");
 
-    outtext =
-        QObject::tr("Please enter the ") + type + QObject::tr(" PIN for ") +
-        QLatin1String(token_label) + ".";
+    outtext = QObject::tr("Please enter the ") + type + QObject::tr(" PIN for ") + QLatin1String(token_label) + ".";
     if (flags & GNUTLS_PKCS11_PIN_FINAL_TRY)
         outtext += QObject::tr(" This is the FINAL try!");
 
@@ -63,11 +61,11 @@ int pin_callback(void *userdata, int attempt, const char *token_url,
     if (!ok)
         return -1;
 
-    snprintf(pin, pin_max, "%s", text.toAscii().data());
+    snprintf(pin, pin_max, "%s", text.toLatin1().data());
     return 0;
 }
 
-static void log_func(int level, const char *str)
+static void log_func(int level, const char* str)
 {
     if (log != NULL) {
         QString s = QLatin1String(str);
@@ -75,7 +73,7 @@ static void log_func(int level, const char *str)
     }
 }
 
-int main(int argc, char *argv[])
+int main(int argc, char* argv[])
 {
     int ret;
     QApplication a(argc, argv);
@@ -105,10 +103,8 @@ int main(int argc, char *argv[])
 
 #if !defined(_WIN32) && !defined(DEVEL)
     if (getuid() != 0) {
-        msgBox.setText(QObject::tr
-                       ("This program requires root privileges to fully function."));
-        msgBox.setInformativeText(QObject::tr
-                                  ("VPN connection establishment would fail."));
+        msgBox.setText(QObject::tr("This program requires root privileges to fully function."));
+        msgBox.setInformativeText(QObject::tr("VPN connection establishment would fail."));
         ret = msgBox.exec();
     }
 #endif

@@ -20,16 +20,16 @@
 #ifndef CRYPTDATA_H
 #define CRYPTDATA_H
 
-#include <common.h>
-#include <QString>
+#include "common.h"
 #include <QByteArray>
+#include <QString>
 
 class CryptData {
- public:
-    static QByteArray encode(QString & txt, QString password);
-    static bool decode(QString & txt, QByteArray encoded, QString & res);
- private:
+public:
+    static QByteArray encode(QString& txt, QString password);
+    static bool decode(QString& txt, QByteArray encoded, QString& res);
 
+private:
 };
 
-#endif                          // CRYPTDATA_H
+#endif // CRYPTDATA_H

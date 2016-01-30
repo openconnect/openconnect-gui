@@ -22,8 +22,9 @@
 #include <QClipboard>
 #include <QMessageBox>
 
- LogDialog::LogDialog(QStringList items, QWidget * parent):
-QDialog(parent), ui(new Ui::LogDialog)
+LogDialog::LogDialog(QStringList items, QWidget* parent)
+    : QDialog(parent)
+    , ui(new Ui::LogDialog)
 {
     ui->setupUi(this);
     this->text = items;
@@ -42,6 +43,12 @@ void LogDialog::reject()
     QDialog::reject();
 }
 
+void LogDialog::cancel()
+{
+    emit clear_logdialog();
+    this->close();
+}
+
 void LogDialog::on_pushButton_clicked()
 {
     this->cancel();
@@ -49,7 +56,7 @@ void LogDialog::on_pushButton_clicked()
 
 void LogDialog::on_copyButton_clicked()
 {
-    QClipboard *clipboard = QApplication::clipboard();
+    QClipboard* clipboard = QApplication::clipboard();
 
     clipboard->setText(text.join("\n"));
 }

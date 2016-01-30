@@ -18,8 +18,10 @@
  */
 
 #include "cert.h"
-#include <QTemporaryFile>
+#include "common.h"
 #include <gnutls/pkcs11.h>
+#include <stdio.h>
+
 Cert::Cert()
 {
     imported = false;
@@ -40,7 +42,7 @@ void Cert::clear()
     }
 }
 
-static int import_cert(gnutls_x509_crt_t * crt, gnutls_datum_t * raw,
+static int import_cert(gnutls_x509_crt_t* crt, gnutls_datum_t* raw,
                        unsigned pem)
 {
     int ret;
@@ -59,13 +61,13 @@ static int import_cert(gnutls_x509_crt_t * crt, gnutls_datum_t * raw,
         goto fail;
     }
     return 0;
- fail:
+fail:
     gnutls_x509_crt_deinit(*crt);
     *crt = NULL;
     return ret;
 }
 
-int Cert::import_pem(QByteArray & data)
+int Cert::import_pem(QByteArray& data)
 {
     int ret;
     gnutls_datum_t raw;
@@ -73,7 +75,7 @@ int Cert::import_pem(QByteArray & data)
     if (this->imported != false)
         this->clear();
 
-    raw.data = (unsigned char *)data.constData();
+    raw.data = (unsigned char*)data.constData();
     raw.size = data.size();
 
     ret = import_cert(&this->crt, &raw, 1);
@@ -86,7 +88,14 @@ int Cert::import_pem(QByteArray & data)
     return 0;
 }
 
-int Cert::data_export(QByteArray & data)
+void Cert::set(gnutls_x509_crt_t crt)
+{
+    clear();
+    this->crt = crt;
+    this->imported = true;
+}
+
+int Cert::data_export(QByteArray& data)
 {
     int ret;
     gnutls_datum_t raw;
@@ -102,12 +111,12 @@ int Cert::data_export(QByteArray & data)
         return -1;
     }
 
-    data = QByteArray((char *)raw.data, raw.size);
+    data = QByteArray((char*)raw.data, raw.size);
     gnutls_free(raw.data);
     return 0;
 }
 
-int Cert::import_file(QString & File)
+int Cert::import_file(QString& File)
 {
     int ret;
     gnutls_datum_t contents = { NULL, 0 };
@@ -121,14 +130,12 @@ int Cert::import_file(QString & File)
     if (is_url(File)) {
         gnutls_x509_crt_init(&this->crt);
 
-        ret =
-            gnutls_x509_crt_import_pkcs11_url(this->crt, File.toAscii().data(),
-                                              0);
+        ret = gnutls_x509_crt_import_pkcs11_url(this->crt, File.toAscii().data(),
+                                                0);
         if (ret < 0)
-            ret =
-                gnutls_x509_crt_import_pkcs11_url(this->crt,
-                                                  File.toAscii().data(),
-                                                  GNUTLS_PKCS11_OBJ_FLAG_LOGIN);
+            ret = gnutls_x509_crt_import_pkcs11_url(this->crt,
+                                                    File.toAscii().data(),
+                                                    GNUTLS_PKCS11_OBJ_FLAG_LOGIN);
 
         if (ret < 0) {
             this->last_err = gnutls_strerror(ret);
@@ -156,7 +163,7 @@ int Cert::import_file(QString & File)
     return 0;
 }
 
-int Cert::tmpfile_export(QString & filename)
+int Cert::tmpfile_export(QString& filename)
 {
     int ret;
     gnutls_datum_t out;
@@ -172,7 +179,7 @@ int Cert::tmpfile_export(QString & filename)
         return -1;
     }
 
-    qa.append((const char *)out.data, out.size);
+    qa.append((const char*)out.data, out.size);
     gnutls_free(out.data);
 
     tmpfile.open();
@@ -186,7 +193,6 @@ int Cert::tmpfile_export(QString & filename)
     return 0;
 }
 
-#include <stdio.h>
 QString Cert::sha1_hash(void)
 {
     unsigned char id[32];
@@ -206,8 +212,15 @@ QString Cert::sha1_hash(void)
         return "";
     }
 
-    array.append((const char *)id, len);
+    array.append((const char*)id, len);
     hex = array.toHex();
     s = QObject::tr("SHA1:") + hex;
     return s;
+}
+
+bool Cert::is_ok()
+{
+    if (imported != false)
+        return true;
+    return false;
 }

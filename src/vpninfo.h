@@ -20,46 +20,42 @@
 #ifndef VPNINFO_H
 #define VPNINFO_H
 
-#include <dialog/mainwindow.h>
-#include <storage.h>
+#include <QString>
+#ifdef _WIN32
+#include <winsock2.h>
+#endif
 
-extern "C" {
-#include <openconnect.h>
-} class VpnInfo {
- public:
-    explicit VpnInfo(QString name, class StoredServer * ss,
-                     class MainWindow * m);
+class MainWindow;
+class StoredServer;
+
+class VpnInfo {
+public:
+    VpnInfo(QString name,
+            StoredServer* ss,
+            MainWindow* m);
     ~VpnInfo();
-    void parse_url(const char *url);
+
+    void parse_url(const char* url);
     int connect();
     int dtls_connect();
     void mainloop();
-    void get_info(QString & dns, QString & ip, QString & ip6);
-    void get_cipher_info(QString & cstp, QString & dtls);
-    SOCKET get_cmd_fd() {
-        return cmd_fd;
-    }
-    void reset_vpn() {
-        openconnect_reset_ssl(vpninfo);
-        form_pass_attempt = 0;
-        password_set = 0;
-        authgroup_set = 0;
-        form_attempt = 0;
-    }
-    bool get_minimize() {
-        return ss->get_minimize();
-    }
+    void get_info(QString& dns, QString& ip, QString& ip6);
+    void get_cipher_info(QString& cstp, QString& dtls);
+    SOCKET get_cmd_fd();
+    void reset_vpn();
+    bool get_minimize();
 
     QString last_err;
-    MainWindow *m;
-    StoredServer *ss;
-    struct openconnect_info *vpninfo;
+    MainWindow* m;
+    StoredServer* ss;
+    struct openconnect_info* vpninfo;
     unsigned int authgroup_set;
     unsigned int password_set;
     unsigned int form_attempt;
     unsigned int form_pass_attempt;
- private:
+
+private:
     SOCKET cmd_fd;
 };
 
-#endif                          // VPNINFO_H
+#endif // VPNINFO_H

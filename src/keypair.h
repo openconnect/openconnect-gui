@@ -20,11 +20,11 @@
 #ifndef KEYPAIR_H
 #define KEYPAIR_H
 
-#include "key.h"
 #include "cert.h"
+#include "key.h"
 
 class KeyPair {
- public:
+public:
     KeyPair();
     ~KeyPair();
 
@@ -32,25 +32,19 @@ class KeyPair {
     int import_pfx(QString File);
     int import_cert(QString File);
     int import_key(QString File);
-    void set_window(QWidget * w) {
-        this->w = w;
-        key.set_window(w);
-    };
+    void set_window(QWidget* w);
 
-    int cert_export(QByteArray & data);
-    int key_export(QByteArray & data);
-    bool is_complete() {
-        if (key.is_ok() == cert.is_ok())
-            return true;
-        return false;
-    };
+    int cert_export(QByteArray& data);
+    int key_export(QByteArray& data);
+    bool is_complete();
 
     QString last_err;
 
     Key key;
     Cert cert;
- private:
-    QWidget * w;
+
+private:
+    QWidget* w;
 };
 
-#endif                          // KEYPAIR_H
+#endif // KEYPAIR_H
