@@ -24,8 +24,6 @@
 #define APP_NAME "openconnect-gui"
 #define APP_STRING APP_NAME " " VERSION
 
-#define toAscii toLatin1
-
 /* undef on normal builds */
 #undef DEVEL
 
