@@ -20,12 +20,9 @@
 #ifndef COMMON_H
 #define COMMON_H
 
-#include <iostream>
-#include <QTranslator>
-
 #define VERSION "1.3"
 #define APP_NAME "openconnect-gui"
-#define APP_STRING APP_NAME" "VERSION
+#define APP_STRING APP_NAME " " VERSION
 
 #define toAscii toLatin1
 
@@ -50,10 +47,10 @@
 #define net_errno WSAGetLastError()
 #define ms_sleep Sleep
 #else
-#include <unistd.h>
-#include <fcntl.h>
 #include <errno.h>
-#define ms_sleep(x) usleep(1000*x)
+#include <fcntl.h>
+#include <unistd.h>
+#define ms_sleep(x) usleep(1000 * x)
 #define DEFAULT_VPNC_SCRIPT "/etc/vpnc/vpnc-script"
 #define INVALID_SOCKET -1
 #define SOCKET int
@@ -69,13 +66,12 @@
 
 #include <QString>
 
-inline bool is_url(QString & str)
+inline bool is_url(QString& str)
 {
-    if (str.startsWith("system:") ||
-        str.startsWith("pkcs11:") || str.startsWith("system:")) {
+    if (str.startsWith("system:") || str.startsWith("pkcs11:") || str.startsWith("system:")) {
         return true;
     }
     return false;
 }
 
-#endif                          // COMMON_H
+#endif // COMMON_H

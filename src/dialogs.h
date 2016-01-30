@@ -20,17 +20,18 @@
 #ifndef DIALOGS_H
 #define DIALOGS_H
 
-#include <dialog/mainwindow.h>
-#include <QMessageBox>
-#include <QInputDialog>
 #include <QApplication>
+#include <QInputDialog>
+#include <QMessageBox>
 #include <QMutex>
+#include <dialog/mainwindow.h>
 
 /* These input dialogs work from a different to main thread */
-class MyInputDialog:public QObject {
+class MyInputDialog : public QObject {
 
- public:
-    MyInputDialog(QWidget * w, QString t1, QString t2, QStringList list) {
+public:
+    MyInputDialog(QWidget* w, QString t1, QString t2, QStringList list)
+    {
         this->w = w;
         this->t1 = t1;
         this->t2 = t2;
@@ -39,7 +40,8 @@ class MyInputDialog:public QObject {
         mutex.lock();
         this->moveToThread(QApplication::instance()->thread());
     };
-    MyInputDialog(QWidget * w, QString t1, QString t2, QLineEdit::EchoMode type) {
+    MyInputDialog(QWidget* w, QString t1, QString t2, QLineEdit::EchoMode type)
+    {
         this->w = w;
         this->t1 = t1;
         this->t2 = t2;
@@ -48,16 +50,19 @@ class MyInputDialog:public QObject {
         mutex.lock();
         this->moveToThread(QApplication::instance()->thread());
     };
-    ~MyInputDialog() {
+    ~MyInputDialog()
+    {
         mutex.tryLock();
         mutex.unlock();
     }
 
-    void show() {
+    void show()
+    {
         QCoreApplication::postEvent(this, new QEvent(QEvent::User));
     }
 
-    virtual bool event(QEvent * ev) {
+    virtual bool event(QEvent* ev)
+    {
         res = false;
         if (ev->type() == QEvent::User) {
             if (this->have_list)
@@ -70,29 +75,31 @@ class MyInputDialog:public QObject {
         return res;
     }
 
-    bool result(QString & text) {
+    bool result(QString& text)
+    {
         mutex.lock();
         mutex.unlock();
         text = this->text;
         return res;
     };
 
- private:
+private:
     QString text;
     bool res;
     QMutex mutex;
     bool have_list;
-    QWidget *w;
+    QWidget* w;
     QString t1;
     QString t2;
     QStringList list;
     QLineEdit::EchoMode type;
 };
 
-class MyMsgBox:public QObject {
+class MyMsgBox : public QObject {
 
- public:
-    MyMsgBox(QWidget * w, QString t1, QString t2, QString oktxt) {
+public:
+    MyMsgBox(QWidget* w, QString t1, QString t2, QString oktxt)
+    {
         this->w = w;
         this->t1 = t1;
         this->t2 = t2;
@@ -100,17 +107,20 @@ class MyMsgBox:public QObject {
         mutex.lock();
         this->moveToThread(QApplication::instance()->thread());
     };
-    ~MyMsgBox() {
+    ~MyMsgBox()
+    {
         mutex.tryLock();
         mutex.unlock();
     }
-    void show() {
+    void show()
+    {
         QCoreApplication::postEvent(this, new QEvent(QEvent::User));
     }
-    virtual bool event(QEvent * ev) {
+    virtual bool event(QEvent* ev)
+    {
         res = false;
         if (ev->type() == QEvent::User) {
-            QMessageBox *msgBox = new QMessageBox(w);
+            QMessageBox* msgBox = new QMessageBox(w);
             int ret;
 
             msgBox->setText(t1);
@@ -131,26 +141,28 @@ class MyMsgBox:public QObject {
         return res;
     }
 
-    bool result() {
+    bool result()
+    {
         mutex.lock();
         mutex.unlock();
         return res;
     };
 
- private:
+private:
     bool res;
     QMutex mutex;
-    QWidget *w;
+    QWidget* w;
     QString t1;
     QString t2;
     QString oktxt;
 };
 
-class MyCertMsgBox:public QObject {
+class MyCertMsgBox : public QObject {
 
- public:
-    MyCertMsgBox(QWidget * w, QString t1, QString t2, QString oktxt,
-                 QString details) {
+public:
+    MyCertMsgBox(QWidget* w, QString t1, QString t2, QString oktxt,
+                 QString details)
+    {
         this->w = w;
         this->t1 = t1;
         this->t2 = t2;
@@ -159,24 +171,27 @@ class MyCertMsgBox:public QObject {
         mutex.lock();
         this->moveToThread(QApplication::instance()->thread());
     };
-    ~MyCertMsgBox() {
+    ~MyCertMsgBox()
+    {
         mutex.tryLock();
         mutex.unlock();
     }
-    void show() {
+    void show()
+    {
         QCoreApplication::postEvent(this, new QEvent(QEvent::User));
     }
-    virtual bool event(QEvent * ev) {
+    virtual bool event(QEvent* ev)
+    {
         res = false;
         if (ev->type() == QEvent::User) {
-            QMessageBox *msgBox = new QMessageBox(w);
+            QMessageBox* msgBox = new QMessageBox(w);
             int ret;
 
             msgBox->setText(t1);
             msgBox->setInformativeText(t2);
             msgBox->setStandardButtons(QMessageBox::
-                                       Cancel | QMessageBox::Help |
-                                       QMessageBox::Ok);
+                                           Cancel
+                                       | QMessageBox::Help | QMessageBox::Ok);
             msgBox->setDefaultButton(QMessageBox::Cancel);
             msgBox->setButtonText(QMessageBox::Ok, oktxt);
             msgBox->setButtonText(QMessageBox::Help, tr("View certificate"));
@@ -186,10 +201,9 @@ class MyCertMsgBox:public QObject {
                 if (ret == QMessageBox::Help) {
                     QMessageBox helpBox;
                     helpBox.setTextInteractionFlags(Qt::
-                                                    TextSelectableByMouse |
-                                                    Qt::TextSelectableByKeyboard
-                                                    |
-                                                    Qt::LinksAccessibleByMouse);
+                                                        TextSelectableByMouse
+                                                    | Qt::TextSelectableByKeyboard
+                                                    | Qt::LinksAccessibleByMouse);
                     helpBox.setText(details);
                     helpBox.setTextFormat(Qt::PlainText);
                     helpBox.setStandardButtons(QMessageBox::Ok);
@@ -208,20 +222,21 @@ class MyCertMsgBox:public QObject {
         return res;
     }
 
-    bool result() {
+    bool result()
+    {
         mutex.lock();
         mutex.unlock();
         return res;
     };
 
- private:
+private:
     bool res;
     QMutex mutex;
-    QWidget *w;
+    QWidget* w;
     QString t1;
     QString t2;
     QString oktxt;
     QString details;
 };
 
-#endif                          // DIALOGS_H
+#endif // DIALOGS_H

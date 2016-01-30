@@ -20,10 +20,10 @@
 #ifndef EDITDIALOG_H
 #define EDITDIALOG_H
 
-#include <storage.h>
 #include <QDialog>
-#include <vector>
-#include "common.h"
+
+class StoredServer;
+class QSettings;
 
 struct win_cert_st {
     QString label;
@@ -32,42 +32,34 @@ struct win_cert_st {
 };
 
 namespace Ui {
-    class EditDialog;
-} class EditDialog:public QDialog {
- Q_OBJECT public:
-     explicit EditDialog(QString server, QSettings * settings,
-                         QWidget * parent = 0);
+class EditDialog;
+}
+
+class EditDialog : public QDialog {
+    Q_OBJECT public : EditDialog(QString server,
+                                 QSettings* settings,
+                                 QWidget* parent = 0);
     ~EditDialog();
 
-    private slots:void load_win_certs();
+private slots:
+    void load_win_certs();
     void on_buttonBox_accepted();
-
     void on_buttonBox_rejected();
-
     void on_userCertButton_clicked();
-
     void on_userKeyButton_clicked();
-
     void on_caCertButton_clicked();
-
     void on_userCertClear_clicked();
-
     void on_userKeyClear_clicked();
-
     void on_caCertClear_clicked();
-
     void on_serverCertClear_clicked();
-
     void on_tokenClear_clicked();
-
     void on_toolButton_clicked();
-
     void on_loadWinCert_clicked();
 
- private:
-     Ui::EditDialog * ui;
-     std::vector < win_cert_st > winCerts;
-    StoredServer *ss;
+private:
+    Ui::EditDialog* ui;
+    std::vector<win_cert_st> winCerts;
+    StoredServer* ss;
 };
 
-#endif                          // EDITDIALOG_H
+#endif // EDITDIALOG_H

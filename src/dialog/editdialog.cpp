@@ -17,13 +17,18 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "common.h"
 #include "editdialog.h"
+#include "common.h"
+#include "storage.h"
 #include "ui_editdialog.h"
-#include <QMessageBox>
 #include <QFileDialog>
-#include <QListWidget>
 #include <QItemSelectionModel>
+#include <QListWidget>
+#include <QMessageBox>
+
+extern "C" {
+#include <openconnect.h>
+}
 
 #ifdef USE_SYSTEM_KEYS
 #include <gnutls/system-keys.h>
@@ -44,18 +49,18 @@ static int token_tab(int mode)
 }
 
 int token_rtab[] = {
-    [0] = OC_TOKEN_MODE_HOTP,
-    [1] = OC_TOKEN_MODE_TOTP,
-    [2] = OC_TOKEN_MODE_STOKEN
+        [0] = OC_TOKEN_MODE_HOTP,
+        [1] = OC_TOKEN_MODE_TOTP,
+        [2] = OC_TOKEN_MODE_STOKEN
 };
 
 void EditDialog::load_win_certs()
 {
 #ifdef USE_SYSTEM_KEYS
     gnutls_system_key_iter_t iter = NULL;
-    char *label;
-    char *cert_url;
-    char *key_url;
+    char* label;
+    char* cert_url;
+    char* key_url;
     int ret, idx = -1;
     int row = 0;
     QString prekey = ss->get_key_url();
@@ -68,9 +73,8 @@ void EditDialog::load_win_certs()
     ui->loadWinCertList->clear();
 
     do {
-        ret =
-            gnutls_system_key_iter_get_info(&iter, GNUTLS_CRT_X509, &cert_url, &key_url, &label,
-                                            NULL, 0);
+        ret = gnutls_system_key_iter_get_info(&iter, GNUTLS_CRT_X509, &cert_url, &key_url, &label,
+                                              NULL, 0);
         if (ret >= 0) {
             win_cert_st st;
             QString l;
@@ -81,7 +85,8 @@ void EditDialog::load_win_certs()
             ui->loadWinCertList->addItem(l);
             if (prekey.isEmpty() == false) {
                 if (QString::compare(prekey, QString::fromUtf8(key_url),
-                                     Qt::CaseSensitive) == 0) {
+                                     Qt::CaseSensitive)
+                    == 0) {
                     idx = row;
                 }
             }
@@ -102,9 +107,9 @@ void EditDialog::load_win_certs()
 #endif
 }
 
- EditDialog::EditDialog(QString server, QSettings * settings, QWidget * parent):
-QDialog(parent),
-ui(new Ui::EditDialog)
+EditDialog::EditDialog(QString server, QSettings* settings, QWidget* parent)
+    : QDialog(parent)
+    , ui(new Ui::EditDialog)
 {
     QString hash, txt;
     ui->setupUi(this);
@@ -116,9 +121,7 @@ ui(new Ui::EditDialog)
     if (ret < 0) {
         QMessageBox::information(this,
                                  tr(APP_NAME),
-                                 ss->last_err.isEmpty()?
-                                 tr("Some server information failed to load") :
-                                 ss->last_err);
+                                 ss->last_err.isEmpty() ? tr("Some server information failed to load") : ss->last_err);
     }
 
     this->ss->set_window(this);
@@ -165,16 +168,14 @@ void EditDialog::on_buttonBox_accepted()
     if (ui->gatewayEdit->text().isEmpty() == true) {
         QMessageBox::information(this,
                                  tr(APP_NAME),
-                                 tr
-                                 ("You need to specify a gateway. E.g. vpn.example.com:443"));
+                                 tr("You need to specify a gateway. E.g. vpn.example.com:443"));
         return;
     }
 
     if (ui->labelEdit->text().isEmpty() == true) {
         QMessageBox::information(this,
                                  tr(APP_NAME),
-                                 tr
-                                 ("You need to specify a name for this connection. E.g. 'My company'"));
+                                 tr("You need to specify a name for this connection. E.g. 'My company'"));
         return;
     }
 
@@ -185,7 +186,8 @@ void EditDialog::on_buttonBox_accepted()
                 mbox.setInformativeText(ss->last_err);
             mbox.exec();
             return;
-        } else {
+        }
+        else {
             ui->caCertHash->setText(ss->get_ca_cert_hash());
         }
     }
@@ -208,7 +210,8 @@ void EditDialog::on_buttonBox_accepted()
                 mbox.setInformativeText(ss->last_err);
             mbox.exec();
             return;
-        } else {
+        }
+        else {
             ui->userCertHash->setText(ss->get_client_cert_hash());
         }
     }
@@ -216,8 +219,7 @@ void EditDialog::on_buttonBox_accepted()
     if (ss->client_is_complete() != true) {
         QMessageBox::information(this,
                                  tr(APP_NAME),
-                                 tr
-                                 ("There is a client certificate specified but no key!"));
+                                 tr("There is a client certificate specified but no key!"));
         return;
     }
     ss->set_label(ui->labelEdit->text());
@@ -232,7 +234,8 @@ void EditDialog::on_buttonBox_accepted()
     if (type != -1 && ui->tokenEdit->text().isEmpty() == false) {
         ss->set_token_str(ui->tokenEdit->text());
         ss->set_token_type(token_rtab[type]);
-    } else {
+    }
+    else {
         ss->set_token_str("");
         ss->set_token_type(-1);
     }
@@ -252,8 +255,7 @@ void EditDialog::on_userCertButton_clicked()
 
     filename = QFileDialog::getOpenFileName(this,
                                             tr("Open certificate"), "",
-                                            tr
-                                            ("Certificate Files (*.crt *.pem *.der *.p12)"));
+                                            tr("Certificate Files (*.crt *.pem *.der *.p12)"));
 
     ui->userCertEdit->setText(filename);
 }
@@ -264,8 +266,7 @@ void EditDialog::on_userKeyButton_clicked()
 
     filename = QFileDialog::getOpenFileName(this,
                                             tr("Open private key"), "",
-                                            tr
-                                            ("Private key Files (*.key *.pem *.der *.p8 *.p12)"));
+                                            tr("Private key Files (*.key *.pem *.der *.p8 *.p12)"));
 
     ui->userKeyEdit->setText(filename);
 }
@@ -276,8 +277,7 @@ void EditDialog::on_caCertButton_clicked()
 
     filename = QFileDialog::getOpenFileName(this,
                                             tr("Open certificate"), "",
-                                            tr
-                                            ("Certificate Files (*.crt *.pem *.der)"));
+                                            tr("Certificate Files (*.crt *.pem *.der)"));
 
     ui->caCertEdit->setText(filename);
 }

@@ -17,16 +17,16 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <storage.h>
+#include "storage.h"
+#include "cryptdata.h"
+#include <QSettings>
 #include <stdio.h>
-#include <cryptdata.h>
 
 StoredServer::~StoredServer(void)
 {
-
 }
 
-StoredServer::StoredServer(QSettings * settings)
+StoredServer::StoredServer(QSettings* settings)
 {
     this->server_hash_algo = 0;
     this->settings = settings;
@@ -34,7 +34,7 @@ StoredServer::StoredServer(QSettings * settings)
 };
 
 #define PREFIX "server:"
-QStringList get_server_list(QSettings * settings)
+QStringList get_server_list(QSettings* settings)
 {
     QStringList keys = settings->allKeys();
     QString str;
@@ -44,15 +44,15 @@ QStringList get_server_list(QSettings * settings)
     for (int i = 0; i < keys.size(); i++) {
         if (keys.at(i).startsWith(PREFIX) && keys.at(i).endsWith("/server")) {
             str = keys.at(i);
-            str.remove(0, sizeof(PREFIX) - 1);  /* remove prefix */
-            str.remove(str.size() - 7, 7);      /* remove /server suffix */
+            str.remove(0, sizeof(PREFIX) - 1); /* remove prefix */
+            str.remove(str.size() - 7, 7); /* remove /server suffix */
             res.append(str);
         }
     }
     return res;
 }
 
-void remove_server(QSettings * settings, QString server)
+void remove_server(QSettings* settings, QString server)
 {
     QStringList keys = settings->allKeys();
     QString str;
@@ -105,7 +105,6 @@ QString StoredServer::get_cert_file()
         this->client.cert.tmpfile_export(File);
     }
     return File;
-
 }
 
 QString StoredServer::get_key_file()
@@ -161,20 +160,19 @@ int StoredServer::set_client_key(QString filename)
     return ret;
 }
 
-void StoredServer::get_server_hash(QString & hash)
+void StoredServer::get_server_hash(QString& hash)
 {
     if (this->server_hash_algo == 0) {
         hash = "";
-    } else {
-        hash =
-            gnutls_mac_get_name((gnutls_mac_algorithm_t)
-                                this->server_hash_algo);
+    }
+    else {
+        hash = gnutls_mac_get_name((gnutls_mac_algorithm_t) this->server_hash_algo);
         hash += ":";
         hash += this->server_hash.toHex();
     }
 }
 
-int StoredServer::load(QString & name)
+int StoredServer::load(QString& name)
 {
     QByteArray data;
     QString str;
@@ -196,10 +194,9 @@ int StoredServer::load(QString & name)
 
     if (this->batch_mode == true) {
         this->groupname = settings->value("groupname").toString();
-        ret =
-            CryptData::decode(this->servername,
-                              settings->value("password").toByteArray(),
-                              this->password);
+        ret = CryptData::decode(this->servername,
+                                settings->value("password").toByteArray(),
+                                this->password);
         if (ret == false)
             rval = -1;
     }
@@ -216,15 +213,15 @@ int StoredServer::load(QString & name)
         rval = -1;
     }
 
-    ret =
-        CryptData::decode(this->servername,
-                          settings->value("client-key").toByteArray(), str);
+    ret = CryptData::decode(this->servername,
+                            settings->value("client-key").toByteArray(), str);
     if (ret == false)
         rval = -1;
 
     if (is_url(str) == true) {
         this->client.key.import_file(str);
-    } else {
+    }
+    else {
         data = str.toLatin1();
         this->client.key.import_pem(data);
     }
@@ -232,10 +229,9 @@ int StoredServer::load(QString & name)
     this->server_hash = settings->value("server-hash").toByteArray();
     this->server_hash_algo = settings->value("server-hash-algo").toInt();
 
-    ret =
-        CryptData::decode(this->servername,
-                          settings->value("token-str").toByteArray(),
-                          this->token_str);
+    ret = CryptData::decode(this->servername,
+                            settings->value("token-str").toByteArray(),
+                            this->token_str);
     if (ret == false)
         rval = -1;
 
@@ -284,4 +280,146 @@ int StoredServer::save()
 
     settings->endGroup();
     return 0;
+}
+
+QString& StoredServer::get_username()
+{
+    return this->username;
+}
+
+QString& StoredServer::get_password()
+{
+    return this->password;
+}
+
+QString& StoredServer::get_groupname()
+{
+    return this->groupname;
+}
+
+QString& StoredServer::get_servername()
+{
+    return this->servername;
+}
+
+void StoredServer::set_servername(QString name)
+{
+    this->servername = name;
+}
+
+QString& StoredServer::get_label()
+{
+    return this->label;
+}
+
+void StoredServer::set_label(QString name)
+{
+    this->label = name;
+}
+
+void StoredServer::set_username(QString username)
+{
+    this->username = username;
+}
+
+void StoredServer::set_password(QString p)
+{
+    this->password = p;
+}
+
+void StoredServer::set_groupname(QString& groupname)
+{
+    this->groupname = groupname;
+}
+
+void StoredServer::set_disable_udp(bool v)
+{
+    this->disable_udp = v;
+}
+
+QString StoredServer::get_client_cert_hash()
+{
+    return client.cert.sha1_hash();
+}
+
+QString StoredServer::get_ca_cert_hash()
+{
+    return ca_cert.sha1_hash();
+}
+
+void StoredServer::set_window(QWidget* w)
+{
+    client.set_window(w);
+}
+
+void StoredServer::set_batch_mode(bool mode)
+{
+    this->batch_mode = mode;
+}
+
+bool StoredServer::get_batch_mode()
+{
+    return this->batch_mode;
+}
+
+bool StoredServer::get_minimize()
+{
+    return this->minimize_on_connect;
+}
+
+bool StoredServer::get_proxy()
+{
+    return this->proxy;
+}
+
+bool StoredServer::client_is_complete()
+{
+    return client.is_complete();
+}
+
+void StoredServer::set_minimize(bool t)
+{
+    this->minimize_on_connect = t;
+}
+
+void StoredServer::set_proxy(bool t)
+{
+    this->proxy = t;
+}
+
+QString StoredServer::get_token_str()
+{
+    return this->token_str;
+}
+
+void StoredServer::set_token_str(QString str)
+{
+    this->token_str = str;
+}
+
+int StoredServer::get_token_type()
+{
+    return this->token_type;
+}
+
+bool StoredServer::get_disable_udp()
+{
+    return this->disable_udp;
+}
+
+void StoredServer::set_token_type(int type)
+{
+    this->token_type = type;
+}
+
+void StoredServer::set_server_hash(unsigned algo, QByteArray& hash)
+{
+    this->server_hash_algo = algo;
+    this->server_hash = hash;
+}
+
+unsigned StoredServer::get_server_hash(QByteArray& hash)
+{
+    hash = this->server_hash;
+    return this->server_hash_algo;
 }

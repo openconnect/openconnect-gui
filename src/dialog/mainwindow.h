@@ -20,40 +20,41 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-#include <QMainWindow>
-#include <QCoreApplication>
-#include <QSettings>
-#include <QFutureWatcher>
-#include <QMutex>
 #include "common.h"
-#include <QTimer>
+#include <QCoreApplication>
+#include <QFutureWatcher>
+#include <QMainWindow>
 #include <QMenu>
+#include <QMutex>
+#include <QSettings>
 #include <QSystemTrayIcon>
+#include <QTimer>
 #ifndef _WIN32
-#include <sys/types.h>
-#include <sys/socket.h>
 #include <errno.h>
+#include <sys/socket.h>
+#include <sys/types.h>
 #else
 #include <winsock2.h>
 #endif
 
 extern "C" {
 #include <openconnect.h>
-} namespace Ui {
-    class MainWindow;
-} enum status_t {
+}
+namespace Ui {
+class MainWindow;
+}
+enum status_t {
     STATUS_DISCONNECTED,
     STATUS_CONNECTING,
     STATUS_CONNECTED
 };
 
-class MainWindow:public QMainWindow {
- Q_OBJECT public:
-     explicit MainWindow(QWidget * parent = 0);
+class MainWindow : public QMainWindow {
+    Q_OBJECT public : explicit MainWindow(QWidget* parent = 0);
     void updateProgressBar(QString str);
     void updateProgressBar(QString str, bool show);
-    void set_settings(QSettings * s);
-    void updateStats(const struct oc_stats *stats, QString dtls);
+    void set_settings(QSettings* s);
+    void updateStats(const struct oc_stats* stats, QString dtls);
     void reload_settings();
     void toggleWindow();
     void hideWindow();
@@ -61,29 +62,30 @@ class MainWindow:public QMainWindow {
     void createActions();
 
     ~MainWindow();
-    void disable_cmd_fd() {
-        cmd_fd = INVALID_SOCKET;
-    };
+    void disable_cmd_fd();
 
-    void vpn_status_changed(int connected) {
+    void vpn_status_changed(int connected)
+    {
         emit vpn_status_changed_sig(connected);
-    };
+    }
 
-    void vpn_status_changed(int connected, QString & dns, QString & ip,
-                            QString & ip6, QString & cstp_cipher,
-                            QString & dtls_cipher) {
+    void vpn_status_changed(int connected,
+                            QString& dns,
+                            QString& ip,
+                            QString& ip6,
+                            QString& cstp_cipher,
+                            QString& dtls_cipher)
+    {
         this->dns = dns;
         this->ip = ip;
         this->ip6 = ip6;
         this->dtls_cipher = dtls_cipher;
         this->cstp_cipher = cstp_cipher;
         emit vpn_status_changed_sig(connected);
-    };
-
-    QStringList *get_log(void) {
-        return &this->log;
     }
- private slots:
+
+    QStringList* get_log(void);
+private slots:
     void iconActivated(QSystemTrayIcon::ActivationReason reason);
     void statsChanged(QString, QString, QString);
     void writeProgressBar(QString str);
@@ -103,7 +105,7 @@ class MainWindow:public QMainWindow {
 
     void on_toolButton_2_clicked();
 
-    void closeEvent(QCloseEvent * bar);
+    void closeEvent(QCloseEvent* bar);
 
     void on_pushButton_3_clicked();
 
@@ -113,7 +115,7 @@ signals:
     void vpn_status_changed_sig(int);
     void timeout(void);
 
- private:
+private:
     void createTrayIcon();
 
     void readSettings();
@@ -123,23 +125,23 @@ signals:
      * any multithread issues */
     SOCKET cmd_fd;
     bool minimize_on_connect;
-    Ui::MainWindow * ui;
-    QSettings *settings;
+    Ui::MainWindow* ui;
+    QSettings* settings;
     QMutex progress_mutex;
     QStringList log;
-    QTimer *timer;
-    QTimer *blink_timer;
-    QFutureWatcher < void >futureWatcher;       // watches the vpninfo
+    QTimer* timer;
+    QTimer* blink_timer;
+    QFutureWatcher<void> futureWatcher; // watches the vpninfo
 
     QString dns, ip, ip6;
     QString cstp_cipher;
     QString dtls_cipher;
 
-    QSystemTrayIcon *trayIcon;
-    QMenu *trayIconMenu;
-    QAction *minimizeAction;
-    QAction *restoreAction;
-    QAction *quitAction;
+    QSystemTrayIcon* trayIcon;
+    QMenu* trayIconMenu;
+    QAction* minimizeAction;
+    QAction* restoreAction;
+    QAction* quitAction;
 };
 
-#endif                          // MAINWINDOW_H
+#endif // MAINWINDOW_H
