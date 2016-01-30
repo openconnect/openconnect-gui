@@ -152,7 +152,7 @@
            </property>
            <property name="icon">
             <iconset resource="resources.qrc">
-             <normaloff>:/new/resource/trashcan.png</normaloff>:/new/resource/trashcan.png</iconset>
+             <normaloff>:/new/resource/images/trashcan.png</normaloff>:/new/resource/images/trashcan.png</iconset>
            </property>
           </widget>
          </item>
@@ -191,7 +191,7 @@
            </property>
            <property name="icon">
             <iconset resource="resources.qrc">
-             <normaloff>:/new/resource/trashcan.png</normaloff>:/new/resource/trashcan.png</iconset>
+             <normaloff>:/new/resource/images/trashcan.png</normaloff>:/new/resource/images/trashcan.png</iconset>
            </property>
           </widget>
          </item>
@@ -223,7 +223,7 @@
            </property>
            <property name="icon">
             <iconset resource="resources.qrc">
-             <normaloff>:/new/resource/trashcan.png</normaloff>:/new/resource/trashcan.png</iconset>
+             <normaloff>:/new/resource/images/trashcan.png</normaloff>:/new/resource/images/trashcan.png</iconset>
            </property>
           </widget>
          </item>
@@ -290,7 +290,7 @@
            </property>
            <property name="icon">
             <iconset resource="resources.qrc">
-             <normaloff>:/new/resource/trashcan.png</normaloff>:/new/resource/trashcan.png</iconset>
+             <normaloff>:/new/resource/images/trashcan.png</normaloff>:/new/resource/images/trashcan.png</iconset>
            </property>
           </widget>
          </item>
@@ -356,7 +356,7 @@
                </property>
                <property name="icon">
                 <iconset resource="resources.qrc">
-                 <normaloff>:/new/resource/trashcan.png</normaloff>:/new/resource/trashcan.png</iconset>
+                 <normaloff>:/new/resource/images/trashcan.png</normaloff>:/new/resource/images/trashcan.png</iconset>
                </property>
               </widget>
              </item>
@@ -408,7 +408,7 @@
                </property>
                <property name="icon">
                 <iconset resource="resources.qrc">
-                 <normaloff>:/new/resource/trashcan.png</normaloff>:/new/resource/trashcan.png</iconset>
+                 <normaloff>:/new/resource/images/trashcan.png</normaloff>:/new/resource/images/trashcan.png</iconset>
                </property>
               </widget>
              </item>

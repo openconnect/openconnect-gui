@@ -146,7 +146,7 @@
                   </property>
                   <property name="icon">
                    <iconset>
-                    <normaloff>:/new/resource/text-editor.png</normaloff>:/new/resource/text-editor.png</iconset>
+                    <normaloff>:/new/resource/images/text-editor.png</normaloff>:/new/resource/images/text-editor.png</iconset>
                   </property>
                   <property name="toolButtonStyle">
                    <enum>Qt::ToolButtonIconOnly</enum>
@@ -166,7 +166,7 @@
                   </property>
                   <property name="icon">
                    <iconset>
-                    <normaloff>:/new/resource/trashcan.png</normaloff>:/new/resource/trashcan.png</iconset>
+                    <normaloff>:/new/resource/images/trashcan.png</normaloff>:/new/resource/images/trashcan.png</iconset>
                   </property>
                  </widget>
                 </item>
@@ -192,7 +192,7 @@
                 </property>
                 <property name="icon">
                  <iconset>
-                  <normaloff>:/new/resource/network-wired.png</normaloff>:/new/resource/network-wired.png</iconset>
+                  <normaloff>:/new/resource/images/network-wired.png</normaloff>:/new/resource/images/network-wired.png</iconset>
                 </property>
                </widget>
               </item>
@@ -212,7 +212,7 @@
                 </property>
                 <property name="icon">
                  <iconset>
-                  <normaloff>:/new/resource/process-stop.png</normaloff>:/new/resource/process-stop.png</iconset>
+                  <normaloff>:/new/resource/images/process-stop.png</normaloff>:/new/resource/images/process-stop.png</iconset>
                 </property>
                </widget>
               </item>
@@ -223,7 +223,7 @@
                 </property>
                 <property name="icon">
                  <iconset>
-                  <normaloff>:/new/resource/edit-find.png</normaloff>:/new/resource/edit-find.png</iconset>
+                  <normaloff>:/new/resource/images/edit-find.png</normaloff>:/new/resource/images/edit-find.png</iconset>
                 </property>
                </widget>
               </item>
