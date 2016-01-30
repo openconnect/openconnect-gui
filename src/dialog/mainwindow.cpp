@@ -471,7 +471,7 @@ void MainWindow::on_connectBtn_clicked()
                 str += ":" + QString::number(proxies.at(0).port());
             }
             this->updateProgressBar(tr("Setting proxy to: ") + str);
-            openconnect_set_http_proxy(vpninfo->vpninfo, str.toAscii().data());
+            openconnect_set_http_proxy(vpninfo->vpninfo, str.toLatin1().data());
         }
     }
 

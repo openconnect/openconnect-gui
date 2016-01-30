@@ -130,11 +130,11 @@ int Cert::import_file(QString& File)
     if (is_url(File)) {
         gnutls_x509_crt_init(&this->crt);
 
-        ret = gnutls_x509_crt_import_pkcs11_url(this->crt, File.toAscii().data(),
+        ret = gnutls_x509_crt_import_pkcs11_url(this->crt, File.toLatin1().data(),
                                                 0);
         if (ret < 0)
             ret = gnutls_x509_crt_import_pkcs11_url(this->crt,
-                                                    File.toAscii().data(),
+                                                    File.toLatin1().data(),
                                                     GNUTLS_PKCS11_OBJ_FLAG_LOGIN);
 
         if (ret < 0) {
@@ -146,7 +146,7 @@ int Cert::import_file(QString& File)
     }
 
     /* normal file */
-    ret = gnutls_load_file(File.toAscii().data(), &contents);
+    ret = gnutls_load_file(File.toLatin1().data(), &contents);
     if (ret < 0) {
         this->last_err = gnutls_strerror(ret);
         return -1;
