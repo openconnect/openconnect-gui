@@ -53,7 +53,6 @@ MainWindow::MainWindow(QWidget* parent)
     QString txt;
 
     ui->setupUi(this);
-    this->setWindowTitle(QLatin1String("openconnect " VERSION));
 
     txt = QLatin1String("Based on libopenconnect ") + QLatin1String(version);
     txt += QLatin1String("\nGnuTLS: ") + QLatin1String(gnutls_check_version(NULL));
@@ -411,21 +410,21 @@ void MainWindow::on_connectBtn_clicked()
 
     if (this->cmd_fd != INVALID_SOCKET) {
         QMessageBox::information(this,
-                                 tr(APP_NAME),
+                                 qApp->applicationName(),
                                  tr("A previous VPN instance is still running (socket is active)"));
         return;
     }
 
     if (this->futureWatcher.isRunning() == true) {
         QMessageBox::information(this,
-                                 tr(APP_NAME),
+                                 qApp->applicationName(),
                                  tr("A previous VPN instance is still running"));
         return;
     }
 
     if (ui->comboBox->currentText().isEmpty()) {
         QMessageBox::information(this,
-                                 tr(APP_NAME),
+                                 qApp->applicationName(),
                                  tr("You need to specify a gateway. E.g. vpn.example.com:443"));
         return;
     }
@@ -436,10 +435,10 @@ void MainWindow::on_connectBtn_clicked()
     query.setUrl(turl);
 
     /* ss is now deallocated by vpninfo */
-    vpninfo = new VpnInfo(tr(APP_STRING), ss, this);
+    vpninfo = new VpnInfo(QString("%1 %2").arg(qApp->applicationName()).arg(qApp->applicationVersion()), ss, this);
     if (vpninfo == NULL) {
         QMessageBox::information(this,
-                                 tr(APP_NAME),
+                                 qApp->applicationName(),
                                  tr("There was an issue initializing the VPN."));
         goto fail;
     }
@@ -451,7 +450,7 @@ void MainWindow::on_connectBtn_clicked()
     this->cmd_fd = vpninfo->get_cmd_fd();
     if (this->cmd_fd == INVALID_SOCKET) {
         QMessageBox::information(this,
-                                 tr(APP_NAME),
+                                 qApp->applicationName(),
                                  tr("There was an issue establishing IPC with openconnect; try restarting the application."));
         goto fail;
     }

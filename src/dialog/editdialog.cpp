@@ -120,7 +120,7 @@ EditDialog::EditDialog(QString server, QSettings* settings, QWidget* parent)
     ret = this->ss->load(server);
     if (ret < 0) {
         QMessageBox::information(this,
-                                 tr(APP_NAME),
+                                 qApp->applicationName(),
                                  ss->last_err.isEmpty() ? tr("Some server information failed to load") : ss->last_err);
     }
 
@@ -167,14 +167,14 @@ void EditDialog::on_buttonBox_accepted()
 
     if (ui->gatewayEdit->text().isEmpty() == true) {
         QMessageBox::information(this,
-                                 tr(APP_NAME),
+                                 qApp->applicationName(),
                                  tr("You need to specify a gateway. E.g. vpn.example.com:443"));
         return;
     }
 
     if (ui->labelEdit->text().isEmpty() == true) {
         QMessageBox::information(this,
-                                 tr(APP_NAME),
+                                 qApp->applicationName(),
                                  tr("You need to specify a name for this connection. E.g. 'My company'"));
         return;
     }
@@ -218,7 +218,7 @@ void EditDialog::on_buttonBox_accepted()
 
     if (ss->client_is_complete() != true) {
         QMessageBox::information(this,
-                                 tr(APP_NAME),
+                                 qApp->applicationName(),
                                  tr("There is a client certificate specified but no key!"));
         return;
     }

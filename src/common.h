@@ -20,10 +20,6 @@
 #ifndef COMMON_H
 #define COMMON_H
 
-#define VERSION "1.3"
-#define APP_NAME "openconnect-gui"
-#define APP_STRING APP_NAME " " VERSION
-
 /* undef on normal builds */
 #undef DEVEL
 
