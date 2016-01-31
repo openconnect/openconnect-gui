@@ -49,12 +49,12 @@ void LogDialog::cancel()
     this->close();
 }
 
-void LogDialog::on_pushButton_clicked()
+void LogDialog::on_pushButtonClose_clicked()
 {
     this->cancel();
 }
 
-void LogDialog::on_copyButton_clicked()
+void LogDialog::on_pushButtonCopy_clicked()
 {
     QClipboard* clipboard = QApplication::clipboard();
 
@@ -70,7 +70,7 @@ void LogDialog::append(QString item)
     }
 }
 
-void LogDialog::on_pushButton_2_clicked()
+void LogDialog::on_pushButtonClear_clicked()
 {
     if (this->text.isEmpty() == false) {
         QMessageBox mbox;

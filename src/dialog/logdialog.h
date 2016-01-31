@@ -27,8 +27,9 @@ class LogDialog;
 }
 
 class LogDialog : public QDialog {
-    Q_OBJECT public : LogDialog(QStringList items,
-                                QWidget* parent = 0);
+    Q_OBJECT
+public : LogDialog(QStringList items,
+                   QWidget* parent = 0);
     ~LogDialog();
 
 private slots:
@@ -36,9 +37,9 @@ private slots:
     void reject();
     void cancel();
 
-    void on_pushButton_clicked();
-    void on_copyButton_clicked();
-    void on_pushButton_2_clicked();
+    void on_pushButtonClear_clicked();
+    void on_pushButtonClose_clicked();
+    void on_pushButtonCopy_clicked();
 
 signals:
     void clear_log(void);
