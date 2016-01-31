@@ -30,6 +30,7 @@ LogDialog::LogDialog(QStringList items, QWidget* parent)
     this->text = items;
     ui->listWidget->addItems(text);
     ui->listWidget->scrollToBottom();
+    connect(ui->listWidget, &QListWidget::itemSelectionChanged, this, &LogDialog::onItemSelectionChanged);
 }
 
 LogDialog::~LogDialog()
@@ -54,7 +55,7 @@ void LogDialog::on_pushButtonClose_clicked()
     this->cancel();
 }
 
-void LogDialog::on_pushButtonCopy_clicked()
+void LogDialog::on_pushButtonCopyAll_clicked()
 {
     QClipboard* clipboard = QApplication::clipboard();
 
@@ -88,4 +89,22 @@ void LogDialog::on_pushButtonClear_clicked()
             ui->listWidget->clear();
         }
     }
+}
+
+void LogDialog::on_pushButtonCopySelected_clicked()
+{
+    QList<QListWidgetItem*> items = ui->listWidget->selectedItems();
+    QString text;
+    foreach(QListWidgetItem* item, items) {
+        text += item->text();
+        text += '\n';
+    }
+
+    QClipboard* clipboard = QApplication::clipboard();
+    clipboard->setText(text);
+}
+
+void LogDialog::onItemSelectionChanged()
+{
+    ui->pushButtonCopySelected->setEnabled(!ui->listWidget->selectedItems().empty());
 }
