@@ -99,6 +99,8 @@ int main(int argc, char* argv[])
     gnutls_pkcs11_set_pin_function(pin_callback, &w);
 #endif
 
+    QSettings settings;
+    w.set_settings(&settings);
     w.show();
 
 #if !defined(_WIN32) && !defined(DEVEL)
