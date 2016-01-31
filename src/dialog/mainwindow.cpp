@@ -54,8 +54,8 @@ MainWindow::MainWindow(QWidget* parent)
 
     ui->setupUi(this);
 
-    txt = QLatin1String("Based on libopenconnect ") + QLatin1String(version);
-    txt += QLatin1String("\nGnuTLS: ") + QLatin1String(gnutls_check_version(NULL));
+    txt = QLatin1String("Based on:\n- libopenconnect: ") + QLatin1String(version) +
+            QLatin1String("\n- GnuTLS: ") + QLatin1String(gnutls_check_version(NULL));
     ui->versionLabel->setText(txt);
 
     timer = new QTimer(this);
