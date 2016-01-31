@@ -18,7 +18,8 @@
  */
 
 #include "key.h"
-#include "dialogs.h"
+#include "common.h"
+#include <QInputDialog>
 #include <QTemporaryFile>
 #include <gnutls/pkcs11.h>
 

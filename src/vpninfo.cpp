@@ -18,8 +18,10 @@
  */
 
 #include "vpninfo.h"
-#include "dialogs.h"
 #include "gtdb.h"
+#include "dialog/MyCertMsgBox.h"
+#include "dialog/MyInputDialog.h"
+#include "dialog/mainwindow.h"
 
 extern "C" {
 #include <stdarg.h>
