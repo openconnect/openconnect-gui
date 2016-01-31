@@ -1,5 +1,8 @@
 set(${PROJECT_NAME}_HDRS
     dialog/mainwindow.h
+    dialog/MyMsgBox.h
+    dialog/MyCertMsgBox.h
+    dialog/MyInputDialog.h
     vpninfo.h
     storage.h
     dialog/editdialog.h
@@ -9,12 +12,14 @@ set(${PROJECT_NAME}_HDRS
     cert.h
     dialog/logdialog.h
     gtdb.h
-    dialogs.h
     cryptdata.h
 )
 set(${PROJECT_NAME}_SRCS
     main.cpp
     dialog/mainwindow.cpp
+    dialog/MyMsgBox.cpp
+    dialog/MyCertMsgBox.cpp
+    dialog/MyInputDialog.cpp
     vpninfo.cpp
     storage.cpp
     dialog/editdialog.cpp

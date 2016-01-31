@@ -18,7 +18,8 @@
  */
 
 #include "keypair.h"
-#include "dialogs.h"
+#include "common.h"
+#include <QInputDialog>
 #include <QString>
 #include <gnutls/pkcs12.h>
 

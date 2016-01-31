@@ -20,8 +20,8 @@
 
 #include "common.h"
 #include "config.h"
-#include "dialogs.h"
 #include "dialog/mainwindow.h"
+#include "dialog/MyInputDialog.h"
 #include <QApplication>
 #include <QCoreApplication>
 #include <QMessageBox>
