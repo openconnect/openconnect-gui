@@ -48,14 +48,7 @@
          <enum>Qt::LeftToRight</enum>
         </property>
         <property name="text">
-         <string>Close</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QPushButton" name="pushButtonCopy">
-        <property name="text">
-         <string>Copy</string>
+         <string>&amp;Close</string>
         </property>
        </widget>
       </item>
@@ -63,6 +56,23 @@
        <widget class="Line" name="line_2">
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="pushButtonCopyAll">
+        <property name="text">
+         <string>Copy &amp;All</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="pushButtonCopySelected">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
+        <property name="text">
+         <string>Copy &amp;Selected</string>
         </property>
        </widget>
       </item>

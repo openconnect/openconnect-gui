@@ -39,7 +39,10 @@ private slots:
 
     void on_pushButtonClear_clicked();
     void on_pushButtonClose_clicked();
-    void on_pushButtonCopy_clicked();
+    void on_pushButtonCopyAll_clicked();
+    void on_pushButtonCopySelected_clicked();
+
+    void onItemSelectionChanged();
 
 signals:
     void clear_log(void);
