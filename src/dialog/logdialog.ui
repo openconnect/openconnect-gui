@@ -120,5 +120,41 @@
   <tabstop>checkBox_autoScroll</tabstop>
  </tabstops>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>pushButtonClose</sender>
+   <signal>clicked()</signal>
+   <receiver>LogDialog</receiver>
+   <slot>close()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>652</x>
+     <y>26</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>354</x>
+     <y>148</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>listWidget</sender>
+   <signal>itemSelectionChanged()</signal>
+   <receiver>LogDialog</receiver>
+   <slot>onItemSelectionChanged()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>301</x>
+     <y>148</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>354</x>
+     <y>148</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>onItemSelectionChanged()</slot>
+ </slots>
 </ui>

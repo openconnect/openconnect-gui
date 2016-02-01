@@ -23,7 +23,6 @@
 #include <QMessageBox>
 #include <QSettings>
 
-
 LogDialog::LogDialog(QStringList items, QWidget* parent)
     : QDialog(parent)
     , ui(new Ui::LogDialog)
@@ -36,7 +35,6 @@ LogDialog::LogDialog(QStringList items, QWidget* parent)
 
     ui->listWidget->addItems(items);
     ui->listWidget->scrollToBottom();
-    connect(ui->listWidget, &QListWidget::itemSelectionChanged, this, &LogDialog::onItemSelectionChanged);
 }
 
 LogDialog::~LogDialog()
@@ -50,17 +48,6 @@ void LogDialog::reject()
 
     emit clear_logdialog();
     QDialog::reject();
-}
-
-void LogDialog::cancel()
-{
-    emit clear_logdialog();
-    this->close();
-}
-
-void LogDialog::on_pushButtonClose_clicked()
-{
-    this->cancel();
 }
 
 void LogDialog::on_pushButtonSelectAll_clicked()
@@ -79,16 +66,12 @@ void LogDialog::append(QString item)
 void LogDialog::on_pushButtonClear_clicked()
 {
     if (ui->listWidget->count()) {
-        QMessageBox mbox;
-        int ret;
-
-        mbox.setText(QObject::tr("Are you sure you want to clear the log?"));
-        mbox.setStandardButtons(QMessageBox::Cancel | QMessageBox::Ok);
-        mbox.setDefaultButton(QMessageBox::Cancel);
-        mbox.setButtonText(QMessageBox::Ok, tr("Clear"));
-
-        ret = mbox.exec();
-        if (ret == QMessageBox::Ok) {
+        if (QMessageBox::question(this,
+                                  "",
+                                  tr("Are you sure you want to clear the log?"),
+                                  QMessageBox::Yes | QMessageBox::No,
+                                  QMessageBox::No
+                                  ) == QMessageBox::Yes) {
             emit clear_log();
             ui->listWidget->clear();
         }
