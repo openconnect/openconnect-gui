@@ -51,8 +51,14 @@ FORMS    += mainwindow.ui \
 win32: LIBS += -LZ:\openconnect-gui\lib -lwsock32
 unix: LIBS += -L/usr/local/lib
 unix|win32: LIBS += -lopenconnect -lgnutls
-mac: LIBS += -framework Security
+mac: LIBS += -framework Security -framework CoreFoundation
 
 RESOURCES += \
     resources.qrc
 
+SCRIPT_FILES.files = vpnc-script.sh
+SCRIPT_FILES.path = Contents/Resources
+mac: QMAKE_BUNDLE_DATA += SCRIPT_FILES
+
+DISTFILES += \
+    vpnc-script.sh

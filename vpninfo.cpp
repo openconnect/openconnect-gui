@@ -30,6 +30,10 @@ extern "C" {
 #include <QApplication>
 #include <QDir>
 
+#ifdef __MACH__
+#include <CoreFoundation/CFBundle.h>
+#endif
+
 static void stats_vfn(void *privdata, const struct oc_stats *stats)
 {
     VpnInfo *vpn = static_cast < VpnInfo * >(privdata);
@@ -424,6 +428,36 @@ void VpnInfo::parse_url(const char *url)
     openconnect_parse_url(this->vpninfo, const_cast < char *>(url));
 }
 
+
+const QString get_vpnc_script_path()
+{
+#ifdef __MACH__
+    /* On OS X, store the vpnc-script inside the application bundle
+     * Retrieving the path:  http://stackoverflow.com/questions/8768217
+     */
+
+    // Get a reference to the main bundle
+    CFBundleRef mainBundle = CFBundleGetMainBundle();
+
+    // Get a reference to the file's URL
+    CFURLRef vpncshURL = CFBundleCopyResourceURL(mainBundle, CFSTR("vpnc-script"), CFSTR("sh"), NULL);
+
+    // Convert the URL reference into a string reference
+    CFStringRef vpncshPath = CFURLCopyFileSystemPath(vpncshURL, kCFURLPOSIXPathStyle);
+
+    // Get the system encoding method
+    CFStringEncoding encodingMethod = CFStringGetSystemEncoding();
+
+    // Convert the string reference into a C string
+    const char *path = CFStringGetCStringPtr(vpncshPath, encodingMethod);
+
+    // Wrap in a QString so we don't need to worry about malloc/free
+    return path;
+#else
+    return DEFAULT_VPNC_SCRIPT;
+#endif
+}
+
 int VpnInfo::connect()
 {
     int ret;
@@ -463,7 +497,7 @@ int VpnInfo::connect()
         return ret;
     }
 
-    ret = openconnect_setup_tun_device(vpninfo, DEFAULT_VPNC_SCRIPT, NULL);
+    ret = openconnect_setup_tun_device(vpninfo, qPrintable(get_vpnc_script_path()), NULL);
     if (ret != 0) {
         this->last_err = QObject::tr("Error setting up the TUN device");
         return ret;
