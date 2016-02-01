@@ -110,7 +110,7 @@ int main(int argc, char *argv[])
     w.show();
 
 #if !defined(_WIN32) && !defined(DEVEL)
-    if (getuid() != 0) {
+    if (geteuid() != 0) {
         msgBox.setText(QObject::tr
                        ("This program requires root privileges to fully function."));
         msgBox.setInformativeText(QObject::tr
