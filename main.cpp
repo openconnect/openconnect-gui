@@ -28,7 +28,7 @@ extern "C" {
 #include <signal.h>
 #include <openconnect.h>
 #include <gnutls/pkcs11.h>
-} static QStringList *log = NULL;
+} static QStringList *oclog = NULL;
 
 int pin_callback(void *userdata, int attempt, const char *token_url,
                  const char *token_label, unsigned flags, char *pin,
@@ -64,9 +64,9 @@ int pin_callback(void *userdata, int attempt, const char *token_url,
 
 static void log_func(int level, const char *str)
 {
-    if (log != NULL) {
+    if (oclog != NULL) {
         QString s = QLatin1String(str);
-        log->append(s.trimmed());
+        oclog->append(s.trimmed());
     }
 }
 
@@ -122,7 +122,7 @@ int main(int argc, char *argv[])
 #ifdef DEVEL
     gnutls_global_set_log_function(log_func);
     gnutls_global_set_log_level(3);
-    log = w.get_log();
+    oclog = w.get_log();
     log_func(1, "started logging");
 #endif
 
