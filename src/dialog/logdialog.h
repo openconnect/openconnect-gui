@@ -49,6 +49,9 @@ signals:
     void clear_logdialog(void);
 
 private:
+    void loadSettings();
+    void saveSettings();
+
     Ui::LogDialog* ui;
 };
 
