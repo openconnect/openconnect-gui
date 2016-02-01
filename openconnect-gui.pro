@@ -8,6 +8,8 @@ QMAKE_CXXFLAGS += -O2 -g
 win32: QMAKE_CXXFLAGS += -IZ:\openconnect-gui\include\ 
 #unix: QMAKE_CXXFLAGS += -I/usr/local/include
 
+mac: INCLUDEPATH += /usr/local/include
+
 QT       += core gui network
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
