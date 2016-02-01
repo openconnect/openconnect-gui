@@ -30,6 +30,11 @@ extern "C" {
 #include <gnutls/pkcs11.h>
 } static QStringList *oclog = NULL;
 
+#ifdef __MACH__
+#include <mach-o/dyld.h>
+#include <Security/Security.h>
+#endif
+
 int pin_callback(void *userdata, int attempt, const char *token_url,
                  const char *token_label, unsigned flags, char *pin,
                  size_t pin_max)
@@ -70,9 +75,51 @@ static void log_func(int level, const char *str)
     }
 }
 
+#ifdef __MACH__
+bool relaunch_as_root()
+{
+    QMessageBox msgBox;
+    char appPath[2048];
+    uint32_t size = sizeof(appPath);
+    AuthorizationRef authRef;
+    OSStatus status;
+
+    /* Get the path of the current program */
+    if (_NSGetExecutablePath(appPath, &size) != 0) {
+        msgBox.setText(QObject::tr
+            ("Could not get program path to elevate privileges."));
+        return false;
+    }
+
+    status = AuthorizationCreate(NULL, kAuthorizationEmptyEnvironment,
+        kAuthorizationFlagDefaults, &authRef);
+
+    if (status != errAuthorizationSuccess) {
+        msgBox.setText(QObject::tr
+            ("Failed to create authorization reference."));
+        return false;
+    }
+    status = AuthorizationExecuteWithPrivileges(authRef, appPath,
+        kAuthorizationFlagDefaults, NULL, NULL);
+    AuthorizationFree(authRef, kAuthorizationFlagDestroyRights);
+
+    if (status == errAuthorizationSuccess) {
+        /* We've successfully re-launched with root privs. */
+        return true;
+    }
+
+    return false;
+}
+#endif
+
 int main(int argc, char *argv[])
 {
     int ret;
+
+#ifdef __MACH__
+    /* Re-launching with root privs on OS X needs Qt to allow setsuid */
+    QApplication::setSetuidAllowed(true);
+#endif
     QApplication a(argc, argv);
     a.setQuitOnLastWindowClosed(false);
     QVariant v;
@@ -111,6 +158,14 @@ int main(int argc, char *argv[])
 
 #if !defined(_WIN32) && !defined(DEVEL)
     if (geteuid() != 0) {
+
+#ifdef __MACH__
+        if (relaunch_as_root()) {
+            /* We have re-launched with root privs. Exit this process. */
+            return 0;
+        }
+#endif
+
         msgBox.setText(QObject::tr
                        ("This program requires root privileges to fully function."));
         msgBox.setInformativeText(QObject::tr

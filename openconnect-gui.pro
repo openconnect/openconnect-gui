@@ -51,6 +51,7 @@ FORMS    += mainwindow.ui \
 win32: LIBS += -LZ:\openconnect-gui\lib -lwsock32
 unix: LIBS += -L/usr/local/lib
 unix|win32: LIBS += -lopenconnect -lgnutls
+mac: LIBS += -framework Security
 
 RESOURCES += \
     resources.qrc
