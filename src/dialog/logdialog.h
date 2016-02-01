@@ -35,10 +35,8 @@ public : LogDialog(QStringList items,
 private slots:
     void append(QString item);
     void reject();
-    void cancel();
 
     void on_pushButtonClear_clicked();
-    void on_pushButtonClose_clicked();
     void on_pushButtonSelectAll_clicked();
     void on_pushButtonCopy_clicked();
 
