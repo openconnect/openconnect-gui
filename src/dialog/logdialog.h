@@ -50,7 +50,6 @@ signals:
 
 private:
     Ui::LogDialog* ui;
-    QStringList text;
 };
 
 #endif // LOGDIALOG_H
