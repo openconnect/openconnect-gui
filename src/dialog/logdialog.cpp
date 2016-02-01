@@ -96,8 +96,7 @@ void LogDialog::on_pushButtonCopySelected_clicked()
     QList<QListWidgetItem*> items = ui->listWidget->selectedItems();
     QString text;
     foreach(QListWidgetItem* item, items) {
-        text += item->text();
-        text += '\n';
+        text.append(QString("%1%2").arg(item->text()).arg('\n'));
     }
 
     QClipboard* clipboard = QApplication::clipboard();
