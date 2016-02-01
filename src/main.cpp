@@ -37,6 +37,11 @@ extern "C" {
 #include <QSettings>
 #endif
 
+#ifdef __MACH__
+#include <mach-o/dyld.h>
+#include <Security/Security.h>
+#endif
+
 #include <csignal>
 #include <cstdio>
 
@@ -49,6 +54,43 @@ static void log_func(int level, const char* str)
         QString s = QLatin1String(str);
         logger->append(s.trimmed());
     }
+}
+#endif
+
+#ifdef __MACH__
+bool relaunch_as_root()
+{
+    QMessageBox msgBox;
+    char appPath[2048];
+    uint32_t size = sizeof(appPath);
+    AuthorizationRef authRef;
+    OSStatus status;
+
+    /* Get the path of the current program */
+    if (_NSGetExecutablePath(appPath, &size) != 0) {
+        msgBox.setText(QObject::tr
+            ("Could not get program path to elevate privileges."));
+        return false;
+    }
+
+    status = AuthorizationCreate(NULL, kAuthorizationEmptyEnvironment,
+        kAuthorizationFlagDefaults, &authRef);
+
+    if (status != errAuthorizationSuccess) {
+        msgBox.setText(QObject::tr
+            ("Failed to create authorization reference."));
+        return false;
+    }
+    status = AuthorizationExecuteWithPrivileges(authRef, appPath,
+        kAuthorizationFlagDefaults, NULL, NULL);
+    AuthorizationFree(authRef, kAuthorizationFlagDestroyRights);
+
+    if (status == errAuthorizationSuccess) {
+        /* We've successfully re-launched with root privs. */
+        return true;
+    }
+
+    return false;
 }
 #endif
 
@@ -89,6 +131,10 @@ int main(int argc, char* argv[])
     QSettings::setDefaultFormat(QSettings::IniFormat);
 #endif
 
+#ifdef __MACH__
+    /* Re-launching with root privs on OS X needs Qt to allow setsuid */
+    QApplication::setSetuidAllowed(true);
+#endif
     QApplication app(argc, argv);
     app.setQuitOnLastWindowClosed(false);
     app.setApplicationName(appDescription);
@@ -99,8 +145,13 @@ int main(int argc, char* argv[])
 
 #if !defined(_WIN32) && !defined(PROJ_GNUTLS_DEBUG)
     if (geteuid() != 0) {
+#ifdef __MACH__
+        if (relaunch_as_root()) {
+            /* We have re-launched with root privs. Exit this process. */
+            return 0;
+        }
+#endif
         QMessageBox msgBox;
-
         msgBox.setText(QObject::tr("This program requires root privileges to fully function."));
         msgBox.setInformativeText(QObject::tr("VPN connection establishment would fail."));
         msgBox.exec();
