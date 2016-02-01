@@ -30,8 +30,7 @@ LogDialog::LogDialog(QStringList items, QWidget* parent)
 
     ui->listWidget->setSelectionMode(QAbstractItemView::ContiguousSelection);
 
-    this->text = items;
-    ui->listWidget->addItems(text);
+    ui->listWidget->addItems(items);
     ui->listWidget->scrollToBottom();
     connect(ui->listWidget, &QListWidget::itemSelectionChanged, this, &LogDialog::onItemSelectionChanged);
 }
@@ -65,7 +64,6 @@ void LogDialog::on_pushButtonSelectAll_clicked()
 
 void LogDialog::append(QString item)
 {
-    this->text.append(item);
     ui->listWidget->addItem(item);
     if (ui->checkBox_autoScroll->checkState() == Qt::Checked) {
         ui->listWidget->scrollToBottom();
@@ -74,7 +72,7 @@ void LogDialog::append(QString item)
 
 void LogDialog::on_pushButtonClear_clicked()
 {
-    if (this->text.isEmpty() == false) {
+    if (ui->listWidget->count()) {
         QMessageBox mbox;
         int ret;
 
@@ -86,7 +84,6 @@ void LogDialog::on_pushButtonClear_clicked()
         ret = mbox.exec();
         if (ret == QMessageBox::Ok) {
             emit clear_log();
-            this->text.clear();
             ui->listWidget->clear();
         }
     }
