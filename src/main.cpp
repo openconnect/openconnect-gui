@@ -98,7 +98,7 @@ int main(int argc, char* argv[])
     app.setOrganizationDomain(appOrganizationDomain);
 
 #if !defined(_WIN32) && !defined(PROJ_GNUTLS_DEBUG)
-    if (getuid() != 0) {
+    if (geteuid() != 0) {
         QMessageBox msgBox;
 
         msgBox.setText(QObject::tr("This program requires root privileges to fully function."));
