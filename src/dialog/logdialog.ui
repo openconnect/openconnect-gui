@@ -53,26 +53,26 @@
        </widget>
       </item>
       <item>
-       <widget class="Line" name="line_2">
+       <widget class="Line" name="lineHorizontal">
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="QPushButton" name="pushButtonCopyAll">
-        <property name="text">
-         <string>Copy &amp;All</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QPushButton" name="pushButtonCopySelected">
+       <widget class="QPushButton" name="pushButtonCopy">
         <property name="enabled">
          <bool>false</bool>
         </property>
         <property name="text">
-         <string>Copy &amp;Selected</string>
+         <string>&amp;Copy</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="pushButtonSelectAll">
+        <property name="text">
+         <string>Select &amp;All</string>
         </property>
        </widget>
       </item>
@@ -111,6 +111,14 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>listWidget</tabstop>
+  <tabstop>pushButtonClose</tabstop>
+  <tabstop>pushButtonCopy</tabstop>
+  <tabstop>pushButtonSelectAll</tabstop>
+  <tabstop>pushButtonClear</tabstop>
+  <tabstop>checkBox_autoScroll</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>
