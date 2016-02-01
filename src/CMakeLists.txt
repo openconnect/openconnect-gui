@@ -111,6 +111,8 @@ if(WIN32 AND MINGW)
 endif()
 if(APPLE)
     target_link_libraries (${PROJECT_NAME}
+        ${SECURITY_LIBRARY}
+
         ${OPENCONNECT_LIBRARIES}
         ${GNUTLS_LIBRARY}
     )

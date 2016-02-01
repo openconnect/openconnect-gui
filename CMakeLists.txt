@@ -69,6 +69,17 @@ else()
     find_package(OpenConnect REQUIRED)
     link_directories(${OPENCONNECT_LIBRARY_DIRS})
     include_directories(SYSTEM ${OPENCONNECT_INCLUDE_DIRS})
+
+    find_library(SECURITY_LIBRARY Security REQUIRED)
+    if(SECURITY_LIBRARY)
+        message(STATUS "Framework 'Security' found at ${SECURITY_LIBRARY}")
+
+        link_directories(${SECURITY_LIBRARY_DIRS})
+        include_directories(SYSTEM ${SECURITY_LIBRARY_INCLUDE_DIRS})
+    else()
+        message(FATAL_ERROR "Framework 'Security' not found!")
+    endif()
+    mark_as_advanced(SECURITY_LIBRARY)
 endif()
 
 add_subdirectory(src)
