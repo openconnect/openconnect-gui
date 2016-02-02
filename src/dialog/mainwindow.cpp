@@ -576,6 +576,11 @@ void MainWindow::on_about()
     QMessageBox::about(this, "", txt);
 }
 
+void MainWindow::on_aboutQt()
+{
+    qApp->aboutQt();
+}
+
 void MainWindow::request_update_stats()
 {
     char cmd = OC_CMD_STATS;
