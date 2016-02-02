@@ -111,6 +111,8 @@ private slots:
 
     void on_about();
 
+    void on_aboutQt();
+
 signals:
     void log_changed(QString val);
     void stats_changed_sig(QString, QString, QString);
