@@ -49,14 +49,7 @@ MainWindow::MainWindow(QWidget* parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
 {
-    const char* version = openconnect_get_version();
-    QString txt;
-
     ui->setupUi(this);
-
-    txt = QLatin1String("Based on:\n- libopenconnect: ") + QLatin1String(version) +
-            QLatin1String("\n- GnuTLS: ") + QLatin1String(gnutls_check_version(NULL));
-    ui->versionLabel->setText(txt);
 
     timer = new QTimer(this);
     blink_timer = new QTimer(this);
@@ -566,6 +559,21 @@ void MainWindow::on_pushButton_3_clicked()
     else {
         logdialog->raise();
     }
+}
+
+void MainWindow::on_about()
+{
+    QString txt = \
+            tr("Based on:\n- libopenconnect: ") + QLatin1String(openconnect_get_version()) + \
+            tr("\n- GnuTLS: ") + QLatin1String(gnutls_check_version(NULL));
+    txt += \
+            tr("\n\nCopyright 2014 Red Hat Inc.");
+    txt += \
+            tr("\nOpenconnect-gui comes with ABSOLUTELY NO WARRANTY. This is free software, "
+               "and you are welcome to redistribute it under the conditions "
+               "of the GNU General Public License version 2.");
+
+    QMessageBox::about(this, "", txt);
 }
 
 void MainWindow::request_update_stats()

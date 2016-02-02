@@ -109,6 +109,8 @@ private slots:
 
     void on_pushButton_3_clicked();
 
+    void on_about();
+
 signals:
     void log_changed(QString val);
     void stats_changed_sig(QString, QString, QString);
