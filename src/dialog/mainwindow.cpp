@@ -61,10 +61,13 @@ MainWindow::MainWindow(QWidget* parent)
             Qt::QueuedConnection);
     connect(timer, SIGNAL(timeout()), this, SLOT(request_update_stats()),
             Qt::QueuedConnection);
-    connect(ui->comboBox->lineEdit(), SIGNAL(returnPressed()), this,
-            SLOT(on_connectBtn_clicked()), Qt::QueuedConnection);
+    connect(ui->comboBox->lineEdit(), &QLineEdit::returnPressed, this,
+            &MainWindow::on_connectClicked, Qt::QueuedConnection);
     connect(this, SIGNAL(vpn_status_changed_sig(int)), this,
             SLOT(changeStatus(int)), Qt::QueuedConnection);
+    connect(ui->connectionButton, &QPushButton::clicked, this,
+            &MainWindow::on_connectClicked, Qt::QueuedConnection);
+
     QObject::connect(this, SIGNAL(log_changed(QString)), this,
                      SLOT(writeProgressBar(QString)), Qt::QueuedConnection);
     QObject::connect(this, SIGNAL(stats_changed_sig(QString, QString, QString)),
@@ -245,8 +248,8 @@ void MainWindow::changeStatus(int val)
 
         blink_timer->stop();
         ui->iconLabel->setPixmap(ON_ICON);
-        ui->disconnectBtn->setEnabled(true);
-        ui->connectBtn->setEnabled(false);
+        ui->connectionButton->setIcon(QIcon(":/new/resource/images/process-stop.png"));
+        ui->connectionButton->setText(tr("Disconnect"));
 
         icon.addPixmap(TRAY_ON_ICON, QIcon::Normal, QIcon::Off);
         trayIcon->setIcon(icon);
@@ -270,6 +273,10 @@ void MainWindow::changeStatus(int val)
                 this->setWindowState(Qt::WindowMinimized);
             }
         }
+        disconnect(ui->connectionButton, &QPushButton::clicked, this,
+                   &MainWindow::on_connectClicked);
+        connect(ui->connectionButton, &QPushButton::clicked, this,
+                &MainWindow::on_disconnectClicked, Qt::QueuedConnection);
     }
     else if (val == STATUS_CONNECTING) {
 
@@ -278,8 +285,8 @@ void MainWindow::changeStatus(int val)
             trayIcon->setIcon(icon);
         }
         ui->iconLabel->setPixmap(CONNECTING_ICON);
-        ui->disconnectBtn->setEnabled(true);
-        ui->connectBtn->setEnabled(false);
+        ui->connectionButton->setIcon(QIcon(":/new/resource/images/process-stop.png"));
+        ui->connectionButton->setText(tr("Cancel"));
         blink_timer->start(1500);
     }
     else if (val == STATUS_DISCONNECTED) {
@@ -295,9 +302,9 @@ void MainWindow::changeStatus(int val)
         ui->IP6Label->setText("");
         this->updateProgressBar(QObject::tr("Disconnected"));
 
-        ui->disconnectBtn->setEnabled(false);
-        ui->connectBtn->setEnabled(true);
         ui->iconLabel->setPixmap(OFF_ICON);
+        ui->connectionButton->setIcon(QIcon(":/new/resource/images/network-wired.png"));
+        ui->connectionButton->setText(tr("Connect"));
 
         if (trayIcon) {
             icon.addPixmap(TRAY_OFF_ICON, QIcon::Normal, QIcon::Off);
@@ -308,6 +315,10 @@ void MainWindow::changeStatus(int val)
                                       QSystemTrayIcon::Warning,
                                       10000);
         }
+        disconnect(ui->connectionButton, &QPushButton::clicked, this,
+                   &MainWindow::on_disconnectClicked);
+        connect(ui->connectionButton, &QPushButton::clicked, this,
+                &MainWindow::on_connectClicked, Qt::QueuedConnection);
     }
 }
 
@@ -379,7 +390,7 @@ fail:
     return;
 }
 
-void MainWindow::on_disconnectBtn_clicked()
+void MainWindow::on_disconnectClicked()
 {
     if (this->timer->isActive())
         this->timer->stop();
@@ -387,7 +398,7 @@ void MainWindow::on_disconnectBtn_clicked()
     term_thread(this, &this->cmd_fd);
 }
 
-void MainWindow::on_connectBtn_clicked()
+void MainWindow::on_connectClicked()
 {
     VpnInfo* vpninfo = NULL;
     StoredServer* ss = new StoredServer(this->settings);
@@ -396,10 +407,6 @@ void MainWindow::on_connectBtn_clicked()
     QList<QNetworkProxy> proxies;
     QUrl turl;
     QNetworkProxyQuery query;
-
-    if (ui->connectBtn->isEnabled() == false) {
-        return;
-    }
 
     if (this->cmd_fd != INVALID_SOCKET) {
         QMessageBox::information(this,
@@ -563,15 +570,11 @@ void MainWindow::on_pushButton_3_clicked()
 
 void MainWindow::on_about()
 {
-    QString txt = \
-            tr("Based on:\n- libopenconnect: ") + QLatin1String(openconnect_get_version()) + \
-            tr("\n- GnuTLS: ") + QLatin1String(gnutls_check_version(NULL));
-    txt += \
-            tr("\n\nCopyright 2014 Red Hat Inc.");
-    txt += \
-            tr("\nOpenconnect-gui comes with ABSOLUTELY NO WARRANTY. This is free software, "
-               "and you are welcome to redistribute it under the conditions "
-               "of the GNU General Public License version 2.");
+    QString txt = tr("Based on:\n- libopenconnect: ") + QLatin1String(openconnect_get_version()) + tr("\n- GnuTLS: ") + QLatin1String(gnutls_check_version(NULL));
+    txt += tr("\n\nCopyright 2014 Red Hat Inc.");
+    txt += tr("\nOpenconnect-gui comes with ABSOLUTELY NO WARRANTY. This is free software, "
+              "and you are welcome to redistribute it under the conditions "
+              "of the GNU General Public License version 2.");
 
     QMessageBox::about(this, "", txt);
 }
