@@ -247,6 +247,11 @@ void MainWindow::changeStatus(int val)
     if (val == STATUS_CONNECTED) {
 
         blink_timer->stop();
+
+        ui->comboBox->setEnabled(false);
+        ui->toolButton->setEnabled(false);
+        ui->toolButton_2->setEnabled(false);
+
         ui->iconLabel->setPixmap(ON_ICON);
         ui->connectionButton->setIcon(QIcon(":/new/resource/images/process-stop.png"));
         ui->connectionButton->setText(tr("Disconnect"));
@@ -284,6 +289,11 @@ void MainWindow::changeStatus(int val)
             icon.addPixmap(TRAY_OFF_ICON, QIcon::Normal, QIcon::Off);
             trayIcon->setIcon(icon);
         }
+
+        ui->comboBox->setEnabled(false);
+        ui->toolButton->setEnabled(false);
+        ui->toolButton_2->setEnabled(false);
+
         ui->iconLabel->setPixmap(CONNECTING_ICON);
         ui->connectionButton->setIcon(QIcon(":/new/resource/images/process-stop.png"));
         ui->connectionButton->setText(tr("Cancel"));
@@ -301,6 +311,10 @@ void MainWindow::changeStatus(int val)
         ui->DNSLabel->setText("");
         ui->IP6Label->setText("");
         this->updateProgressBar(QObject::tr("Disconnected"));
+
+        ui->comboBox->setEnabled(true);
+        ui->toolButton->setEnabled(true);
+        ui->toolButton_2->setEnabled(true);
 
         ui->iconLabel->setPixmap(OFF_ICON);
         ui->connectionButton->setIcon(QIcon(":/new/resource/images/network-wired.png"));
