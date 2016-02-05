@@ -97,9 +97,9 @@ private slots:
 
     void request_update_stats();
 
-    void on_disconnectBtn_clicked();
+    void on_disconnectClicked();
 
-    void on_connectBtn_clicked();
+    void on_connectClicked();
 
     void on_toolButton_clicked();
 
