@@ -92,3 +92,7 @@ target_link_libraries (${PROJECT_NAME}
 	libxml2.dll.a
 	libz.dll.a
 )
+
+install(TARGETS ${PROJECT_NAME} RUNTIME
+	DESTINATION bin
+)
