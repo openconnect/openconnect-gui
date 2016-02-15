@@ -44,6 +44,8 @@ set(CPACK_CREATE_DESKTOP_LINKS  "${PROJECT_NAME}")
 
 set(CPACK_NSIS_INSTALLED_ICON_NAME "bin\\\\${PROJECT_NAME}.exe")
 set(CPACK_NSIS_DISPLAY_NAME "${CPACK_PACKAGE_INSTALL_DIRECTORY}")
+set(CPACK_NSIS_HELP_LINK "http:\\\\\\\\github.com\\\\openconnect\\\\openconnect-gui\\\\wiki")
+set(CPACK_NSIS_URL_INFO_ABOUT "https:\\\\\\\\github.com\\\\openconnect\\\\openconnect-gui\\\\issues")
 set(CPACK_NSIS_MODIFY_PATH ON)
 set(CPACK_NSIS_ENABLE_UNINSTALL_BEFORE_INSTALL ON)
 
