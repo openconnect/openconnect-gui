@@ -93,6 +93,21 @@ target_link_libraries (${PROJECT_NAME}
 	libz.dll.a
 )
 
-install(TARGETS ${PROJECT_NAME} RUNTIME
-	DESTINATION bin
+# install executable
+install(TARGETS ${PROJECT_NAME}
+	RUNTIME DESTINATION bin COMPONENT Runtime
+)
+
+install(FILES ../nsis/vpnc-script.js
+	DESTINATION bin COMPONENT Runtime
+)
+
+# fixup the bundle
+set(APPS "\${CMAKE_INSTALL_PREFIX}/bin/${PROJECT_NAME}.exe")
+list(APPEND libSearchDirs ${CMAKE_SOURCE_DIR}/nsis)
+set(additionalLib ${QT_LIBRARY_DIR})
+INSTALL(CODE "
+	include(BundleUtilities)
+	fixup_bundle(\"${APPS}\" \"${additionalLib}\" \"${libSearchDirs}\")
+	" COMPONENT Runtime
 )
