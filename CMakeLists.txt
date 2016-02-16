@@ -54,4 +54,8 @@ set(CPACK_NSIS_MUI_UNIICON "${CMAKE_CURRENT_SOURCE_DIR}\\\\src\\\\${PROJECT_NAME
 
 set(CPACK_NSIS_MUI_FINISHPAGE_RUN "${PROJECT_NAME}.exe")
 
+set(CPACK_NSIS_MENU_LINKS
+	"https://github.com/openconnect/openconnect-gui/wiki" "Homepage"
+)
+
 include(CPack)
