@@ -95,11 +95,9 @@ target_link_libraries (${PROJECT_NAME}
 
 # install executable
 install(TARGETS ${PROJECT_NAME}
-	RUNTIME DESTINATION bin COMPONENT Runtime
-)
-
-install(FILES ../nsis/vpnc-script.js
-	DESTINATION bin COMPONENT Runtime
+	RUNTIME
+	DESTINATION bin
+	COMPONENT App
 )
 
 # fixup the bundle
@@ -109,5 +107,5 @@ set(additionalLib ${QT_LIBRARY_DIR})
 INSTALL(CODE "
 	include(BundleUtilities)
 	fixup_bundle(\"${APPS}\" \"${additionalLib}\" \"${libSearchDirs}\")
-	" COMPONENT Runtime
+	" COMPONENT App
 )
