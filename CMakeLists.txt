@@ -26,6 +26,8 @@ include_directories(SYSTEM ${CMAKE_SOURCE_DIR}/include)
 link_directories(SYSTEM ${CMAKE_SOURCE_DIR}/lib)
 
 add_subdirectory(src)
+add_subdirectory(nsis)
+
 set(CPACK_GENERATOR "NSIS")
 
 include(InstallRequiredSystemLibraries)
@@ -57,5 +59,27 @@ set(CPACK_NSIS_MUI_FINISHPAGE_RUN "${PROJECT_NAME}.exe")
 set(CPACK_NSIS_MENU_LINKS
 	"https://github.com/openconnect/openconnect-gui/wiki" "Homepage"
 )
+
+# NSIS'es list of all components
+set(CPACK_COMPONENTS_ALL App vpnc_script)
+
+set(CPACK_COMPONENT_APP_REQUIRED on)
+set(CPACK_COMPONENT_APP_DISPLAY_NAME "${PRODUCT_NAME_SHORT}")
+set(CPACK_COMPONENT_APP_DESCRIPTION "${PRODUCT_NAME_LONG}")
+set(CPACK_COMPONENT_APP_GROUP "Runtime")
+set(CPACK_COMPONENT_APP_INSTALL_TYPES Full)
+
+set(CPACK_COMPONENT_VPNC_SCRIPT_REQUIRED on)
+set(CPACK_COMPONENT_VPNC_SCRIPT_DISPLAY_NAME "vpnc-script.js")
+set(CPACK_COMPONENT_VPNC_SCRIPT_DESCRIPTION "vpnc helper script to set the routing and name service up")
+set(CPACK_COMPONENT_VPNC_SCRIPT_GROUP "Runtime")
+set(CPACK_COMPONENT_VPNC_SCRIPT_INSTALL_TYPES Full)
+
+# NSIS'es Runtime-group
+set(CPACK_COMPONENT_GROUP_RUNTIME_DESCRIPTION "Main application and network configuration script")
+
+# NSIS'es install types lists
+set(CPACK_ALL_INSTALL_TYPES Full)
+set(CPACK_INSTALL_TYPE_FULL_DISPLAY_NAME "Full installation")
 
 include(CPack)
