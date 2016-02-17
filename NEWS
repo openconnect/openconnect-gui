@@ -1,5 +1,9 @@
 NEWS -- History of user-visible changes.
 
+* version 1.4 (unreleased)
+- updated gmp(6.1.0), gnutls(3.4.9), nettle(3.2), p11-kit(0.23.2)
+
+
 * version 1.3 (released 2015-05-15)
 - Properly notify the server of the VPN session shutdown (#39)
 
