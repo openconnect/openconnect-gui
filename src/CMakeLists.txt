@@ -104,7 +104,7 @@ install(TARGETS ${PROJECT_NAME}
 set(APPS "\${CMAKE_INSTALL_PREFIX}/bin/${PROJECT_NAME}.exe")
 list(APPEND libSearchDirs ${CMAKE_SOURCE_DIR}/nsis)
 set(additionalLib ${QT_LIBRARY_DIR})
-INSTALL(CODE "
+install(CODE "
 	include(BundleUtilities)
 	fixup_bundle(\"${APPS}\" \"${additionalLib}\" \"${libSearchDirs}\")
 	" COMPONENT App
