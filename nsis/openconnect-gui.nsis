@@ -10,9 +10,9 @@
 !define APPNAME "OpenConnect"
 !define DESCRIPTION "OpenConnect VPN client for windows"
 # These three must be integers
-!define VERSIONMAJOR 0
-!define VERSIONMINOR 1
-!define VERSIONBUILD 1
+!define VERSIONMAJOR 1
+!define VERSIONMINOR 3
+!define VERSIONBUILD 0
 # These will be displayed by the "Click here for support information" link in "Add/Remove Programs"
 # It is possible to use "mailto:" links in here to open the email client
 !define HELPURL "https://github.com/nmav/openconnect-gui/issues" # "Support Information" link
@@ -27,7 +27,7 @@ InstallDir "$PROGRAMFILES\${APPNAME}"
 LicenseData "../COPYING"
 # This will be in the installer/uninstaller's title bar
 Name "${APPNAME}"
-Icon "../logo64.ico"
+Icon "..\logo64.ico"
 outFile "openconnect-installer.exe"
 
 !include LogicLib.nsh
@@ -76,7 +76,7 @@ section "install"
 	file tap-windows.exe
 	file tap-windows-xp.exe
 	file vcredist_x86.exe
-	file "../logo64.ico"
+	file "..\logo64.ico"
 	file libgcc_s_dw2-1.dll
 	file libgcc_s_sjlj-1.dll
 	file libgmp-10.dll
@@ -89,7 +89,6 @@ section "install"
 	file libstdc++-6.dll
 	file libwinpthread-1.dll
 	file libxml2-2.dll
-	file openconnect.exe
 	file openconnect-gui.exe
 	file Qt5Core.dll
 	file Qt5Gui.dll
@@ -194,7 +193,6 @@ section "uninstall"
 	delete $INSTDIR\libstdc++-6.dll
 	delete $INSTDIR\libwinpthread-1.dll
 	delete $INSTDIR\libxml2-2.dll
-	delete $INSTDIR\openconnect.exe
 	delete $INSTDIR\openconnect-gui.exe
 	delete $INSTDIR\Qt5Core.dll
 	delete $INSTDIR\Qt5Gui.dll
