@@ -92,3 +92,20 @@ target_link_libraries (${PROJECT_NAME}
 	libxml2.dll.a
 	libz.dll.a
 )
+
+# install executable
+install(TARGETS ${PROJECT_NAME}
+	RUNTIME
+	DESTINATION bin
+	COMPONENT App
+)
+
+# fixup the bundle
+set(APPS "\${CMAKE_INSTALL_PREFIX}/bin/${PROJECT_NAME}.exe")
+list(APPEND libSearchDirs ${CMAKE_SOURCE_DIR}/nsis)
+set(additionalLib ${QT_LIBRARY_DIR})
+install(CODE "
+	include(BundleUtilities)
+	fixup_bundle(\"${APPS}\" \"${additionalLib}\" \"${libSearchDirs}\")
+	" COMPONENT App
+)
