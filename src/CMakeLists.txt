@@ -82,7 +82,6 @@ target_link_libraries (${PROJECT_NAME}
 
 	# 3rd party libraries
 	libgmp.dll.a
-	libgnutls-xssl.dll.a
 	libgnutls.dll.a
 	libhogweed.dll.a
 	libnettle.dll.a
