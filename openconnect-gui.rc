@@ -1,5 +1,0 @@
-1 24 "openconnect-gui.exe.manifest"
-IDI_ICON1               ICON    DISCARDABLE     "logo16.ico"
-IDI_ICON2               ICON    DISCARDABLE     "logo32.ico"
-IDI_ICON3               ICON    DISCARDABLE     "logo64.ico"
-IDI_ICON4               ICON    DISCARDABLE     "logo128.ico"
