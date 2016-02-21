@@ -25,6 +25,7 @@ extern "C" {
 }
 #include "editdialog.h"
 #include "logdialog.h"
+#include "config.h"
 #include <QCloseEvent>
 #include <QDateTime>
 #include <QDialog>
@@ -584,9 +585,13 @@ void MainWindow::on_pushButton_3_clicked()
 
 void MainWindow::on_about()
 {
-    QString txt = tr("Based on:\n- libopenconnect: ") + QLatin1String(openconnect_get_version()) + tr("\n- GnuTLS: ") + QLatin1String(gnutls_check_version(NULL));
-    txt += tr("\n\nCopyright 2014 Red Hat Inc.");
-    txt += tr("\nOpenconnect-gui comes with ABSOLUTELY NO WARRANTY. This is free software, "
+    QString txt = QLatin1String("<h2>") + QLatin1String(appDescriptionLong) + QLatin1String("</h2>") +
+            tr("Version: ") + QLatin1String("<i>") + QLatin1String(appVersion) + QLatin1String("</i><br><br>");
+    txt += tr("Based on:<br>- libopenconnect: ") +
+            QLatin1String(openconnect_get_version()) + tr("<br>- GnuTLS: ") +
+            QLatin1String(gnutls_check_version(NULL));
+    txt += tr("<br><br>Copyright 2014 Red Hat Inc.");
+    txt += tr("<br>Openconnect-gui comes with ABSOLUTELY NO WARRANTY. This is free software, "
               "and you are welcome to redistribute it under the conditions "
               "of the GNU General Public License version 2.");
 
