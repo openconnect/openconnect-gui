@@ -50,28 +50,12 @@ bool MyCertMsgBox::event(QEvent* ev)
 
         msgBox->setText(t1);
         msgBox->setInformativeText(t2);
-        msgBox->setStandardButtons(QMessageBox::
-                                       Cancel
-                                   | QMessageBox::Help | QMessageBox::Ok);
+        msgBox->setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
         msgBox->setDefaultButton(QMessageBox::Cancel);
         msgBox->setButtonText(QMessageBox::Ok, oktxt);
-        msgBox->setButtonText(QMessageBox::Help, tr("View certificate"));
+        msgBox->setDetailedText(details);
 
-        do {
-            ret = msgBox->exec();
-            if (ret == QMessageBox::Help) {
-                QMessageBox helpBox;
-                helpBox.setTextInteractionFlags(Qt::
-                                                    TextSelectableByMouse
-                                                | Qt::TextSelectableByKeyboard
-                                                | Qt::LinksAccessibleByMouse);
-                helpBox.setText(details);
-                helpBox.setTextFormat(Qt::PlainText);
-                helpBox.setStandardButtons(QMessageBox::Ok);
-                helpBox.exec();
-            }
-        } while (ret == QMessageBox::Help);
-
+        ret = msgBox->exec();
         if (ret == QMessageBox::Cancel)
             res = false;
         else

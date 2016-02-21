@@ -277,7 +277,8 @@ static int validate_peer_cert(void* privdata, const char* reason)
         str = QObject::tr("Host: ") + vpn->ss->get_servername() + QObject::tr("\n") + hash;
 
         MyCertMsgBox msgBox(vpn->m,
-                            QObject::tr("You are connecting for the first time to this peer. Is the information provided below accurate?"),
+                            QObject::tr("You are connecting for the first time to this peer."
+                                        "Is the information provided below accurate?"),
                             str,
                             QObject::tr("Accurate information"),
                             dstr);
