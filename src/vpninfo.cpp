@@ -23,11 +23,10 @@
 #include "dialog/MyInputDialog.h"
 #include "dialog/mainwindow.h"
 
-extern "C" {
-#include <stdarg.h>
-#include <stdio.h>
-}
 #include <QDir>
+
+#include <cstdarg>
+#include <cstdio>
 
 static void stats_vfn(void* privdata, const struct oc_stats* stats)
 {

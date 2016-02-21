@@ -23,7 +23,9 @@
 #include <QByteArray>
 #include <QString>
 #include <QTemporaryFile>
+extern "C" {
 #include <gnutls/x509.h>
+}
 
 class Key {
 public:

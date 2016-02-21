@@ -52,7 +52,9 @@
 #define net_errno errno
 #endif
 
+extern "C" {
 #include <gnutls/gnutls.h>
+}
 
 #if !defined(__MACH__) && GNUTLS_VERSION_NUMBER >= 0x030400
 #define USE_SYSTEM_KEYS

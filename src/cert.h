@@ -21,7 +21,9 @@
 #define CERT_H
 
 #include <QTemporaryFile>
+extern "C" {
 #include <gnutls/x509.h>
+}
 
 class Cert {
 public:

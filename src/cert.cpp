@@ -19,8 +19,10 @@
 
 #include "cert.h"
 #include "common.h"
+extern "C" {
 #include <gnutls/pkcs11.h>
-#include <stdio.h>
+}
+#include <cstdio>
 
 Cert::Cert()
 {

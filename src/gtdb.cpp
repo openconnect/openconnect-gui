@@ -18,7 +18,9 @@
  */
 
 #include "gtdb.h"
+extern "C" {
 #include <gnutls/crypto.h>
+}
 
 #define HASH GNUTLS_DIG_SHA1
 #define HASH_LEN 20

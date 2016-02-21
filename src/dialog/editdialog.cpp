@@ -36,7 +36,9 @@ extern "C" {
 }
 
 #ifdef USE_SYSTEM_KEYS
+extern "C" {
 #include <gnutls/system-keys.h>
+}
 #endif
 
 static int token_tab(int mode)
