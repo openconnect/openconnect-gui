@@ -33,7 +33,7 @@ extern "C" {
 #include <stdio.h>
 }
 
-static QStringList* log = NULL;
+static QStringList* logger = NULL;
 
 int pin_callback(void* userdata, int attempt, const char* token_url,
                  const char* token_label, unsigned flags, char* pin,
@@ -67,9 +67,9 @@ int pin_callback(void* userdata, int attempt, const char* token_url,
 
 static void log_func(int level, const char* str)
 {
-    if (log != NULL) {
+    if (logger != NULL) {
         QString s = QLatin1String(str);
-        log->append(s.trimmed());
+        logger->append(s.trimmed());
     }
 }
 
