@@ -21,7 +21,9 @@
 #include "common.h"
 #include <QInputDialog>
 #include <QTemporaryFile>
+extern "C" {
 #include <gnutls/pkcs11.h>
+}
 
 Key::Key()
 {

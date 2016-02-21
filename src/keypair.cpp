@@ -21,7 +21,9 @@
 #include "common.h"
 #include <QInputDialog>
 #include <QString>
+extern "C" {
 #include <gnutls/pkcs12.h>
+}
 
 KeyPair::KeyPair()
 {

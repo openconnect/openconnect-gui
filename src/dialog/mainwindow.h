@@ -30,7 +30,7 @@
 #include <QSystemTrayIcon>
 #include <QTimer>
 #ifndef _WIN32
-#include <errno.h>
+#include <cerrno>
 #include <sys/socket.h>
 #include <sys/types.h>
 #else

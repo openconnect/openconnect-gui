@@ -19,13 +19,11 @@
 
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
-extern "C" {
-#include <stdarg.h>
-#include <stdio.h>
-}
 #include "editdialog.h"
 #include "logdialog.h"
 #include "config.h"
+#include "storage.h"
+#include "vpninfo.h"
 #include <QCloseEvent>
 #include <QDateTime>
 #include <QDialog>
@@ -37,9 +35,12 @@ extern "C" {
 #include <QtNetwork/QNetworkProxy>
 #include <QtNetwork/QNetworkProxyFactory>
 #include <QtNetwork/QNetworkProxyQuery>
+extern "C" {
 #include <gnutls/gnutls.h>
-#include <storage.h>
-#include <vpninfo.h>
+}
+#include <cstdarg>
+#include <cstdio>
+
 #ifdef _WIN32
 #define pipe_write(x, y, z) send(x, y, z, 0)
 #else

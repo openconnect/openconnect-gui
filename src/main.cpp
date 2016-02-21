@@ -29,9 +29,9 @@
 extern "C" {
 #include <gnutls/pkcs11.h>
 #include <openconnect.h>
-#include <signal.h>
-#include <stdio.h>
 }
+#include <csignal>
+#include <cstdio>
 
 static QStringList* logger = NULL;
 

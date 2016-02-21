@@ -21,7 +21,9 @@
 #define GTDB_H
 
 #include "storage.h"
+extern "C" {
 #include <gnutls/gnutls.h>
+}
 
 class gtdb {
 public:

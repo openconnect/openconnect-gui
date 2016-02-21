@@ -20,7 +20,7 @@
 #include "storage.h"
 #include "cryptdata.h"
 #include <QSettings>
-#include <stdio.h>
+#include <cstdio>
 
 StoredServer::~StoredServer(void)
 {
