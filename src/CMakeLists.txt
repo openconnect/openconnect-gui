@@ -64,38 +64,38 @@ if(WIN32 AND MINGW)
 endif()
 
 add_executable(${PROJECT_NAME} WIN32
-	${${PROJECT_NAME}_SRCS}
-	${${PROJECT_NAME}_HDRS}
-	${${PROJECT_NAME}_FORMS}
-	${${PROJECT_NAME}_RESOURCES}
+    ${${PROJECT_NAME}_SRCS}
+    ${${PROJECT_NAME}_HDRS}
+    ${${PROJECT_NAME}_FORMS}
+    ${${PROJECT_NAME}_RESOURCES}
 )
 
 target_link_libraries (${PROJECT_NAME}
-	Qt5::Core
-	Qt5::Gui
-	Qt5::Widgets
-	Qt5::Network
+    Qt5::Core
+    Qt5::Gui
+    Qt5::Widgets
+    Qt5::Network
 
-	# system libraries
-	wsock32
+    # system libraries
+    wsock32
 
-	# 3rd party libraries
-	libgmp.dll.a
-	libgnutls.dll.a
-	libhogweed.dll.a
-	libnettle.dll.a
-	libopenconnect.dll.a
-	libp11-kit.dll.a
-	libstoken.dll.a
-	libxml2.dll.a
-	libz.dll.a
+    # 3rd party libraries
+    libgmp.dll.a
+    libgnutls.dll.a
+    libhogweed.dll.a
+    libnettle.dll.a
+    libopenconnect.dll.a
+    libp11-kit.dll.a
+    libstoken.dll.a
+    libxml2.dll.a
+    libz.dll.a
 )
 
 # install executable
 install(TARGETS ${PROJECT_NAME}
-	RUNTIME
-	DESTINATION bin
-	COMPONENT App
+    RUNTIME
+    DESTINATION bin
+    COMPONENT App
 )
 
 # fixup the bundle
@@ -103,7 +103,7 @@ set(APPS "\${CMAKE_INSTALL_PREFIX}/bin/${PROJECT_NAME}.exe")
 list(APPEND libSearchDirs ${CMAKE_SOURCE_DIR}/nsis)
 set(additionalLib ${QT_LIBRARY_DIR})
 install(CODE "
-	include(BundleUtilities)
-	fixup_bundle(\"${APPS}\" \"${additionalLib}\" \"${libSearchDirs}\")
-	" COMPONENT App
+    include(BundleUtilities)
+    fixup_bundle(\"${APPS}\" \"${additionalLib}\" \"${libSearchDirs}\")
+    " COMPONENT App
 )
