@@ -69,7 +69,6 @@ add_executable(${PROJECT_NAME} WIN32
 	${${PROJECT_NAME}_FORMS}
 	${${PROJECT_NAME}_RESOURCES}
 )
-set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 98)
 
 target_link_libraries (${PROJECT_NAME}
 	Qt5::Core
