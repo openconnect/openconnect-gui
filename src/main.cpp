@@ -33,7 +33,17 @@ extern "C" {
 #include <csignal>
 #include <cstdio>
 
+#ifdef DEVEL
 static QStringList* logger = NULL;
+
+static void log_func(int level, const char* str)
+{
+    if (logger != NULL) {
+        QString s = QLatin1String(str);
+        logger->append(s.trimmed());
+    }
+}
+#endif
 
 int pin_callback(void* userdata, int attempt, const char* token_url,
                  const char* token_label, unsigned flags, char* pin,
@@ -63,14 +73,6 @@ int pin_callback(void* userdata, int attempt, const char* token_url,
 
     snprintf(pin, pin_max, "%s", text.toLatin1().data());
     return 0;
-}
-
-static void log_func(int level, const char* str)
-{
-    if (logger != NULL) {
-        QString s = QLatin1String(str);
-        logger->append(s.trimmed());
-    }
 }
 
 int main(int argc, char* argv[])
@@ -114,7 +116,7 @@ int main(int argc, char* argv[])
 #ifdef DEVEL
     gnutls_global_set_log_function(log_func);
     gnutls_global_set_log_level(3);
-    log = w.get_log();
+    logger = w.get_log();
     log_func(1, "started logging");
 #endif
 
