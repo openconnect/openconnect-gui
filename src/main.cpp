@@ -33,7 +33,7 @@ extern "C" {
 #include <csignal>
 #include <cstdio>
 
-#ifdef DEVEL
+#ifdef PROJ_GNUTLS_DEBUG
 static QStringList* logger = NULL;
 
 static void log_func(int level, const char* str)
@@ -105,7 +105,7 @@ int main(int argc, char* argv[])
     w.set_settings(&settings);
     w.show();
 
-#if !defined(_WIN32) && !defined(DEVEL)
+#if !defined(_WIN32) && !defined(PROJ_GNUTLS_DEBUG)
     if (getuid() != 0) {
         msgBox.setText(QObject::tr("This program requires root privileges to fully function."));
         msgBox.setInformativeText(QObject::tr("VPN connection establishment would fail."));
@@ -113,7 +113,7 @@ int main(int argc, char* argv[])
     }
 #endif
 
-#ifdef DEVEL
+#ifdef PROJ_GNUTLS_DEBUG
     gnutls_global_set_log_function(log_func);
     gnutls_global_set_log_level(3);
     logger = w.get_log();
