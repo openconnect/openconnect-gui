@@ -21,7 +21,7 @@
 #define COMMON_H
 
 /* undef on normal builds */
-#undef DEVEL
+#undef PROJ_GNUTLS_DEBUG
 
 #define TMP_CERT_PREFIX "tmp-certXXXXXX"
 #define TMP_KEY_PREFIX "tmp-keyXXXXXX"

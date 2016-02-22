@@ -45,10 +45,16 @@ configure_file(
     ${CMAKE_CURRENT_BINARY_DIR}/config.cpp
     @ONLY
 )
+configure_file(
+    config.h.in
+    ${CMAKE_CURRENT_BINARY_DIR}/config.h
+    @ONLY
+)
 list(APPEND ${PROJECT_NAME}_SRCS
     ${CMAKE_CURRENT_BINARY_DIR}/config.cpp
     config.cpp.in
-    config.h
+    ${CMAKE_CURRENT_BINARY_DIR}/config.h
+    config.h.in
 )
 
 if(WIN32 AND MINGW)

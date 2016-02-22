@@ -26,3 +26,5 @@ extern const char* const appVersion;
 extern const char* const appCopyright;
 extern const char* const appOrganizationName;
 extern const char* const appOrganizationDomain;
+
+#cmakedefine PROJ_GNUTLS_DEBUG
