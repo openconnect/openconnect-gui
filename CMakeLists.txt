@@ -16,6 +16,7 @@ set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 add_compile_options("-Wall")
+add_compile_options("-pedantic")
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
