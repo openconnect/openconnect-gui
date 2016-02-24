@@ -201,7 +201,7 @@ void MainWindow::set_settings(QSettings* s)
 {
     this->settings = s;
     reload_settings();
-};
+}
 
 void MainWindow::writeProgressBar(QString str)
 {

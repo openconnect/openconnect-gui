@@ -31,7 +31,7 @@ StoredServer::StoredServer(QSettings* settings)
     this->server_hash_algo = 0;
     this->settings = settings;
     set_window(NULL);
-};
+}
 
 #define PREFIX "server:"
 QStringList get_server_list(QSettings* settings)
