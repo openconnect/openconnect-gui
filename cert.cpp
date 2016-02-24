@@ -118,6 +118,7 @@ int Cert::import_file(QString & File)
     if (this->imported != false)
         this->clear();
 
+#ifdef ENABLE_PKCS11
     if (is_url(File)) {
         gnutls_x509_crt_init(&this->crt);
 
@@ -137,6 +138,7 @@ int Cert::import_file(QString & File)
         this->imported = true;
         return 0;
     }
+#endif
 
     /* normal file */
     ret = gnutls_load_file(File.toAscii().data(), &contents);
