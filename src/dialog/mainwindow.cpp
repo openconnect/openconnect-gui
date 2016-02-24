@@ -130,6 +130,7 @@ MainWindow::~MainWindow()
     }
     delete ui;
     delete timer;
+    delete blink_timer;
 
     writeSettings();
 }
