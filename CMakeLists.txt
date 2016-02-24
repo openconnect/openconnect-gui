@@ -11,6 +11,12 @@ set(PRODUCT_NAME_COMPANY_DOMAIN "redhat.com")
 set(PRODUCT_NAME_COPYRIGHT "Copyright (c) 2015-2016 RedHat")
 
 option(PROJ_GNUTLS_DEBUG "Enable GnuTLS debug mode" OFF)
+option(PROJ_UAC_ON "Enable UAC (don't turn it off in production)" ON)
+if(PROJ_UAC_ON)
+    set(UAC_FLAG "")
+else()
+    set(UAC_FLAG "//")
+endif()
 
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
