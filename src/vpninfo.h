@@ -30,9 +30,7 @@ class StoredServer;
 
 class VpnInfo {
 public:
-    VpnInfo(QString name,
-            StoredServer* ss,
-            MainWindow* m);
+    VpnInfo(QString name, StoredServer* ss, MainWindow* m);
     ~VpnInfo();
 
     void parse_url(const char* url);
@@ -41,9 +39,9 @@ public:
     void mainloop();
     void get_info(QString& dns, QString& ip, QString& ip6);
     void get_cipher_info(QString& cstp, QString& dtls);
-    SOCKET get_cmd_fd();
+    SOCKET get_cmd_fd() const;
     void reset_vpn();
-    bool get_minimize();
+    bool get_minimize() const;
 
     QString last_err;
     MainWindow* m;

@@ -19,13 +19,13 @@
 
 #include "MyCertMsgBox.h"
 
-MyCertMsgBox::MyCertMsgBox(QWidget* w, QString t1, QString t2, QString oktxt, QString details)
+MyCertMsgBox::MyCertMsgBox(QWidget* w, QString t1, QString t2, QString oktxt, QString details) :
+    w(w),
+    t1(t1),
+    t2(t2),
+    oktxt(oktxt),
+    details(details)
 {
-    this->w = w;
-    this->t1 = t1;
-    this->t2 = t2;
-    this->oktxt = oktxt;
-    this->details = details;
     mutex.lock();
     this->moveToThread(QApplication::instance()->thread());
 }
@@ -46,7 +46,6 @@ bool MyCertMsgBox::event(QEvent* ev)
     res = false;
     if (ev->type() == QEvent::User) {
         QMessageBox* msgBox = new QMessageBox(w);
-        int ret;
 
         msgBox->setText(t1);
         msgBox->setInformativeText(t2);
@@ -55,11 +54,11 @@ bool MyCertMsgBox::event(QEvent* ev)
         msgBox->setButtonText(QMessageBox::Ok, oktxt);
         msgBox->setDetailedText(details);
 
-        ret = msgBox->exec();
-        if (ret == QMessageBox::Cancel)
+        if (msgBox->exec() == QMessageBox::Cancel) {
             res = false;
-        else
+        } else {
             res = true;
+        }
 
         delete msgBox;
         mutex.unlock();

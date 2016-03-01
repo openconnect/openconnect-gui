@@ -28,12 +28,14 @@ class LogDialog;
 
 class LogDialog : public QDialog {
     Q_OBJECT
-public : LogDialog(QStringList items,
-                   QWidget* parent = 0);
+public:
+    LogDialog(QStringList items, QWidget* parent = 0);
     ~LogDialog();
 
-private slots:
+public slots:
     void append(QString item);
+
+private slots:
     void reject();
 
     void on_pushButtonClear_clicked();

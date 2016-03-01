@@ -62,7 +62,7 @@ extern "C" {
 
 #include <QString>
 
-inline bool is_url(QString& str)
+inline bool is_url(const QString& str)
 {
     if (str.startsWith("system:") || str.startsWith("pkcs11:") || str.startsWith("system:")) {
         return true;
