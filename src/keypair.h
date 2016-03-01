@@ -29,14 +29,15 @@ public:
     ~KeyPair();
 
     /* functions return zero on success */
-    int import_pfx(QString File);
-    int import_cert(QString File);
-    int import_key(QString File);
+    int import_pfx(const QString& File);
+    int import_cert(const QString& File);
+    int import_key(const QString& File);
     void set_window(QWidget* w);
 
     int cert_export(QByteArray& data);
     int key_export(QByteArray& data);
-    bool is_complete();
+
+    const bool is_complete() const;
 
     QString last_err;
 

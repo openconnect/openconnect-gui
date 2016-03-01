@@ -22,23 +22,26 @@
 #include "config.h"
 #include "dialog/mainwindow.h"
 #include "dialog/MyInputDialog.h"
-#include <QApplication>
-#include <QCoreApplication>
-#include <QMessageBox>
 
 extern "C" {
 #include <gnutls/pkcs11.h>
 #include <openconnect.h>
 }
+
+#include <QApplication>
+#if !defined(_WIN32) && !defined(PROJ_GNUTLS_DEBUG)
+#include <QMessageBox>
+#endif
+
 #include <csignal>
 #include <cstdio>
 
 #ifdef PROJ_GNUTLS_DEBUG
-static QStringList* logger = NULL;
+static QStringList* logger = nullptr;
 
 static void log_func(int level, const char* str)
 {
-    if (logger != NULL) {
+    if (logger != nullptr) {
         QString s = QLatin1String(str);
         logger->append(s.trimmed());
     }
@@ -49,27 +52,32 @@ int pin_callback(void* userdata, int attempt, const char* token_url,
                  const char* token_label, unsigned flags, char* pin,
                  size_t pin_max)
 {
-    MainWindow* w = (MainWindow*)userdata;
-    QString text, outtext, type = "user";
-    bool ok;
-
-    if (flags & GNUTLS_PIN_SO)
+    QString type = QObject::tr("user");
+    if (flags & GNUTLS_PIN_SO) {
         type = QObject::tr("security officer");
+    }
 
-    outtext = QObject::tr("Please enter the ") + type + QObject::tr(" PIN for ") + QLatin1String(token_label) + ".";
-    if (flags & GNUTLS_PKCS11_PIN_FINAL_TRY)
+    QString outtext =
+            QObject::tr("Please enter the ") +
+            type +
+            QObject::tr(" PIN for ") +
+            QLatin1String(token_label) + ".";
+    if (flags & GNUTLS_PKCS11_PIN_FINAL_TRY) {
         outtext += QObject::tr(" This is the FINAL try!");
-
-    if (flags & GNUTLS_PKCS11_PIN_COUNT_LOW)
+    }
+    if (flags & GNUTLS_PKCS11_PIN_COUNT_LOW) {
         outtext += QObject::tr(" Only few tries before token lock!");
+    }
 
-    MyInputDialog dialog(w, QLatin1String(token_url), outtext,
-                         QLineEdit::Password);
+    MainWindow* w = (MainWindow*)userdata;
+    MyInputDialog dialog(w, QLatin1String(token_url), outtext, QLineEdit::Password);
     dialog.show();
-    ok = dialog.result(text);
 
-    if (!ok)
+    QString text;
+    bool ok = dialog.result(text);
+    if (ok == false) {
         return -1;
+    }
 
     snprintf(pin, pin_max, "%s", text.toLatin1().data());
     return 0;
@@ -77,39 +85,37 @@ int pin_callback(void* userdata, int attempt, const char* token_url,
 
 int main(int argc, char* argv[])
 {
-    int ret;
-    QApplication a(argc, argv);
-    a.setQuitOnLastWindowClosed(false);
+    QApplication app(argc, argv);
+    app.setQuitOnLastWindowClosed(false);
 
-    a.setApplicationName(appDescription);
-    a.setApplicationDisplayName(appDescriptionLong);
-    a.setApplicationVersion(appVersion);
-    a.setOrganizationName(appOrganizationName);
-    a.setOrganizationDomain(appOrganizationDomain);
-
-    QVariant v;
-    MainWindow w;
-    QMessageBox msgBox;
+    app.setApplicationName(appDescription);
+    app.setApplicationDisplayName(appDescriptionLong);
+    app.setApplicationVersion(appVersion);
+    app.setOrganizationName(appOrganizationName);
+    app.setOrganizationDomain(appOrganizationDomain);
 
     gnutls_global_init();
 #ifndef _WIN32
     signal(SIGPIPE, SIG_IGN);
 #endif
     openconnect_init_ssl();
-
 #ifdef ENABLE_PKCS11
     gnutls_pkcs11_set_pin_function(pin_callback, &w);
 #endif
 
+    MainWindow mainWindow;
     QSettings settings;
-    w.set_settings(&settings);
-    w.show();
+
+    mainWindow.set_settings(&settings);
+    mainWindow.show();
 
 #if !defined(_WIN32) && !defined(PROJ_GNUTLS_DEBUG)
     if (getuid() != 0) {
+        QMessageBox msgBox;
+
         msgBox.setText(QObject::tr("This program requires root privileges to fully function."));
         msgBox.setInformativeText(QObject::tr("VPN connection establishment would fail."));
-        ret = msgBox.exec();
+        msgBox.exec();
     }
 #endif
 
@@ -120,7 +126,5 @@ int main(int argc, char* argv[])
     log_func(1, "started logging");
 #endif
 
-    ret = a.exec();
-
-    return ret;
+    return app.exec();
 }

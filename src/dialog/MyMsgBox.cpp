@@ -19,12 +19,13 @@
 
 #include "MyMsgBox.h"
 
-MyMsgBox::MyMsgBox(QWidget* w, QString t1, QString t2, QString oktxt)
+MyMsgBox::MyMsgBox(QWidget* w, QString t1, QString t2, QString oktxt) :
+    w(w),
+    t1(t1),
+    t2(t2),
+    oktxt(oktxt)
+
 {
-    this->w = w;
-    this->t1 = t1;
-    this->t2 = t2;
-    this->oktxt = oktxt;
     mutex.lock();
     this->moveToThread(QApplication::instance()->thread());
 }
@@ -45,19 +46,17 @@ bool MyMsgBox::event(QEvent* ev)
     res = false;
     if (ev->type() == QEvent::User) {
         QMessageBox* msgBox = new QMessageBox(w);
-        int ret;
-
         msgBox->setText(t1);
         msgBox->setInformativeText(t2);
         msgBox->setStandardButtons(QMessageBox::Cancel | QMessageBox::Ok);
         msgBox->setDefaultButton(QMessageBox::Cancel);
         msgBox->setButtonText(QMessageBox::Ok, oktxt);
 
-        ret = msgBox->exec();
-        if (ret == QMessageBox::Cancel)
+        if (msgBox->exec() == QMessageBox::Cancel) {
             res = false;
-        else
+        } else {
             res = true;
+        }
 
         delete msgBox;
         mutex.unlock();

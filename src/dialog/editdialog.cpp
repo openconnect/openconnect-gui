@@ -128,7 +128,7 @@ EditDialog::EditDialog(QString server, QSettings* settings, QWidget* parent)
     if (ret < 0) {
         QMessageBox::information(this,
                                  qApp->applicationName(),
-                                 ss->last_err.isEmpty() ? tr("Some server information failed to load") : ss->last_err);
+                                 ss->m_last_err.isEmpty() ? tr("Some server information failed to load") : ss->m_last_err);
     }
 
     this->ss->set_window(this);
@@ -189,8 +189,8 @@ void EditDialog::on_buttonBox_accepted()
     if (ui->caCertEdit->text().isEmpty() == false) {
         if (ss->set_ca_cert(ui->caCertEdit->text()) != 0) {
             mbox.setText(tr("Cannot import CA certificate."));
-            if (ss->last_err.isEmpty() == false)
-                mbox.setInformativeText(ss->last_err);
+            if (ss->m_last_err.isEmpty() == false)
+                mbox.setInformativeText(ss->m_last_err);
             mbox.exec();
             return;
         }
@@ -202,8 +202,8 @@ void EditDialog::on_buttonBox_accepted()
     if (ui->userKeyEdit->text().isEmpty() == false) {
         if (ss->set_client_key(ui->userKeyEdit->text()) != 0) {
             mbox.setText(tr("Cannot import user key."));
-            if (ss->last_err.isEmpty() == false)
-                mbox.setInformativeText(ss->last_err);
+            if (ss->m_last_err.isEmpty() == false)
+                mbox.setInformativeText(ss->m_last_err);
             mbox.exec();
             return;
         }
@@ -213,8 +213,8 @@ void EditDialog::on_buttonBox_accepted()
         if (ss->set_client_cert(ui->userCertEdit->text()) != 0) {
 
             mbox.setText(tr("Cannot import user certificate."));
-            if (ss->last_err.isEmpty() == false)
-                mbox.setInformativeText(ss->last_err);
+            if (ss->m_last_err.isEmpty() == false)
+                mbox.setInformativeText(ss->m_last_err);
             mbox.exec();
             return;
         }

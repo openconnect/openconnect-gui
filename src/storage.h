@@ -25,32 +25,39 @@
 class QSettings;
 
 QStringList get_server_list(QSettings* settings);
-void remove_server(QSettings* settings, QString server);
+void remove_server(QSettings* settings, const QString& server);
 
 class StoredServer {
 public:
-    explicit StoredServer(QSettings* settings);
+    explicit StoredServer(QSettings* m_settings);
     ~StoredServer();
 
     int load(QString& name);
+    int save();
 
-    QString& get_username(void);
-    QString& get_password(void);
-    QString& get_groupname(void);
-    QString& get_servername(void);
-    QString& get_label(void);
+    const QString& get_username() const;
+    void set_username(const QString& username);
 
-    void set_servername(QString name);
-    void set_label(QString name);
-    void set_username(QString username);
-    void set_password(QString p);
-    void set_groupname(QString& groupname);
+    const QString& get_password() const;
+    void set_password(const QString& password);
+
+    const QString& get_groupname() const;
+    void set_groupname(const QString& groupname);
+
+    const QString& get_servername() const;
+    void set_servername(const QString& servername);
+
+    const QString& get_label() const;
+    void set_label(const QString& label);
+
+    const bool get_disable_udp() const;
     void set_disable_udp(bool v);
 
     QString get_cert_file();
     QString get_key_file();
-    QString get_key_url();
+    QString get_key_url() const;
     QString get_ca_cert_file();
+
     void clear_cert();
     void clear_key();
     void clear_ca();
@@ -59,51 +66,56 @@ public:
     void clear_server_hash();
 
     QString get_client_cert_hash();
+    int set_client_cert(const QString& filename);
 
     QString get_ca_cert_hash();
+    int set_ca_cert(const QString& filename);
+
+    const bool get_batch_mode() const;
+    void set_batch_mode(const bool mode);
+
+    const bool get_minimize() const;
+    void set_minimize(const bool t);
+
+    const bool get_proxy() const;
+    void set_proxy(const bool t);
+
+    QString get_token_str();
+    void set_token_str(const QString& str);
+
+    int get_token_type();
+    void set_token_type(const int type);
+
+    unsigned get_server_hash(QByteArray& hash) const;
+    void get_server_hash(QString& hash) const;
+    void set_server_hash(const unsigned algo, const QByteArray& hash);
+
+    const bool client_is_complete() const;
 
     void set_window(QWidget* w);
 
-    int set_ca_cert(QString filename);
-    int set_client_cert(QString filename);
-    int set_client_key(QString filename);
-    void set_batch_mode(bool mode);
-    bool get_batch_mode();
+    int set_client_key(const QString& filename);
 
-    bool get_minimize();
-    bool get_proxy();
-    bool client_is_complete();
-    void set_minimize(bool t);
-    void set_proxy(bool t);
-    QString get_token_str();
-    void set_token_str(QString str);
-    int get_token_type();
-    bool get_disable_udp();
-    void set_token_type(int type);
-    void set_server_hash(unsigned algo, QByteArray& hash);
-    unsigned get_server_hash(QByteArray& hash);
-    void get_server_hash(QString& hash);
-    int save();
-
-    QString last_err;
+    QString m_last_err;
 
 private:
-    bool batch_mode;
-    bool minimize_on_connect;
-    bool proxy;
-    bool disable_udp;
-    QString username;
-    QString password;
-    QString groupname;
-    QString servername;
-    QString token_str;
-    QString label;
-    int token_type;
-    QByteArray server_hash;
-    unsigned server_hash_algo;
-    Cert ca_cert;
-    KeyPair client;
-    QSettings* settings;
+    bool m_batch_mode;
+    bool m_minimize_on_connect;
+    bool m_proxy;
+    bool m_disable_udp;
+    QString m_username;
+    QString m_password;
+    QString m_groupname;
+    QString m_servername;
+    QString m_token_string;
+    QString m_label;
+    int m_token_type;
+    QByteArray m_server_hash;
+    unsigned m_server_hash_algo;
+    Cert m_ca_cert;
+    KeyPair m_client;
+
+    QSettings* m_settings;
 };
 
 #endif // STORAGE_H

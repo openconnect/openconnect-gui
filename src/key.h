@@ -29,23 +29,24 @@ extern "C" {
 
 class Key {
 public:
+    Key();
+    ~Key();
+
     /* functions return zero on success */
-    int import_file(QString& File);
-    int import_pem(QByteArray& data);
-    void set(gnutls_x509_privkey_t privkey);
+    int import_file(const QString& File);
+    int import_pem(const QByteArray& data);
+    void set(const gnutls_x509_privkey_t privkey);
 
     void set_window(QWidget* w);
 
     int data_export(QByteArray& data);
     int tmpfile_export(QString& File);
 
-    bool is_ok();
-    void get_url(QString& url);
+    const bool is_ok() const;
+    void get_url(QString& url) const;
 
     void clear();
 
-    Key();
-    ~Key();
     QString last_err;
 
 private:

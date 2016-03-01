@@ -27,19 +27,20 @@ extern "C" {
 
 class Cert {
 public:
+    Cert();
+    ~Cert();
+
     /* functions return zero on success */
-    int import_file(QString& File);
-    int import_pem(QByteArray& data);
+    int import_file(const QString& File);
+    int import_pem(const QByteArray& data);
     void set(gnutls_x509_crt_t crt);
     int data_export(QByteArray& data);
     int tmpfile_export(QString& File);
-    QString sha1_hash(void);
+    QString sha1_hash();
 
-    bool is_ok();
+    const bool is_ok() const;
     void clear();
 
-    Cert();
-    ~Cert();
     QString last_err;
 
 private:
