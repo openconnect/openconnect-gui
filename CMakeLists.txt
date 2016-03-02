@@ -22,7 +22,10 @@ set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 add_compile_options("-Wall")
+#add_compile_options("-Wextra")
 add_compile_options("-pedantic")
+#add_compile_options("-Weffc++")
+#add_compile_options("-Werror")
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
