@@ -3,10 +3,12 @@ text-editor.png: CC0: http://openclipart.org/detail/35197/tango-accesories-text-
 network-wired.png: CC0: http://openclipart.org/detail/34885/tango-network-wired-by-warszawianka
 edit-find.png: CC0: http://openclipart.org/detail/32407/tango-edit-find-by-warszawianka
 process-stop.png: CC0: http://openclipart.org/detail/34267/tango-process-stop-by-warszawianka
-traffic_light_green_dan__01.png: CC0: https://openclipart.org/detail/118831/traffic-light-green-dan--01-by-anonymous
-traffic_light_red_dan_ge_01.png: CC0: https://openclipart.org/detail/118825/traffic-light-red-dan-ge-01-by-anonymous
-traffic_light_yellow_dan_01.png: CC0: https://openclipart.org/detail/118819/traffic-light-yellow-dan-01-by-anonymous
-traffic_light_off.png: CC0: https://openclipart.org/detail/159547/traffic-lights-turned-off-by-gr8dan
 logo*.ico: CC0: https://openclipart.org/detail/197887/mono_lock-by-dannya
 network-disconnected.png: CC): https://openclipart.org/detail/198073/mono%20network%20disconnected
 network-connected.png: CC): https://openclipart.org/detail/198072/mono%20network%20connected
+
+- resized & converted & re-colored:
+traffic_light_green: https://openclipart.org/detail/204662/digital-encryption-icon
+traffic_light_red.png: https://openclipart.org/detail/204439/encryption-icon
+traffic_light_yellow.png: https://openclipart.org/detail/204439/encryption-icon
+traffic_light_off.png: https://openclipart.org/detail/204439/encryption-icon
