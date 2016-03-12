@@ -17,8 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef GTDB_H
-#define GTDB_H
+#pragma once
 
 class StoredServer;
 extern "C" {
@@ -36,4 +35,3 @@ public:
     gnutls_tdb_t tdb;
 };
 
-#endif // GTDB_H

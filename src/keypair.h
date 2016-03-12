@@ -17,8 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef KEYPAIR_H
-#define KEYPAIR_H
+#pragma once
 
 #include "cert.h"
 #include "key.h"
@@ -48,4 +47,3 @@ private:
     QWidget* w;
 };
 
-#endif // KEYPAIR_H

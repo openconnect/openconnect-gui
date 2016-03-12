@@ -17,8 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef COMMON_H
-#define COMMON_H
+#pragma once
 
 /* undef on normal builds */
 #undef PROJ_GNUTLS_DEBUG
@@ -68,4 +67,3 @@ inline bool is_url(const QString& str)
     return false;
 }
 
-#endif // COMMON_H

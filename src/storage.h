@@ -17,8 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef STORAGE_H
-#define STORAGE_H
+#pragma once
 
 #include "keypair.h"
 
@@ -118,4 +117,3 @@ private:
     QSettings* m_settings;
 };
 
-#endif // STORAGE_H

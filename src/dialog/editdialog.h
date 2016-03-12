@@ -17,8 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef EDITDIALOG_H
-#define EDITDIALOG_H
+#pragma once
 
 #include <QDialog>
 
@@ -62,4 +61,3 @@ private:
     StoredServer* ss;
 };
 
-#endif // EDITDIALOG_H

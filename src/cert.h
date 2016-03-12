@@ -17,8 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef CERT_H
-#define CERT_H
+#pragma once
 
 #include <QTemporaryFile>
 extern "C" {
@@ -49,4 +48,3 @@ private:
     bool imported;
 };
 
-#endif // CERT_H

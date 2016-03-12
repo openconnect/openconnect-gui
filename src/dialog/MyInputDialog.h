@@ -17,8 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef MYINPUTDIALOG_H
-#define MYINPUTDIALOG_H
+#pragma once
 
 #include <QApplication>
 #include <QInputDialog>
@@ -49,4 +48,3 @@ private:
     QLineEdit::EchoMode type;
 };
 
-#endif // MYINPUTDIALOG_H
