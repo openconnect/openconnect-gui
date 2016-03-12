@@ -30,19 +30,34 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTORCC ON)
 
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/CMake/Modules/")
+
 find_package(Qt5Core 5.5 REQUIRED)
 find_package(Qt5Gui 5.5 REQUIRED)
 find_package(Qt5Widgets 5.5 REQUIRED)
 find_package(Qt5Network 5.5 REQUIRED)
 
 # paths to 3rd party libraries
-include_directories(SYSTEM ${CMAKE_SOURCE_DIR}/include)
-link_directories(SYSTEM ${CMAKE_SOURCE_DIR}/lib)
+if(WIN32 AND MINGW)
+	include_directories(SYSTEM ${CMAKE_SOURCE_DIR}/include)
+	link_directories(SYSTEM ${CMAKE_SOURCE_DIR}/lib)
+else()
+	find_package(GnuTLS)
+	include_directories(SYSTEM ${GNUTLS_INCLUDE_DIR})
+
+	find_package(OpenConnect REQUIRED)
+	link_directories(${OPENCONNECT_LIBRARY_DIRS})
+	include_directories(SYSTEM ${OPENCONNECT_INCLUDE_DIRS})
+endif()
 
 add_subdirectory(src)
-add_subdirectory(nsis)
+if(WIN32 AND MINGW)
+	add_subdirectory(nsis)
+endif()
 
-set(CPACK_GENERATOR "NSIS")
+if(WIN32 AND MINGW)
+	set(CPACK_GENERATOR "NSIS")
+endif()
 
 include(InstallRequiredSystemLibraries)
 
