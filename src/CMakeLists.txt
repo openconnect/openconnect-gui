@@ -131,17 +131,23 @@ endif()
 # install executable
 install(TARGETS ${PROJECT_NAME}
 	RUNTIME DESTINATION bin COMPONENT App
-	BUNDLE DESTINATION bin COMPONENT App
+	BUNDLE DESTINATION ./ COMPONENT App
 )
 
+# fixup the bundle
+#get_target_property(QT_LIBRARY_DIR Qt5::Core LOCATION)
+#get_filename_component(QT_LIBRARY_DIR ${QT_LIBRARY_DIR} PATH)
+#get_filename_component(QT_LIBRARY_DIR "${QT_LIBRARY_DIR}/.." ABSOLUTE)
 if(WIN32 AND MINGW)
-	# fixup the bundle
 	set(APPS "\${CMAKE_INSTALL_PREFIX}/bin/${PROJECT_NAME}.exe")
 	list(APPEND libSearchDirs ${CMAKE_SOURCE_DIR}/nsis)
-	set(additionalLib ${QT_LIBRARY_DIR})
-	install(CODE "
-	    include(BundleUtilities)
-	    fixup_bundle(\"${APPS}\" \"${additionalLib}\" \"${libSearchDirs}\")
-	    " COMPONENT App
-	)
+else()
+	set(APPS "\${CMAKE_INSTALL_PREFIX}/${PROJECT_NAME}.app")
+	list(APPEND libSearchDirs "")
 endif()
+	set(additionalLib ${QT_LIBRARY_DIR})
+install(CODE "
+    include(BundleUtilities)
+    fixup_bundle(\"${APPS}\" \"${additionalLib}\" \"${libSearchDirs}\")
+    " COMPONENT App
+)
