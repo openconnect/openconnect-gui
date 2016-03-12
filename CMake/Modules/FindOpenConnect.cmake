@@ -23,7 +23,7 @@ endif(OPENCONNECT_INCLUDE_DIRS)
 if(NOT WIN32)
 	# use pkg-config to get the directories and then use these values
 	# in the FIND_PATH() and FIND_LIBRARY() calls
-	find_package(PkgConfig)
+	find_package(PkgConfig REQUIRED)
 	pkg_search_module(OPENCONNECT openconnect)
 	if(OPENCONNECT_FOUND)
 		find_program(OPENCONNECT_EXECUTABLE
