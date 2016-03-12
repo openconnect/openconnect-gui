@@ -18,6 +18,14 @@ else()
     set(UAC_FLAG "//")
 endif()
 
+if(WIN32 AND MINGW)
+	set(DEFAULT_VPNC_SCRIPT "vpnc-script.js")
+else(APPLE)
+	set(DEFAULT_VPNC_SCRIPT "../Resources/vpnc-script")
+else()
+	set(DEFAULT_VPNC_SCRIPT "/etc/vpnc/vpnc-script")
+endif()
+
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 

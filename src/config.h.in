@@ -28,3 +28,5 @@ extern const char* const appOrganizationName;
 extern const char* const appOrganizationDomain;
 
 #cmakedefine PROJ_GNUTLS_DEBUG
+#cmakedefine DEFAULT_VPNC_SCRIPT "@DEFAULT_VPNC_SCRIPT@"
+

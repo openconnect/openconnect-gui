@@ -5,34 +5,54 @@
 #  OPENCONNECT_INCLUDE_DIRS - the OpenConnect include directories
 #  OPENCONNECT_LIBRARIES - the libraries needed to use OpenConnect
 #  OPENCONNECT_CFLAGS - Compiler switches required for using OpenConnect
+#  OPENCONNECT_VPNC_SCRIPT - location of 'vpnc-script' of OpenConnect
 #  OPENCONNECT_VERSION - version number of OpenConnect
 
 # Copyright (c) 2011, Ilia Kats <ilia-kats@gmx.net>
+# Copyright (c) 2016, Lubomir Carik <lubomir.carik@gmail.com>
 #
 # Redistribution and use is allowed according to the terms of the BSD license.
 # For details see the accompanying COPYING-CMAKE-SCRIPTS file.
 
 
-IF (OPENCONNECT_INCLUDE_DIRS)
-    # in cache already
-    SET(OpenConnect_FIND_QUIETLY TRUE)
-ENDIF (OPENCONNECT_INCLUDE_DIRS)
+if(OPENCONNECT_INCLUDE_DIRS)
+	# in cache already
+	set(OpenConnect_FIND_QUIETLY TRUE)
+endif(OPENCONNECT_INCLUDE_DIRS)
 
-IF (NOT WIN32)
-    # use pkg-config to get the directories and then use these values
-    # in the FIND_PATH() and FIND_LIBRARY() calls
-    find_package(PkgConfig)
-    pkg_search_module(OPENCONNECT openconnect)
-ENDIF (NOT WIN32)
+if(NOT WIN32)
+	# use pkg-config to get the directories and then use these values
+	# in the FIND_PATH() and FIND_LIBRARY() calls
+	find_package(PkgConfig)
+	pkg_search_module(OPENCONNECT openconnect)
+	if(OPENCONNECT_FOUND)
+		find_program(OPENCONNECT_EXECUTABLE
+			NAMES openconnect
+		)
+		if(OPENCONNECT_EXECUTABLE)
+			execute_process(
+				COMMAND ${OPENCONNECT_EXECUTABLE} -help
+				OUTPUT_VARIABLE output
+				ERROR_VARIABLE output
+			)
+			string(REGEX MATCH "default: \".*\"" vpnc-script-location "${output}")
+			string(REPLACE "default: " "" vpnc-script-location ${vpnc-script-location})
+			string(REPLACE "\"" "" OPENCONNECT_VPNC_SCRIPT ${vpnc-script-location})
+		endif()
+	endif()
+endif(NOT WIN32)
 
-IF (OPENCONNECT_FOUND)
-    IF (NOT OpenConnect_FIND_QUIETLY)
-        MESSAGE(STATUS "Found OpenConnect ${OPENCONNECT_VERSION}: ${OPENCONNECT_LIBRARIES}")
-    ENDIF (NOT OpenConnect_FIND_QUIETLY)
-ELSE (OPENCONNECT_FOUND)
-    IF (OpenConnect_FIND_REQUIRED)
-        MESSAGE(FATAL_ERROR "Could NOT find OpenConnect, check FindPkgConfig output above!")
-    ENDIF (OpenConnect_FIND_REQUIRED)
-ENDIF (OPENCONNECT_FOUND)
+if(OPENCONNECT_FOUND)
+	if(NOT OpenConnect_FIND_QUIETLY)
+		message(STATUS "Found OpenConnect ${OPENCONNECT_VERSION}: ${OPENCONNECT_LIBRARIES}")
+		if(OPENCONNECT_VPNC_SCRIPT)
+			message(STATUS "Found vpnc-script ${OPENCONNECT_VPNC_SCRIPT}")
+		endif()
+	endif()
+else()
+	if(OpenConnect_FIND_REQUIRED)
+		message(FATAL_ERROR "Could NOT find OpenConnect, check FindPkgConfig output above!")
+	endif()
+endif()
 
-MARK_AS_ADVANCED(OPENCONNECT_INCLUDE_DIRS OPENCONNECT_LIBRARIES OPENCONNECT_STATIC_LIBRARIES)
+mark_as_advanced(OPENCONNECT_INCLUDE_DIRS OPENCONNECT_LIBRARIES OPENCONNECT_STATIC_LIBRARIES)
