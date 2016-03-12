@@ -71,9 +71,12 @@ endif()
 if(APPLE)
     list(APPEND ${PROJECT_NAME}_RESOURCES
         images/mono_lock.icns
+		${OPENCONNECT_VPNC_SCRIPT}
     )
-	set_source_files_properties(images/mono_lock.icns PROPERTIES
-		MACOSX_PACKAGE_LOCATION Resources
+	set_source_files_properties(
+		images/mono_lock.icns
+		${OPENCONNECT_VPNC_SCRIPT}
+		PROPERTIES MACOSX_PACKAGE_LOCATION Resources
 	)
 endif()
 

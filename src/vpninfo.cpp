@@ -18,6 +18,7 @@
  */
 
 #include "vpninfo.h"
+#include "config.h"
 #include "gtdb.h"
 #include "dialog/MyCertMsgBox.h"
 #include "dialog/MyInputDialog.h"
@@ -442,7 +443,11 @@ int VpnInfo::connect()
         return ret;
     }
 
-    ret = openconnect_setup_tun_device(vpninfo, DEFAULT_VPNC_SCRIPT, NULL);
+	QByteArray vpncScriptFullPath;
+	vpncScriptFullPath.append(QCoreApplication::applicationDirPath());
+	vpncScriptFullPath.append(QDir::separator());
+	vpncScriptFullPath.append(DEFAULT_VPNC_SCRIPT);
+    ret = openconnect_setup_tun_device(vpninfo, vpncScriptFullPath.constData(), NULL);
     if (ret != 0) {
         this->last_err = QObject::tr("Error setting up the TUN device");
         return ret;
