@@ -17,8 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef VPNINFO_H
-#define VPNINFO_H
+#pragma once
 
 #include <QString>
 #ifdef _WIN32
@@ -56,4 +55,3 @@ private:
     SOCKET cmd_fd;
 };
 
-#endif // VPNINFO_H

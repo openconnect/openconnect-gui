@@ -17,8 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef LOGDIALOG_H
-#define LOGDIALOG_H
+#pragma once
 
 #include <QDialog>
 
@@ -55,4 +54,3 @@ private:
     Ui::LogDialog* ui;
 };
 
-#endif // LOGDIALOG_H

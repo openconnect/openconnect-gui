@@ -17,8 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef CRYPTDATA_H
-#define CRYPTDATA_H
+#pragma once
 
 #include "common.h"
 #include <QByteArray>
@@ -32,4 +31,3 @@ public:
 private:
 };
 
-#endif // CRYPTDATA_H

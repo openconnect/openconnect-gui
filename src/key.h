@@ -17,8 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef KEY_H
-#define KEY_H
+#pragma once
 
 #include <QByteArray>
 #include <QString>
@@ -57,4 +56,3 @@ private:
     bool imported;
 };
 
-#endif // KEY_H
