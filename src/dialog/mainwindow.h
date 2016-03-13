@@ -30,7 +30,6 @@ extern "C" {
 #include <QMainWindow>
 #include <QMenu>
 #include <QMutex>
-#include <QSettings>
 #include <QSystemTrayIcon>
 #include <QTimer>
 
@@ -59,7 +58,6 @@ public:
 
     void updateProgressBar(const QString& str);
     void updateProgressBar(QString str, bool show);
-    void set_settings(QSettings* s);
     void updateStats(const struct oc_stats* stats, QString dtls);
     void reload_settings();
 
@@ -118,7 +116,6 @@ private:
     SOCKET cmd_fd;
     bool minimize_on_connect;
     Ui::MainWindow* ui;
-    QSettings* settings;
     QMutex progress_mutex;
     QStringList log;
     QTimer* timer;

@@ -35,6 +35,7 @@ extern "C" {
 #include <QLineEdit>
 #include <QMessageBox>
 #include <QUrl>
+#include <QSettings>
 #include <QtConcurrent/QtConcurrentRun>
 #include <QtNetwork/QNetworkProxy>
 #include <QtNetwork/QNetworkProxyFactory>
@@ -105,6 +106,8 @@ MainWindow::MainWindow(QWidget* parent)
     }
 
     readSettings();
+
+	reload_settings();
 }
 
 static void term_thread(MainWindow* m, SOCKET* fd)
@@ -212,22 +215,20 @@ void MainWindow::updateStats(const struct oc_stats* stats, QString dtls)
                            dtls);
 }
 
+#define PREFIX "server:"
 void MainWindow::reload_settings()
 {
-    QStringList servers;
     ui->comboBox->clear();
 
-    servers = get_server_list(this->settings);
-
-    for (int i = 0; i < servers.size(); i++) {
-        ui->comboBox->addItem(servers.at(i));
-    }
-}
-
-void MainWindow::set_settings(QSettings* s)
-{
-    this->settings = s; // LCA: drop settings
-    reload_settings();
+	QSettings settings;
+	for (const auto& key : settings.allKeys()) {
+		if (key.startsWith(PREFIX) && key.endsWith("/server")) {
+			QString str{key};
+			str.remove(0, sizeof(PREFIX) - 1); /* remove prefix */
+			str.remove(str.size() - 7, 7); /* remove /server suffix */
+			ui->comboBox->addItem(str);
+		}
+	}
 }
 
 void MainWindow::writeProgressBar(const QString& str)
@@ -445,7 +446,7 @@ void MainWindow::on_disconnectClicked()
 void MainWindow::on_connectClicked()
 {
     VpnInfo* vpninfo = nullptr;
-    StoredServer* ss = new StoredServer(this->settings); // LCA: drop settings
+	StoredServer* ss = new StoredServer();
     QFuture<void> future;
     QString name, str, url;
     QList<QNetworkProxy> proxies;
@@ -531,31 +532,38 @@ fail: // LCA: remote 'fail' label :/
 
 void MainWindow::on_toolButton_clicked()
 {
-    EditDialog dialog(ui->comboBox->currentText(), this->settings); // LCA: drop settings
+	EditDialog dialog(ui->comboBox->currentText());
     dialog.exec();
 
     int idx = ui->comboBox->currentIndex();
     reload_settings();
     if (idx < ui->comboBox->maxVisibleItems() && idx >= 0) {
         ui->comboBox->setCurrentIndex(idx);
-    }
-    else if (ui->comboBox->maxVisibleItems() == 0) {
+	} else if (ui->comboBox->maxVisibleItems() == 0) {
         ui->comboBox->setCurrentIndex(0);
     }
     // LCA: else ???
 }
 
+#define PREFIX "server:"
 void MainWindow::on_toolButton_2_clicked()
 {
-    if (ui->comboBox->currentText().isEmpty() == false) {
+	if (ui->comboBox->currentText().isEmpty() == false) {
         QMessageBox mbox;
         mbox.setText(tr("Are you sure you want to remove '%1' host?").arg(ui->comboBox->currentText()));
         mbox.setStandardButtons(QMessageBox::Cancel | QMessageBox::Ok);
         mbox.setDefaultButton(QMessageBox::Cancel);
         mbox.setButtonText(QMessageBox::Ok, tr("Remove"));
         if (mbox.exec() == QMessageBox::Ok) {
-            remove_server(settings, ui->comboBox->currentText());
-            reload_settings(); // LCA: remove this feature...
+			QSettings settings;
+			QString prefix = PREFIX;
+			for (const auto& key : settings.allKeys()) {
+				if (key.startsWith(prefix + ui->comboBox->currentText())) {
+					settings.remove(key);
+				}
+			}
+
+			reload_settings();
         }
     }
 }

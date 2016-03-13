@@ -114,7 +114,7 @@ void EditDialog::load_win_certs()
 #endif
 }
 
-EditDialog::EditDialog(QString server, QSettings* settings, QWidget* parent)
+EditDialog::EditDialog(QString server, QWidget* parent)
     : QDialog(parent)
     , ui(new Ui::EditDialog)
 {
@@ -122,7 +122,7 @@ EditDialog::EditDialog(QString server, QSettings* settings, QWidget* parent)
     ui->setupUi(this);
     int type, ret;
 
-    this->ss = new StoredServer(settings);
+	this->ss = new StoredServer();
 
     ret = this->ss->load(server);
     if (ret < 0) {
