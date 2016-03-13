@@ -89,10 +89,9 @@ MainWindow::MainWindow(QWidget* parent)
     QNetworkProxyFactory::setUseSystemConfiguration(true);
 
     if (QSystemTrayIcon::isSystemTrayAvailable()) {
-        createActions();
-        createTrayIcon();
+		createTrayIcon();
 
-        connect(m_trayIcon, &QSystemTrayIcon::activated,
+		connect(m_trayIcon, &QSystemTrayIcon::activated,
                 this, &MainWindow::iconActivated);
 
         QIcon icon;
@@ -298,7 +297,7 @@ void MainWindow::changeStatus(int val)
 
         if (this->minimize_on_connect) {
             if (m_trayIcon) {
-                this->hideWindow();
+				hide();
                 m_trayIcon->showMessage(QLatin1String("Connected"), QLatin1String("You were connected to ") + ui->comboBox->currentText(),
                                         QSystemTrayIcon::Information,
                                         10000);
@@ -584,7 +583,7 @@ void MainWindow::closeEvent(QCloseEvent* event)
                                         "choose <b>Quit</b> in the system tray entry."));
             shown = 1;
         }
-        hideWindow();
+		hide();
         event->ignore();
     }
 }
@@ -648,31 +647,6 @@ void MainWindow::request_update_stats()
     }
 }
 
-void MainWindow::toggleWindow()
-{
-    if (m_trayIcon == nullptr) {
-        return;
-    }
-
-    if (this->isHidden()) {
-        setVisible(true);
-    }
-    else {
-        setVisible(false);
-    }
-}
-
-void MainWindow::hideWindow()
-{
-    if (m_trayIcon == nullptr) {
-        return;
-    }
-
-    if (this->isHidden() == false) {
-        setVisible(false);
-    }
-}
-
 void MainWindow::readSettings()
 {
     QSettings settings;
@@ -693,86 +667,38 @@ void MainWindow::writeSettings()
     settings.endGroup();
 }
 
-/****************************************************************************
- **
- ** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
- ** All rights reserved.
- ** Contact: Nokia Corporation (qt-info@nokia.com)
- **
- ** This file is part of the examples of the Qt Toolkit.
- **
- ** $QT_BEGIN_LICENSE:BSD$
- ** You may use this file under the terms of the BSD license as follows:
- **
- ** "Redistribution and use in source and binary forms, with or without
- ** modification, are permitted provided that the following conditions are
- ** met:
- **   * Redistributions of source code must retain the above copyright
- **     notice, this list of conditions and the following disclaimer.
- **   * Redistributions in binary form must reproduce the above copyright
- **     notice, this list of conditions and the following disclaimer in
- **     the documentation and/or other materials provided with the
- **     distribution.
- **   * Neither the name of Nokia Corporation and its Subsidiary(-ies) nor
- **     the names of its contributors may be used to endorse or promote
- **     products derived from this software without specific prior written
- **     permission.
- **
- ** THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
- ** "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
- ** LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
- ** A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
- ** OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- ** SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
- ** LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
- ** DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
- ** THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- ** (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE."
- ** $QT_END_LICENSE$
- **
- ****************************************************************************/
 void MainWindow::createTrayIcon()
 {
     m_trayIconMenu = new QMenu(this);
-    m_trayIconMenu->addAction(m_minimizeAction);
-    m_trayIconMenu->addAction(m_restoreAction);
+	m_trayIconMenu->addAction(ui->actionMinimize);
+	m_trayIconMenu->addAction(ui->actionRestore);
     m_trayIconMenu->addSeparator();
-    m_trayIconMenu->addAction(m_quitAction);
+	m_trayIconMenu->addAction(ui->actionQuit);
 
     m_trayIcon = new QSystemTrayIcon(this);
-    m_trayIcon->setContextMenu(m_trayIconMenu);
+	m_trayIcon->setContextMenu(m_trayIconMenu);
 }
 
 void MainWindow::setVisible(bool visible)
 {
-    m_minimizeAction->setEnabled(visible);
-    m_restoreAction->setEnabled(isMaximized() || !visible);
+	ui->actionMinimize->setEnabled(visible);
+	ui->actionRestore->setEnabled(!visible);
     QMainWindow::setVisible(visible);
+	if (visible) {
+		raise();
+	}
 }
 
 void MainWindow::iconActivated(QSystemTrayIcon::ActivationReason reason)
 {
     switch (reason) {
-    case QSystemTrayIcon::Trigger:
+	case QSystemTrayIcon::Trigger:
     case QSystemTrayIcon::DoubleClick:
-        this->toggleWindow();
+#ifdef Q_OS_WIN
+		setVisible(isHidden());
+#endif
         break;
-    default:;
+	default:
+		break;
     }
-}
-
-void MainWindow::createActions()
-{
-    m_minimizeAction = new QAction(tr("Mi&nimize"), this);
-    connect(m_minimizeAction, &QAction::triggered,
-            this, &MainWindow::hide);
-
-    m_restoreAction = new QAction(tr("&Restore"), this);
-    connect(m_restoreAction, &QAction::triggered,
-            this, &MainWindow::showNormal);
-
-    m_quitAction = new QAction(tr("&Quit"), this);
-    connect(m_quitAction, &QAction::triggered,
-            qApp, &QApplication::quit);
 }
