@@ -62,10 +62,6 @@ public:
     void set_settings(QSettings* s);
     void updateStats(const struct oc_stats* stats, QString dtls);
     void reload_settings();
-    void toggleWindow();
-    void hideWindow();
-    void setVisible(bool visible);
-    void createActions();
 
     void disable_cmd_fd();
 
@@ -78,6 +74,9 @@ public:
                             QString& dtls_cipher);
 
     QStringList* get_log(void);
+
+public slots:
+	void setVisible(bool visible) override;
 
 private slots:
     void iconActivated(QSystemTrayIcon::ActivationReason reason);
@@ -97,7 +96,7 @@ private slots:
     void on_toolButton_2_clicked();
     void on_pushButton_3_clicked();
 
-    void closeEvent(QCloseEvent* bar);
+	void closeEvent(QCloseEvent* bar) override;
 
     void on_about();
     void on_aboutQt();
