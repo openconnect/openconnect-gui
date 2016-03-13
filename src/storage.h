@@ -21,14 +21,9 @@
 
 #include "keypair.h"
 
-class QSettings;
-
-QStringList get_server_list(QSettings* settings);
-void remove_server(QSettings* settings, const QString& server);
-
 class StoredServer {
 public:
-    explicit StoredServer(QSettings* m_settings);
+	StoredServer();
     ~StoredServer();
 
     int load(QString& name);
@@ -113,7 +108,5 @@ private:
     unsigned m_server_hash_algo;
     Cert m_ca_cert;
     KeyPair m_client;
-
-    QSettings* m_settings;
 };
 

@@ -35,9 +35,9 @@ class EditDialog;
 }
 
 class EditDialog : public QDialog {
-    Q_OBJECT public : EditDialog(QString server,
-                                 QSettings* settings,
-                                 QWidget* parent = 0);
+	Q_OBJECT
+public:
+	EditDialog(QString server, QWidget* parent = 0);
     ~EditDialog();
 
 private slots:

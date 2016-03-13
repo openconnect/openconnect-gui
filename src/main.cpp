@@ -104,9 +104,6 @@ int main(int argc, char* argv[])
 #endif
 
     MainWindow mainWindow;
-    QSettings settings;
-
-    mainWindow.set_settings(&settings);
     mainWindow.show();
 
 #if !defined(_WIN32) && !defined(PROJ_GNUTLS_DEBUG)
