@@ -122,7 +122,7 @@ int main(int argc, char* argv[])
 #ifdef PROJ_GNUTLS_DEBUG
     gnutls_global_set_log_function(log_func);
     gnutls_global_set_log_level(3);
-    logger = w.get_log();
+	logger = mainWindow.get_log();
     log_func(1, "started logging");
 #endif
 
