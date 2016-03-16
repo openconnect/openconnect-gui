@@ -48,6 +48,10 @@ find_package(Qt5Gui 5.5 REQUIRED)
 find_package(Qt5Widgets 5.5 REQUIRED)
 find_package(Qt5Network 5.5 REQUIRED)
 
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+
 # paths to 3rd party libraries
 if(WIN32 AND MINGW)
 	include_directories(SYSTEM ${CMAKE_SOURCE_DIR}/include)
