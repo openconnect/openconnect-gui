@@ -43,10 +43,10 @@ set(CMAKE_AUTORCC ON)
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/CMake/Modules/")
 
-find_package(Qt5Core 5.5 REQUIRED)
-find_package(Qt5Gui 5.5 REQUIRED)
-find_package(Qt5Widgets 5.5 REQUIRED)
-find_package(Qt5Network 5.5 REQUIRED)
+find_package(Qt5Core 5.6 REQUIRED)
+find_package(Qt5Gui 5.6 REQUIRED)
+find_package(Qt5Widgets 5.6 REQUIRED)
+find_package(Qt5Network 5.6 REQUIRED)
 
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
