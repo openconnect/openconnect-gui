@@ -1,7 +1,4 @@
 /*
- * Auto-generated source code file for 'openconnect-gui'.
- * See main CMake project file variables if you need to modify the original.
- *
  * Copyright (C) 2014 Red Hat
  * Copyright (C) 2016 by Lubomír Carik <Lubomir.Carik@gmail.com>
  *
@@ -21,11 +18,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "config.h"
+#pragma once
 
-const char* const appDescription = "@PRODUCT_NAME_SHORT@";
-const char* const appDescriptionLong = "@PRODUCT_NAME_LONG@";
-const char* const appVersion = "@PROJECT_VERSION_MAJOR@.@PROJECT_VERSION_MINOR@.@PROJECT_VERSION_PATCH@.@PROJECT_VERSION_TWEAK@";
-const char* const appCopyright = "@PRODUCT_NAME_COPYRIGHT@";
-const char* const appOrganizationName = "@PRODUCT_NAME_COMPANY@";
-const char* const appOrganizationDomain = "@PRODUCT_NAME_COMPANY_DOMAIN@";
+extern const char* const appDescription;
+extern const char* const appDescriptionLong;
+extern const char* const appVersion;
+extern const char* const appCopyright;
+extern const char* const appOrganizationName;
+extern const char* const appOrganizationDomain;

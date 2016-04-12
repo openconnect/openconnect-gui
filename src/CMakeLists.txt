@@ -1,3 +1,9 @@
+if(IS_DIRECTORY ${PROJECT_SOURCE_DIR}/.git)
+    include(scm)
+else()
+    message(FATAL_ERROR "TODO: building from source code snapshot is not supported yet...")
+endif()
+
 set(${PROJECT_NAME}_HDRS
     dialog/mainwindow.h
     dialog/MyMsgBox.h
@@ -41,30 +47,20 @@ set(${PROJECT_NAME}_RESOURCES
 )
 
 configure_file(
-    config.cpp.in
-    ${CMAKE_CURRENT_BINARY_DIR}/config.cpp
-    @ONLY
-)
-configure_file(
     config.h.in
-    ${CMAKE_CURRENT_BINARY_DIR}/config.h
+    config.h
     @ONLY
 )
 list(APPEND ${PROJECT_NAME}_SRCS
-    ${CMAKE_CURRENT_BINARY_DIR}/config.cpp
-    config.cpp.in
-    ${CMAKE_CURRENT_BINARY_DIR}/config.h
+    ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.cpp
+#    ${PROJECT_NAME}.cpp
+    ${PROJECT_NAME}.h
     config.h.in
+    config.h
 )
 
 if(WIN32 AND MINGW)
-    configure_file(
-        ${PROJECT_NAME}.rc.in
-        ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.rc
-        @ONLY
-    )
     list(APPEND ${PROJECT_NAME}_RESOURCES
-        ${PROJECT_NAME}.rc.in
         ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.rc
     )
 endif()

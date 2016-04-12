@@ -20,6 +20,7 @@
 
 #include "common.h"
 #include "config.h"
+#include "openconnect-gui.h"
 #include "dialog/mainwindow.h"
 #include "dialog/MyInputDialog.h"
 
