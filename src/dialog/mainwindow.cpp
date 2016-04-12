@@ -618,12 +618,16 @@ void MainWindow::on_pushButton_3_clicked()
 
 void MainWindow::on_about()
 {
-    QString txt = QLatin1String("<h2>") + QLatin1String(appDescriptionLong) + QLatin1String("</h2>") + tr("Version: ") + QLatin1String("<i>") + QLatin1String(appVersion) + QLatin1String("</i><br><br>");
-    txt += tr("Based on:<br>- libopenconnect: ") + QLatin1String(openconnect_get_version()) + tr("<br>- GnuTLS: ") + QLatin1String(gnutls_check_version(nullptr));
-    txt += tr("<br><br>Copyright 2014 Red Hat Inc.");
-    txt += tr("<br>Openconnect-gui comes with ABSOLUTELY NO WARRANTY. This is free software, "
+    QString txt = QLatin1String("<h2>") + QLatin1String(appDescriptionLong) + QLatin1String("</h2>");
+    txt += tr("Version: ") + QLatin1String("<i>") + QLatin1String(appVersion) + QLatin1String("</i>");
+    txt += tr("<br><br>Based on:");
+    txt += tr("<br>- libopenconnect ") + QLatin1String(openconnect_get_version());
+    txt += tr("<br>- GnuTLS ") + QLatin1String(gnutls_check_version(nullptr));
+    txt += tr("<br>- Qt %1 (%2 bit)").arg(QT_VERSION_STR).arg(QSysInfo::buildCpuArchitecture() == "i386" ? 32 : 64);
+    txt += tr("<br><br>%1<br>").arg(appCopyright);
+    txt += tr("<br><i>%1</i> comes with ABSOLUTELY NO WARRANTY. This is free software, "
               "and you are welcome to redistribute it under the conditions "
-              "of the GNU General Public License version 2.");
+              "of the GNU General Public License version 2.").arg(appDescriptionLong);
 
     QMessageBox::about(this, "", txt);
 }

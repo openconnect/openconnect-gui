@@ -7,7 +7,7 @@ set(PRODUCT_NAME_SHORT "OpenConnect")
 set(PRODUCT_NAME_LONG "OpenConnect VPN client")
 set(PRODUCT_NAME_COMPANY "Red Hat")
 set(PRODUCT_NAME_COMPANY_DOMAIN "redhat.com")
-set(PRODUCT_NAME_COPYRIGHT "Copyright (c) 2015-2016 RedHat")
+set(PRODUCT_NAME_COPYRIGHT "Copyright (C) 2015-2016 Red Hat Inc.")
 
 option(PROJ_GNUTLS_DEBUG "Enable GnuTLS debug mode" OFF)
 if(WIN32 AND MINGW)
