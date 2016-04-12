@@ -43,6 +43,7 @@ find_package(Qt5 5.6 REQUIRED COMPONENTS Core Gui Widgets Network)
 if(IS_DIRECTORY ${PROJECT_SOURCE_DIR}/.git)
 	find_package(Git 2.0 REQUIRED)
 endif()
+include(clang-format)
 
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
