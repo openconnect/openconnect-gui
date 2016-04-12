@@ -18,6 +18,7 @@
  */
 
 #include "mainwindow.h"
+#include "openconnect-gui.h"
 #include "config.h"
 #include "editdialog.h"
 #include "logdialog.h"
