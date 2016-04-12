@@ -47,4 +47,3 @@ private:
     QTemporaryFile tmpfile;
     bool imported;
 };
-

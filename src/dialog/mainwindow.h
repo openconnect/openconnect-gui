@@ -74,7 +74,7 @@ public:
     QStringList* get_log(void);
 
 public slots:
-	void setVisible(bool visible) override;
+    void setVisible(bool visible) override;
 
 private slots:
     void iconActivated(QSystemTrayIcon::ActivationReason reason);
@@ -94,7 +94,7 @@ private slots:
     void on_toolButton_2_clicked();
     void on_pushButton_3_clicked();
 
-	void closeEvent(QCloseEvent* bar) override;
+    void closeEvent(QCloseEvent* bar) override;
 
     void on_about();
     void on_aboutQt();
@@ -134,4 +134,3 @@ private:
     QAction* m_restoreAction;
     QAction* m_quitAction;
 };
-

@@ -26,8 +26,8 @@ StoredServer::~StoredServer(void)
 {
 }
 
-StoredServer::StoredServer() :
-	m_server_hash_algo(0)
+StoredServer::StoredServer()
+    : m_server_hash_algo(0)
 {
     set_window(nullptr);
 }
@@ -131,7 +131,8 @@ void StoredServer::get_server_hash(QString& hash) const
 {
     if (this->m_server_hash_algo == 0) {
         hash = "";
-    } else {
+    }
+    else {
         hash = gnutls_mac_get_name((gnutls_mac_algorithm_t) this->m_server_hash_algo);
         hash += ":";
         hash += this->m_server_hash.toHex();
@@ -141,40 +142,40 @@ void StoredServer::get_server_hash(QString& hash) const
 int StoredServer::load(QString& name)
 {
     this->m_label = name;
-	QSettings settings;
-	settings.beginGroup(PREFIX + name);
+    QSettings settings;
+    settings.beginGroup(PREFIX + name);
 
-	this->m_servername = settings.value("server").toString();
+    this->m_servername = settings.value("server").toString();
     if (this->m_servername.isEmpty() == true) {
         this->m_servername = name;
     }
 
-	this->m_username = settings.value("username").toString();
-	this->m_batch_mode = settings.value("batch").toBool();
-	this->m_proxy = settings.value("proxy").toBool();
-	this->m_disable_udp = settings.value("disable-udp").toBool();
-	this->m_minimize_on_connect = settings.value("minimize-on-connect").toBool();
+    this->m_username = settings.value("username").toString();
+    this->m_batch_mode = settings.value("batch").toBool();
+    this->m_proxy = settings.value("proxy").toBool();
+    this->m_disable_udp = settings.value("disable-udp").toBool();
+    this->m_minimize_on_connect = settings.value("minimize-on-connect").toBool();
 
     bool ret = false;
     int rval = 0;
 
     if (this->m_batch_mode == true) {
-		this->m_groupname = settings.value("groupname").toString();
+        this->m_groupname = settings.value("groupname").toString();
         ret = CryptData::decode(this->m_servername,
-								settings.value("password").toByteArray(),
+                                settings.value("password").toByteArray(),
                                 this->m_password);
         if (ret == false)
             rval = -1;
     }
 
     QByteArray data;
-	data = settings.value("ca-cert").toByteArray();
+    data = settings.value("ca-cert").toByteArray();
     if (data.isEmpty() == false && this->m_ca_cert.import_pem(data) < 0) {
         this->m_last_err = this->m_ca_cert.last_err;
         rval = -1;
     }
 
-	data = settings.value("client-cert").toByteArray();
+    data = settings.value("client-cert").toByteArray();
     if (data.isEmpty() == false && this->m_client.cert.import_pem(data) < 0) {
         this->m_last_err = this->m_client.cert.last_err;
         rval = -1;
@@ -182,70 +183,71 @@ int StoredServer::load(QString& name)
 
     QString str;
     ret = CryptData::decode(this->m_servername,
-							settings.value("client-key").toByteArray(), str);
+                            settings.value("client-key").toByteArray(), str);
     if (ret == false) {
         rval = -1;
     }
 
     if (is_url(str) == true) {
         this->m_client.key.import_file(str);
-    } else {
+    }
+    else {
         data = str.toLatin1();
         this->m_client.key.import_pem(data);
     }
 
-	this->m_server_hash = settings.value("server-hash").toByteArray();
-	this->m_server_hash_algo = settings.value("server-hash-algo").toInt();
+    this->m_server_hash = settings.value("server-hash").toByteArray();
+    this->m_server_hash_algo = settings.value("server-hash-algo").toInt();
 
     ret = CryptData::decode(this->m_servername,
-							settings.value("token-str").toByteArray(),
+                            settings.value("token-str").toByteArray(),
                             this->m_token_string);
     if (ret == false) {
         rval = -1;
     }
 
-	this->m_token_type = settings.value("token-type").toInt();
+    this->m_token_type = settings.value("token-type").toInt();
 
-	settings.endGroup();
+    settings.endGroup();
     return rval;
 }
 
 int StoredServer::save()
 {
-	QSettings settings;
-	settings.beginGroup(PREFIX + this->m_label);
-	settings.setValue("server", this->m_servername);
-	settings.setValue("batch", this->m_batch_mode);
-	settings.setValue("proxy", this->m_proxy);
-	settings.setValue("disable-udp", this->m_disable_udp);
-	settings.setValue("minimize-on-connect", this->m_minimize_on_connect);
-	settings.setValue("username", this->m_username);
+    QSettings settings;
+    settings.beginGroup(PREFIX + this->m_label);
+    settings.setValue("server", this->m_servername);
+    settings.setValue("batch", this->m_batch_mode);
+    settings.setValue("proxy", this->m_proxy);
+    settings.setValue("disable-udp", this->m_disable_udp);
+    settings.setValue("minimize-on-connect", this->m_minimize_on_connect);
+    settings.setValue("username", this->m_username);
 
     if (this->m_batch_mode == true) {
-		settings.setValue("password",
-                           CryptData::encode(this->m_servername, this->m_password));
-		settings.setValue("groupname", this->m_groupname);
+        settings.setValue("password",
+                          CryptData::encode(this->m_servername, this->m_password));
+        settings.setValue("groupname", this->m_groupname);
     }
 
     QByteArray data;
     this->m_ca_cert.data_export(data);
-	settings.setValue("ca-cert", data);
+    settings.setValue("ca-cert", data);
 
     this->m_client.cert_export(data);
-	settings.setValue("client-cert", data);
+    settings.setValue("client-cert", data);
 
     this->m_client.key_export(data);
     QString str = QString::fromLatin1(data);
-	settings.setValue("client-key", CryptData::encode(this->m_servername, str));
+    settings.setValue("client-key", CryptData::encode(this->m_servername, str));
 
-	settings.setValue("server-hash", this->m_server_hash);
-	settings.setValue("server-hash-algo", this->m_server_hash_algo);
+    settings.setValue("server-hash", this->m_server_hash);
+    settings.setValue("server-hash-algo", this->m_server_hash_algo);
 
-	settings.setValue("token-str",
-                       CryptData::encode(this->m_servername, this->m_token_string));
-	settings.setValue("token-type", this->m_token_type);
+    settings.setValue("token-str",
+                      CryptData::encode(this->m_servername, this->m_token_string));
+    settings.setValue("token-type", this->m_token_type);
 
-	settings.endGroup();
+    settings.endGroup();
     return 0;
 }
 

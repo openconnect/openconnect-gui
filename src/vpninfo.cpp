@@ -257,7 +257,7 @@ static int validate_peer_cert(void* privdata, const char* reason)
 
     gtdb tdb(vpn->ss);
     int ret = gnutls_verify_stored_pubkey(reinterpret_cast<const char*>(&tdb),
-                                      tdb.tdb, "", "", GNUTLS_CRT_X509, &raw, 0);
+                                          tdb.tdb, "", "", GNUTLS_CRT_X509, &raw, 0);
 
     char* details = openconnect_get_peer_cert_details(vpn->vpninfo);
     QString dstr;
@@ -443,16 +443,17 @@ int VpnInfo::connect()
         return ret;
     }
 
-	QByteArray vpncScriptFullPath;
-	vpncScriptFullPath.append(QCoreApplication::applicationDirPath());
-	vpncScriptFullPath.append(QDir::separator());
-	vpncScriptFullPath.append(DEFAULT_VPNC_SCRIPT);
+    QByteArray vpncScriptFullPath;
+    vpncScriptFullPath.append(QCoreApplication::applicationDirPath());
+    vpncScriptFullPath.append(QDir::separator());
+    vpncScriptFullPath.append(DEFAULT_VPNC_SCRIPT);
     ret = openconnect_setup_tun_device(vpninfo, vpncScriptFullPath.constData(), NULL);
     if (ret != 0) {
         this->last_err = QObject::tr("Error setting up the TUN device");
         return ret;
     }
 
+    // TODO: WTF:???
     /* now read %temp%\\vpnc.log and post it to our log */
     tfile = QDir::tempPath() + QLatin1String("/vpnc.log");
     QFile file(tfile);

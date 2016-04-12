@@ -34,4 +34,3 @@ public:
     StoredServer* ss;
     gnutls_tdb_t tdb;
 };
-

@@ -55,4 +55,3 @@ private:
     QWidget* w;
     bool imported;
 };
-

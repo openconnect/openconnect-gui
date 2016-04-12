@@ -24,10 +24,10 @@ extern "C" {
 #include <gnutls/pkcs11.h>
 }
 
-Key::Key() :
-    privkey(nullptr),
-    w(nullptr),
-    imported(false)
+Key::Key()
+    : privkey(nullptr)
+    , w(nullptr)
+    , imported(false)
 {
 }
 
@@ -58,9 +58,9 @@ static int import_Key(QWidget* w, gnutls_x509_privkey_t* privkey,
     if (ret == GNUTLS_E_DECRYPTION_FAILED && w != NULL) {
         bool ok;
         QString text = QInputDialog::getText(w,
-                                     QLatin1String("This file requires a password"),
-                                     QLatin1String("Please enter your password"),
-                                     QLineEdit::Password, QString(), &ok);
+                                             QLatin1String("This file requires a password"),
+                                             QLatin1String("Please enter your password"),
+                                             QLineEdit::Password, QString(), &ok);
         if (ok == false) {
             ret = -1;
             goto fail;

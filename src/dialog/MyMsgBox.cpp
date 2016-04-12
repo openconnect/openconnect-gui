@@ -19,11 +19,11 @@
 
 #include "MyMsgBox.h"
 
-MyMsgBox::MyMsgBox(QWidget* w, QString t1, QString t2, QString oktxt) :
-    w(w),
-    t1(t1),
-    t2(t2),
-    oktxt(oktxt)
+MyMsgBox::MyMsgBox(QWidget* w, QString t1, QString t2, QString oktxt)
+    : w(w)
+    , t1(t1)
+    , t2(t2)
+    , oktxt(oktxt)
 
 {
     mutex.lock();
@@ -54,7 +54,8 @@ bool MyMsgBox::event(QEvent* ev)
 
         if (msgBox->exec() == QMessageBox::Cancel) {
             res = false;
-        } else {
+        }
+        else {
             res = true;
         }
 

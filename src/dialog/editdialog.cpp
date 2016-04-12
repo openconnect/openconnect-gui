@@ -122,7 +122,7 @@ EditDialog::EditDialog(QString server, QWidget* parent)
     ui->setupUi(this);
     int type, ret;
 
-	this->ss = new StoredServer();
+    this->ss = new StoredServer();
 
     ret = this->ss->load(server);
     if (ret < 0) {
