@@ -23,7 +23,7 @@
 
 class StoredServer {
 public:
-	StoredServer();
+    StoredServer();
     ~StoredServer();
 
     int load(QString& name);
@@ -109,4 +109,3 @@ private:
     Cert m_ca_cert;
     KeyPair m_client;
 };
-

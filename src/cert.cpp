@@ -24,9 +24,9 @@ extern "C" {
 }
 #include <cstdio>
 
-Cert::Cert():
-    crt(nullptr),
-    imported(false)
+Cert::Cert()
+    : crt(nullptr)
+    , imported(false)
 {
 }
 

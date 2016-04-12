@@ -70,8 +70,8 @@ void LogDialog::on_pushButtonClear_clicked()
                                   "",
                                   tr("Are you sure you want to clear the log?"),
                                   QMessageBox::Yes | QMessageBox::No,
-                                  QMessageBox::No
-                                  ) == QMessageBox::Yes) {
+                                  QMessageBox::No)
+            == QMessageBox::Yes) {
             emit clear_log();
             ui->listWidget->clear();
         }
@@ -82,7 +82,7 @@ void LogDialog::on_pushButtonCopy_clicked()
 {
     QList<QListWidgetItem*> items = ui->listWidget->selectedItems();
     QString text;
-    foreach(QListWidgetItem* item, items) {
+    foreach (QListWidgetItem* item, items) {
         text.append(QString("%1%2").arg(item->text()).arg('\n'));
     }
 

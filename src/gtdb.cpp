@@ -67,7 +67,7 @@ static int verify_cb(const char* db_name,
     }
 
     int ret = gnutls_hash_fast((gnutls_digest_algorithm_t)algo, pubkey->data,
-                           pubkey->size, output);
+                               pubkey->size, output);
     if (ret < 0) {
         return -1;
     }
@@ -78,7 +78,8 @@ static int verify_cb(const char* db_name,
     return GNUTLS_E_CERTIFICATE_KEY_MISMATCH;
 }
 
-gtdb::gtdb(StoredServer* ss) : ss(ss)
+gtdb::gtdb(StoredServer* ss)
+    : ss(ss)
 {
     gnutls_tdb_init(&this->tdb);
     gnutls_tdb_set_verify_func(tdb, verify_cb);

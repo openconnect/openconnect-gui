@@ -19,23 +19,23 @@
 
 #include "MyInputDialog.h"
 
-MyInputDialog::MyInputDialog(QWidget* w, QString t1, QString t2, QStringList list) :
-    w(w),
-    t1(t1),
-    t2(t2),
-    list(list),
-    have_list(true)
+MyInputDialog::MyInputDialog(QWidget* w, QString t1, QString t2, QStringList list)
+    : w(w)
+    , t1(t1)
+    , t2(t2)
+    , list(list)
+    , have_list(true)
 {
     mutex.lock();
     this->moveToThread(QApplication::instance()->thread());
 }
 
-MyInputDialog::MyInputDialog(QWidget* w, QString t1, QString t2, QLineEdit::EchoMode type) :
-    w(w),
-    t1(t1),
-    t2(t2),
-    have_list(false),
-    type(type)
+MyInputDialog::MyInputDialog(QWidget* w, QString t1, QString t2, QLineEdit::EchoMode type)
+    : w(w)
+    , t1(t1)
+    , t2(t2)
+    , have_list(false)
+    , type(type)
 {
     mutex.lock();
     this->moveToThread(QApplication::instance()->thread());
@@ -58,7 +58,8 @@ bool MyInputDialog::event(QEvent* ev)
     if (ev->type() == QEvent::User) {
         if (this->have_list) {
             text = QInputDialog::getItem(w, t1, t2, list, 0, true, &res);
-        } else {
+        }
+        else {
             text = QInputDialog::getText(w, t1, t2, type, QString(), &res);
         }
 

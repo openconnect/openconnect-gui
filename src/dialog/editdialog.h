@@ -35,9 +35,9 @@ class EditDialog;
 }
 
 class EditDialog : public QDialog {
-	Q_OBJECT
+    Q_OBJECT
 public:
-	EditDialog(QString server, QWidget* parent = 0);
+    EditDialog(QString server, QWidget* parent = 0);
     ~EditDialog();
 
 private slots:
@@ -60,4 +60,3 @@ private:
     std::vector<win_cert_st> winCerts;
     StoredServer* ss;
 };
-

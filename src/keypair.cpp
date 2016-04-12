@@ -25,8 +25,8 @@ extern "C" {
 #include <gnutls/pkcs12.h>
 }
 
-KeyPair::KeyPair() :
-    w(nullptr)
+KeyPair::KeyPair()
+    : w(nullptr)
 {
 }
 
@@ -47,8 +47,8 @@ static int load_pkcs12_file(QWidget* w,
     gnutls_x509_crt_t* xcert;
     unsigned int xcert_size;
 
-    bool ok = false;    // TODO
-    char* p = nullptr;  // TODO
+    bool ok = false; // TODO
+    char* p = nullptr; // TODO
 
     if (w == nullptr || is_url(File)) {
         return -1;
@@ -62,7 +62,7 @@ static int load_pkcs12_file(QWidget* w,
     }
 
     /* check if the file data contain BEGIN PKCS12 */
-    /*char* */p = strstr((char*)raw.data, "--- BEGIN ");
+    /*char* */ p = strstr((char*)raw.data, "--- BEGIN ");
     if (p != nullptr) {
         pem = 1;
         if (strstr(p, "--- BEGIN PKCS12") == 0) {
@@ -84,7 +84,7 @@ static int load_pkcs12_file(QWidget* w,
         goto fail;
     }
 
-//    bool ok = false;
+    //    bool ok = false;
     pass = QInputDialog::getText(w,
                                  QLatin1String("This file requires a password"),
                                  QLatin1String("Please enter your password"),

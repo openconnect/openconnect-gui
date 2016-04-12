@@ -53,4 +53,3 @@ private:
 
     Ui::LogDialog* ui;
 };
-

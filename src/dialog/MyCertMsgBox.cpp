@@ -19,12 +19,12 @@
 
 #include "MyCertMsgBox.h"
 
-MyCertMsgBox::MyCertMsgBox(QWidget* w, QString t1, QString t2, QString oktxt, QString details) :
-    w(w),
-    t1(t1),
-    t2(t2),
-    oktxt(oktxt),
-    details(details)
+MyCertMsgBox::MyCertMsgBox(QWidget* w, QString t1, QString t2, QString oktxt, QString details)
+    : w(w)
+    , t1(t1)
+    , t2(t2)
+    , oktxt(oktxt)
+    , details(details)
 {
     mutex.lock();
     this->moveToThread(QApplication::instance()->thread());
@@ -56,7 +56,8 @@ bool MyCertMsgBox::event(QEvent* ev)
 
         if (msgBox->exec() == QMessageBox::Cancel) {
             res = false;
-        } else {
+        }
+        else {
             res = true;
         }
 

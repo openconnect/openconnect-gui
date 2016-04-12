@@ -66,4 +66,3 @@ inline bool is_url(const QString& str)
     }
     return false;
 }
-

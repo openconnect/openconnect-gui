@@ -20,9 +20,9 @@
 
 #include "common.h"
 #include "config.h"
-#include "openconnect-gui.h"
-#include "dialog/mainwindow.h"
 #include "dialog/MyInputDialog.h"
+#include "dialog/mainwindow.h"
+#include "openconnect-gui.h"
 
 extern "C" {
 #include <gnutls/pkcs11.h>
@@ -58,11 +58,7 @@ int pin_callback(void* userdata, int attempt, const char* token_url,
         type = QObject::tr("security officer");
     }
 
-    QString outtext =
-            QObject::tr("Please enter the ") +
-            type +
-            QObject::tr(" PIN for ") +
-            QLatin1String(token_label) + ".";
+    QString outtext = QObject::tr("Please enter the ") + type + QObject::tr(" PIN for ") + QLatin1String(token_label) + ".";
     if (flags & GNUTLS_PKCS11_PIN_FINAL_TRY) {
         outtext += QObject::tr(" This is the FINAL try!");
     }
@@ -120,7 +116,7 @@ int main(int argc, char* argv[])
 #ifdef PROJ_GNUTLS_DEBUG
     gnutls_global_set_log_function(log_func);
     gnutls_global_set_log_level(3);
-	logger = mainWindow.get_log();
+    logger = mainWindow.get_log();
     log_func(1, "started logging");
 #endif
 

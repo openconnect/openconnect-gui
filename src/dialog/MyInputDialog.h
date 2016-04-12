@@ -47,4 +47,3 @@ private:
     bool have_list;
     QLineEdit::EchoMode type;
 };
-

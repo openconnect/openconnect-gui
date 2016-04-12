@@ -43,4 +43,3 @@ private:
     QString t2;
     QString oktxt;
 };
-
