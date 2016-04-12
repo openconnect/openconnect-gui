@@ -65,11 +65,11 @@ public:
 
     void vpn_status_changed(int connected);
     void vpn_status_changed(int connected,
-                            QString& dns,
-                            QString& ip,
-                            QString& ip6,
-                            QString& cstp_cipher,
-                            QString& dtls_cipher);
+        QString& dns,
+        QString& ip,
+        QString& ip6,
+        QString& cstp_cipher,
+        QString& dtls_cipher);
 
     QStringList* get_log(void);
 

@@ -50,8 +50,8 @@ static void log_func(int level, const char* str)
 #endif
 
 int pin_callback(void* userdata, int attempt, const char* token_url,
-                 const char* token_label, unsigned flags, char* pin,
-                 size_t pin_max)
+    const char* token_label, unsigned flags, char* pin,
+    size_t pin_max)
 {
     QString type = QObject::tr("user");
     if (flags & GNUTLS_PIN_SO) {

@@ -35,10 +35,10 @@ KeyPair::~KeyPair()
 }
 
 static int load_pkcs12_file(QWidget* w,
-                            Key& key,
-                            Cert& cert,
-                            QString File,
-                            QString& last_err)
+    Key& key,
+    Cert& cert,
+    QString File,
+    QString& last_err)
 {
     gnutls_pkcs12_t pkcs12 = nullptr;
     QString pass;
@@ -77,8 +77,8 @@ static int load_pkcs12_file(QWidget* w,
     }
 
     ret = gnutls_pkcs12_import(pkcs12, &raw,
-                               (pem != 0) ? GNUTLS_X509_FMT_PEM : GNUTLS_X509_FMT_DER,
-                               0);
+        (pem != 0) ? GNUTLS_X509_FMT_PEM : GNUTLS_X509_FMT_DER,
+        0);
     if (ret < 0) {
         last_err = gnutls_strerror(ret);
         goto fail;
@@ -86,11 +86,11 @@ static int load_pkcs12_file(QWidget* w,
 
     //    bool ok = false;
     pass = QInputDialog::getText(w,
-                                 QLatin1String("This file requires a password"),
-                                 QLatin1String("Please enter your password"),
-                                 QLineEdit::Password,
-                                 QString(),
-                                 &ok);
+        QLatin1String("This file requires a password"),
+        QLatin1String("Please enter your password"),
+        QLineEdit::Password,
+        QString(),
+        &ok);
 
     if (ok == false) {
         goto fail;
@@ -103,7 +103,7 @@ static int load_pkcs12_file(QWidget* w,
     }
 
     ret = gnutls_pkcs12_simple_parse(pkcs12, pass.toLatin1().data(), &xkey, &xcert,
-                                     &xcert_size, nullptr, nullptr, nullptr, 0);
+        &xcert_size, nullptr, nullptr, nullptr, 0);
     if (ret < 0) {
         last_err = gnutls_strerror(ret);
         goto fail;

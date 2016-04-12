@@ -28,10 +28,10 @@ extern "C" {
 #define MAX_HASH_LEN 64
 
 static int store_cb(const char* db_name,
-                    const char* host,
-                    const char* service,
-                    time_t expiration,
-                    const gnutls_datum_t* pubkey)
+    const char* host,
+    const char* service,
+    time_t expiration,
+    const gnutls_datum_t* pubkey)
 {
     char output[MAX_HASH_LEN];
     int ret = gnutls_hash_fast(HASH, pubkey->data, pubkey->size, output);
@@ -48,9 +48,9 @@ static int store_cb(const char* db_name,
 }
 
 static int verify_cb(const char* db_name,
-                     const char* host,
-                     const char* service,
-                     const gnutls_datum_t* pubkey)
+    const char* host,
+    const char* service,
+    const gnutls_datum_t* pubkey)
 {
     const gtdb* tdb = reinterpret_cast<const gtdb*>(db_name);
     QByteArray ahash;
@@ -67,7 +67,7 @@ static int verify_cb(const char* db_name,
     }
 
     int ret = gnutls_hash_fast((gnutls_digest_algorithm_t)algo, pubkey->data,
-                               pubkey->size, output);
+        pubkey->size, output);
     if (ret < 0) {
         return -1;
     }
