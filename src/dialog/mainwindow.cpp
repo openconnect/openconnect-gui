@@ -62,30 +62,30 @@ MainWindow::MainWindow(QWidget* parent)
     this->cmd_fd = INVALID_SOCKET;
 
     connect(ui->actionQuit, &QAction::triggered,
-            qApp, &QApplication::quit);
+        qApp, &QApplication::quit);
 
     connect(blink_timer, &QTimer::timeout,
-            this, &MainWindow::blink_ui,
-            Qt::QueuedConnection);
+        this, &MainWindow::blink_ui,
+        Qt::QueuedConnection);
     connect(timer, &QTimer::timeout,
-            this, &MainWindow::request_update_stats,
-            Qt::QueuedConnection);
+        this, &MainWindow::request_update_stats,
+        Qt::QueuedConnection);
     connect(ui->comboBox->lineEdit(), &QLineEdit::returnPressed,
-            this, &MainWindow::on_connectClicked,
-            Qt::QueuedConnection);
+        this, &MainWindow::on_connectClicked,
+        Qt::QueuedConnection);
     connect(this, &MainWindow::vpn_status_changed_sig,
-            this, &MainWindow::changeStatus,
-            Qt::QueuedConnection);
+        this, &MainWindow::changeStatus,
+        Qt::QueuedConnection);
     connect(ui->connectionButton, &QPushButton::clicked,
-            this, &MainWindow::on_connectClicked,
-            Qt::QueuedConnection);
+        this, &MainWindow::on_connectClicked,
+        Qt::QueuedConnection);
 
     connect(this, &MainWindow::log_changed,
-            this, &MainWindow::writeProgressBar,
-            Qt::QueuedConnection);
+        this, &MainWindow::writeProgressBar,
+        Qt::QueuedConnection);
     connect(this, &MainWindow::stats_changed_sig,
-            this, &MainWindow::statsChanged,
-            Qt::QueuedConnection);
+        this, &MainWindow::statsChanged,
+        Qt::QueuedConnection);
 
     ui->iconLabel->setPixmap(OFF_ICON);
     QNetworkProxyFactory::setUseSystemConfiguration(true);
@@ -94,14 +94,13 @@ MainWindow::MainWindow(QWidget* parent)
         createTrayIcon();
 
         connect(m_trayIcon, &QSystemTrayIcon::activated,
-                this, &MainWindow::iconActivated);
+            this, &MainWindow::iconActivated);
 
         QIcon icon;
         icon.addPixmap(TRAY_OFF_ICON, QIcon::Normal, QIcon::Off);
         m_trayIcon->setIcon(icon);
         m_trayIcon->show();
-    }
-    else {
+    } else {
         updateProgressBar(QLatin1String("System doesn't support tray icon"), false);
         m_trayIcon = nullptr;
     }
@@ -122,8 +121,7 @@ static void term_thread(MainWindow* m, SOCKET* fd)
             m->updateProgressBar(QObject::tr("term_thread: IPC error: ") + QString::number(net_errno));
         *fd = INVALID_SOCKET;
         ms_sleep(200);
-    }
-    else {
+    } else {
         m->vpn_status_changed(STATUS_DISCONNECTED);
     }
 }
@@ -183,20 +181,17 @@ QString value_to_string(uint64_t bytes)
         QString r = QString::number((int)bytes);
         r += QObject::tr(" KB");
         return r;
-    }
-    else if (bytes >= 1000 * 1000 && bytes < 1000 * 1000 * 1000) {
+    } else if (bytes >= 1000 * 1000 && bytes < 1000 * 1000 * 1000) {
         bytes /= 1000 * 1000;
         QString r = QString::number((int)bytes);
         r += QObject::tr(" MB");
         return r;
-    }
-    else if (bytes >= 1000 * 1000 * 1000) {
+    } else if (bytes >= 1000 * 1000 * 1000) {
         bytes /= 1000 * 1000 * 1000;
         QString r = QString::number((int)bytes);
         r += QObject::tr(" GB");
         return r;
-    }
-    else {
+    } else {
         QString r = QString::number((int)bytes);
         r += QObject::tr(" bytes");
         return r;
@@ -213,8 +208,8 @@ void MainWindow::statsChanged(QString tx, QString rx, QString dtls)
 void MainWindow::updateStats(const struct oc_stats* stats, QString dtls)
 {
     emit stats_changed_sig(value_to_string(stats->tx_bytes),
-                           value_to_string(stats->rx_bytes),
-                           dtls);
+        value_to_string(stats->rx_bytes),
+        dtls);
 }
 
 #define PREFIX "server:"
@@ -267,8 +262,7 @@ void MainWindow::blink_ui()
 
     if (t % 2 == 0) {
         ui->iconLabel->setPixmap(CONNECTING_ICON);
-    }
-    else {
+    } else {
         ui->iconLabel->setPixmap(CONNECTING_ICON2);
     }
     ++t;
@@ -303,20 +297,18 @@ void MainWindow::changeStatus(int val)
             if (m_trayIcon) {
                 hide();
                 m_trayIcon->showMessage(QLatin1String("Connected"), QLatin1String("You were connected to ") + ui->comboBox->currentText(),
-                                        QSystemTrayIcon::Information,
-                                        10000);
-            }
-            else {
+                    QSystemTrayIcon::Information,
+                    10000);
+            } else {
                 this->setWindowState(Qt::WindowMinimized);
             }
         }
         disconnect(ui->connectionButton, &QPushButton::clicked,
-                   this, &MainWindow::on_connectClicked);
+            this, &MainWindow::on_connectClicked);
         connect(ui->connectionButton, &QPushButton::clicked,
-                this, &MainWindow::on_disconnectClicked,
-                Qt::QueuedConnection);
-    }
-    else if (val == STATUS_CONNECTING) {
+            this, &MainWindow::on_disconnectClicked,
+            Qt::QueuedConnection);
+    } else if (val == STATUS_CONNECTING) {
 
         if (m_trayIcon) {
             QIcon icon(TRAY_OFF_ICON);
@@ -331,8 +323,7 @@ void MainWindow::changeStatus(int val)
         ui->connectionButton->setIcon(QIcon(":/new/resource/images/process-stop.png"));
         ui->connectionButton->setText(tr("Cancel"));
         blink_timer->start(1500);
-    }
-    else if (val == STATUS_DISCONNECTED) {
+    } else if (val == STATUS_DISCONNECTED) {
         blink_timer->stop();
         if (this->timer->isActive()) {
             timer->stop();
@@ -360,14 +351,14 @@ void MainWindow::changeStatus(int val)
 
             if (this->isHidden() == true)
                 m_trayIcon->showMessage(QLatin1String("Disconnected"), QLatin1String("You were disconnected from the VPN"),
-                                        QSystemTrayIcon::Warning,
-                                        10000);
+                    QSystemTrayIcon::Warning,
+                    10000);
         }
         disconnect(ui->connectionButton, &QPushButton::clicked,
-                   this, &MainWindow::on_disconnectClicked);
+            this, &MainWindow::on_disconnectClicked);
         connect(ui->connectionButton, &QPushButton::clicked,
-                this, &MainWindow::on_connectClicked,
-                Qt::QueuedConnection);
+            this, &MainWindow::on_connectClicked,
+            Qt::QueuedConnection);
     }
 }
 
@@ -458,22 +449,22 @@ void MainWindow::on_connectClicked()
 
     if (this->cmd_fd != INVALID_SOCKET) {
         QMessageBox::information(this,
-                                 qApp->applicationName(),
-                                 tr("A previous VPN instance is still running (socket is active)"));
+            qApp->applicationName(),
+            tr("A previous VPN instance is still running (socket is active)"));
         return;
     }
 
     if (this->futureWatcher.isRunning() == true) {
         QMessageBox::information(this,
-                                 qApp->applicationName(),
-                                 tr("A previous VPN instance is still running"));
+            qApp->applicationName(),
+            tr("A previous VPN instance is still running"));
         return;
     }
 
     if (ui->comboBox->currentText().isEmpty()) {
         QMessageBox::information(this,
-                                 qApp->applicationName(),
-                                 tr("You need to specify a gateway. e.g. vpn.example.com:443"));
+            qApp->applicationName(),
+            tr("You need to specify a gateway. e.g. vpn.example.com:443"));
         return;
     }
 
@@ -486,8 +477,8 @@ void MainWindow::on_connectClicked()
     vpninfo = new VpnInfo(QString("%1 %2").arg(qApp->applicationName()).arg(qApp->applicationVersion()), ss, this);
     if (vpninfo == nullptr) {
         QMessageBox::information(this,
-                                 qApp->applicationName(),
-                                 tr("There was an issue initializing the VPN."));
+            qApp->applicationName(),
+            tr("There was an issue initializing the VPN."));
         goto fail;
     }
 
@@ -498,8 +489,8 @@ void MainWindow::on_connectClicked()
     this->cmd_fd = vpninfo->get_cmd_fd();
     if (this->cmd_fd == INVALID_SOCKET) {
         QMessageBox::information(this,
-                                 qApp->applicationName(),
-                                 tr("There was an issue establishing IPC with openconnect; try restarting the application."));
+            qApp->applicationName(),
+            tr("There was an issue establishing IPC with openconnect; try restarting the application."));
         goto fail;
     }
 
@@ -508,7 +499,7 @@ void MainWindow::on_connectClicked()
         if (proxies.at(0).type() == QNetworkProxy::Socks5Proxy)
             url = "socks5://";
         else if (proxies.at(0).type() == QNetworkProxy::HttpCachingProxy
-                 || proxies.at(0).type() == QNetworkProxy::HttpProxy)
+            || proxies.at(0).type() == QNetworkProxy::HttpProxy)
             url = "http://";
 
         if (url.isEmpty() == false) {
@@ -542,8 +533,7 @@ void MainWindow::on_toolButton_clicked()
     reload_settings();
     if (idx < ui->comboBox->maxVisibleItems() && idx >= 0) {
         ui->comboBox->setCurrentIndex(idx);
-    }
-    else if (ui->comboBox->maxVisibleItems() == 0) {
+    } else if (ui->comboBox->maxVisibleItems() == 0) {
         ui->comboBox->setCurrentIndex(0);
     }
     // LCA: else ???
@@ -593,9 +583,9 @@ void MainWindow::closeEvent(QCloseEvent* event)
 
         if (shown == 0) {
             QMessageBox::information(this, tr("Systray"),
-                                     tr("The program will keep running in the "
-                                        "system tray. To terminate the program, "
-                                        "choose <b>Quit</b> in the system tray entry."));
+                tr("The program will keep running in the "
+                   "system tray. To terminate the program, "
+                   "choose <b>Quit</b> in the system tray entry."));
             shown = 1;
         }
         hide();
@@ -609,20 +599,19 @@ void MainWindow::on_pushButton_3_clicked()
         logdialog = new LogDialog(this->log);
 
         QObject::connect(this, &MainWindow::log_changed,
-                         logdialog, &LogDialog::append,
-                         Qt::QueuedConnection);
+            logdialog, &LogDialog::append,
+            Qt::QueuedConnection);
         QObject::connect(logdialog, &LogDialog::clear_log,
-                         this, &MainWindow::clear_log,
-                         Qt::QueuedConnection);
+            this, &MainWindow::clear_log,
+            Qt::QueuedConnection);
         QObject::connect(logdialog, &LogDialog::clear_logdialog,
-                         this, &MainWindow::clear_logdialog,
-                         Qt::DirectConnection);
+            this, &MainWindow::clear_logdialog,
+            Qt::DirectConnection);
 
         logdialog->show();
         logdialog->raise();
         logdialog->activateWindow();
-    }
-    else {
+    } else {
         logdialog->raise();
     }
 }
@@ -654,8 +643,7 @@ void MainWindow::request_update_stats()
             if (this->timer->isActive())
                 this->timer->stop();
         }
-    }
-    else {
+    } else {
         this->updateProgressBar(QObject::tr("update_stats: invalid socket"));
         if (this->timer->isActive())
             this->timer->stop();

@@ -57,8 +57,8 @@ static int token_tab(int mode)
 
 int token_rtab[] = {
         [0] = OC_TOKEN_MODE_HOTP,
-        [1] = OC_TOKEN_MODE_TOTP,
-        [2] = OC_TOKEN_MODE_STOKEN
+    [1] = OC_TOKEN_MODE_TOTP,
+    [2] = OC_TOKEN_MODE_STOKEN
 };
 
 void EditDialog::load_win_certs()
@@ -81,7 +81,7 @@ void EditDialog::load_win_certs()
 
     do {
         ret = gnutls_system_key_iter_get_info(&iter, GNUTLS_CRT_X509, &cert_url, &key_url, &label,
-                                              NULL, 0);
+            NULL, 0);
         if (ret >= 0) {
             win_cert_st st;
             QString l;
@@ -92,7 +92,7 @@ void EditDialog::load_win_certs()
             ui->loadWinCertList->addItem(l);
             if (prekey.isEmpty() == false) {
                 if (QString::compare(prekey, QString::fromUtf8(key_url),
-                                     Qt::CaseSensitive)
+                        Qt::CaseSensitive)
                     == 0) {
                     idx = row;
                 }
@@ -127,8 +127,8 @@ EditDialog::EditDialog(QString server, QWidget* parent)
     ret = this->ss->load(server);
     if (ret < 0) {
         QMessageBox::information(this,
-                                 qApp->applicationName(),
-                                 ss->m_last_err.isEmpty() ? tr("Some server information failed to load") : ss->m_last_err);
+            qApp->applicationName(),
+            ss->m_last_err.isEmpty() ? tr("Some server information failed to load") : ss->m_last_err);
     }
 
     this->ss->set_window(this);
@@ -174,15 +174,15 @@ void EditDialog::on_buttonBox_accepted()
 
     if (ui->gatewayEdit->text().isEmpty() == true) {
         QMessageBox::information(this,
-                                 qApp->applicationName(),
-                                 tr("You need to specify a gateway. E.g. vpn.example.com:443"));
+            qApp->applicationName(),
+            tr("You need to specify a gateway. E.g. vpn.example.com:443"));
         return;
     }
 
     if (ui->labelEdit->text().isEmpty() == true) {
         QMessageBox::information(this,
-                                 qApp->applicationName(),
-                                 tr("You need to specify a name for this connection. E.g. 'My company'"));
+            qApp->applicationName(),
+            tr("You need to specify a name for this connection. E.g. 'My company'"));
         return;
     }
 
@@ -193,8 +193,7 @@ void EditDialog::on_buttonBox_accepted()
                 mbox.setInformativeText(ss->m_last_err);
             mbox.exec();
             return;
-        }
-        else {
+        } else {
             ui->caCertHash->setText(ss->get_ca_cert_hash());
         }
     }
@@ -217,16 +216,15 @@ void EditDialog::on_buttonBox_accepted()
                 mbox.setInformativeText(ss->m_last_err);
             mbox.exec();
             return;
-        }
-        else {
+        } else {
             ui->userCertHash->setText(ss->get_client_cert_hash());
         }
     }
 
     if (ss->client_is_complete() != true) {
         QMessageBox::information(this,
-                                 qApp->applicationName(),
-                                 tr("There is a client certificate specified but no key!"));
+            qApp->applicationName(),
+            tr("There is a client certificate specified but no key!"));
         return;
     }
     ss->set_label(ui->labelEdit->text());
@@ -241,8 +239,7 @@ void EditDialog::on_buttonBox_accepted()
     if (type != -1 && ui->tokenEdit->text().isEmpty() == false) {
         ss->set_token_str(ui->tokenEdit->text());
         ss->set_token_type(token_rtab[type]);
-    }
-    else {
+    } else {
         ss->set_token_str("");
         ss->set_token_type(-1);
     }
@@ -261,8 +258,8 @@ void EditDialog::on_userCertButton_clicked()
     QString filename;
 
     filename = QFileDialog::getOpenFileName(this,
-                                            tr("Open certificate"), "",
-                                            tr("Certificate Files (*.crt *.pem *.der *.p12)"));
+        tr("Open certificate"), "",
+        tr("Certificate Files (*.crt *.pem *.der *.p12)"));
 
     ui->userCertEdit->setText(filename);
 }
@@ -272,8 +269,8 @@ void EditDialog::on_userKeyButton_clicked()
     QString filename;
 
     filename = QFileDialog::getOpenFileName(this,
-                                            tr("Open private key"), "",
-                                            tr("Private key Files (*.key *.pem *.der *.p8 *.p12)"));
+        tr("Open private key"), "",
+        tr("Private key Files (*.key *.pem *.der *.p8 *.p12)"));
 
     ui->userKeyEdit->setText(filename);
 }
@@ -283,8 +280,8 @@ void EditDialog::on_caCertButton_clicked()
     QString filename;
 
     filename = QFileDialog::getOpenFileName(this,
-                                            tr("Open certificate"), "",
-                                            tr("Certificate Files (*.crt *.pem *.der)"));
+        tr("Open certificate"), "",
+        tr("Certificate Files (*.crt *.pem *.der)"));
 
     ui->caCertEdit->setText(filename);
 }

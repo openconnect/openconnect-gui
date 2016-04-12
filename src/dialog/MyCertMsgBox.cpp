@@ -56,8 +56,7 @@ bool MyCertMsgBox::event(QEvent* ev)
 
         if (msgBox->exec() == QMessageBox::Cancel) {
             res = false;
-        }
-        else {
+        } else {
             res = true;
         }
 

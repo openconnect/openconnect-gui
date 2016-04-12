@@ -25,21 +25,21 @@
 #include <winbase.h>
 
 typedef WINBOOL(WINAPI* CryptProtectDataFunc)(DATA_BLOB* pDataIn,
-                                              LPCWSTR szDataDescr,
-                                              DATA_BLOB* pOptionalEntropy,
-                                              PVOID pvReserved,
-                                              CRYPTPROTECT_PROMPTSTRUCT*
-                                                  pPromptStruct,
-                                              DWORD dwFlags,
-                                              DATA_BLOB* pDataOut);
+    LPCWSTR szDataDescr,
+    DATA_BLOB* pOptionalEntropy,
+    PVOID pvReserved,
+    CRYPTPROTECT_PROMPTSTRUCT*
+        pPromptStruct,
+    DWORD dwFlags,
+    DATA_BLOB* pDataOut);
 typedef WINBOOL(WINAPI* CryptUnprotectDataFunc)(DATA_BLOB* pDataIn,
-                                                LPWSTR* ppszDataDescr,
-                                                DATA_BLOB* pOptionalEntropy,
-                                                PVOID pvReserved,
-                                                CRYPTPROTECT_PROMPTSTRUCT*
-                                                    pPromptStruct,
-                                                DWORD dwFlags,
-                                                DATA_BLOB* pDataOut);
+    LPWSTR* ppszDataDescr,
+    DATA_BLOB* pOptionalEntropy,
+    PVOID pvReserved,
+    CRYPTPROTECT_PROMPTSTRUCT*
+        pPromptStruct,
+    DWORD dwFlags,
+    DATA_BLOB* pDataOut);
 
 static CryptProtectDataFunc pCryptProtectData;
 static CryptUnprotectDataFunc pCryptUnprotectData;

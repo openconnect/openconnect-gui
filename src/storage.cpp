@@ -32,6 +32,7 @@ StoredServer::StoredServer()
     set_window(nullptr);
 }
 
+// LCA: drop thsi define from whole project...
 #define PREFIX "server:"
 
 void StoredServer::clear_password()
@@ -131,8 +132,7 @@ void StoredServer::get_server_hash(QString& hash) const
 {
     if (this->m_server_hash_algo == 0) {
         hash = "";
-    }
-    else {
+    } else {
         hash = gnutls_mac_get_name((gnutls_mac_algorithm_t) this->m_server_hash_algo);
         hash += ":";
         hash += this->m_server_hash.toHex();
@@ -162,8 +162,8 @@ int StoredServer::load(QString& name)
     if (this->m_batch_mode == true) {
         this->m_groupname = settings.value("groupname").toString();
         ret = CryptData::decode(this->m_servername,
-                                settings.value("password").toByteArray(),
-                                this->m_password);
+            settings.value("password").toByteArray(),
+            this->m_password);
         if (ret == false)
             rval = -1;
     }
@@ -183,15 +183,14 @@ int StoredServer::load(QString& name)
 
     QString str;
     ret = CryptData::decode(this->m_servername,
-                            settings.value("client-key").toByteArray(), str);
+        settings.value("client-key").toByteArray(), str);
     if (ret == false) {
         rval = -1;
     }
 
     if (is_url(str) == true) {
         this->m_client.key.import_file(str);
-    }
-    else {
+    } else {
         data = str.toLatin1();
         this->m_client.key.import_pem(data);
     }
@@ -200,8 +199,8 @@ int StoredServer::load(QString& name)
     this->m_server_hash_algo = settings.value("server-hash-algo").toInt();
 
     ret = CryptData::decode(this->m_servername,
-                            settings.value("token-str").toByteArray(),
-                            this->m_token_string);
+        settings.value("token-str").toByteArray(),
+        this->m_token_string);
     if (ret == false) {
         rval = -1;
     }
@@ -225,7 +224,7 @@ int StoredServer::save()
 
     if (this->m_batch_mode == true) {
         settings.setValue("password",
-                          CryptData::encode(this->m_servername, this->m_password));
+            CryptData::encode(this->m_servername, this->m_password));
         settings.setValue("groupname", this->m_groupname);
     }
 
@@ -244,7 +243,7 @@ int StoredServer::save()
     settings.setValue("server-hash-algo", this->m_server_hash_algo);
 
     settings.setValue("token-str",
-                      CryptData::encode(this->m_servername, this->m_token_string));
+        CryptData::encode(this->m_servername, this->m_token_string));
     settings.setValue("token-type", this->m_token_type);
 
     settings.endGroup();

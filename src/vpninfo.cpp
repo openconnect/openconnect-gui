@@ -98,14 +98,13 @@ static int process_auth_form(void* privdata, struct oc_auth_form* form)
         /* if the configured exists */
         if (gitems.contains(vpn->ss->get_groupname())) {
             openconnect_set_option_value(&select_opt->form,
-                                         vpn->ss->get_groupname().toLatin1().data());
-        }
-        else {
+                vpn->ss->get_groupname().toLatin1().data());
+        } else {
             {
                 MyInputDialog dialog(vpn->m,
-                                     QLatin1String(select_opt->form.name),
-                                     QLatin1String(select_opt->form.label),
-                                     ditems);
+                    QLatin1String(select_opt->form.name),
+                    QLatin1String(select_opt->form.label),
+                    ditems);
                 dialog.show();
                 ok = dialog.result(text);
             }
@@ -118,7 +117,7 @@ static int process_auth_form(void* privdata, struct oc_auth_form* form)
                 goto fail;
 
             openconnect_set_option_value(&select_opt->form,
-                                         select_opt->choices[idx]->name);
+                select_opt->choices[idx]->name);
             text = QLatin1String(select_opt->choices[idx]->name);
 
             vpn->m->updateProgressBar(QLatin1String("Saving group: ") + text);
@@ -152,7 +151,7 @@ static int process_auth_form(void* privdata, struct oc_auth_form* form)
 
             {
                 MyInputDialog dialog(vpn->m, QLatin1String(opt->name),
-                                     QLatin1String(opt->label), items);
+                    QLatin1String(opt->label), items);
                 dialog.show();
                 ok = dialog.result(text);
             }
@@ -165,22 +164,21 @@ static int process_auth_form(void* privdata, struct oc_auth_form* form)
                 goto fail;
 
             openconnect_set_option_value(opt, select_opt->choices[idx]->name);
-        }
-        else if (opt->type == OC_FORM_OPT_TEXT) {
+        } else if (opt->type == OC_FORM_OPT_TEXT) {
             vpn->m->updateProgressBar(QLatin1String("Text form: ") + QLatin1String(opt->name));
 
             if (vpn->form_attempt == 0
                 && vpn->ss->get_username().isEmpty() == false
                 && strcasecmp(opt->name, "username") == 0) {
                 openconnect_set_option_value(opt,
-                                             vpn->ss->get_username().toLatin1().data());
+                    vpn->ss->get_username().toLatin1().data());
                 continue;
             }
 
             do {
                 MyInputDialog dialog(vpn->m, QLatin1String(opt->name),
-                                     QLatin1String(opt->label),
-                                     QLineEdit::Normal);
+                    QLatin1String(opt->label),
+                    QLineEdit::Normal);
                 dialog.show();
                 ok = dialog.result(text);
 
@@ -194,22 +192,21 @@ static int process_auth_form(void* privdata, struct oc_auth_form* form)
 
             openconnect_set_option_value(opt, text.toLatin1().data());
             vpn->form_attempt++;
-        }
-        else if (opt->type == OC_FORM_OPT_PASSWORD) {
+        } else if (opt->type == OC_FORM_OPT_PASSWORD) {
             vpn->m->updateProgressBar(QLatin1String("Password form: ") + QLatin1String(opt->name));
 
             if (vpn->form_pass_attempt == 0
                 && vpn->ss->get_password().isEmpty() == false
                 && strcasecmp(opt->name, "password") == 0) {
                 openconnect_set_option_value(opt,
-                                             vpn->ss->get_password().toLatin1().data());
+                    vpn->ss->get_password().toLatin1().data());
                 continue;
             }
 
             do {
                 MyInputDialog dialog(vpn->m, QLatin1String(opt->name),
-                                     QLatin1String(opt->label),
-                                     QLineEdit::Password);
+                    QLatin1String(opt->label),
+                    QLineEdit::Password);
                 dialog.show();
                 ok = dialog.result(text);
 
@@ -224,8 +221,7 @@ static int process_auth_form(void* privdata, struct oc_auth_form* form)
             }
             openconnect_set_option_value(opt, text.toLatin1().data());
             vpn->form_pass_attempt++;
-        }
-        else {
+        } else {
             vpn->m->updateProgressBar(QLatin1String("unknown type ") + QString::number((int)opt->type));
         }
     }
@@ -257,7 +253,7 @@ static int validate_peer_cert(void* privdata, const char* reason)
 
     gtdb tdb(vpn->ss);
     int ret = gnutls_verify_stored_pubkey(reinterpret_cast<const char*>(&tdb),
-                                          tdb.tdb, "", "", GNUTLS_CRT_X509, &raw, 0);
+        tdb.tdb, "", "", GNUTLS_CRT_X509, &raw, 0);
 
     char* details = openconnect_get_peer_cert_details(vpn->vpninfo);
     QString dstr;
@@ -273,39 +269,37 @@ static int validate_peer_cert(void* privdata, const char* reason)
         QString str = QObject::tr("Host: ") + vpn->ss->get_servername() + QObject::tr("\n") + hash;
 
         MyCertMsgBox msgBox(vpn->m,
-                            QObject::tr("You are connecting for the first time to this peer."
-                                        "Is the information provided below accurate?"),
-                            str,
-                            QObject::tr("Accurate information"),
-                            dstr);
+            QObject::tr("You are connecting for the first time to this peer."
+                        "Is the information provided below accurate?"),
+            str,
+            QObject::tr("Accurate information"),
+            dstr);
         msgBox.show();
         if (msgBox.result() == false) {
             return -1;
         }
 
         save = true;
-    }
-    else if (ret == GNUTLS_E_CERTIFICATE_KEY_MISMATCH) {
+    } else if (ret == GNUTLS_E_CERTIFICATE_KEY_MISMATCH) {
         vpn->m->updateProgressBar(QObject::tr("peer's key has changed!"));
 
         QString str = QObject::tr("Host: ") + vpn->ss->get_servername() + QObject::tr("\n") + hash;
 
         MyCertMsgBox msgBox(vpn->m,
-                            QObject::tr("This peer is known and associated with a different key."
-                                        "It may be that the server has multiple keys "
-                                        "or you are (or were in the past) under attack. "
-                                        "Do you want to proceed?"),
-                            str,
-                            QObject::tr("The key was changed by the administrator"),
-                            dstr);
+            QObject::tr("This peer is known and associated with a different key."
+                        "It may be that the server has multiple keys "
+                        "or you are (or were in the past) under attack. "
+                        "Do you want to proceed?"),
+            str,
+            QObject::tr("The key was changed by the administrator"),
+            dstr);
         msgBox.show();
         if (msgBox.result() == false) {
             return -1;
         }
 
         save = true;
-    }
-    else if (ret < 0) {
+    } else if (ret < 0) {
         QString str = QObject::tr("Could not verify certificate: ");
         str += gnutls_strerror(ret);
         vpn->m->updateProgressBar(str);
@@ -315,13 +309,12 @@ static int validate_peer_cert(void* privdata, const char* reason)
     if (save != false) {
         vpn->m->updateProgressBar(QObject::tr("saving peer's public key"));
         ret = gnutls_store_pubkey(reinterpret_cast<const char*>(&tdb), tdb.tdb,
-                                  "", "", GNUTLS_CRT_X509, &raw, 0, 0);
+            "", "", GNUTLS_CRT_X509, &raw, 0, 0);
         if (ret < 0) {
             QString str = QObject::tr("Could not store certificate: ");
             str += gnutls_strerror(ret);
             vpn->m->updateProgressBar(str);
-        }
-        else {
+        } else {
             vpn->ss->save();
         }
     }
@@ -333,8 +326,8 @@ static int lock_token_vfn(void* privdata)
     VpnInfo* vpn = static_cast<VpnInfo*>(privdata);
 
     openconnect_set_token_mode(vpn->vpninfo,
-                               (oc_token_mode_t)vpn->ss->get_token_type(),
-                               vpn->ss->get_token_str().toLatin1().data());
+        (oc_token_mode_t)vpn->ss->get_token_type(),
+        vpn->ss->get_token_str().toLatin1().data());
 
     return 0;
 }
@@ -361,7 +354,7 @@ static inline int set_sock_block(int fd)
 VpnInfo::VpnInfo(QString name, StoredServer* ss, MainWindow* m)
 {
     this->vpninfo = openconnect_vpninfo_new(name.toLatin1().data(), validate_peer_cert, nullptr,
-                                            process_auth_form, progress_vfn, this);
+        process_auth_form, progress_vfn, this);
     if (this->vpninfo == nullptr) {
         throw;
     }
@@ -384,8 +377,8 @@ VpnInfo::VpnInfo(QString name, StoredServer* ss, MainWindow* m)
     if (ss->get_token_str().isEmpty() == false) {
         openconnect_set_token_callbacks(this->vpninfo, this, lock_token_vfn, unlock_token_vfn);
         openconnect_set_token_mode(this->vpninfo,
-                                   (oc_token_mode_t)ss->get_token_type(),
-                                   ss->get_token_str().toLatin1().data());
+            (oc_token_mode_t)ss->get_token_type(),
+            ss->get_token_str().toLatin1().data());
     }
 }
 
@@ -421,7 +414,7 @@ int VpnInfo::connect()
 
     if (cert_file.isEmpty() != true) {
         openconnect_set_client_cert(vpninfo, cert_file.toLatin1().data(),
-                                    key_file.toLatin1().data());
+            key_file.toLatin1().data());
     }
 
     if (ca_file.isEmpty() != true) {
@@ -474,8 +467,7 @@ int VpnInfo::connect()
         }
         file.close();
         QFile::remove(tfile);
-    }
-    else {
+    } else {
         this->m->updateProgressBar(QLatin1String("Could not open ") + tfile + ": " + QString::number((int)file.error()));
     }
 

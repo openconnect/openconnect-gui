@@ -45,7 +45,7 @@ void Cert::clear()
 }
 
 static int import_cert(gnutls_x509_crt_t* crt, gnutls_datum_t* raw,
-                       unsigned pem)
+    unsigned pem)
 {
     if (raw->size == 0) {
         return -1;
@@ -131,8 +131,8 @@ int Cert::import_file(const QString& File)
         int ret = gnutls_x509_crt_import_pkcs11_url(this->crt, File.toLatin1().data(), 0);
         if (ret < 0) {
             ret = gnutls_x509_crt_import_pkcs11_url(this->crt,
-                                                    File.toLatin1().data(),
-                                                    GNUTLS_PKCS11_OBJ_FLAG_LOGIN);
+                File.toLatin1().data(),
+                GNUTLS_PKCS11_OBJ_FLAG_LOGIN);
         }
 
         if (ret < 0) {

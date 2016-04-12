@@ -46,7 +46,7 @@ void Key::clear()
 }
 
 static int import_Key(QWidget* w, gnutls_x509_privkey_t* privkey,
-                      gnutls_datum_t* raw)
+    gnutls_datum_t* raw)
 {
     if (raw->size == 0) {
         return -1;
@@ -58,16 +58,16 @@ static int import_Key(QWidget* w, gnutls_x509_privkey_t* privkey,
     if (ret == GNUTLS_E_DECRYPTION_FAILED && w != NULL) {
         bool ok;
         QString text = QInputDialog::getText(w,
-                                             QLatin1String("This file requires a password"),
-                                             QLatin1String("Please enter your password"),
-                                             QLineEdit::Password, QString(), &ok);
+            QLatin1String("This file requires a password"),
+            QLatin1String("Please enter your password"),
+            QLineEdit::Password, QString(), &ok);
         if (ok == false) {
             ret = -1;
             goto fail;
         }
 
         ret = gnutls_x509_privkey_import2(*privkey, raw, GNUTLS_X509_FMT_PEM,
-                                          text.toLatin1().data(), 0);
+            text.toLatin1().data(), 0);
     }
 
     if (ret == GNUTLS_E_BASE64_DECODING_ERROR || ret == GNUTLS_E_BASE64_UNEXPECTED_HEADER_ERROR) {

@@ -54,4 +54,3 @@ public:
 private:
     SOCKET cmd_fd;
 };
-
