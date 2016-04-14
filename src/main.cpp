@@ -33,6 +33,9 @@ extern "C" {
 #if !defined(_WIN32) && !defined(PROJ_GNUTLS_DEBUG)
 #include <QMessageBox>
 #endif
+#ifdef PROJ_INI_SETTINGS
+#include <QSettings>
+#endif
 
 #include <csignal>
 #include <cstdio>
@@ -82,6 +85,10 @@ int pin_callback(void* userdata, int attempt, const char* token_url,
 
 int main(int argc, char* argv[])
 {
+#ifdef PROJ_INI_SETTINGS
+    QSettings::setDefaultFormat(QSettings::IniFormat);
+#endif
+
     QApplication app(argc, argv);
     app.setQuitOnLastWindowClosed(false);
 
