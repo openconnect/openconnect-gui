@@ -19,6 +19,7 @@ else(APPLE)
 else()
     set(DEFAULT_VPNC_SCRIPT "/etc/vpnc/vpnc-script")
 endif()
+option(PROJ_INI_SETTINGS "Store the settings in INI files." OFF)
 
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
