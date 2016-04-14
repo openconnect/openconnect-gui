@@ -4,46 +4,43 @@ else()
     message(FATAL_ERROR "TODO: building from source code snapshot is not supported yet...")
 endif()
 
-set(${PROJECT_NAME}_HDRS
-    dialog/mainwindow.h
-    dialog/MyMsgBox.h
-    dialog/MyCertMsgBox.h
-    dialog/MyInputDialog.h
-    vpninfo.h
-    storage.h
-    dialog/editdialog.h
-    common.h
-    keypair.h
-    key.h
-    cert.h
-    dialog/logdialog.h
-    gtdb.h
-    cryptdata.h
-)
 set(${PROJECT_NAME}_SRCS
-    main.cpp
-    dialog/mainwindow.cpp
-    dialog/MyMsgBox.cpp
-    dialog/MyCertMsgBox.cpp
-    dialog/MyInputDialog.cpp
-    vpninfo.cpp
-    storage.cpp
-    dialog/editdialog.cpp
-    keypair.cpp
-    key.cpp
-    cert.cpp
-    dialog/logdialog.cpp
-    gtdb.cpp
-    cryptdata.cpp
-)
-set(${PROJECT_NAME}_FORMS
-    dialog/mainwindow.ui
-    dialog/editdialog.ui
-    dialog/logdialog.ui
-)
-
-set(${PROJECT_NAME}_RESOURCES
+    ${PROJECT_NAME}.cpp
+    ${PROJECT_NAME}.h
     ${PROJECT_NAME}.qrc
+    cert.cpp
+    cert.h
+    common.h
+    config.h
+    config.h.in
+    cryptdata.cpp
+    cryptdata.h
+    dialog/MyCertMsgBox.cpp
+    dialog/MyCertMsgBox.h
+    dialog/MyInputDialog.cpp
+    dialog/MyInputDialog.h
+    dialog/MyMsgBox.cpp
+    dialog/MyMsgBox.h
+    dialog/editdialog.cpp
+    dialog/editdialog.h
+    dialog/editdialog.ui
+    dialog/logdialog.cpp
+    dialog/logdialog.h
+    dialog/logdialog.ui
+    dialog/mainwindow.cpp
+    dialog/mainwindow.h
+    dialog/mainwindow.ui
+    gtdb.cpp
+    gtdb.h
+    key.cpp
+    key.h
+    keypair.cpp
+    keypair.h
+    main.cpp
+    storage.cpp
+    storage.h
+    vpninfo.cpp
+    vpninfo.h
 )
 
 configure_file(
@@ -51,17 +48,10 @@ configure_file(
     config.h
     @ONLY
 )
-list(APPEND ${PROJECT_NAME}_SRCS
-    ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.cpp
-#    ${PROJECT_NAME}.cpp
-    ${PROJECT_NAME}.h
-    config.h.in
-    config.h
-)
 
 if(WIN32 AND MINGW)
     list(APPEND ${PROJECT_NAME}_RESOURCES
-        ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.rc
+        ${PROJECT_NAME}.rc
     )
 endif()
 if(APPLE)
@@ -78,9 +68,6 @@ endif()
 
 add_executable(${PROJECT_NAME}
     ${${PROJECT_NAME}_SRCS}
-    ${${PROJECT_NAME}_HDRS}
-    ${${PROJECT_NAME}_FORMS}
-    ${${PROJECT_NAME}_RESOURCES}
 )
 if(WIN32 AND MINGW)
     set_target_properties(${PROJECT_NAME} PROPERTIES
@@ -123,7 +110,8 @@ if(WIN32 AND MINGW)
         libxml2.dll.a
         libz.dll.a
     )
-else()
+endif()
+if(APPLE)
     target_link_libraries (${PROJECT_NAME}
         ${OPENCONNECT_LIBRARIES}
         ${GNUTLS_LIBRARY}
