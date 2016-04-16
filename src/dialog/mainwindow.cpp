@@ -105,10 +105,10 @@ MainWindow::MainWindow(QWidget* parent)
         m_trayIcon = nullptr;
     }
 
-    readSettings();
-
     reload_settings();
     // LCA: find better way to load/fill combobox...
+
+    readSettings();
 }
 
 static void term_thread(MainWindow* m, SOCKET* fd)
@@ -141,11 +141,11 @@ MainWindow::~MainWindow()
         counter--;
     }
 
+    writeSettings();
+
     delete ui;
     delete timer;
     delete blink_timer;
-
-    writeSettings();
 }
 
 void MainWindow::disable_cmd_fd()
@@ -663,6 +663,11 @@ void MainWindow::readSettings()
         move(settings.value("pos").toPoint());
     }
     settings.endGroup();
+
+    const int currentIndex = settings.value("Profiles/currentIndex", -1).toInt();
+    if (currentIndex != -1 && currentIndex < ui->comboBox->count()) {
+        ui->comboBox->setCurrentIndex(currentIndex);
+    }
 }
 
 void MainWindow::writeSettings()
@@ -672,6 +677,8 @@ void MainWindow::writeSettings()
     settings.setValue("size", size());
     settings.setValue("pos", pos());
     settings.endGroup();
+
+    settings.setValue("Profiles/currentIndex", ui->comboBox->currentIndex());
 }
 
 void MainWindow::createTrayIcon()
