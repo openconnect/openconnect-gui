@@ -258,9 +258,9 @@ QString value_to_string(uint64_t bytes)
 
 void MainWindow::statsChanged(QString tx, QString rx, QString dtls)
 {
-    ui->lcdDown->setText(rx);
-    ui->lcdUp->setText(tx);
-    ui->DTLSLabel->setText(dtls);
+    ui->downloadLabel->setText(rx);
+    ui->uploadLabel->setText(tx);
+    ui->cipherDTLSLabel->setText(dtls);
 }
 
 void MainWindow::updateStats(const struct oc_stats* stats, QString dtls)
@@ -342,11 +342,11 @@ void MainWindow::changeStatus(int val)
         QIcon icon(TRAY_ON_ICON);
         m_trayIcon->setIcon(icon);
 
-        this->ui->IPLabel->setText(ip);
-        this->ui->IP6Label->setText(ip6);
-        this->ui->DNSLabel->setText(dns);
-        this->ui->CSTPLabel->setText(cstp_cipher);
-        this->ui->DTLSLabel->setText(dtls_cipher);
+        this->ui->ipV4Label->setText(ip);
+        this->ui->ipV6Label->setText(ip6);
+        this->ui->dnsLabel->setText(dns);
+        this->ui->cipherCSTPLabel->setText(cstp_cipher);
+        this->ui->cipherDTLSLabel->setText(dtls_cipher);
 
         timer->start(UPDATE_TIMER);
 
@@ -386,11 +386,11 @@ void MainWindow::changeStatus(int val)
         }
         disable_cmd_fd();
 
-        ui->CSTPLabel->clear();
-        ui->DTLSLabel->clear();
-        ui->IPLabel->clear();
-        ui->DNSLabel->clear();
-        ui->IP6Label->clear();
+        ui->cipherCSTPLabel->clear();
+        ui->cipherDTLSLabel->clear();
+        ui->ipV4Label->clear();
+        ui->ipV6Label->clear();
+        ui->dnsLabel->clear();
         this->updateProgressBar(QObject::tr("Disconnected"));
 
         ui->serverList->setEnabled(true);
