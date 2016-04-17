@@ -111,6 +111,10 @@ MainWindow::MainWindow(QWidget* parent)
     s1_noProfiles->assignProperty(ui->serverList, "enabled", false);
     s1_noProfiles->assignProperty(ui->actionEditSelectedProfile, "enabled", false);
     s1_noProfiles->assignProperty(ui->actionRemoveSelectedProfile, "enabled", false);
+
+    s1_noProfiles->assignProperty(m_trayIconMenuConnections, "title", tr("No servers to connect"));
+    s1_noProfiles->assignProperty(m_trayIconMenuConnections, "enabled", false);
+    s1_noProfiles->assignProperty(m_disconnectAction, "enabled", false);
     machine->addState(s1_noProfiles);
 
     QState* s2_connectionReady = new QState();
@@ -118,6 +122,9 @@ MainWindow::MainWindow(QWidget* parent)
     s2_connectionReady->assignProperty(ui->serverList, "enabled", true);
     s2_connectionReady->assignProperty(ui->actionEditSelectedProfile, "enabled", true);
     s2_connectionReady->assignProperty(ui->actionRemoveSelectedProfile, "enabled", true);
+
+    s2_connectionReady->assignProperty(m_trayIconMenuConnections, "title", tr("Connect to..."));
+    s2_connectionReady->assignProperty(m_trayIconMenuConnections, "enabled", true);
     machine->addState(s2_connectionReady);
 
     class ServerListTransition : public QSignalTransition
@@ -270,11 +277,11 @@ void MainWindow::updateStats(const struct oc_stats* stats, QString dtls)
         dtls);
 }
 
-#define PREFIX "server:"
-// LCA: remot this...
+#define PREFIX "server:" // LCA: remot this...
 void MainWindow::reload_settings()
 {
     ui->serverList->clear();
+    m_trayIconMenuConnections->clear();
 
     QSettings settings;
     for (const auto& key : settings.allKeys()) {
@@ -283,6 +290,15 @@ void MainWindow::reload_settings()
             str.remove(0, sizeof(PREFIX) - 1); /* remove prefix */
             str.remove(str.size() - 7, 7); /* remove /server suffix */
             ui->serverList->addItem(str);
+
+            QAction* act = m_trayIconMenuConnections->addAction(str);
+            connect(act, &QAction::triggered, [act, this]() {
+                int idx = ui->serverList->findText(act->text());
+                if (idx != -1) {
+                    ui->serverList->setCurrentIndex(idx);
+                    on_connectClicked();
+                }
+            });
         }
     }
 }
@@ -333,7 +349,9 @@ void MainWindow::changeStatus(int val)
         blink_timer->stop();
 
         ui->serverList->setEnabled(false);
-        ui->serverListControl->setEnabled(false);
+
+        m_trayIconMenuConnections->setEnabled(false);
+        m_disconnectAction->setEnabled(true);
 
         ui->iconLabel->setPixmap(ON_ICON);
         ui->connectionButton->setIcon(QIcon(":/new/resource/images/process-stop.png"));
@@ -373,7 +391,9 @@ void MainWindow::changeStatus(int val)
         }
 
         ui->serverList->setEnabled(false);
-        ui->serverListControl->setEnabled(false);
+
+        m_trayIconMenuConnections->setEnabled(false);
+        m_disconnectAction->setEnabled(true);
 
         ui->iconLabel->setPixmap(CONNECTING_ICON);
         ui->connectionButton->setIcon(QIcon(":/new/resource/images/process-stop.png"));
@@ -394,7 +414,9 @@ void MainWindow::changeStatus(int val)
         this->updateProgressBar(QObject::tr("Disconnected"));
 
         ui->serverList->setEnabled(true);
-        ui->serverListControl->setEnabled(true);
+
+        m_trayIconMenuConnections->setEnabled(true);
+        m_disconnectAction->setEnabled(false);
 
         ui->iconLabel->setPixmap(OFF_ICON);
         ui->connectionButton->setIcon(QIcon(":/new/resource/images/network-wired.png"));
@@ -414,6 +436,8 @@ void MainWindow::changeStatus(int val)
         connect(ui->connectionButton, &QPushButton::clicked,
             this, &MainWindow::on_connectClicked,
             Qt::QueuedConnection);
+    } else {
+        qDebug() << "TODO: was is das?";
     }
 }
 
@@ -672,6 +696,15 @@ void MainWindow::writeSettings()
 void MainWindow::createTrayIcon()
 {
     m_trayIconMenu = new QMenu(this);
+
+    m_trayIconMenuConnections = new QMenu(this);
+    m_trayIconMenu->addMenu(m_trayIconMenuConnections);
+    m_disconnectAction = new QAction(tr("Disconnect"), this);
+    m_trayIconMenu->addAction(m_disconnectAction);
+    connect(m_disconnectAction, &QAction::triggered,
+            this, &MainWindow::on_disconnectClicked);
+
+    m_trayIconMenu->addSeparator();
     m_trayIconMenu->addAction(ui->actionLogWindow);
     m_trayIconMenu->addSeparator();
     m_trayIconMenu->addAction(ui->actionMinimize);
