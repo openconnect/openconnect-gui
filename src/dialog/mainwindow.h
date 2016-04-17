@@ -90,7 +90,7 @@ private slots:
 
     void on_disconnectClicked();
     void on_connectClicked();
-    void on_pushButton_3_clicked();
+    void on_viewLogButton_clicked();
 
     void closeEvent(QCloseEvent* bar) override;
 
