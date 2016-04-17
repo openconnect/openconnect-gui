@@ -478,38 +478,6 @@
  </resources>
  <connections>
   <connection>
-   <sender>actionAbout</sender>
-   <signal>triggered()</signal>
-   <receiver>MainWindow</receiver>
-   <slot>on_about()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>-1</x>
-     <y>-1</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>174</x>
-     <y>132</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>actionAboutQt</sender>
-   <signal>triggered()</signal>
-   <receiver>MainWindow</receiver>
-   <slot>on_aboutQt()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>-1</x>
-     <y>-1</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>174</x>
-     <y>132</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
    <sender>actionMinimize</sender>
    <signal>triggered()</signal>
    <receiver>MainWindow</receiver>
@@ -542,8 +510,4 @@
    </hints>
   </connection>
  </connections>
- <slots>
-  <slot>on_about()</slot>
-  <slot>on_aboutQt()</slot>
- </slots>
 </ui>
