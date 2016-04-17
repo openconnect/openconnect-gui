@@ -607,7 +607,7 @@ void MainWindow::closeEvent(QCloseEvent* event)
     }
 }
 
-void MainWindow::on_pushButton_3_clicked()
+void MainWindow::on_viewLogButton_clicked()
 {
     if (logdialog == nullptr) {
         logdialog = new LogDialog(this->log);
@@ -672,6 +672,8 @@ void MainWindow::writeSettings()
 void MainWindow::createTrayIcon()
 {
     m_trayIconMenu = new QMenu(this);
+    m_trayIconMenu->addAction(ui->actionLogWindow);
+    m_trayIconMenu->addSeparator();
     m_trayIconMenu->addAction(ui->actionMinimize);
     m_trayIconMenu->addAction(ui->actionRestore);
     m_trayIconMenu->addSeparator();
