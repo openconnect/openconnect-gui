@@ -245,12 +245,12 @@ void EditDialog::on_buttonBox_accepted()
     }
 
     ss->save();
-    this->close();
+    this->accept();
 }
 
 void EditDialog::on_buttonBox_rejected()
 {
-    this->close();
+    this->reject();
 }
 
 void EditDialog::on_userCertButton_clicked()
