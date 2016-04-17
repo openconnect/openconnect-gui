@@ -96,8 +96,8 @@ private slots:
 
     void closeEvent(QCloseEvent* bar) override;
 
-    void on_about();
-    void on_aboutQt();
+    void on_actionAbout_triggered();
+    void on_actionAboutQt_triggered();
 
 signals:
     void log_changed(QString val);
