@@ -90,14 +90,16 @@ private slots:
 
     void on_disconnectClicked();
     void on_connectClicked();
-    void on_toolButton_clicked();
-    void on_toolButton_2_clicked();
     void on_pushButton_3_clicked();
 
     void closeEvent(QCloseEvent* bar) override;
 
     void on_actionAbout_triggered();
     void on_actionAboutQt_triggered();
+
+    void on_actionNewProfile_triggered();
+    void on_actionEditSelectedProfile_triggered();
+    void on_actionRemoveSelectedProfile_triggered();
 
 signals:
     void log_changed(QString val);

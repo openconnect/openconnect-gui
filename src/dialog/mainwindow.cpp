@@ -41,6 +41,8 @@ extern "C" {
 #include <QtNetwork/QNetworkProxy>
 #include <QtNetwork/QNetworkProxyFactory>
 #include <QtNetwork/QNetworkProxyQuery>
+#include <QStateMachine>
+#include <QSignalTransition>
 
 #include <cstdarg>
 #include <cstdio>
@@ -69,9 +71,6 @@ MainWindow::MainWindow(QWidget* parent)
         Qt::QueuedConnection);
     connect(timer, &QTimer::timeout,
         this, &MainWindow::request_update_stats,
-        Qt::QueuedConnection);
-    connect(ui->comboBox->lineEdit(), &QLineEdit::returnPressed,
-        this, &MainWindow::on_connectClicked,
         Qt::QueuedConnection);
     connect(this, &MainWindow::vpn_status_changed_sig,
         this, &MainWindow::changeStatus,
@@ -105,8 +104,67 @@ MainWindow::MainWindow(QWidget* parent)
         m_trayIcon = nullptr;
     }
 
-    reload_settings();
-    // LCA: find better way to load/fill combobox...
+    // TODO: initial state machine
+    QStateMachine* machine = new QStateMachine(this);
+    QState* s1_noProfiles = new QState();
+    s1_noProfiles->assignProperty(ui->connectionButton, "enabled", false);
+    s1_noProfiles->assignProperty(ui->serverList, "enabled", false);
+    s1_noProfiles->assignProperty(ui->actionEditSelectedProfile, "enabled", false);
+    s1_noProfiles->assignProperty(ui->actionRemoveSelectedProfile, "enabled", false);
+    machine->addState(s1_noProfiles);
+
+    QState* s2_connectionReady = new QState();
+    s2_connectionReady->assignProperty(ui->connectionButton, "enabled", true);
+    s2_connectionReady->assignProperty(ui->serverList, "enabled", true);
+    s2_connectionReady->assignProperty(ui->actionEditSelectedProfile, "enabled", true);
+    s2_connectionReady->assignProperty(ui->actionRemoveSelectedProfile, "enabled", true);
+    machine->addState(s2_connectionReady);
+
+    class ServerListTransition : public QSignalTransition
+    {
+    public:
+        ServerListTransition(QComboBox *cb, bool hasServers)
+            : QSignalTransition(cb, SIGNAL(currentIndexChanged(int))), hasServers(hasServers) {}
+    protected:
+        bool eventTest(QEvent *e) {
+            if (!QSignalTransition::eventTest(e)) {
+                return false;
+            }
+            QStateMachine::SignalEvent *se = static_cast<QStateMachine::SignalEvent*>(e);
+            bool isEmpty = se->arguments().at(0).toInt() == -1;
+            return (hasServers ? !isEmpty : isEmpty);
+        }
+
+    private:
+        bool hasServers;
+    };
+
+    ServerListTransition* t1 = new ServerListTransition(ui->serverList, true);
+    t1->setTargetState(s2_connectionReady);
+    s1_noProfiles->addTransition(t1);
+
+    ServerListTransition* t2 = new ServerListTransition(ui->serverList, false);
+    t2->setTargetState(s1_noProfiles);
+    s2_connectionReady->addTransition(t2);
+
+    machine->setInitialState(s1_noProfiles);
+    machine->start();
+    connect(machine, &QStateMachine::started, [=]() {
+        // LCA: find better way to load/fill combobox...
+        this->reload_settings();
+
+        QSettings settings;
+        const int currentIndex = settings.value("Profiles/currentIndex", -1).toInt();
+        if (currentIndex != -1 && currentIndex < ui->serverList->count()) {
+            ui->serverList->setCurrentIndex(currentIndex);
+        }
+    });
+
+    QMenu* serverProfilesMenu = new QMenu(this);
+    serverProfilesMenu->addAction(ui->actionNewProfile);
+    serverProfilesMenu->addAction(ui->actionEditSelectedProfile);
+    serverProfilesMenu->addAction(ui->actionRemoveSelectedProfile);
+    ui->serverListControl->setMenu(serverProfilesMenu);
 
     readSettings();
 }
@@ -216,7 +274,7 @@ void MainWindow::updateStats(const struct oc_stats* stats, QString dtls)
 // LCA: remot this...
 void MainWindow::reload_settings()
 {
-    ui->comboBox->clear();
+    ui->serverList->clear();
 
     QSettings settings;
     for (const auto& key : settings.allKeys()) {
@@ -224,7 +282,7 @@ void MainWindow::reload_settings()
             QString str{ key };
             str.remove(0, sizeof(PREFIX) - 1); /* remove prefix */
             str.remove(str.size() - 7, 7); /* remove /server suffix */
-            ui->comboBox->addItem(str);
+            ui->serverList->addItem(str);
         }
     }
 }
@@ -274,9 +332,8 @@ void MainWindow::changeStatus(int val)
 
         blink_timer->stop();
 
-        ui->comboBox->setEnabled(false);
-        ui->toolButton->setEnabled(false);
-        ui->toolButton_2->setEnabled(false);
+        ui->serverList->setEnabled(false);
+        ui->serverListControl->setEnabled(false);
 
         ui->iconLabel->setPixmap(ON_ICON);
         ui->connectionButton->setIcon(QIcon(":/new/resource/images/process-stop.png"));
@@ -296,7 +353,7 @@ void MainWindow::changeStatus(int val)
         if (this->minimize_on_connect) {
             if (m_trayIcon) {
                 hide();
-                m_trayIcon->showMessage(QLatin1String("Connected"), QLatin1String("You were connected to ") + ui->comboBox->currentText(),
+                m_trayIcon->showMessage(QLatin1String("Connected"), QLatin1String("You were connected to ") + ui->serverList->currentText(),
                     QSystemTrayIcon::Information,
                     10000);
             } else {
@@ -315,9 +372,8 @@ void MainWindow::changeStatus(int val)
             m_trayIcon->setIcon(icon);
         }
 
-        ui->comboBox->setEnabled(false);
-        ui->toolButton->setEnabled(false);
-        ui->toolButton_2->setEnabled(false);
+        ui->serverList->setEnabled(false);
+        ui->serverListControl->setEnabled(false);
 
         ui->iconLabel->setPixmap(CONNECTING_ICON);
         ui->connectionButton->setIcon(QIcon(":/new/resource/images/process-stop.png"));
@@ -337,9 +393,8 @@ void MainWindow::changeStatus(int val)
         ui->IP6Label->clear();
         this->updateProgressBar(QObject::tr("Disconnected"));
 
-        ui->comboBox->setEnabled(true);
-        ui->toolButton->setEnabled(true);
-        ui->toolButton_2->setEnabled(true);
+        ui->serverList->setEnabled(true);
+        ui->serverListControl->setEnabled(true);
 
         ui->iconLabel->setPixmap(OFF_ICON);
         ui->connectionButton->setIcon(QIcon(":/new/resource/images/network-wired.png"));
@@ -461,14 +516,14 @@ void MainWindow::on_connectClicked()
         return;
     }
 
-    if (ui->comboBox->currentText().isEmpty()) {
+    if (ui->serverList->currentText().isEmpty()) {
         QMessageBox::information(this,
             qApp->applicationName(),
             tr("You need to specify a gateway. e.g. vpn.example.com:443"));
         return;
     }
 
-    name = ui->comboBox->currentText();
+    name = ui->serverList->currentText();
     ss->load(name);
     turl.setUrl("https://" + ss->get_servername());
     query.setUrl(turl);
@@ -522,47 +577,6 @@ fail: // LCA: remote 'fail' label :/
     if (vpninfo != nullptr)
         delete vpninfo;
     return;
-}
-
-void MainWindow::on_toolButton_clicked()
-{
-    EditDialog dialog(ui->comboBox->currentText());
-    dialog.exec();
-
-    int idx = ui->comboBox->currentIndex();
-    reload_settings();
-    if (idx < ui->comboBox->maxVisibleItems() && idx >= 0) {
-        ui->comboBox->setCurrentIndex(idx);
-    } else if (ui->comboBox->maxVisibleItems() == 0) {
-        ui->comboBox->setCurrentIndex(0);
-    }
-    // LCA: else ???
-}
-
-#define PREFIX "server:"
-// LCA: remote this...
-void MainWindow::on_toolButton_2_clicked()
-{
-    if (ui->comboBox->currentText().isEmpty() == false) {
-        // LCA: won't be empty if changed to RO combobox
-        QMessageBox mbox;
-        mbox.setText(tr("Are you sure you want to remove '%1' host?").arg(ui->comboBox->currentText()));
-        mbox.setStandardButtons(QMessageBox::Cancel | QMessageBox::Ok);
-        mbox.setDefaultButton(QMessageBox::Cancel);
-        mbox.setButtonText(QMessageBox::Ok, tr("Remove"));
-        if (mbox.exec() == QMessageBox::Ok) {
-            QSettings settings;
-            QString prefix = PREFIX;
-            for (const auto& key : settings.allKeys()) {
-                if (key.startsWith(prefix + ui->comboBox->currentText())) {
-                    settings.remove(key);
-                }
-            }
-
-            reload_settings();
-            // LCA: remove this feature...
-        }
-    }
 }
 
 static LogDialog* logdialog = nullptr;
@@ -642,11 +656,6 @@ void MainWindow::readSettings()
         move(settings.value("pos").toPoint());
     }
     settings.endGroup();
-
-    const int currentIndex = settings.value("Profiles/currentIndex", -1).toInt();
-    if (currentIndex != -1 && currentIndex < ui->comboBox->count()) {
-        ui->comboBox->setCurrentIndex(currentIndex);
-    }
 }
 
 void MainWindow::writeSettings()
@@ -657,7 +666,7 @@ void MainWindow::writeSettings()
     settings.setValue("pos", pos());
     settings.endGroup();
 
-    settings.setValue("Profiles/currentIndex", ui->comboBox->currentIndex());
+    settings.setValue("Profiles/currentIndex", ui->serverList->currentIndex());
 }
 
 void MainWindow::createTrayIcon()
@@ -696,6 +705,63 @@ void MainWindow::iconActivated(QSystemTrayIcon::ActivationReason reason)
     }
 }
 
+void MainWindow::on_actionNewProfile_triggered()
+{
+    // TODO: the new profile has no name yet...
+    EditDialog dialog("", this);
+    if (dialog.exec() != QDialog::Accepted) {
+        return;
+    }
+
+    int idx = ui->serverList->currentIndex();
+    reload_settings();
+    if (idx < ui->serverList->maxVisibleItems() && idx >= 0) {
+        ui->serverList->setCurrentIndex(idx);
+    } else if (ui->serverList->maxVisibleItems() == 0) {
+        ui->serverList->setCurrentIndex(0);
+    }
+    // LCA: else ???
+}
+
+void MainWindow::on_actionEditSelectedProfile_triggered()
+{
+    EditDialog dialog(ui->serverList->currentText(), this);
+    if (dialog.exec() != QDialog::Accepted) {
+        return;
+    }
+
+    int idx = ui->serverList->currentIndex();
+    reload_settings();
+    // TODO: may be signal/slot?
+    if (idx < ui->serverList->maxVisibleItems() && idx >= 0) {
+        ui->serverList->setCurrentIndex(idx);
+    } else if (ui->serverList->maxVisibleItems() == 0) {
+        ui->serverList->setCurrentIndex(0);
+    }
+    // LCA: else ???
+}
+
+#define PREFIX "server:" // LCA: remote this...
+void MainWindow::on_actionRemoveSelectedProfile_triggered()
+{
+    QMessageBox mbox;
+    mbox.setText(tr("Are you sure you want to remove '%1' host?").arg(ui->serverList->currentText()));
+    mbox.setStandardButtons(QMessageBox::Cancel | QMessageBox::Ok);
+    mbox.setDefaultButton(QMessageBox::Cancel);
+    mbox.setButtonText(QMessageBox::Ok, tr("Remove"));
+    if (mbox.exec() == QMessageBox::Ok) {
+        QSettings settings;
+        QString prefix = PREFIX;
+        for (const auto& key : settings.allKeys()) {
+            //qDebug() << key << ":" << QString(prefix + ui->serverList->currentText());
+            if (key.startsWith(prefix + ui->serverList->currentText() + "/")) {
+                settings.remove(key);
+            }
+        }
+
+        reload_settings(); // LCA: remove this feature...
+    }
+}
 
 void MainWindow::on_actionAbout_triggered()
 {
