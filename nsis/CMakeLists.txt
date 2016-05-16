@@ -10,5 +10,10 @@ install(FILES tap-windows.exe
 
 install(FILES vcredist_x86.exe
 	DESTINATION Drivers
-	COMPONENT VcRedist_drivers
+	COMPONENT VcRedist_libs
+)
+
+install(FILES openconnect.exe
+    DESTINATION bin
+    COMPONENT App_Console
 )
