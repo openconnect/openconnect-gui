@@ -1,6 +1,9 @@
-/* ecc-curve.h
+/* version.h
 
-   Copyright (C) 2013 Niels Möller
+   Information about library version.
+
+   Copyright (C) 2015 Red Hat, Inc.
+   Copyright (C) 2015 Niels Möller
 
    This file is part of GNU Nettle.
 
@@ -29,26 +32,27 @@
    not, see http://www.gnu.org/licenses/.
 */
 
-/* Development of Nettle's ECC support was funded by the .SE Internet Fund. */
-
-#ifndef NETTLE_ECC_CURVE_H_INCLUDED
-#define NETTLE_ECC_CURVE_H_INCLUDED
+#ifndef NETTLE_VERSION_H_INCLUDED
+#define NETTLE_VERSION_H_INCLUDED
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-/* The contents of this struct is internal. */
-struct ecc_curve;
+/* Individual version numbers in decimal */
+#define NETTLE_VERSION_MAJOR 3
+#define NETTLE_VERSION_MINOR 2
 
-extern const struct ecc_curve nettle_secp_192r1;
-extern const struct ecc_curve nettle_secp_224r1;
-extern const struct ecc_curve nettle_secp_256r1;
-extern const struct ecc_curve nettle_secp_384r1;
-extern const struct ecc_curve nettle_secp_521r1;
+#define NETTLE_USE_MINI_GMP 0
+
+int
+nettle_version_major (void);
+
+int
+nettle_version_minor (void);
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* NETTLE_ECC_CURVE_H_INCLUDED */
+#endif /* NETTLE_VERSION_H_INCLUDED */

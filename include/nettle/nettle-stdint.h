@@ -2,7 +2,7 @@
 #define __NETTLE_STDINT_H 1
 #ifndef _GENERATED_STDINT_H
 #define _GENERATED_STDINT_H " "
-/* generated using gnu compiler i686-w64-mingw32-gcc (GCC) 4.9.2 20141030 (Fedora MinGW 4.9.2-1.fc21) */
+/* generated using gnu compiler i686-w64-mingw32-gcc (GCC) 5.3.0 20151204 (Fedora MinGW 5.3.0-1.fc24) */
 #define _STDINT_HAVE_STDINT_H 1
 
 /* ................... shortcircuit part ........................... */

@@ -2288,8 +2288,8 @@ enum
 };
 
 /* Define CC and CFLAGS which were used to build this version of GMP */
-#define __GMP_CC "i686-w64-mingw32-gcc -std=gnu99"
-#define __GMP_CFLAGS "-m32 -O2 -pedantic -fomit-frame-pointer"
+#define __GMP_CC "i686-w64-mingw32-gcc"
+#define __GMP_CFLAGS " -O2 -g -pipe -Wall -Wp,-D_FORTIFY_SOURCE=2 -fexceptions --param=ssp-buffer-size=4"
 
 /* Major version number is the value of __GNU_MP__ too, above and in mp.h. */
 #define __GNU_MP_VERSION            6

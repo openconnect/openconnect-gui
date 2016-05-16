@@ -1,13 +1,13 @@
-prefix=/home/nmavrogi/cvs/openconnect-gui
-exec_prefix=${prefix}
-libdir=/home/nmavrogi/cvs/openconnect-gui/lib
-includedir=/home/nmavrogi/cvs/openconnect-gui/include
+prefix=/usr/i686-w64-mingw32/sys-root/mingw
+exec_prefix=/usr/i686-w64-mingw32/sys-root/mingw
+libdir=/usr/i686-w64-mingw32/sys-root/mingw/lib
+includedir=/usr/i686-w64-mingw32/sys-root/mingw/include
 
 
 Name: openconnect
 Description: OpenConnect VPN client
-Version: 6.00
-Requires.private:  zlib gnutls  stoken liboath  libxml-2.0
+Version: 7.06
+Requires.private:  zlib gnutls p11-kit-1   libpcsclite libxml-2.0
 Libs: -L${libdir} -lopenconnect
-Libs.private: 
+Libs.private: -lintl
 Cflags: -I${includedir}

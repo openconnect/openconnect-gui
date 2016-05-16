@@ -38,14 +38,12 @@
 
 #include "nettle-types.h"
 
-#define NETTLE_USE_MINI_GMP 0
+/* For NETTLE_USE_MINI_GMP */
+#include "version.h"
 
 #if NETTLE_USE_MINI_GMP
 # include "mini-gmp.h"
 
-/* We need a preprocessor constant for GMP_NUMB_BITS, simply using
-   sizeof(mp_limb_t) * CHAR_BIT is not good enough. */
-# define GMP_NUMB_BITS 32
 # define GMP_NUMB_MASK (~(mp_limb_t) 0)
 
 /* Functions missing in older gmp versions, and checked for with ifdef */

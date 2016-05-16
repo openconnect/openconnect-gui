@@ -78,6 +78,7 @@ void                   p11_kit_modules_finalize_and_release (CK_FUNCTION_LIST **
 CK_FUNCTION_LIST *     p11_kit_module_for_name              (CK_FUNCTION_LIST **modules,
                                                              const char *name);
 
+char *                 p11_kit_module_get_filename          (CK_FUNCTION_LIST *module);
 char *                 p11_kit_module_get_name              (CK_FUNCTION_LIST *module);
 
 int                    p11_kit_module_get_flags             (CK_FUNCTION_LIST *module);

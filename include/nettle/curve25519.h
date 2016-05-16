@@ -1,6 +1,6 @@
-/* ecc-curve.h
+/* curve25519.h
 
-   Copyright (C) 2013 Niels Möller
+   Copyright (C) 2014 Niels Möller
 
    This file is part of GNU Nettle.
 
@@ -29,26 +29,29 @@
    not, see http://www.gnu.org/licenses/.
 */
 
-/* Development of Nettle's ECC support was funded by the .SE Internet Fund. */
+#ifndef NETTLE_CURVE25519_H
+#define NETTLE_CURVE25519_H
 
-#ifndef NETTLE_ECC_CURVE_H_INCLUDED
-#define NETTLE_ECC_CURVE_H_INCLUDED
+#include "nettle-types.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-/* The contents of this struct is internal. */
-struct ecc_curve;
+/* Name mangling */
+#define curve25519_mul_g nettle_curve25519_mul_g
+#define curve25519_mul nettle_curve25519_mul
 
-extern const struct ecc_curve nettle_secp_192r1;
-extern const struct ecc_curve nettle_secp_224r1;
-extern const struct ecc_curve nettle_secp_256r1;
-extern const struct ecc_curve nettle_secp_384r1;
-extern const struct ecc_curve nettle_secp_521r1;
+#define CURVE25519_SIZE 32
+
+void
+curve25519_mul_g (uint8_t *q, const uint8_t *n);
+
+void
+curve25519_mul (uint8_t *q, const uint8_t *n, const uint8_t *p);
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* NETTLE_ECC_CURVE_H_INCLUDED */
+#endif /* NETTLE_CURVE25519_H */

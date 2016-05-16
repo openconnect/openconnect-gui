@@ -173,16 +173,6 @@ int gnutls_openpgp_privkey_sign_hash(gnutls_openpgp_privkey_t key,
 				     gnutls_datum_t * signature)
     _GNUTLS_GCC_ATTR_DEPRECATED;
 
-/* we support the gnutls_privkey_sign_data() instead.
- */
-int gnutls_x509_privkey_sign_data(gnutls_x509_privkey_t key,
-				  gnutls_digest_algorithm_t digest,
-				  unsigned int flags,
-				  const gnutls_datum_t * data,
-				  void *signature,
-				  size_t * signature_size)
-    _GNUTLS_GCC_ATTR_DEPRECATED;
-
 	/* gnutls_pubkey_get_preferred_hash_algorithm() */
 int gnutls_x509_crt_get_preferred_hash_algorithm(gnutls_x509_crt_t
 						 crt,
@@ -205,11 +195,6 @@ int gnutls_x509_crl_sign(gnutls_x509_crl_t crl,
     _GNUTLS_GCC_ATTR_DEPRECATED;
 
 	/* use gnutls_privkey_sign_hash() with the GNUTLS_PRIVKEY_SIGN_FLAG_TLS1_RSA flag */
-int gnutls_privkey_sign_raw_data(gnutls_privkey_t key,
-				 unsigned flags,
-				 const gnutls_datum_t * data,
-				 gnutls_datum_t *
-				 signature) _GNUTLS_GCC_ATTR_DEPRECATED;
 
 #ifdef _ISOC99_SOURCE
 /* we provide older functions for compatibility as inline functions that
@@ -244,6 +229,9 @@ gnutls_global_set_mem_functions(gnutls_alloc_function alloc_func,
 				gnutls_is_secure_function is_secure_func,
 				gnutls_realloc_function realloc_func,
 				gnutls_free_function free_func) _GNUTLS_GCC_ATTR_DEPRECATED;
+
+/* defined in old headers - unused nevertheless */
+#define GNUTLS_SUPPLEMENTAL_USER_MAPPING_DATA 0
 
 /* *INDENT-OFF* */
 #ifdef __cplusplus

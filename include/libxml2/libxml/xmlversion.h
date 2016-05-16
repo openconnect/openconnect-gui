@@ -29,21 +29,21 @@ XMLPUBFUN void XMLCALL xmlCheckVersion(int version);
  *
  * the version string like "1.2.3"
  */
-#define LIBXML_DOTTED_VERSION "2.9.1"
+#define LIBXML_DOTTED_VERSION "2.9.3"
 
 /**
  * LIBXML_VERSION:
  *
  * the version number: 1.2.3 value is 10203
  */
-#define LIBXML_VERSION 20901
+#define LIBXML_VERSION 20903
 
 /**
  * LIBXML_VERSION_STRING:
  *
  * the version number string, 1.2.3 value is "10203"
  */
-#define LIBXML_VERSION_STRING "20901"
+#define LIBXML_VERSION_STRING "20903"
 
 /**
  * LIBXML_VERSION_EXTRA:
@@ -58,7 +58,7 @@ XMLPUBFUN void XMLCALL xmlCheckVersion(int version);
  * Macro to check that the libxml version in use is compatible with
  * the version the software has been compiled against
  */
-#define LIBXML_TEST_VERSION xmlCheckVersion(20901);
+#define LIBXML_TEST_VERSION xmlCheckVersion(20903);
 
 #ifndef VMS
 #if 0
@@ -174,7 +174,7 @@ XMLPUBFUN void XMLCALL xmlCheckVersion(int version);
  *
  * Whether the FTP support is configured in
  */
-#if 0
+#if 1
 #define LIBXML_FTP_ENABLED
 #endif
 
@@ -183,7 +183,7 @@ XMLPUBFUN void XMLCALL xmlCheckVersion(int version);
  *
  * Whether the HTTP support is configured in
  */
-#if 0
+#if 1
 #define LIBXML_HTTP_ENABLED
 #endif
 
@@ -210,7 +210,7 @@ XMLPUBFUN void XMLCALL xmlCheckVersion(int version);
  *
  * Whether the deprecated APIs are compiled in for compatibility
  */
-#if 0
+#if 1
 #define LIBXML_LEGACY_ENABLED
 #endif
 
@@ -273,7 +273,7 @@ XMLPUBFUN void XMLCALL xmlCheckVersion(int version);
  *
  * Whether iconv support is available
  */
-#if 0
+#if 1
 #define LIBXML_ICONV_ENABLED
 #endif
 
@@ -396,7 +396,7 @@ XMLPUBFUN void XMLCALL xmlCheckVersion(int version);
  *
  * Whether the Zlib support is compiled in
  */
-#if 0
+#if 1
 #define LIBXML_ZLIB_ENABLED
 #endif
 
@@ -435,7 +435,7 @@ XMLPUBFUN void XMLCALL xmlCheckVersion(int version);
  */
 
 #ifndef LIBXML_ATTR_ALLOC_SIZE
-# if ((__GNUC__ > 4) || ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 3)))
+# if (!defined(__clang__) && ((__GNUC__ > 4) || ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 3))))
 #  define LIBXML_ATTR_ALLOC_SIZE(x) __attribute__((alloc_size(x)))
 # else
 #  define LIBXML_ATTR_ALLOC_SIZE(x)
