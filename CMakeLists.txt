@@ -114,7 +114,7 @@ if(EXISTS ${CMAKE_BINARY_DIR}/src/scm_version.cmake)
 		)
 
 		# NSIS'es list of all components
-		set(CPACK_COMPONENTS_ALL App vpnc_script TAP_drivers VcRedist_drivers)
+		set(CPACK_COMPONENTS_ALL App App_Console vpnc_script TAP_drivers VcRedist_libs)
 
 		set(CPACK_COMPONENT_APP_REQUIRED on)
 		set(CPACK_COMPONENT_APP_DISPLAY_NAME "${PRODUCT_NAME_SHORT}")
@@ -128,16 +128,24 @@ if(EXISTS ${CMAKE_BINARY_DIR}/src/scm_version.cmake)
 		set(CPACK_COMPONENT_VPNC_SCRIPT_GROUP "Runtime")
 		set(CPACK_COMPONENT_VPNC_SCRIPT_INSTALL_TYPES Full AppOnly)
 
+   		set(CPACK_COMPONENT_TAP_DRIVERS_REQUIRED off)
 		set(CPACK_COMPONENT_TAP_DRIVERS_DISPLAY_NAME "TAP driver (NDIS 6)")
 		set(CPACK_COMPONENT_TAP_DRIVERS_DESCRIPTION "NDIS 6 driver for Windows (in case you're installing on Windows XP, \
 		disable this option and install NDIS 5 drivers manually from https://openvpn.net)")
 		set(CPACK_COMPONENT_TAP_DRIVERS_GROUP "Drivers")
 		set(CPACK_COMPONENT_TAP_DRIVERS_INSTALL_TYPES Full)
 
-		set(CPACK_COMPONENT_VCREDIST_DRIVERS_DISPLAY_NAME "vcredist for msvc2013 (x86)")
-		set(CPACK_COMPONENT_VCREDIST_DRIVERS_DESCRIPTION "Visual C++ Redistributable Packages for Visual Studio 2013")
-		set(CPACK_COMPONENT_VCREDIST_DRIVERS_GROUP "Drivers")
-		set(CPACK_COMPONENT_VCREDIST_DRIVERS_INSTALL_TYPES Full)
+   		set(CPACK_COMPONENT_VCREDIST_LIBS_REQUIRED off)
+		set(CPACK_COMPONENT_VCREDIST_LIBS_DISPLAY_NAME "vcredist for msvc2013 (x86)")
+		set(CPACK_COMPONENT_VCREDIST_LIBS_DESCRIPTION "Visual C++ Redistributable Packages for Visual Studio 2013")
+		set(CPACK_COMPONENT_VCREDIST_LIBS_GROUP "Drivers")
+		set(CPACK_COMPONENT_VCREDIST_LIBS_INSTALL_TYPES Full)
+
+   		set(CPACK_COMPONENT_APP_CONSOLE_REQUIRED off)
+		set(CPACK_COMPONENT_APP_CONSOLE_DISPLAY_NAME "OpenConnect console")
+		set(CPACK_COMPONENT_APP_CONSOLE_DESCRIPTION "OpenConnect console client")
+		set(CPACK_COMPONENT_APP_CONSOLE_GROUP "Runtime")
+		#set(CPACK_COMPONENT_APP_CONSOLE_INSTALL_TYPES Full)
 
 		# custom install command to populate vcredist & NDIS drivers
 		# vcredis: http://asawicki.info/news_1597_installing_visual_c_redistributable_package_from_command_line.html
