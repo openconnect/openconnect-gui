@@ -51,6 +51,7 @@ configure_file(
 
 if(WIN32 AND MINGW)
     list(APPEND ${PROJECT_NAME}_RESOURCES
+        ${PROJECT_NAME}.rc.in
         ${PROJECT_NAME}.rc
     )
 endif()
@@ -68,6 +69,7 @@ endif()
 
 add_executable(${PROJECT_NAME}
     ${${PROJECT_NAME}_SRCS}
+    ${${PROJECT_NAME}_RESOURCES}
 )
 if(WIN32 AND MINGW)
     set_target_properties(${PROJECT_NAME} PROPERTIES
