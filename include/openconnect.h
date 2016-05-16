@@ -25,16 +25,14 @@
 #include <unistd.h>
 
 #ifdef _WIN32
+#include <winsock2.h>
 #define uid_t unsigned
 #endif
 
 #define OPENCONNECT_API_VERSION_MAJOR 5
-#define OPENCONNECT_API_VERSION_MINOR 3
+#define OPENCONNECT_API_VERSION_MINOR 1
 
 /*
- * API version 5.3:
- *  - Add openconnect_override_getaddrinfo().
- *
  * API version 5.2:
  *  - Add openconnect_set_http_auth(), openconnect_set_protocol().
  *
@@ -577,10 +575,5 @@ int openconnect_has_yubioath_support(void);
 int openconnect_has_system_key_support(void);
 
 int openconnect_set_protocol(struct openconnect_info *vpninfo, const char *protocol);
-
-struct addrinfo;
-typedef int (*openconnect_getaddrinfo_vfn) (void *privdata, const char *nost, const char *service,
-					    const struct addrinfo *hints, struct addrinfo **res);
-void openconnect_override_getaddrinfo(struct openconnect_info *vpninfo, openconnect_getaddrinfo_vfn gai_fn);
 
 #endif /* __OPENCONNECT_H__ */

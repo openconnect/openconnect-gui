@@ -108,7 +108,7 @@ if(WIN32 AND MINGW)
         libnettle.dll.a
         libopenconnect.dll.a
         libp11-kit.dll.a
-        libstoken.dll.a
+        #libstoken.dll.a
         libxml2.dll.a
         libz.dll.a
     )
@@ -123,7 +123,7 @@ endif()
 # install executable
 install(TARGETS ${PROJECT_NAME}
     RUNTIME DESTINATION bin COMPONENT App
-    BUNDLE DESTINATION ./ COMPONENT App
+    BUNDLE DESTINATION . COMPONENT App
 )
 
 # fixup the bundle

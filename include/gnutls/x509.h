@@ -138,7 +138,6 @@ int gnutls_x509_crt_list_import(gnutls_x509_crt_t * certs,
 				gnutls_x509_crt_fmt_t format,
 				unsigned int flags);
 
-#define gnutls_x509_crt_import_pkcs11_url gnutls_x509_crt_import_url
 int gnutls_x509_crt_import_url(gnutls_x509_crt_t crt,
 				      const char *url, unsigned int flags
 				      /* GNUTLS_PKCS11_OBJ_FLAG_* */
@@ -182,11 +181,30 @@ int gnutls_x509_crt_check_hostname(gnutls_x509_crt_t cert,
 				   const char *hostname);
 int gnutls_x509_crt_check_hostname2(gnutls_x509_crt_t cert,
 	 			    const char *hostname, unsigned int flags);
+int
+gnutls_x509_crt_check_email(gnutls_x509_crt_t cert,
+			    const char *email, unsigned int flags);
 
 int gnutls_x509_crt_get_signature_algorithm(gnutls_x509_crt_t cert);
 int gnutls_x509_crt_get_signature(gnutls_x509_crt_t cert,
 				  char *sig, size_t * sizeof_sig);
 int gnutls_x509_crt_get_version(gnutls_x509_crt_t cert);
+
+
+/**
+ * gnutls_keyid_flags_t:
+ * @GNUTLS_KEYID_USE_SHA1: Use SHA1 as the key ID algorithm (default).
+ * @GNUTLS_KEYID_USE_SHA256: Use SHA256 as the key ID algorithm.
+ * @GNUTLS_KEYID_USE_BEST_KNOWN: Use the best known algorithm to calculate key ID. Using that option will make your program behavior depend on the version of gnutls linked with. That option has a cap of 64-bytes key IDs.
+ *
+ * Enumeration of different flags for the key ID functions.
+ 
+ */
+typedef enum {
+	GNUTLS_KEYID_USE_SHA1 = 0,
+	GNUTLS_KEYID_USE_SHA256 = (1<<0),
+	GNUTLS_KEYID_USE_BEST_KNOWN = (1<<30)
+} gnutls_keyid_flags_t;
 int gnutls_x509_crt_get_key_id(gnutls_x509_crt_t crt,
 			       unsigned int flags,
 			       unsigned char *output_data,
@@ -362,6 +380,10 @@ int gnutls_x509_crt_get_pk_dsa_raw(gnutls_x509_crt_t crt,
 				   gnutls_datum_t * p,
 				   gnutls_datum_t * q,
 				   gnutls_datum_t * g, gnutls_datum_t * y);
+int gnutls_x509_crt_get_pk_ecc_raw(gnutls_x509_crt_t crt,
+				   gnutls_ecc_curve_t * curve,
+				   gnutls_datum_t * x,
+				   gnutls_datum_t * y);
 
 int gnutls_x509_crt_get_subject_alt_name(gnutls_x509_crt_t cert,
 					 unsigned int seq,
@@ -522,6 +544,14 @@ int gnutls_x509_crt_set_ca_status(gnutls_x509_crt_t crt, unsigned int ca);
 int gnutls_x509_crt_set_basic_constraints(gnutls_x509_crt_t crt,
 					  unsigned int ca,
 					  int pathLenConstraint);
+
+int
+gnutls_x509_crt_set_subject_unique_id(gnutls_x509_crt_t cert, const void *id,
+			   size_t id_size);
+int
+gnutls_x509_crt_set_issuer_unique_id(gnutls_x509_crt_t cert, const void *id,
+			   size_t id_size);
+
 int gnutls_x509_crt_set_subject_alternative_name(gnutls_x509_crt_t
 						 crt,
 						 gnutls_x509_subject_alt_name_t
@@ -593,7 +623,7 @@ int gnutls_x509_rdn_get_by_oid(const gnutls_datum_t * idn,
 			       unsigned int raw_flag, void *buf,
 			       size_t * sizeof_buf);
 
-typedef void *gnutls_x509_dn_t;
+typedef struct gnutls_x509_dn_st *gnutls_x509_dn_t;
 
 typedef struct gnutls_x509_ava_st {
 	gnutls_datum_t oid;
@@ -607,6 +637,8 @@ int gnutls_x509_crt_get_issuer(gnutls_x509_crt_t cert,
 			       gnutls_x509_dn_t * dn);
 int gnutls_x509_dn_get_rdn_ava(gnutls_x509_dn_t dn, int irdn,
 			       int iava, gnutls_x509_ava_st * ava);
+
+int gnutls_x509_dn_get_str(gnutls_x509_dn_t dn, gnutls_datum_t *str);
 
 int gnutls_x509_dn_init(gnutls_x509_dn_t * dn);
 
@@ -749,41 +781,6 @@ int gnutls_x509_crl_set_number(gnutls_x509_crl_t crl,
 			       const void *nr, size_t nr_size);
 
 
-/* PKCS7 structures handling
- */
-struct gnutls_pkcs7_int;
-typedef struct gnutls_pkcs7_int *gnutls_pkcs7_t;
-
-int gnutls_pkcs7_init(gnutls_pkcs7_t * pkcs7);
-void gnutls_pkcs7_deinit(gnutls_pkcs7_t pkcs7);
-int gnutls_pkcs7_import(gnutls_pkcs7_t pkcs7,
-			const gnutls_datum_t * data,
-			gnutls_x509_crt_fmt_t format);
-int gnutls_pkcs7_export(gnutls_pkcs7_t pkcs7,
-			gnutls_x509_crt_fmt_t format,
-			void *output_data, size_t * output_data_size);
-int gnutls_pkcs7_export2(gnutls_pkcs7_t pkcs7,
-			 gnutls_x509_crt_fmt_t format,
-			 gnutls_datum_t * out);
-
-int gnutls_pkcs7_get_crt_count(gnutls_pkcs7_t pkcs7);
-int gnutls_pkcs7_get_crt_raw(gnutls_pkcs7_t pkcs7, int indx,
-			     void *certificate, size_t * certificate_size);
-
-int gnutls_pkcs7_set_crt_raw(gnutls_pkcs7_t pkcs7,
-			     const gnutls_datum_t * crt);
-int gnutls_pkcs7_set_crt(gnutls_pkcs7_t pkcs7, gnutls_x509_crt_t crt);
-int gnutls_pkcs7_delete_crt(gnutls_pkcs7_t pkcs7, int indx);
-
-int gnutls_pkcs7_get_crl_raw(gnutls_pkcs7_t pkcs7,
-			     int indx, void *crl, size_t * crl_size);
-int gnutls_pkcs7_get_crl_count(gnutls_pkcs7_t pkcs7);
-
-int gnutls_pkcs7_set_crl_raw(gnutls_pkcs7_t pkcs7,
-			     const gnutls_datum_t * crl);
-int gnutls_pkcs7_set_crl(gnutls_pkcs7_t pkcs7, gnutls_x509_crl_t crl);
-int gnutls_pkcs7_delete_crl(gnutls_pkcs7_t pkcs7, int indx);
-
 /* X.509 Certificate verification functions.
  */
 
@@ -813,6 +810,8 @@ int gnutls_pkcs7_delete_crl(gnutls_pkcs7_t pkcs7, int indx);
  *   using the broken MD2 algorithm.
  * @GNUTLS_VERIFY_ALLOW_SIGN_RSA_MD5: Allow certificates to be signed
  *   using the broken MD5 algorithm.
+ * @GNUTLS_VERIFY_ALLOW_BROKEN: Allow certificates to be signed
+ *   using any broken algorithm.
  * @GNUTLS_VERIFY_DISABLE_TIME_CHECKS: Disable checking of activation
  *   and expiration validity periods of certificate chains. Don't set
  *   this unless you understand the security implications.
@@ -820,6 +819,8 @@ int gnutls_pkcs7_delete_crl(gnutls_pkcs7_t pkcs7, int indx);
  *   using certificate revocation lists or the available OCSP data.
  * @GNUTLS_VERIFY_DO_NOT_ALLOW_WILDCARDS: When including a hostname
  *   check in the verification, do not consider any wildcards.
+ * @GNUTLS_VERIFY_USE_TLS1_RSA: This indicates that a (raw) RSA signature is provided
+ *   as in the TLS 1.0 protocol. Not all functions accept this flag.
  *
  * Enumeration of different certificate verify flags. Additional
  * verification profiles can be set using GNUTLS_PROFILE_TO_VFLAGS()
@@ -838,8 +839,11 @@ typedef enum gnutls_certificate_verify_flags {
 	GNUTLS_VERIFY_ALLOW_UNSORTED_CHAIN = 1 << 10,
 	GNUTLS_VERIFY_DO_NOT_ALLOW_UNSORTED_CHAIN = 1 << 11,
 	GNUTLS_VERIFY_DO_NOT_ALLOW_WILDCARDS = 1 << 12,
+	GNUTLS_VERIFY_USE_TLS1_RSA = 1 << 13
 	/* cannot exceed 2^24 due to GNUTLS_PROFILE_TO_VFLAGS() */
 } gnutls_certificate_verify_flags;
+
+#define GNUTLS_VERIFY_ALLOW_BROKEN (GNUTLS_VERIFY_ALLOW_SIGN_RSA_MD2|GNUTLS_VERIFY_ALLOW_SIGN_RSA_MD5)
 
 /**
  * gnutls_certificate_verification_profiles_t:
@@ -903,6 +907,13 @@ int gnutls_x509_crl_verify(gnutls_x509_crl_t crl,
 			   const gnutls_x509_crt_t * CA_list,
 			   int CA_list_length, unsigned int flags,
 			   unsigned int *verify);
+
+int
+gnutls_x509_crt_verify_data2(gnutls_x509_crt_t crt,
+			   gnutls_sign_algorithm_t algo,
+			   unsigned int flags,
+			   const gnutls_datum_t * data,
+			   const gnutls_datum_t * signature);
 
 int gnutls_x509_crt_check_revocation(gnutls_x509_crt_t cert,
 				     const gnutls_x509_crl_t *
@@ -1093,6 +1104,14 @@ int gnutls_x509_privkey_export_ecc_raw(gnutls_x509_privkey_t key,
 				       gnutls_datum_t * x,
 				       gnutls_datum_t * y,
 				       gnutls_datum_t * k);
+
+int gnutls_x509_privkey_sign_data(gnutls_x509_privkey_t key,
+				  gnutls_digest_algorithm_t digest,
+				  unsigned int flags,
+				  const gnutls_datum_t * data,
+				  void *signature,
+				  size_t * signature_size);
+
 /* Certificate request stuff.
  */
 
@@ -1271,6 +1290,12 @@ int gnutls_x509_trust_list_get_issuer_by_dn(gnutls_x509_trust_list_t list,
 				      gnutls_x509_crt_t *issuer,
 				      unsigned int flags);
 
+int gnutls_x509_trust_list_get_issuer_by_subject_key_id(gnutls_x509_trust_list_t list,
+				      const gnutls_datum_t *dn,
+				      const gnutls_datum_t *spki,
+				      gnutls_x509_crt_t *issuer,
+				      unsigned int flags);
+
 #define GNUTLS_TL_VERIFY_CRL 1
 #define GNUTLS_TL_USE_IN_TLS (1<<1)
 #define GNUTLS_TL_NO_DUPLICATES (1<<2)
@@ -1402,6 +1427,8 @@ int
 gnutls_x509_ext_print(gnutls_x509_ext_st *exts, unsigned int exts_size,
 		      gnutls_certificate_print_formats_t format,
 		      gnutls_datum_t * out);
+
+#include <gnutls/pkcs7.h>
 
 /* *INDENT-OFF* */
 #ifdef __cplusplus

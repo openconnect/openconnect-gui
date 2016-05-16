@@ -1,13 +1,12 @@
 prefix=/usr/i686-w64-mingw32/sys-root/mingw
-exec_prefix=${prefix}
+exec_prefix=/usr/i686-w64-mingw32/sys-root/mingw
 libdir=/usr/i686-w64-mingw32/sys-root/mingw/lib
-sharedlibdir=${libdir}
 includedir=/usr/i686-w64-mingw32/sys-root/mingw/include
 
 Name: zlib
 Description: zlib compression library
-Version: 1.2.8
+Version: 1.2.5
 
 Requires:
-Libs: -L${libdir} -L${sharedlibdir} -lz
+Libs: -L${libdir} -lz
 Cflags: -I${includedir}
