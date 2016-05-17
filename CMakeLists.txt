@@ -96,7 +96,7 @@ if(EXISTS ${CMAKE_BINARY_DIR}/src/scm_version.cmake)
 	if(WIN32 AND MINGW)
 		set(CPACK_GENERATOR "NSIS")
 
-		set(CPACK_NSIS_INSTALLED_ICON_NAME "bin\\\\${PROJECT_NAME}.exe")
+		set(CPACK_NSIS_INSTALLED_ICON_NAME "${PROJECT_NAME}.exe")
 		set(CPACK_NSIS_DISPLAY_NAME "${CPACK_PACKAGE_INSTALL_DIRECTORY}")
 		set(CPACK_NSIS_HELP_LINK "https:\\\\\\\\github.com\\\\openconnect\\\\openconnect-gui\\\\issues")
 		set(CPACK_NSIS_URL_INFO_ABOUT "https:\\\\\\\\openconnect.github.io\\\\openconnect-gui")
@@ -107,6 +107,7 @@ if(EXISTS ${CMAKE_BINARY_DIR}/src/scm_version.cmake)
 		set(CPACK_NSIS_MUI_ICON "${CMAKE_CURRENT_SOURCE_DIR}\\\\src\\\\${PROJECT_NAME}.ico")
 		set(CPACK_NSIS_MUI_UNIICON "${CMAKE_CURRENT_SOURCE_DIR}\\\\src\\\\${PROJECT_NAME}.ico")
 
+		set(CPACK_NSIS_EXECUTABLES_DIRECTORY ".")
 		set(CPACK_NSIS_MUI_FINISHPAGE_RUN "${PROJECT_NAME}.exe")
 
 		set(CPACK_NSIS_MENU_LINKS
@@ -141,6 +142,7 @@ if(EXISTS ${CMAKE_BINARY_DIR}/src/scm_version.cmake)
 		set(CPACK_COMPONENT_VCREDIST_LIBS_GROUP "Drivers")
 		set(CPACK_COMPONENT_VCREDIST_LIBS_INSTALL_TYPES Full)
 
+		set(CPACK_COMPONENT_APP_CONSOLE_DISABLED on)
    		set(CPACK_COMPONENT_APP_CONSOLE_REQUIRED off)
 		set(CPACK_COMPONENT_APP_CONSOLE_DISPLAY_NAME "OpenConnect console")
 		set(CPACK_COMPONENT_APP_CONSOLE_DESCRIPTION "OpenConnect console client")
