@@ -112,6 +112,8 @@ if(EXISTS ${CMAKE_BINARY_DIR}/src/scm_version.cmake)
 
 		set(CPACK_NSIS_MENU_LINKS
 			"https://openconnect.github.io/openconnect-gui/" "Homepage"
+			"https://github.com/openconnect/openconnect-gui/issues" "Issues"
+			"https://github.com/openconnect/openconnect-gui/wiki/FAQ" "FAQ"
 		)
 
 		# NSIS'es list of all components
