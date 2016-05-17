@@ -406,11 +406,13 @@ void MainWindow::changeStatus(int val)
         }
         disable_cmd_fd();
 
-        ui->cipherCSTPLabel->clear();
-        ui->cipherDTLSLabel->clear();
         ui->ipV4Label->clear();
         ui->ipV6Label->clear();
         ui->dnsLabel->clear();
+        ui->uploadLabel->clear();
+        ui->downloadLabel->clear();
+        ui->cipherCSTPLabel->clear();
+        ui->cipherDTLSLabel->clear();
         this->updateProgressBar(QObject::tr("Disconnected"));
 
         ui->serverList->setEnabled(true);
