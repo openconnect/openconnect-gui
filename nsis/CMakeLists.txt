@@ -1,5 +1,5 @@
 install(FILES vpnc-script.js
-	DESTINATION bin
+	DESTINATION .
 	COMPONENT vpnc_script
 )
 
@@ -14,6 +14,6 @@ install(FILES vcredist_x86.exe
 )
 
 install(FILES openconnect.exe
-    DESTINATION bin
+    DESTINATION .
     COMPONENT App_Console
 )
