@@ -12,3 +12,7 @@ traffic_light_green: https://openclipart.org/detail/204662/digital-encryption-ic
 traffic_light_red.png: https://openclipart.org/detail/204439/encryption-icon
 traffic_light_yellow.png: https://openclipart.org/detail/204439/encryption-icon
 traffic_light_off.png: https://openclipart.org/detail/204439/encryption-icon
+
+- NSIS installer
+https://openclipart.org/detail/197887/mono_lock-by-dannya
+https://openclipart.org/detail/161209/lock-and-key

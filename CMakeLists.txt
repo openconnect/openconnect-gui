@@ -107,9 +107,9 @@ if(EXISTS ${CMAKE_BINARY_DIR}/src/scm_version.cmake)
 		set(CPACK_NSIS_MUI_ICON "${CMAKE_CURRENT_SOURCE_DIR}\\\\src\\\\${PROJECT_NAME}.ico")
 		set(CPACK_NSIS_MUI_UNIICON "${CMAKE_CURRENT_SOURCE_DIR}\\\\src\\\\${PROJECT_NAME}.ico")
 
-		set(CPACK_PACKAGE_ICON ${CMAKE_CURRENT_SOURCE_DIR}\\\\nsis\\\\images\\\\header-nsis.bmp)
-		set(CPACK_NSIS_MUI_WELCOMEFINISHPAGE_BITMAP ${CMAKE_CURRENT_SOURCE_DIR}\\\\nsis\\\\images\\\\install-nsis.bmp)
-		set(CPACK_NSIS_MUI_UNWELCOMEFINISHPAGE_BITMAP ${CMAKE_CURRENT_SOURCE_DIR}\\\\nsis\\\\images\\\\uninstall-nsis.bmp)
+		set(CPACK_PACKAGE_ICON ${CMAKE_CURRENT_SOURCE_DIR}\\\\nsis\\\\images\\\\header-openconnect.bmp)
+		set(CPACK_NSIS_MUI_WELCOMEFINISHPAGE_BITMAP ${CMAKE_CURRENT_SOURCE_DIR}\\\\nsis\\\\images\\\\install-openconnect.bmp)
+		set(CPACK_NSIS_MUI_UNWELCOMEFINISHPAGE_BITMAP ${CMAKE_CURRENT_SOURCE_DIR}\\\\nsis\\\\images\\\\install-openconnect.bmp)
 
 		set(CPACK_NSIS_EXECUTABLES_DIRECTORY ".")
 		set(CPACK_NSIS_MUI_FINISHPAGE_RUN "${PROJECT_NAME}.exe")
