@@ -7,11 +7,7 @@ logo*.ico: CC0: https://openclipart.org/detail/197887/mono_lock-by-dannya
 network-disconnected.png: CC): https://openclipart.org/detail/198073/mono%20network%20disconnected
 network-connected.png: CC): https://openclipart.org/detail/198072/mono%20network%20connected
 
-- resized & converted & re-colored:
-traffic_light_green: https://openclipart.org/detail/204662/digital-encryption-icon
-traffic_light_red.png: https://openclipart.org/detail/204439/encryption-icon
-traffic_light_yellow.png: https://openclipart.org/detail/204439/encryption-icon
-traffic_light_off.png: https://openclipart.org/detail/204439/encryption-icon
+traffic_light_*.png: https://openclipart.org/detail/35521/tango-emblem-readonly
 
 - NSIS installer
 https://openclipart.org/detail/197887/mono_lock-by-dannya
