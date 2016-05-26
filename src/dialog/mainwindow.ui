@@ -403,8 +403,18 @@
     </property>
     <addaction name="actionLogWindow"/>
    </widget>
+   <widget class="QMenu" name="menu_Settings">
+    <property name="title">
+     <string>&amp;Settings</string>
+    </property>
+    <addaction name="actionMinimizeToTheNotificationArea"/>
+    <addaction name="actionMinimizeTheApplicationInsteadOfClosing"/>
+    <addaction name="separator"/>
+    <addaction name="actionStartMinimized"/>
+   </widget>
    <addaction name="menuFile"/>
    <addaction name="menu_View"/>
+   <addaction name="menu_Settings"/>
    <addaction name="menuHelp"/>
   </widget>
   <action name="actionQuit">
@@ -498,6 +508,30 @@
     <string>Ctrl+L</string>
    </property>
   </action>
+  <action name="actionMinimizeToTheNotificationArea">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Minimize to the notification &amp;area</string>
+   </property>
+  </action>
+  <action name="actionMinimizeTheApplicationInsteadOfClosing">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Minimize instead of &amp;closing</string>
+   </property>
+  </action>
+  <action name="actionStartMinimized">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Start &amp;minimized</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <resources>
@@ -508,7 +542,7 @@
    <sender>actionMinimize</sender>
    <signal>triggered()</signal>
    <receiver>MainWindow</receiver>
-   <slot>hide()</slot>
+   <slot>showMinimized()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>-1</x>
@@ -543,8 +577,8 @@
    <slot>click()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>366</x>
-     <y>163</y>
+     <x>-1</x>
+     <y>-1</y>
     </hint>
     <hint type="destinationlabel">
      <x>366</x>
