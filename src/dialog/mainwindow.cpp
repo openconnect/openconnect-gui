@@ -112,7 +112,7 @@ MainWindow::MainWindow(QWidget* parent)
     s1_noProfiles->assignProperty(ui->actionEditSelectedProfile, "enabled", false);
     s1_noProfiles->assignProperty(ui->actionRemoveSelectedProfile, "enabled", false);
 
-    s1_noProfiles->assignProperty(m_trayIconMenuConnections, "title", tr("No servers to connect"));
+    s1_noProfiles->assignProperty(m_trayIconMenuConnections, "title", tr("(no servers to connect)"));
     s1_noProfiles->assignProperty(m_trayIconMenuConnections, "enabled", false);
     s1_noProfiles->assignProperty(m_disconnectAction, "enabled", false);
     machine->addState(s1_noProfiles);
