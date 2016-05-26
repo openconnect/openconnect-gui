@@ -43,6 +43,8 @@ extern "C" {
 #include <QtNetwork/QNetworkProxyQuery>
 #include <QStateMachine>
 #include <QSignalTransition>
+#include <QEventTransition>
+#include <QCheckBox>
 
 #include <cstdarg>
 #include <cstdio>
@@ -174,6 +176,91 @@ MainWindow::MainWindow(QWidget* parent)
     ui->serverListControl->setMenu(serverProfilesMenu);
 
     readSettings();
+    // TODO: initial app window state machine
+    m_appWindowStateMachine = new QStateMachine(this);
+
+    QState* s111_normalWindow = new QState();
+    m_appWindowStateMachine->addState(s111_normalWindow);
+    s111_normalWindow->assignProperty(ui->actionRestore, "enabled", false);
+    s111_normalWindow->assignProperty(ui->actionMinimize, "enabled", true);
+
+    QState* s112_minimizedWindow = new QState();
+    m_appWindowStateMachine->addState(s112_minimizedWindow);
+    connect(s112_minimizedWindow, &QState::entered, [=]() {
+        showMinimized();
+        if (ui->actionMinimizeToTheNotificationArea->isChecked()) {
+            QTimer::singleShot(10, this, SLOT(hide()));
+        }
+    });
+    connect(s112_minimizedWindow, &QState::exited, [=]() {
+        this->showNormal();
+        if (ui->actionMinimizeToTheNotificationArea->isChecked()) {
+            show();
+            raise();
+            activateWindow();
+        }
+    });
+    s112_minimizedWindow->assignProperty(ui->actionRestore, "enabled", true);
+    s112_minimizedWindow->assignProperty(ui->actionMinimize, "enabled", false);
+
+    if (ui->actionStartMinimized->isChecked()) {
+        m_appWindowStateMachine->setInitialState(s112_minimizedWindow);
+    } else {
+        m_appWindowStateMachine->setInitialState(s111_normalWindow);
+    }
+
+    // TODO: move outside...
+    class MinimizeEventTransition : public QEventTransition
+    {
+    public:
+        MinimizeEventTransition(QMainWindow* mw,  Qt::WindowState state)
+            : QEventTransition(mw, QEvent::WindowStateChange), m_mw(mw), m_state(state) {}
+    protected:
+        bool eventTest(QEvent *e) override {
+            if (!QEventTransition::eventTest(e)) {
+                return false;
+            }
+            QStateMachine::WrappedEvent *we = static_cast<QStateMachine::WrappedEvent*>(e);
+            if(we->event()->type() == QEvent::WindowStateChange) {
+                return (m_mw->windowState() == m_state);
+            }
+            return false;
+        }
+    private:
+        QMainWindow* m_mw;
+        Qt::WindowState m_state;
+    };
+    // TODO: move outside...
+    class RestoreEventTransition : public QEventTransition
+    {
+    public:
+        RestoreEventTransition(QMainWindow* mw,  Qt::WindowState state)
+            : QEventTransition(mw, QEvent::WindowStateChange), m_mw(mw), m_state(state) {}
+    protected:
+        bool eventTest(QEvent *e) override {
+            if (!QEventTransition::eventTest(e)) {
+                return false;
+            }
+            QStateMachine::WrappedEvent *we = static_cast<QStateMachine::WrappedEvent*>(e);
+            if(we->event()->type() == QEvent::WindowStateChange) {
+                return (m_mw->windowState() == m_state);
+            }
+            return false;
+        }
+    private:
+        QMainWindow* m_mw;
+        Qt::WindowState m_state;
+    };
+
+    MinimizeEventTransition* minimizeEvent = new MinimizeEventTransition(this, Qt::WindowMinimized);
+    minimizeEvent->setTargetState(s112_minimizedWindow);
+    s111_normalWindow->addTransition(minimizeEvent);
+
+    RestoreEventTransition* restoreEvent = new RestoreEventTransition(this, Qt::WindowNoState);
+    restoreEvent->setTargetState(s111_normalWindow);
+    s112_minimizedWindow->addTransition(restoreEvent);
+
+    m_appWindowStateMachine->start();
 }
 
 static void term_thread(MainWindow* m, SOCKET* fd)
@@ -682,6 +769,12 @@ void MainWindow::readSettings()
         move(settings.value("pos").toPoint());
     }
     settings.endGroup();
+
+    settings.beginGroup("Settings");
+    ui->actionMinimizeToTheNotificationArea->setChecked(settings.value("minimizeToTheNotificationArea", true).toBool());
+    ui->actionMinimizeTheApplicationInsteadOfClosing->setChecked(settings.value("minimizeTheApplicationInsteadOfClosing", true).toBool());
+    ui->actionStartMinimized->setChecked(settings.value("startMinimized", false).toBool());
+    settings.endGroup();
 }
 
 void MainWindow::writeSettings()
@@ -690,6 +783,12 @@ void MainWindow::writeSettings()
     settings.beginGroup("MainWindow");
     settings.setValue("size", size());
     settings.setValue("pos", pos());
+    settings.endGroup();
+
+    settings.beginGroup("Settings");
+    settings.setValue("minimizeToTheNotificationArea", ui->actionMinimizeToTheNotificationArea->isChecked());
+    settings.setValue("minimizeTheApplicationInsteadOfClosing", ui->actionMinimizeTheApplicationInsteadOfClosing->isChecked());
+    settings.setValue("startMinimized", ui->actionStartMinimized->isChecked());
     settings.endGroup();
 
     settings.setValue("Profiles/currentIndex", ui->serverList->currentIndex());
@@ -718,23 +817,18 @@ void MainWindow::createTrayIcon()
     m_trayIcon->setContextMenu(m_trayIconMenu);
 }
 
-void MainWindow::setVisible(bool visible)
-{
-    ui->actionMinimize->setEnabled(visible);
-    ui->actionRestore->setEnabled(!visible);
-    QMainWindow::setVisible(visible);
-    if (visible) {
-        raise();
-    }
-}
-
 void MainWindow::iconActivated(QSystemTrayIcon::ActivationReason reason)
 {
     switch (reason) {
     case QSystemTrayIcon::Trigger:
     case QSystemTrayIcon::DoubleClick:
+    case QSystemTrayIcon::MiddleClick:
 #ifdef Q_OS_WIN
-        setVisible(isHidden());
+        if (isMinimized()) {
+            showNormal();
+        } else {
+            showMinimized();
+        }
 #endif
         break;
     default:

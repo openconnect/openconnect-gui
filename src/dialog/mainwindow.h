@@ -41,6 +41,8 @@ extern "C" {
 #include <winsock2.h>
 #endif
 
+class QStateMachine;
+
 namespace Ui {
 class MainWindow;
 }
@@ -72,9 +74,6 @@ public:
         QString& dtls_cipher);
 
     QStringList* get_log(void);
-
-public slots:
-    void setVisible(bool visible) override;
 
 private slots:
     void iconActivated(QSystemTrayIcon::ActivationReason reason);
@@ -130,6 +129,7 @@ private:
     QString cstp_cipher;
     QString dtls_cipher;
 
+    QStateMachine* m_appWindowStateMachine;
     QSystemTrayIcon* m_trayIcon;
     QMenu* m_trayIconMenu;
     QMenu* m_trayIconMenuConnections;
