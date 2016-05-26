@@ -700,24 +700,35 @@ void MainWindow::clear_logdialog()
 
 void MainWindow::closeEvent(QCloseEvent* event)
 {
-    if (logdialog) {
-        logdialog->close();
-        logdialog = nullptr;
-    }
+    if (m_trayIcon && m_trayIcon->isVisible() && ui->actionMinimizeTheApplicationInsteadOfClosing->isChecked()) {
+        QSettings settings;
+        const bool showTheMessageAgain = settings.value("showTheMessageAgain/minimizeToNotificationArea", true).toBool();
 
-    if (m_trayIcon && m_trayIcon->isVisible()) {
-        static int shown = 0;
+        if (showTheMessageAgain == true) {
+            QMessageBox msg(this);
+            msg.setWindowTitle(tr("Minimize to notification area"));
+            msg.setIcon(QMessageBox::Warning);
+            msg.setText(tr("The program will keep running in the notification area.<br> "
+                           "To terminate the program, choose <b>Quit</b> in application menu or "
+                           "in the context menu of the notification area entry."));
+            msg.setCheckBox(new QCheckBox(tr("&Show this message again")));
+            msg.checkBox()->setChecked(showTheMessageAgain);
+            msg.exec();
 
-        if (shown == 0) {
-            QMessageBox::information(this, tr("Systray"),
-                tr("The program will keep running in the "
-                   "system tray. To terminate the program, "
-                   "choose <b>Quit</b> in the system tray entry."));
-            shown = 1;
+            settings.setValue("showTheMessageAgain/minimizeToNotificationArea", msg.checkBox()->isChecked());
         }
-        hide();
+        this->showMinimized();
         event->ignore();
+    } else {
+        if (logdialog) {
+            logdialog->close();
+            logdialog = nullptr;
+        }
+
+        event->accept();
+        qApp->quit();
     }
+    QMainWindow::closeEvent(event);
 }
 
 void MainWindow::on_viewLogButton_clicked()
