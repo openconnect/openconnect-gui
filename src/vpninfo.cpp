@@ -403,7 +403,6 @@ int VpnInfo::connect()
     int ret;
     QString cert_file, key_file, tfile;
     QString ca_file;
-    bool status;
 
     cert_file = ss->get_cert_file();
     ca_file = ss->get_ca_cert_file();
@@ -448,17 +447,9 @@ int VpnInfo::connect()
 
     // TODO: WTF:???
     /* now read %temp%\\vpnc.log and post it to our log */
-    tfile = QDir::tempPath() + QLatin1String("/vpnc.log");
+    tfile = QDir::tempPath() + QDir::separator() + QLatin1String("vpnc.log");
     QFile file(tfile);
-
-    status = file.open(QIODevice::ReadOnly);
-    if (!status) {
-        tfile = QDir::tempPath() + QLatin1String("\\vpnc.log");
-        file.setFileName(tfile);
-        status = file.open(QIODevice::ReadOnly);
-    }
-
-    if (status) {
+    if (file.open(QIODevice::ReadOnly) == true) {
         QTextStream in(&file);
 
         while (!in.atEnd()) {
