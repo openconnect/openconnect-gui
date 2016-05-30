@@ -52,5 +52,7 @@ public:
     unsigned int form_pass_attempt;
 
 private:
+    void logVpncScriptOutput();
+
     SOCKET cmd_fd;
 };
