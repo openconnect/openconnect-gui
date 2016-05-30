@@ -401,7 +401,7 @@ void VpnInfo::parse_url(const char* url)
 int VpnInfo::connect()
 {
     int ret;
-    QString cert_file, key_file, tfile;
+    QString cert_file, key_file;
     QString ca_file;
 
     cert_file = ss->get_cert_file();
@@ -445,22 +445,7 @@ int VpnInfo::connect()
         return ret;
     }
 
-    // TODO: WTF:???
-    /* now read %temp%\\vpnc.log and post it to our log */
-    tfile = QDir::tempPath() + QDir::separator() + QLatin1String("vpnc.log");
-    QFile file(tfile);
-    if (file.open(QIODevice::ReadOnly) == true) {
-        QTextStream in(&file);
-
-        while (!in.atEnd()) {
-            QString line = in.readLine();
-            this->m->updateProgressBar(line, false);
-        }
-        file.close();
-        QFile::remove(tfile);
-    } else {
-        this->m->updateProgressBar(QLatin1String("Could not open ") + tfile + ": " + QString::number((int)file.error()));
-    }
+    logVpncScriptOutput();
 
     return 0;
 }
@@ -484,6 +469,7 @@ void VpnInfo::mainloop()
         int ret = openconnect_mainloop(vpninfo, 15, RECONNECT_INTERVAL_MIN);
         if (ret != 0) {
             this->last_err = QObject::tr("Disconnected");
+            logVpncScriptOutput();
             break;
         }
     }
@@ -551,4 +537,24 @@ void VpnInfo::reset_vpn()
 bool VpnInfo::get_minimize() const
 {
     return ss->get_minimize();
+}
+
+void VpnInfo::logVpncScriptOutput()
+{
+    /* now read %temp%\\vpnc.log and post it to our log */
+    QString tfile = QDir::tempPath() + QDir::separator() + QLatin1String("vpnc.log");
+    QFile file(tfile);
+    if (file.open(QIODevice::ReadOnly) == true) {
+        QTextStream in(&file);
+
+        while (!in.atEnd()) {
+            QString line = in.readLine();
+            this->m->updateProgressBar(line, false);
+        }
+        file.close();
+        QFile::remove(tfile);
+    } else {
+        this->m->updateProgressBar(QLatin1String("Could not open ") + tfile + ": " + QString::number((int)file.error()));
+    }
+
 }
