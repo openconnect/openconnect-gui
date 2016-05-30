@@ -751,6 +751,7 @@ void MainWindow::on_viewLogButton_clicked()
         logdialog->activateWindow();
     } else {
         logdialog->raise();
+        logdialog->activateWindow();
     }
 }
 
