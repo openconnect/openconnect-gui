@@ -30,10 +30,12 @@ function echo(msg) {
 
 function exec(cmd) {
 	log.WriteLine("<<-- [EXEC] " + cmd);
-	var s = ws.Exec(comspec + " /c \"" + cmd + "\" 2>&1").StdOut.ReadAll();
-
+	var oExec = ws.Exec(comspec + " /c \"" + cmd + "\" 2>&1");
+	var ret = oExec.Status;
+    
+	var s = oExec.StdOut.ReadAll();
 	log.Write(s);
-	log.WriteLine("-->>");
+	log.WriteLine("-->> (ret: " + ret + ")");
 	return s;
 }
   
