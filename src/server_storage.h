@@ -44,7 +44,7 @@ public:
     const QString& get_label() const;
     void set_label(const QString& label);
 
-    const bool get_disable_udp() const;
+    bool get_disable_udp() const;
     void set_disable_udp(bool v);
 
     QString get_cert_file();
@@ -65,13 +65,13 @@ public:
     QString get_ca_cert_hash();
     int set_ca_cert(const QString& filename);
 
-    const bool get_batch_mode() const;
+    bool get_batch_mode() const;
     void set_batch_mode(const bool mode);
 
-    const bool get_minimize() const;
+    bool get_minimize() const;
     void set_minimize(const bool t);
 
-    const bool get_proxy() const;
+    bool get_proxy() const;
     void set_proxy(const bool t);
 
     QString get_token_str();
@@ -84,7 +84,7 @@ public:
     void get_server_hash(QString& hash) const;
     void set_server_hash(const unsigned algo, const QByteArray& hash);
 
-    const bool client_is_complete() const;
+    bool client_is_complete() const;
 
     void set_window(QWidget* w);
 

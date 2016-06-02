@@ -19,7 +19,7 @@
 
 #include "editdialog.h"
 #include "common.h"
-#include "storage.h"
+#include "server_storage.h"
 #include "ui_editdialog.h"
 #include <QFileDialog>
 #include <QItemSelectionModel>

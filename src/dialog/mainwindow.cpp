@@ -18,12 +18,12 @@
  */
 
 #include "mainwindow.h"
+#include "ui_mainwindow.h"
 #include "config.h"
 #include "editdialog.h"
 #include "logdialog.h"
 #include "openconnect-gui.h"
-#include "storage.h"
-#include "ui_mainwindow.h"
+#include "server_storage.h"
 #include "vpninfo.h"
 
 extern "C" {

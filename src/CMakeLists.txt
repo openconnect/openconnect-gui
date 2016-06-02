@@ -37,8 +37,8 @@ set(${PROJECT_NAME}_SRCS
     keypair.cpp
     keypair.h
     main.cpp
-    storage.cpp
-    storage.h
+    server_storage.cpp
+    server_storage.h
     vpninfo.cpp
     vpninfo.h
 )

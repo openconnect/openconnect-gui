@@ -18,7 +18,7 @@
  */
 
 #include "gtdb.h"
-#include "storage.h"
+#include "server_storage.h"
 extern "C" {
 #include <gnutls/crypto.h>
 }
