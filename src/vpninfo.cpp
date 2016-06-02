@@ -23,7 +23,7 @@
 #include "dialog/MyInputDialog.h"
 #include "dialog/mainwindow.h"
 #include "gtdb.h"
-#include "storage.h"
+#include "server_storage.h"
 
 #include <QDir>
 

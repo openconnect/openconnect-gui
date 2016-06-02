@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "storage.h"
+#include "server_storage.h"
 #include "cryptdata.h"
 #include <QSettings>
 #include <cstdio>
@@ -133,7 +133,7 @@ void StoredServer::get_server_hash(QString& hash) const
     if (this->m_server_hash_algo == 0) {
         hash = "";
     } else {
-        hash = gnutls_mac_get_name((gnutls_mac_algorithm_t) this->m_server_hash_algo);
+        hash = gnutls_mac_get_name((gnutls_mac_algorithm_t)this->m_server_hash_algo);
         hash += ":";
         hash += this->m_server_hash.toHex();
     }
@@ -305,7 +305,7 @@ void StoredServer::set_disable_udp(bool v)
     this->m_disable_udp = v;
 }
 
-const bool StoredServer::get_disable_udp() const
+bool StoredServer::get_disable_udp() const
 {
     return this->m_disable_udp;
 }
@@ -330,22 +330,22 @@ void StoredServer::set_batch_mode(const bool mode)
     this->m_batch_mode = mode;
 }
 
-const bool StoredServer::get_batch_mode() const
+bool StoredServer::get_batch_mode() const
 {
     return this->m_batch_mode;
 }
 
-const bool StoredServer::get_minimize() const
+bool StoredServer::get_minimize() const
 {
     return this->m_minimize_on_connect;
 }
 
-const bool StoredServer::get_proxy() const
+bool StoredServer::get_proxy() const
 {
     return this->m_proxy;
 }
 
-const bool StoredServer::client_is_complete() const
+bool StoredServer::client_is_complete() const
 {
     return m_client.is_complete();
 }
