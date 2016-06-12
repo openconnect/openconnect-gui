@@ -24,12 +24,6 @@
 class StoredServer;
 class QSettings;
 
-struct win_cert_st {
-    QString label;
-    QString key_url;
-    QString cert_url;
-};
-
 namespace Ui {
 class EditDialog;
 }
@@ -41,7 +35,6 @@ public:
     ~EditDialog();
 
 private slots:
-    void load_win_certs();
     void on_buttonBox_accepted();
     void on_buttonBox_rejected();
     void on_userCertButton_clicked();
@@ -52,10 +45,18 @@ private slots:
     void on_caCertClear_clicked();
     void on_serverCertClear_clicked();
     void on_tokenClear_clicked();
-    void on_toolButton_clicked();
+    void on_groupnameClear_clicked();
     void on_loadWinCert_clicked();
 
 private:
+    void load_win_certs();
+
+    struct win_cert_st {
+        QString label;
+        QString key_url;
+        QString cert_url;
+    };
+
     Ui::EditDialog* ui;
     std::vector<win_cert_st> winCerts;
     StoredServer* ss;
