@@ -55,7 +55,7 @@ static int token_tab(int mode)
     }
 }
 
-int token_rtab[] = {
+static int token_rtab[] = {
         [0] = OC_TOKEN_MODE_HOTP,
     [1] = OC_TOKEN_MODE_TOTP,
     [2] = OC_TOKEN_MODE_STOKEN
@@ -64,14 +64,7 @@ int token_rtab[] = {
 void EditDialog::load_win_certs()
 {
 #ifdef USE_SYSTEM_KEYS
-    gnutls_system_key_iter_t iter = NULL;
-    char* label;
-    char* cert_url;
-    char* key_url;
-    int ret, idx = -1;
-    int row = 0;
     QString prekey = ss->get_key_url();
-
     if (prekey.isEmpty() == false) {
         ui->userKeyEdit->setText(prekey);
     }
@@ -79,21 +72,26 @@ void EditDialog::load_win_certs()
     this->winCerts.clear();
     ui->loadWinCertList->clear();
 
+    int ret = -1;
+    gnutls_system_key_iter_t iter = nullptr;
+    char* cert_url;
+    char* key_url;
+    char* label;
+    int row = 0;
+    int idx = -1;
     do {
         ret = gnutls_system_key_iter_get_info(&iter, GNUTLS_CRT_X509, &cert_url, &key_url, &label,
-            NULL, 0);
+            nullptr, 0);
         if (ret >= 0) {
             win_cert_st st;
             QString l;
-            if (label != NULL)
+            if (label != nullptr)
                 l = QString::fromUtf8(label);
             else
                 l = QString::fromUtf8(cert_url);
             ui->loadWinCertList->addItem(l);
             if (prekey.isEmpty() == false) {
-                if (QString::compare(prekey, QString::fromUtf8(key_url),
-                        Qt::CaseSensitive)
-                    == 0) {
+                if (QString::compare(prekey, QString::fromUtf8(key_url), Qt::CaseSensitive) == 0) {
                     idx = row;
                 }
             }
@@ -117,26 +115,22 @@ void EditDialog::load_win_certs()
 EditDialog::EditDialog(QString server, QWidget* parent)
     : QDialog(parent)
     , ui(new Ui::EditDialog)
+    , ss(new StoredServer())
 {
-    QString hash, txt;
     ui->setupUi(this);
-    int type, ret;
 
-    this->ss = new StoredServer();
-
-    ret = this->ss->load(server);
-    if (ret < 0) {
+    if (ss->load(server) < 0) {
         QMessageBox::information(this,
             qApp->applicationName(),
             ss->m_last_err.isEmpty() ? tr("Some server information failed to load") : ss->m_last_err);
     }
 
-    this->ss->set_window(this);
+    ss->set_window(this);
 
-    txt = ss->get_label();
-    ui->labelEdit->setText(txt);
+    QString txt = ss->get_label();
+    ui->nameEdit->setText(txt);
     if (txt.isEmpty() == true) {
-        ui->labelEdit->setText(server);
+        ui->nameEdit->setText(server);
     }
     ui->groupnameEdit->setText(ss->get_groupname());
     ui->usernameEdit->setText(ss->get_username());
@@ -151,12 +145,13 @@ EditDialog::EditDialog(QString server, QWidget* parent)
     // Load the windows certificates
     load_win_certs();
 
-    type = ss->get_token_type();
+    int type = ss->get_token_type();
     if (type >= 0) {
         ui->tokenBox->setCurrentIndex(token_tab(ss->get_token_type()));
         ui->tokenEdit->setText(ss->get_token_str());
     }
 
+    QString hash;
     ss->get_server_hash(hash);
     ui->serverCertHash->setText(hash);
 }
@@ -169,9 +164,6 @@ EditDialog::~EditDialog()
 
 void EditDialog::on_buttonBox_accepted()
 {
-    QMessageBox mbox;
-    int type;
-
     if (ui->gatewayEdit->text().isEmpty() == true) {
         QMessageBox::information(this,
             qApp->applicationName(),
@@ -179,7 +171,7 @@ void EditDialog::on_buttonBox_accepted()
         return;
     }
 
-    if (ui->labelEdit->text().isEmpty() == true) {
+    if (ui->nameEdit->text().isEmpty() == true) {
         QMessageBox::information(this,
             qApp->applicationName(),
             tr("You need to specify a name for this connection. E.g. 'My company'"));
@@ -188,6 +180,7 @@ void EditDialog::on_buttonBox_accepted()
 
     if (ui->caCertEdit->text().isEmpty() == false) {
         if (ss->set_ca_cert(ui->caCertEdit->text()) != 0) {
+            QMessageBox mbox;
             mbox.setText(tr("Cannot import CA certificate."));
             if (ss->m_last_err.isEmpty() == false)
                 mbox.setInformativeText(ss->m_last_err);
@@ -200,6 +193,7 @@ void EditDialog::on_buttonBox_accepted()
 
     if (ui->userKeyEdit->text().isEmpty() == false) {
         if (ss->set_client_key(ui->userKeyEdit->text()) != 0) {
+            QMessageBox mbox;
             mbox.setText(tr("Cannot import user key."));
             if (ss->m_last_err.isEmpty() == false)
                 mbox.setInformativeText(ss->m_last_err);
@@ -210,7 +204,7 @@ void EditDialog::on_buttonBox_accepted()
 
     if (ui->userCertEdit->text().isEmpty() == false) {
         if (ss->set_client_cert(ui->userCertEdit->text()) != 0) {
-
+            QMessageBox mbox;
             mbox.setText(tr("Cannot import user certificate."));
             if (ss->m_last_err.isEmpty() == false)
                 mbox.setInformativeText(ss->m_last_err);
@@ -227,7 +221,7 @@ void EditDialog::on_buttonBox_accepted()
             tr("There is a client certificate specified but no key!"));
         return;
     }
-    ss->set_label(ui->labelEdit->text());
+    ss->set_label(ui->nameEdit->text());
     ss->set_username(ui->usernameEdit->text());
     ss->set_servername(ui->gatewayEdit->text());
     ss->set_batch_mode(ui->batchModeBox->isChecked());
@@ -235,7 +229,7 @@ void EditDialog::on_buttonBox_accepted()
     ss->set_proxy(ui->proxyBox->isChecked());
     ss->set_disable_udp(ui->disableUDP->isChecked());
 
-    type = ui->tokenBox->currentIndex();
+    int type = ui->tokenBox->currentIndex();
     if (type != -1 && ui->tokenEdit->text().isEmpty() == false) {
         ss->set_token_str(ui->tokenEdit->text());
         ss->set_token_type(token_rtab[type]);
@@ -255,9 +249,7 @@ void EditDialog::on_buttonBox_rejected()
 
 void EditDialog::on_userCertButton_clicked()
 {
-    QString filename;
-
-    filename = QFileDialog::getOpenFileName(this,
+    QString filename = QFileDialog::getOpenFileName(this,
         tr("Open certificate"), "",
         tr("Certificate Files (*.crt *.pem *.der *.p12)"));
 
@@ -266,9 +258,7 @@ void EditDialog::on_userCertButton_clicked()
 
 void EditDialog::on_userKeyButton_clicked()
 {
-    QString filename;
-
-    filename = QFileDialog::getOpenFileName(this,
+    QString filename = QFileDialog::getOpenFileName(this,
         tr("Open private key"), "",
         tr("Private key Files (*.key *.pem *.der *.p8 *.p12)"));
 
@@ -277,9 +267,7 @@ void EditDialog::on_userKeyButton_clicked()
 
 void EditDialog::on_caCertButton_clicked()
 {
-    QString filename;
-
-    filename = QFileDialog::getOpenFileName(this,
+    QString filename = QFileDialog::getOpenFileName(this,
         tr("Open certificate"), "",
         tr("Certificate Files (*.crt *.pem *.der)"));
 
@@ -317,7 +305,7 @@ void EditDialog::on_tokenClear_clicked()
     ui->tokenEdit->clear();
 }
 
-void EditDialog::on_toolButton_clicked()
+void EditDialog::on_groupnameClear_clicked()
 {
     ss->clear_groupname();
     ui->groupnameEdit->clear();
