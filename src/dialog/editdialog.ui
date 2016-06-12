@@ -28,6 +28,9 @@
        <property name="toolTip">
         <string>This is a friendly name to distinguish the connection</string>
        </property>
+       <property name="placeholderText">
+        <string>User friendly connection name</string>
+       </property>
       </widget>
      </item>
      <item row="2" column="0">
@@ -47,6 +50,9 @@
        </property>
        <property name="whatsThis">
         <string/>
+       </property>
+       <property name="placeholderText">
+        <string>https://my_server[:443]/[usergroup]</string>
        </property>
       </widget>
      </item>
