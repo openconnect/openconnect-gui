@@ -141,6 +141,7 @@ EditDialog::EditDialog(QString server, QWidget* parent)
     ui->minimizeBox->setChecked(ss->get_minimize());
     ui->proxyBox->setChecked(ss->get_proxy());
     ui->disableUDP->setChecked(ss->get_disable_udp());
+    ui->reconnectTimeoutSpinBox->setValue(ss->get_reconnect_timeout());
 
     // Load the windows certificates
     load_win_certs();
@@ -228,6 +229,7 @@ void EditDialog::on_buttonBox_accepted()
     ss->set_minimize(ui->minimizeBox->isChecked());
     ss->set_proxy(ui->proxyBox->isChecked());
     ss->set_disable_udp(ui->disableUDP->isChecked());
+    ss->set_reconnect_timeout(ui->reconnectTimeoutSpinBox->value());
 
     int type = ui->tokenBox->currentIndex();
     if (type != -1 && ui->tokenEdit->text().isEmpty() == false) {

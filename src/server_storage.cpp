@@ -155,6 +155,7 @@ int StoredServer::load(QString& name)
     this->m_proxy = settings.value("proxy").toBool();
     this->m_disable_udp = settings.value("disable-udp").toBool();
     this->m_minimize_on_connect = settings.value("minimize-on-connect").toBool();
+    this->m_reconnect_timeout = settings.value("reconnect-timeout", 300).toInt();
 
     bool ret = false;
     int rval = 0;
@@ -220,6 +221,7 @@ int StoredServer::save()
     settings.setValue("proxy", this->m_proxy);
     settings.setValue("disable-udp", this->m_disable_udp);
     settings.setValue("minimize-on-connect", this->m_minimize_on_connect);
+    settings.setValue("reconnect-timeout", this->m_reconnect_timeout);
     settings.setValue("username", this->m_username);
 
     if (this->m_batch_mode == true) {
@@ -358,6 +360,16 @@ void StoredServer::set_minimize(const bool t)
 void StoredServer::set_proxy(const bool t)
 {
     this->m_proxy = t;
+}
+
+int StoredServer::get_reconnect_timeout() const
+{
+    return m_reconnect_timeout;
+}
+
+void StoredServer::set_reconnect_timeout(const int timeout)
+{
+    m_reconnect_timeout = timeout;
 }
 
 QString StoredServer::get_token_str()
