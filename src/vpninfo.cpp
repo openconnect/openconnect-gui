@@ -466,7 +466,9 @@ int VpnInfo::dtls_connect()
 void VpnInfo::mainloop()
 {
     while (true) {
-        int ret = openconnect_mainloop(vpninfo, 15, RECONNECT_INTERVAL_MIN);
+        int ret = openconnect_mainloop(vpninfo,
+                                       ss->get_reconnect_timeout(),
+                                       RECONNECT_INTERVAL_MIN);
         if (ret != 0) {
             this->last_err = QObject::tr("Disconnected");
             logVpncScriptOutput();
