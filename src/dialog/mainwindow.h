@@ -107,6 +107,7 @@ signals:
     void timeout(void);
 
 private:
+    static QString normalize_byte_size(uint64_t bytes);
     void createTrayIcon();
 
     void readSettings();
