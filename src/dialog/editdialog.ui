@@ -371,7 +371,7 @@
     <widget class="QGroupBox" name="settingsGroupBox">
      <layout class="QGridLayout" name="gridLayout">
       <item row="4" column="0">
-       <widget class="QCheckBox" name="disableUDP">
+       <widget class="QCheckBox" name="disableUdpBox">
         <property name="text">
          <string>Disable UDP</string>
         </property>
@@ -398,7 +398,7 @@
        </widget>
       </item>
       <item row="4" column="1">
-       <widget class="QCheckBox" name="proxyBox">
+       <widget class="QCheckBox" name="useProxyBox">
         <property name="toolTip">
          <string>Enable this to use the system's default proxy settings for this server</string>
         </property>
@@ -474,8 +474,8 @@ The default timeout is 300 seconds, which means that openconnect can recover VPN
   <tabstop>userKeyClear</tabstop>
   <tabstop>minimizeBox</tabstop>
   <tabstop>batchModeBox</tabstop>
-  <tabstop>disableUDP</tabstop>
-  <tabstop>proxyBox</tabstop>
+  <tabstop>disableUdpBox</tabstop>
+  <tabstop>useProxyBox</tabstop>
   <tabstop>loadWinCertList</tabstop>
   <tabstop>loadWinCert</tabstop>
  </tabstops>
