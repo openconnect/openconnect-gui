@@ -326,28 +326,15 @@ QStringList* MainWindow::get_log()
     return &this->log;
 }
 
-QString value_to_string(uint64_t bytes)
+QString MainWindow::normalize_byte_size(uint64_t bytes)
 {
-    if (bytes > 1000 && bytes < 1000 * 1000) {
-        bytes /= 1000;
-        QString r = QString::number((int)bytes);
-        r += QObject::tr(" KB");
-        return r;
-    } else if (bytes >= 1000 * 1000 && bytes < 1000 * 1000 * 1000) {
-        bytes /= 1000 * 1000;
-        QString r = QString::number((int)bytes);
-        r += QObject::tr(" MB");
-        return r;
-    } else if (bytes >= 1000 * 1000 * 1000) {
-        bytes /= 1000 * 1000 * 1000;
-        QString r = QString::number((int)bytes);
-        r += QObject::tr(" GB");
-        return r;
-    } else {
-        QString r = QString::number((int)bytes);
-        r += QObject::tr(" bytes");
-        return r;
+    const unsigned unit = 1024;// TODO: add support for SI units? (optional)
+    if (bytes < unit) {
+        return QString("%1 B").arg(QString::number(bytes));
     }
+    const int exp = static_cast<int>(std::log(bytes) / std::log(unit));
+    static const char suffixChar[] = "KMGTPE";
+    return QString("%1 %2B").arg(QString::number(bytes / std::pow(unit, exp), 'f', 3)).arg(suffixChar[exp-1]);
 }
 
 void MainWindow::statsChanged(QString tx, QString rx, QString dtls)
@@ -359,8 +346,9 @@ void MainWindow::statsChanged(QString tx, QString rx, QString dtls)
 
 void MainWindow::updateStats(const struct oc_stats* stats, QString dtls)
 {
-    emit stats_changed_sig(value_to_string(stats->tx_bytes),
-        value_to_string(stats->rx_bytes),
+    emit stats_changed_sig(
+        normalize_byte_size(stats->tx_bytes),
+        normalize_byte_size(stats->rx_bytes),
         dtls);
 }
 
