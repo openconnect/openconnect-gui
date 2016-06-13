@@ -139,8 +139,8 @@ EditDialog::EditDialog(QString server, QWidget* parent)
     ui->caCertHash->setText(ss->get_ca_cert_hash());
     ui->batchModeBox->setChecked(ss->get_batch_mode());
     ui->minimizeBox->setChecked(ss->get_minimize());
-    ui->proxyBox->setChecked(ss->get_proxy());
-    ui->disableUDP->setChecked(ss->get_disable_udp());
+    ui->useProxyBox->setChecked(ss->get_proxy());
+    ui->disableUdpBox->setChecked(ss->get_disable_udp());
     ui->reconnectTimeoutSpinBox->setValue(ss->get_reconnect_timeout());
 
     // Load the windows certificates
@@ -227,8 +227,8 @@ void EditDialog::on_buttonBox_accepted()
     ss->set_servername(ui->gatewayEdit->text());
     ss->set_batch_mode(ui->batchModeBox->isChecked());
     ss->set_minimize(ui->minimizeBox->isChecked());
-    ss->set_proxy(ui->proxyBox->isChecked());
-    ss->set_disable_udp(ui->disableUDP->isChecked());
+    ss->set_proxy(ui->useProxyBox->isChecked());
+    ss->set_disable_udp(ui->disableUdpBox->isChecked());
     ss->set_reconnect_timeout(ui->reconnectTimeoutSpinBox->value());
 
     int type = ui->tokenBox->currentIndex();
