@@ -48,6 +48,13 @@ private slots:
     void on_groupnameClear_clicked();
     void on_loadWinCert_clicked();
 
+    void on_groupnameEdit_textChanged(const QString &arg1);
+    void on_caCertEdit_textChanged(const QString &arg1);
+    void on_serverCertHash_textChanged(const QString &arg1);
+    void on_tokenEdit_textChanged(const QString &arg1);
+    void on_userCertEdit_textChanged(const QString &arg1);
+    void on_userKeyEdit_textChanged(const QString &arg1);
+
 private:
     void load_win_certs();
 

@@ -324,3 +324,33 @@ void EditDialog::on_loadWinCert_clicked()
     ui->userCertEdit->setText(st.cert_url);
     ui->userKeyEdit->setText(st.key_url);
 }
+
+void EditDialog::on_groupnameEdit_textChanged(const QString &arg1)
+{
+    ui->groupnameClear->setEnabled(!arg1.isEmpty());
+}
+
+void EditDialog::on_caCertEdit_textChanged(const QString &arg1)
+{
+    ui->caCertClear->setEnabled(!arg1.isEmpty());
+}
+
+void EditDialog::on_serverCertHash_textChanged(const QString &arg1)
+{
+    ui->serverCertClear->setEnabled(!arg1.isEmpty());
+}
+
+void EditDialog::on_tokenEdit_textChanged(const QString &arg1)
+{
+    ui->tokenClear->setEnabled(!arg1.isEmpty());
+}
+
+void EditDialog::on_userCertEdit_textChanged(const QString &arg1)
+{
+    ui->userCertClear->setEnabled(!arg1.isEmpty());
+}
+
+void EditDialog::on_userKeyEdit_textChanged(const QString &arg1)
+{
+    ui->userKeyClear->setEnabled(!arg1.isEmpty());
+}
