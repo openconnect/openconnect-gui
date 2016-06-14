@@ -80,10 +80,23 @@
      <item row="6" column="1">
       <layout class="QHBoxLayout" name="groupnameLayout">
        <item>
-        <widget class="QLabel" name="groupnameEdit"/>
+        <widget class="QLineEdit" name="groupnameEdit">
+         <property name="styleSheet">
+          <string notr="true">background-color:&quot;transparent&quot;</string>
+         </property>
+         <property name="frame">
+          <bool>false</bool>
+         </property>
+         <property name="readOnly">
+          <bool>true</bool>
+         </property>
+        </widget>
        </item>
        <item>
         <widget class="QToolButton" name="groupnameClear">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
          <property name="text">
           <string/>
          </property>
@@ -123,6 +136,9 @@
        </item>
        <item>
         <widget class="QToolButton" name="caCertClear">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
          <property name="text">
           <string>Clear</string>
          </property>
@@ -144,14 +160,23 @@
      <item row="8" column="1">
       <layout class="QHBoxLayout" name="serverCertificateLayout">
        <item>
-        <widget class="QLabel" name="serverCertHash">
-         <property name="toolTip">
-          <string>This is the hash of the server's certificate</string>
+        <widget class="QLineEdit" name="serverCertHash">
+         <property name="styleSheet">
+          <string notr="true">background-color:&quot;transparent&quot;</string>
+         </property>
+         <property name="frame">
+          <bool>false</bool>
+         </property>
+         <property name="readOnly">
+          <bool>true</bool>
          </property>
         </widget>
        </item>
        <item>
         <widget class="QToolButton" name="serverCertClear">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
          <property name="text">
           <string>Clear</string>
          </property>
@@ -164,9 +189,15 @@
       </layout>
      </item>
      <item row="9" column="1">
-      <widget class="QLabel" name="caCertHash">
-       <property name="text">
-        <string/>
+      <widget class="QLineEdit" name="caCertHash">
+       <property name="styleSheet">
+        <string notr="true">background-color:&quot;transparent&quot;</string>
+       </property>
+       <property name="frame">
+        <bool>false</bool>
+       </property>
+       <property name="readOnly">
+        <bool>true</bool>
        </property>
       </widget>
      </item>
@@ -219,6 +250,9 @@
        </item>
        <item>
         <widget class="QToolButton" name="tokenClear">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
          <property name="text">
           <string>...</string>
          </property>
@@ -282,6 +316,9 @@
            </item>
            <item>
             <widget class="QToolButton" name="userCertClear">
+             <property name="enabled">
+              <bool>false</bool>
+             </property>
              <property name="text">
               <string>Clear</string>
              </property>
@@ -294,7 +331,17 @@
           </layout>
          </item>
          <item row="2" column="1">
-          <widget class="QLabel" name="userCertHash"/>
+          <widget class="QLineEdit" name="userCertHash">
+           <property name="styleSheet">
+            <string notr="true">background-color:&quot;transparent&quot;</string>
+           </property>
+           <property name="frame">
+            <bool>false</bool>
+           </property>
+           <property name="readOnly">
+            <bool>true</bool>
+           </property>
+          </widget>
          </item>
          <item row="3" column="0">
           <widget class="QLabel" name="userKeyLabel">
@@ -330,6 +377,9 @@
            </item>
            <item>
             <widget class="QToolButton" name="userKeyClear">
+             <property name="enabled">
+              <bool>false</bool>
+             </property>
              <property name="text">
               <string>Clear</string>
              </property>
