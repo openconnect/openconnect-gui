@@ -142,6 +142,7 @@ EditDialog::EditDialog(QString server, QWidget* parent)
     ui->useProxyBox->setChecked(ss->get_proxy());
     ui->disableUdpBox->setChecked(ss->get_disable_udp());
     ui->reconnectTimeoutSpinBox->setValue(ss->get_reconnect_timeout());
+    ui->dtlsAttemptPeriodSpinBox->setValue(ss->get_dtls_reconnect_timeout());
 
     // Load the windows certificates
     load_win_certs();
@@ -230,6 +231,7 @@ void EditDialog::on_buttonBox_accepted()
     ss->set_proxy(ui->useProxyBox->isChecked());
     ss->set_disable_udp(ui->disableUdpBox->isChecked());
     ss->set_reconnect_timeout(ui->reconnectTimeoutSpinBox->value());
+    ss->set_dtls_reconnect_timeout(ui->dtlsAttemptPeriodSpinBox->value());
 
     int type = ui->tokenBox->currentIndex();
     if (type != -1 && ui->tokenEdit->text().isEmpty() == false) {

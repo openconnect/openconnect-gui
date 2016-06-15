@@ -77,6 +77,9 @@ public:
     int get_reconnect_timeout() const;
     void set_reconnect_timeout(const int timeout);
 
+    int get_dtls_reconnect_timeout() const;
+    void set_dtls_reconnect_timeout(const int timeout);
+
     QString get_token_str();
     void set_token_str(const QString& str);
 
@@ -101,6 +104,7 @@ private:
     bool m_proxy;
     bool m_disable_udp;
     int m_reconnect_timeout;
+    int m_dtls_attempt_period;
     QString m_username;
     QString m_password;
     QString m_groupname;
