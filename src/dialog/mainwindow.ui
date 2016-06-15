@@ -384,9 +384,15 @@
     <property name="title">
      <string>&amp;File</string>
     </property>
-    <addaction name="actionNewProfile"/>
-    <addaction name="actionEditSelectedProfile"/>
-    <addaction name="actionRemoveSelectedProfile"/>
+    <widget class="QMenu" name="menu_Profiles">
+     <property name="title">
+      <string>&amp;Profiles</string>
+     </property>
+     <addaction name="actionNewProfile"/>
+     <addaction name="actionEditSelectedProfile"/>
+     <addaction name="actionRemoveSelectedProfile"/>
+    </widget>
+    <addaction name="menu_Profiles"/>
     <addaction name="separator"/>
     <addaction name="actionQuit"/>
    </widget>
