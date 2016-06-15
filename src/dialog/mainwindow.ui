@@ -45,8 +45,8 @@
      <verstretch>0</verstretch>
     </sizepolicy>
    </property>
-   <layout class="QGridLayout" name="gridLayout">
-    <item row="0" column="0">
+   <layout class="QHBoxLayout" name="horizontalLayout">
+    <item>
      <widget class="QTabWidget" name="tabWidget">
       <property name="autoFillBackground">
        <bool>false</bool>
@@ -86,42 +86,21 @@
             </property>
             <item>
              <widget class="QLabel" name="iconLabel">
-              <property name="enabled">
-               <bool>true</bool>
-              </property>
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
               <property name="maximumSize">
                <size>
                 <width>80</width>
                 <height>80</height>
                </size>
               </property>
-              <property name="autoFillBackground">
-               <bool>false</bool>
-              </property>
-              <property name="text">
-               <string/>
-              </property>
               <property name="scaledContents">
                <bool>true</bool>
               </property>
              </widget>
             </item>
-            <item>
-             <widget class="QWidget" name="widget" native="true"/>
-            </item>
            </layout>
           </item>
           <item>
            <layout class="QVBoxLayout" name="verticalLayout">
-            <property name="spacing">
-             <number>8</number>
-            </property>
             <item>
              <layout class="QHBoxLayout" name="horizontalLayout_Profiles" stretch="0,4,0">
               <item>
@@ -149,18 +128,12 @@
                 <property name="popupMode">
                  <enum>QToolButton::InstantPopup</enum>
                 </property>
-                <property name="toolButtonStyle">
-                 <enum>Qt::ToolButtonIconOnly</enum>
-                </property>
-                <property name="arrowType">
-                 <enum>Qt::NoArrow</enum>
-                </property>
                </widget>
               </item>
              </layout>
             </item>
             <item>
-             <layout class="QHBoxLayout" name="horizontalLayout_Buttons" stretch="4,2">
+             <layout class="QHBoxLayout" name="horizontalLayout_Buttons" stretch="4,0">
               <item>
                <widget class="QPushButton" name="connectionButton">
                 <property name="text">
@@ -195,12 +168,9 @@
        <attribute name="title">
         <string>VPN Info</string>
        </attribute>
-       <layout class="QGridLayout" name="gridLayout_3">
-        <item row="0" column="0">
+       <layout class="QVBoxLayout" name="verticalLayout_3">
+        <item>
          <layout class="QFormLayout" name="formLayout">
-          <property name="fieldGrowthPolicy">
-           <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
-          </property>
           <item row="0" column="0">
            <widget class="QLabel" name="ipV4LabelText">
             <property name="text">
@@ -277,6 +247,51 @@
            </widget>
           </item>
           <item row="3" column="0">
+           <widget class="QLabel" name="cipherCSTPLabelText">
+            <property name="text">
+             <string>Cipher:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="1">
+           <widget class="QLabel" name="cipherCSTPLabel">
+            <property name="text">
+             <string/>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="0">
+           <widget class="QLabel" name="cipherDTLSLabelText">
+            <property name="text">
+             <string>DTLS Cipher:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="1">
+           <widget class="QLabel" name="cipherDTLSLabel">
+            <property name="text">
+             <string/>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <widget class="Line" name="line">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <layout class="QFormLayout" name="formLayout_2">
+          <item row="0" column="0">
            <widget class="QLabel" name="uploadLaberText">
             <property name="text">
              <string>Upload:</string>
@@ -286,7 +301,7 @@
             </property>
            </widget>
           </item>
-          <item row="3" column="1">
+          <item row="0" column="1">
            <widget class="QLabel" name="uploadLabel">
             <property name="text">
              <string/>
@@ -302,7 +317,7 @@
             </property>
            </widget>
           </item>
-          <item row="4" column="0">
+          <item row="1" column="0">
            <widget class="QLabel" name="downloadLabelText">
             <property name="text">
              <string>Download:</string>
@@ -312,7 +327,7 @@
             </property>
            </widget>
           </item>
-          <item row="4" column="1">
+          <item row="1" column="1">
            <widget class="QLabel" name="downloadLabel">
             <property name="text">
              <string/>
@@ -325,40 +340,6 @@
             </property>
             <property name="textInteractionFlags">
              <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
-            </property>
-           </widget>
-          </item>
-          <item row="5" column="0">
-           <widget class="QLabel" name="cipherCSTPLabelText">
-            <property name="text">
-             <string>Cipher:</string>
-            </property>
-           </widget>
-          </item>
-          <item row="5" column="1">
-           <widget class="QLabel" name="cipherCSTPLabel">
-            <property name="text">
-             <string/>
-            </property>
-            <property name="alignment">
-             <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-            </property>
-           </widget>
-          </item>
-          <item row="6" column="0">
-           <widget class="QLabel" name="cipherDTLSLabelText">
-            <property name="text">
-             <string>DTLS Cipher:</string>
-            </property>
-           </widget>
-          </item>
-          <item row="6" column="1">
-           <widget class="QLabel" name="cipherDTLSLabel">
-            <property name="text">
-             <string/>
-            </property>
-            <property name="alignment">
-             <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
             </property>
            </widget>
           </item>
@@ -384,7 +365,7 @@
     <property name="title">
      <string>&amp;File</string>
     </property>
-    <widget class="QMenu" name="menu_Profiles">
+    <widget class="QMenu" name="menuProfiles">
      <property name="title">
       <string>&amp;Profiles</string>
      </property>
@@ -392,7 +373,7 @@
      <addaction name="actionEditSelectedProfile"/>
      <addaction name="actionRemoveSelectedProfile"/>
     </widget>
-    <addaction name="menu_Profiles"/>
+    <addaction name="menuProfiles"/>
     <addaction name="separator"/>
     <addaction name="actionQuit"/>
    </widget>
@@ -403,13 +384,13 @@
     <addaction name="actionAbout"/>
     <addaction name="actionAboutQt"/>
    </widget>
-   <widget class="QMenu" name="menu_View">
+   <widget class="QMenu" name="menuView">
     <property name="title">
      <string>&amp;View</string>
     </property>
     <addaction name="actionLogWindow"/>
    </widget>
-   <widget class="QMenu" name="menu_Settings">
+   <widget class="QMenu" name="menuSettings">
     <property name="title">
      <string>&amp;Settings</string>
     </property>
@@ -419,8 +400,8 @@
     <addaction name="actionStartMinimized"/>
    </widget>
    <addaction name="menuFile"/>
-   <addaction name="menu_View"/>
-   <addaction name="menu_Settings"/>
+   <addaction name="menuView"/>
+   <addaction name="menuSettings"/>
    <addaction name="menuHelp"/>
   </widget>
   <action name="actionQuit">
