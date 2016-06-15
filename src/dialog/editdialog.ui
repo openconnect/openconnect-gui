@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>404</width>
-    <height>497</height>
+    <width>405</width>
+    <height>500</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -16,14 +16,14 @@
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
     <layout class="QFormLayout" name="settingsProfileLayout">
-     <item row="1" column="0">
+     <item row="0" column="0">
       <widget class="QLabel" name="nameLabel">
        <property name="text">
         <string>Name</string>
        </property>
       </widget>
      </item>
-     <item row="1" column="1">
+     <item row="0" column="1">
       <widget class="QLineEdit" name="nameEdit">
        <property name="toolTip">
         <string>This is a friendly name to distinguish the connection</string>
@@ -33,14 +33,14 @@
        </property>
       </widget>
      </item>
-     <item row="2" column="0">
+     <item row="1" column="0">
       <widget class="QLabel" name="gatewayLabel">
        <property name="text">
         <string>Gateway</string>
        </property>
       </widget>
      </item>
-     <item row="2" column="1">
+     <item row="1" column="1">
       <widget class="QLineEdit" name="gatewayEdit">
        <property name="toolTip">
         <string>Specify the hostname to connect to; a port may be specified after the host separated with a colon ':'</string>
@@ -56,28 +56,28 @@
        </property>
       </widget>
      </item>
-     <item row="3" column="0">
+     <item row="2" column="0">
       <widget class="QLabel" name="usernameLabel">
        <property name="text">
         <string>Username</string>
        </property>
       </widget>
      </item>
-     <item row="3" column="1">
+     <item row="2" column="1">
       <widget class="QLineEdit" name="usernameEdit">
        <property name="toolTip">
         <string>Specify the username used in that gateway</string>
        </property>
       </widget>
      </item>
-     <item row="6" column="0">
+     <item row="3" column="0">
       <widget class="QLabel" name="groupnameLabel">
        <property name="text">
         <string>Groupname</string>
        </property>
       </widget>
      </item>
-     <item row="6" column="1">
+     <item row="3" column="1">
       <layout class="QHBoxLayout" name="groupnameLayout">
        <item>
         <widget class="QLineEdit" name="groupnameEdit">
@@ -108,14 +108,14 @@
        </item>
       </layout>
      </item>
-     <item row="7" column="0">
+     <item row="4" column="0">
       <widget class="QLabel" name="caCertificateLabel">
        <property name="text">
         <string>CA Certificate</string>
        </property>
       </widget>
      </item>
-     <item row="7" column="1">
+     <item row="4" column="1">
       <layout class="QHBoxLayout" name="caCertificatLayout">
        <item>
         <widget class="QToolButton" name="caCertButton">
@@ -150,14 +150,14 @@
        </item>
       </layout>
      </item>
-     <item row="8" column="0">
+     <item row="5" column="0">
       <widget class="QLabel" name="serverCertificateLabel">
        <property name="text">
         <string>Server Certificate</string>
        </property>
       </widget>
      </item>
-     <item row="8" column="1">
+     <item row="5" column="1">
       <layout class="QHBoxLayout" name="serverCertificateLayout">
        <item>
         <widget class="QLineEdit" name="serverCertHash">
@@ -188,7 +188,7 @@
        </item>
       </layout>
      </item>
-     <item row="9" column="1">
+     <item row="6" column="1">
       <widget class="QLineEdit" name="caCertHash">
        <property name="styleSheet">
         <string notr="true">background-color:&quot;transparent&quot;</string>
@@ -201,14 +201,14 @@
        </property>
       </widget>
      </item>
-     <item row="10" column="0">
+     <item row="7" column="0">
       <widget class="QLabel" name="otpTokenLabel">
        <property name="text">
         <string>OTP Token</string>
        </property>
       </widget>
      </item>
-     <item row="10" column="1">
+     <item row="7" column="1">
       <layout class="QHBoxLayout" name="otpTokenLayout">
        <item>
         <widget class="QComboBox" name="tokenBox">
@@ -264,23 +264,10 @@
        </item>
       </layout>
      </item>
-     <item row="11" column="1">
-      <spacer name="verticalSpacer">
-       <property name="orientation">
-        <enum>Qt::Vertical</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>20</width>
-         <height>40</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
     </layout>
    </item>
    <item>
-    <widget class="QTabWidget" name="tabWidget">
+    <widget class="QTabWidget" name="settingsTabWidget">
      <property name="currentIndex">
       <number>0</number>
      </property>
@@ -419,77 +406,81 @@
    </item>
    <item>
     <widget class="QGroupBox" name="settingsGroupBox">
-     <layout class="QGridLayout" name="gridLayout">
-      <item row="4" column="0">
-       <widget class="QCheckBox" name="disableUdpBox">
-        <property name="text">
-         <string>Disable UDP</string>
-        </property>
-       </widget>
+     <layout class="QVBoxLayout" name="verticalLayout_3">
+      <item>
+       <layout class="QFormLayout" name="formLayout_3">
+        <item row="0" column="0">
+         <widget class="QLabel" name="reconnectTimeoutLabel">
+          <property name="text">
+           <string>Reconnect timeout</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1">
+         <widget class="QSpinBox" name="reconnectTimeoutSpinBox">
+          <property name="toolTip">
+           <string>Keep reconnect attempts until so much seconds are elapsed.
+The default timeout is 300 seconds, which means that openconnect can recover VPN connection after a temporary network down time of 300 seconds.</string>
+          </property>
+          <property name="suffix">
+           <string>s</string>
+          </property>
+          <property name="minimum">
+           <number>1</number>
+          </property>
+          <property name="maximum">
+           <number>1000</number>
+          </property>
+          <property name="value">
+           <number>300</number>
+          </property>
+         </widget>
+        </item>
+       </layout>
       </item>
-      <item row="1" column="0">
-       <widget class="QCheckBox" name="minimizeBox">
-        <property name="toolTip">
-         <string>Enable this to automatically minimize after connection</string>
-        </property>
-        <property name="text">
-         <string>Minimize on Connect</string>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="1">
-       <widget class="QCheckBox" name="batchModeBox">
-        <property name="toolTip">
-         <string>Enable this to remember passwords for this server</string>
-        </property>
-        <property name="text">
-         <string>Batch mode</string>
-        </property>
-       </widget>
-      </item>
-      <item row="4" column="1">
-       <widget class="QCheckBox" name="useProxyBox">
-        <property name="toolTip">
-         <string>Enable this to use the system's default proxy settings for this server</string>
-        </property>
-        <property name="text">
-         <string>Use Proxy</string>
-        </property>
-       </widget>
+      <item>
+       <layout class="QGridLayout" name="gridLayout">
+        <item row="0" column="0">
+         <widget class="QCheckBox" name="minimizeBox">
+          <property name="toolTip">
+           <string>Enable this to automatically minimize after connection</string>
+          </property>
+          <property name="text">
+           <string>Minimize on Connect</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1">
+         <widget class="QCheckBox" name="batchModeBox">
+          <property name="toolTip">
+           <string>Enable this to remember passwords for this server</string>
+          </property>
+          <property name="text">
+           <string>Batch mode</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="0">
+         <widget class="QCheckBox" name="disableUdpBox">
+          <property name="text">
+           <string>Disable UDP</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="1">
+         <widget class="QCheckBox" name="useProxyBox">
+          <property name="toolTip">
+           <string>Enable this to use the system's default proxy settings for this server</string>
+          </property>
+          <property name="text">
+           <string>Use Proxy</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
       </item>
      </layout>
     </widget>
-   </item>
-   <item>
-    <layout class="QFormLayout" name="formLayout">
-     <item row="1" column="0">
-      <widget class="QLabel" name="reconnectTimeoutLabel">
-       <property name="text">
-        <string>Reconnect timeout</string>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="1">
-      <widget class="QSpinBox" name="reconnectTimeoutSpinBox">
-       <property name="toolTip">
-        <string>Keep reconnect attempts until so much seconds are elapsed.
-The default timeout is 300 seconds, which means that openconnect can recover VPN connection after a temporary network down time of 300 seconds.</string>
-       </property>
-       <property name="suffix">
-        <string>s</string>
-       </property>
-       <property name="minimum">
-        <number>1</number>
-       </property>
-       <property name="maximum">
-        <number>1000</number>
-       </property>
-       <property name="value">
-        <number>300</number>
-       </property>
-      </widget>
-     </item>
-    </layout>
    </item>
    <item>
     <widget class="QDialogButtonBox" name="buttonBox">
@@ -515,7 +506,7 @@ The default timeout is 300 seconds, which means that openconnect can recover VPN
   <tabstop>tokenBox</tabstop>
   <tabstop>tokenEdit</tabstop>
   <tabstop>tokenClear</tabstop>
-  <tabstop>tabWidget</tabstop>
+  <tabstop>settingsTabWidget</tabstop>
   <tabstop>userCertButton</tabstop>
   <tabstop>userCertEdit</tabstop>
   <tabstop>userCertClear</tabstop>
