@@ -436,6 +436,26 @@ The default timeout is 300 seconds, which means that openconnect can recover VPN
           </property>
          </widget>
         </item>
+        <item row="1" column="0">
+         <widget class="QLabel" name="dtlsAttemptPeriodLabel">
+          <property name="text">
+           <string>DTLS attempt period</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="1">
+         <widget class="QSpinBox" name="dtlsAttemptPeriodSpinBox">
+          <property name="suffix">
+           <string>s</string>
+          </property>
+          <property name="maximum">
+           <number>1000</number>
+          </property>
+          <property name="value">
+           <number>30</number>
+          </property>
+         </widget>
+        </item>
        </layout>
       </item>
       <item>

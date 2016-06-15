@@ -156,6 +156,7 @@ int StoredServer::load(QString& name)
     this->m_disable_udp = settings.value("disable-udp").toBool();
     this->m_minimize_on_connect = settings.value("minimize-on-connect").toBool();
     this->m_reconnect_timeout = settings.value("reconnect-timeout", 300).toInt();
+    this->m_dtls_attempt_period = settings.value("dtls_attempt_period", 25).toInt();
 
     bool ret = false;
     int rval = 0;
@@ -222,6 +223,7 @@ int StoredServer::save()
     settings.setValue("disable-udp", this->m_disable_udp);
     settings.setValue("minimize-on-connect", this->m_minimize_on_connect);
     settings.setValue("reconnect-timeout", this->m_reconnect_timeout);
+    settings.setValue("dtls_attempt_period", this->m_dtls_attempt_period);
     settings.setValue("username", this->m_username);
 
     if (this->m_batch_mode == true) {
@@ -370,6 +372,16 @@ int StoredServer::get_reconnect_timeout() const
 void StoredServer::set_reconnect_timeout(const int timeout)
 {
     m_reconnect_timeout = timeout;
+}
+
+int StoredServer::get_dtls_reconnect_timeout() const
+{
+    return m_dtls_attempt_period;
+}
+
+void StoredServer::set_dtls_reconnect_timeout(const int timeout)
+{
+    m_dtls_attempt_period = timeout;
 }
 
 QString StoredServer::get_token_str()
