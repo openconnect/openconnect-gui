@@ -22,5 +22,5 @@
 
 #cmakedefine PROJ_GNUTLS_DEBUG
 #cmakedefine PROJ_INI_SETTINGS
-#cmakedefine ENABLE_PKCS11
+#cmakedefine PROJ_PKCS11
 #cmakedefine DEFAULT_VPNC_SCRIPT "@DEFAULT_VPNC_SCRIPT@"
