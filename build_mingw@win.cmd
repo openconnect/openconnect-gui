@@ -1,4 +1,12 @@
 @echo off
+REM
+REM Sample build script & release package preapration
+REM
+REM It should be used only as illustration how to build application
+REM and create an installer package
+REM
+REM (c) 2016, Lubomir Carik
+REM
 
 echo "======================================================================="
 echo " Preparing environment..."
@@ -13,6 +21,12 @@ set PATH=C:\Dev\Qt\Tools\mingw492_32\bin;%PATH%
 
 echo Setting up environment for CMake usage...
 set PATH="C:\Program Files (x86)\CMake\bin";%PATH%
+
+echo Setting up environment for 7Z usage...
+set PATH="C:\Program Files\7-Zip\";%PATH%
+
+echo Setting up environment for 'clang' usage...
+set PATH="C:\Dev\LLVM64\bin\";%PATH%
 
 echo "======================================================================="
 echo " Preparing sandbox..."
@@ -53,6 +67,6 @@ echo " Packaging..."
 echo "======================================================================="
 cmake .
 mingw32-make package VERBOSE=1
-
+mingw32-make package_source VERBOSE=1
 
 cd ..

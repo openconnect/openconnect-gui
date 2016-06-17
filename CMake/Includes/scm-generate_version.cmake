@@ -32,9 +32,10 @@ else()
 endif()
 
 set(VERSION "${GIT_COMMIT_ID}")
+message(STATUS "Version: ${GIT_COMMIT_ID}")
 
 configure_file(
     ${SOURCE_DIR}/scm_version.cmake.in
-    ${BINARY_DIR}/scm_version.cmake
+    ${SOURCE_DIR}/scm_version.cmake
     @ONLY
 )

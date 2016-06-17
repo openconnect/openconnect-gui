@@ -1,8 +1,4 @@
-if(IS_DIRECTORY ${PROJECT_SOURCE_DIR}/.git)
-    include(scm)
-else()
-    message(FATAL_ERROR "TODO: building from source code snapshot is not supported yet...")
-endif()
+include(scm)
 
 set(${PROJECT_NAME}_SRCS
     ${PROJECT_NAME}.cpp
