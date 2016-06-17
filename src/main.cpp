@@ -91,24 +91,11 @@ int main(int argc, char* argv[])
 
     QApplication app(argc, argv);
     app.setQuitOnLastWindowClosed(false);
-
     app.setApplicationName(appDescription);
     app.setApplicationDisplayName(appDescriptionLong);
     app.setApplicationVersion(appVersion);
     app.setOrganizationName(appOrganizationName);
     app.setOrganizationDomain(appOrganizationDomain);
-
-    gnutls_global_init();
-#ifndef _WIN32
-    signal(SIGPIPE, SIG_IGN);
-#endif
-    openconnect_init_ssl();
-#ifdef ENABLE_PKCS11
-    gnutls_pkcs11_set_pin_function(pin_callback, &w);
-#endif
-
-    MainWindow mainWindow;
-    mainWindow.show();
 
 #if !defined(_WIN32) && !defined(PROJ_GNUTLS_DEBUG)
     if (getuid() != 0) {
@@ -120,6 +107,17 @@ int main(int argc, char* argv[])
     }
 #endif
 
+    gnutls_global_init();
+#ifndef _WIN32
+    signal(SIGPIPE, SIG_IGN);
+#endif
+    openconnect_init_ssl();
+
+    MainWindow mainWindow;
+#ifdef PROJ_PKCS11
+    gnutls_pkcs11_set_pin_function(pin_callback, &mainWindow);
+#endif
+
 #ifdef PROJ_GNUTLS_DEBUG
     gnutls_global_set_log_function(log_func);
     gnutls_global_set_log_level(3);
@@ -127,5 +125,6 @@ int main(int argc, char* argv[])
     log_func(1, "started logging");
 #endif
 
+    mainWindow.show();
     return app.exec();
 }
