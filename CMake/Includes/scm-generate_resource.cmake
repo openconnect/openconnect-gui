@@ -1,4 +1,4 @@
-list(APPEND CMAKE_MODULE_PATH "${BINARY_DIR}")
+list(APPEND CMAKE_MODULE_PATH "${SOURCE_DIR}")
 include(scm_version)
 
 #if(WIN32 AND MINGW)

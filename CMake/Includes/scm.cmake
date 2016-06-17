@@ -1,14 +1,16 @@
-add_custom_command(
-    OUTPUT scm_version.cmake
-    COMMAND ${CMAKE_COMMAND}
-        -D GIT_EXECUTABLE=${GIT_EXECUTABLE}
-        -D GIT_ROOT_DIR=${PROJECT_SOURCE_DIR}
-        -D SOURCE_DIR=${CMAKE_CURRENT_SOURCE_DIR}
-        -D BINARY_DIR=${CMAKE_CURRENT_BINARY_DIR}
-        -P ${PROJECT_SOURCE_DIR}/CMake/Includes/scm-generate_version.cmake
-    COMMENT "Automatic version strings assembling"
-    VERBATIM
-)
+if(IS_DIRECTORY ${PROJECT_SOURCE_DIR}/.git)
+    add_custom_command(
+        OUTPUT scm_version.cmake
+        COMMAND ${CMAKE_COMMAND}
+            -D GIT_EXECUTABLE=${GIT_EXECUTABLE}
+            -D GIT_ROOT_DIR=${PROJECT_SOURCE_DIR}
+            -D SOURCE_DIR=${CMAKE_CURRENT_SOURCE_DIR}
+            -D BINARY_DIR=${CMAKE_CURRENT_BINARY_DIR}
+            -P ${PROJECT_SOURCE_DIR}/CMake/Includes/scm-generate_version.cmake
+        COMMENT "Automatic version strings assembling"
+        VERBATIM
+    )
+endif()
 
 add_custom_command(
     OUTPUT ${PROJECT_NAME}.cpp

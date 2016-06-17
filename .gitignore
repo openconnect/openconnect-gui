@@ -1,11 +1,18 @@
-*.o
+# temporary files
+*.sw[op]
 *~
-Makefile
-moc_*.cpp
-qrc_*.cpp
-ui_*.h
-qconnect
-*.exe
 
+# project files
 /*.pro.user
 /CMakeLists.txt.user
+
+# in source generate files
+/src/scm_version.cmake
+
+# temporary build folder
+build-release/
+
+
+# temporary...
+_xxx/
+*.zip

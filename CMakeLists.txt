@@ -65,9 +65,9 @@ endif()
 
 add_subdirectory(src)
 
-if(EXISTS ${CMAKE_BINARY_DIR}/src/scm_version.cmake)
+if(EXISTS ${CMAKE_SOURCE_DIR}/src/scm_version.cmake)
 	message(STATUS "Setting package...")
-	include(${CMAKE_BINARY_DIR}/src/scm_version.cmake)
+	include(${CMAKE_SOURCE_DIR}/src/scm_version.cmake)
 	
 	message(STATUS "Version: ${PROJECT_VERSION}")
 
@@ -172,6 +172,10 @@ if(EXISTS ${CMAKE_BINARY_DIR}/src/scm_version.cmake)
 		set(CPACK_INSTALL_TYPE_FULL_DISPLAY_NAME "Full installation")
 		set(CPACK_INSTALL_TYPE_APPONLY_DISPLAY_NAME "Application only")
 		set(CPACK_INSTALL_TYPE_STANDARD_DISPLAY_NAME "Standard installation")
+        
+        # source code packaging
+        set(CPACK_SOURCE_GENERATOR "7Z")
+        set(CPACK_SOURCE_IGNORE_FILES "build-release/;/\.git/;\.swp$;\.gitignore$")
 	else()
 		set(CPACK_GENERATOR "DragNDrop")
 
