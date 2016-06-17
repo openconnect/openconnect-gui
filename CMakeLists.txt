@@ -63,6 +63,7 @@ else()
     include_directories(SYSTEM ${OPENCONNECT_INCLUDE_DIRS})
 endif()
 
+add_subdirectory(3rd_party)
 add_subdirectory(src)
 
 if(EXISTS ${CMAKE_SOURCE_DIR}/src/scm_version.cmake)
