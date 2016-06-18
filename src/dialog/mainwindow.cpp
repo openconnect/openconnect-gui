@@ -48,6 +48,7 @@ extern "C" {
 
 #include <cstdarg>
 #include <cstdio>
+#include <cmath>
 
 #ifdef _WIN32
 #define pipe_write(x, y, z) send(x, y, z, 0)
