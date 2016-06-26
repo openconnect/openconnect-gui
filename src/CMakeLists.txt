@@ -87,8 +87,6 @@ if(APPLE)
 endif()
 
 target_link_libraries (${PROJECT_NAME}
-    spdlog
-    
     Qt5::Core
     Qt5::Gui
     Qt5::Widgets
