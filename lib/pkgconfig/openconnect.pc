@@ -6,8 +6,8 @@ includedir=/usr/i686-w64-mingw32/sys-root/mingw/include
 
 Name: openconnect
 Description: OpenConnect VPN client
-Version: 7.06
-Requires.private:  zlib gnutls p11-kit-1 stoken  libpcsclite libxml-2.0
+Version: 7.07
+Requires.private:  zlib  gnutls p11-kit-1 stoken  libpcsclite libxml-2.0
 Libs: -L${libdir} -lopenconnect
 Libs.private: -lintl
 Cflags: -I${includedir}
