@@ -17,7 +17,7 @@ includedir=/usr/i686-w64-mingw32/sys-root/mingw/include
 Name: GnuTLS
 Description: Transport Security Layer implementation for the GNU system
 URL: http://www.gnutls.org/
-Version: 3.4.12
+Version: 3.4.14
 Libs: -L${libdir} -lgnutls
 Libs.private: /usr/i686-w64-mingw32/sys-root/mingw/lib/libz.dll.a  -lws2_32   -L/usr/i686-w64-mingw32/sys-root/mingw/lib -lp11-kit  -lws2_32  -lgmp
 Requires.private: nettle, hogweed, libtasn1, p11-kit-1, zlib
