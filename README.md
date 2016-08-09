@@ -1,9 +1,10 @@
 # OpenConnect-GUI
 
 This is the GUI client for openconnect VPN.
-
 This client is in beta testing phase. It cannot be assumed to provide
 the required security.
+
+Look to [OpenConnect-GUI](http://openconnect.github.io/openconnect-gui/) project webpage for detailed description and screen shots.
 
 ## Development info
 
