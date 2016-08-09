@@ -18,6 +18,19 @@ Newer or older versions may work... feel free tweak main CMakeLists.txt as you n
 #### Fedora 24
 TODO...
 
+### Development with QtCreator
+- checkout project from GitHub
+- start QtCreator
+- choose session if make sense
+- open CMakeLists.txt from project root
+- update desired Qt 5.6 version build types and click "Configure"
+- open 'Project' tab on left side of QtCreator with CMake configuration
+- change
+	- 'PROJ_UAC_ON' to 'off' because QtCreator is not able to start app with UAC (?) :/
+	- if you like; change 'PROJ_INI_SETTINGS' to 'off' if you want store all settings into file instead of Registry
+- click 'Apply Configuration Changes' and then switch again to 'Edit' tab on let side of QtCreator
+- build the project (optionally setup MAKEFLAGS in Projects settings if you like for faster build)
+
 ### Webpage maintenance
 1. images/screenshots preaparation:
 	- prepare desired screen shots (common width is 650px)
