@@ -20,12 +20,12 @@
 #include "MyCertMsgBox.h"
 
 MyCertMsgBox::MyCertMsgBox(QWidget* w, QString t1, QString t2, QString oktxt, QString details)
+    : w(w)
+    , t1(t1)
+    , t2(t2)
+    , oktxt(oktxt)
+    , details(details)
 {
-    this->w = w;
-    this->t1 = t1;
-    this->t2 = t2;
-    this->oktxt = oktxt;
-    this->details = details;
     mutex.lock();
     this->moveToThread(QApplication::instance()->thread());
 }
@@ -46,36 +46,19 @@ bool MyCertMsgBox::event(QEvent* ev)
     res = false;
     if (ev->type() == QEvent::User) {
         QMessageBox* msgBox = new QMessageBox(w);
-        int ret;
 
         msgBox->setText(t1);
         msgBox->setInformativeText(t2);
-        msgBox->setStandardButtons(QMessageBox::
-                                       Cancel
-                                   | QMessageBox::Help | QMessageBox::Ok);
+        msgBox->setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
         msgBox->setDefaultButton(QMessageBox::Cancel);
         msgBox->setButtonText(QMessageBox::Ok, oktxt);
-        msgBox->setButtonText(QMessageBox::Help, tr("View certificate"));
+        msgBox->setDetailedText(details);
 
-        do {
-            ret = msgBox->exec();
-            if (ret == QMessageBox::Help) {
-                QMessageBox helpBox;
-                helpBox.setTextInteractionFlags(Qt::
-                                                    TextSelectableByMouse
-                                                | Qt::TextSelectableByKeyboard
-                                                | Qt::LinksAccessibleByMouse);
-                helpBox.setText(details);
-                helpBox.setTextFormat(Qt::PlainText);
-                helpBox.setStandardButtons(QMessageBox::Ok);
-                helpBox.exec();
-            }
-        } while (ret == QMessageBox::Help);
-
-        if (ret == QMessageBox::Cancel)
+        if (msgBox->exec() == QMessageBox::Cancel) {
             res = false;
-        else
+        } else {
             res = true;
+        }
 
         delete msgBox;
         mutex.unlock();

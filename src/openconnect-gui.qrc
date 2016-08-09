@@ -12,5 +12,7 @@
         <file>images/traffic_light_off.png</file>
         <file>images/network-connected.png</file>
         <file>images/network-disconnected.png</file>
+        <file>images/profiles.png</file>
+        <file>images/text-new.png</file>
     </qresource>
 </RCC>

@@ -17,8 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef LOGDIALOG_H
-#define LOGDIALOG_H
+#pragma once
 
 #include <QDialog>
 
@@ -28,12 +27,14 @@ class LogDialog;
 
 class LogDialog : public QDialog {
     Q_OBJECT
-public : LogDialog(QStringList items,
-                   QWidget* parent = 0);
+public:
+    LogDialog(QStringList items, QWidget* parent = 0);
     ~LogDialog();
 
-private slots:
+public slots:
     void append(QString item);
+
+private slots:
     void reject();
 
     void on_pushButtonClear_clicked();
@@ -52,5 +53,3 @@ private:
 
     Ui::LogDialog* ui;
 };
-
-#endif // LOGDIALOG_H

@@ -46,7 +46,6 @@ extern const struct ecc_curve nettle_secp_224r1;
 extern const struct ecc_curve nettle_secp_256r1;
 extern const struct ecc_curve nettle_secp_384r1;
 extern const struct ecc_curve nettle_secp_521r1;
-extern const struct ecc_curve nettle_curve25519;
 
 #ifdef __cplusplus
 }

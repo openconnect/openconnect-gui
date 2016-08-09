@@ -17,11 +17,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef COMMON_H
-#define COMMON_H
+#pragma once
 
 /* undef on normal builds */
-#undef DEVEL
+#undef PROJ_GNUTLS_DEBUG
 
 #define TMP_CERT_PREFIX "tmp-certXXXXXX"
 #define TMP_KEY_PREFIX "tmp-keyXXXXXX"
@@ -37,7 +36,6 @@
 #define UPDATE_TIMER 10000
 
 #ifdef _WIN32
-#define DEFAULT_VPNC_SCRIPT "vpnc-script.js"
 #define net_errno WSAGetLastError()
 #define ms_sleep Sleep
 #else
@@ -45,14 +43,15 @@
 #include <fcntl.h>
 #include <unistd.h>
 #define ms_sleep(x) usleep(1000 * x)
-#define DEFAULT_VPNC_SCRIPT "/etc/vpnc/vpnc-script"
 #define INVALID_SOCKET -1
 #define SOCKET int
 #define closesocket close
 #define net_errno errno
 #endif
 
+extern "C" {
 #include <gnutls/gnutls.h>
+}
 
 #if !defined(__MACH__) && GNUTLS_VERSION_NUMBER >= 0x030400
 #define USE_SYSTEM_KEYS
@@ -60,12 +59,10 @@
 
 #include <QString>
 
-inline bool is_url(QString& str)
+inline bool is_url(const QString& str)
 {
     if (str.startsWith("system:") || str.startsWith("pkcs11:") || str.startsWith("system:")) {
         return true;
     }
     return false;
 }
-
-#endif // COMMON_H

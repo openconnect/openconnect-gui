@@ -19,13 +19,15 @@
 
 #include "cert.h"
 #include "common.h"
+extern "C" {
 #include <gnutls/pkcs11.h>
-#include <stdio.h>
+}
+#include <cstdio>
 
 Cert::Cert()
+    : crt(nullptr)
+    , imported(false)
 {
-    imported = false;
-    crt = NULL;
 }
 
 Cert::~Cert()
@@ -37,48 +39,46 @@ void Cert::clear()
 {
     if (this->crt) {
         gnutls_x509_crt_deinit(crt);
-        crt = NULL;
+        crt = nullptr;
         imported = false;
     }
 }
 
 static int import_cert(gnutls_x509_crt_t* crt, gnutls_datum_t* raw,
-                       unsigned pem)
+    unsigned pem)
 {
-    int ret;
-
-    if (raw->size == 0)
+    if (raw->size == 0) {
         return -1;
+    }
 
     gnutls_x509_crt_init(crt);
 
-    ret = gnutls_x509_crt_import(*crt, raw, GNUTLS_X509_FMT_PEM);
+    int ret = gnutls_x509_crt_import(*crt, raw, GNUTLS_X509_FMT_PEM);
     if (pem == 0
-        && (ret == GNUTLS_E_BASE64_DECODING_ERROR
-            || ret == GNUTLS_E_BASE64_UNEXPECTED_HEADER_ERROR))
+        && (ret == GNUTLS_E_BASE64_DECODING_ERROR || ret == GNUTLS_E_BASE64_UNEXPECTED_HEADER_ERROR)) {
         ret = gnutls_x509_crt_import(*crt, raw, GNUTLS_X509_FMT_DER);
+    }
     if (ret < 0) {
         goto fail;
     }
     return 0;
 fail:
     gnutls_x509_crt_deinit(*crt);
-    *crt = NULL;
+    *crt = nullptr;
     return ret;
 }
 
-int Cert::import_pem(QByteArray& data)
+int Cert::import_pem(const QByteArray& data)
 {
-    int ret;
-    gnutls_datum_t raw;
-
-    if (this->imported != false)
+    if (this->imported != false) {
         this->clear();
+    }
 
+    gnutls_datum_t raw;
     raw.data = (unsigned char*)data.constData();
     raw.size = data.size();
 
-    ret = import_cert(&this->crt, &raw, 1);
+    int ret = import_cert(&this->crt, &raw, 1);
     if (ret < 0) {
         this->last_err = gnutls_strerror(ret);
         return -1;
@@ -97,15 +97,14 @@ void Cert::set(gnutls_x509_crt_t crt)
 
 int Cert::data_export(QByteArray& data)
 {
-    int ret;
-    gnutls_datum_t raw;
-
     data.clear();
 
-    if (this->imported != true)
+    if (this->imported != true) {
         return -1;
+    }
 
-    ret = gnutls_x509_crt_export2(this->crt, GNUTLS_X509_FMT_PEM, &raw);
+    gnutls_datum_t raw;
+    int ret = gnutls_x509_crt_export2(this->crt, GNUTLS_X509_FMT_PEM, &raw);
     if (ret < 0) {
         this->last_err = gnutls_strerror(ret);
         return -1;
@@ -116,26 +115,25 @@ int Cert::data_export(QByteArray& data)
     return 0;
 }
 
-int Cert::import_file(QString& File)
+int Cert::import_file(const QString& File)
 {
-    int ret;
-    gnutls_datum_t contents = { NULL, 0 };
-
-    if (File.isEmpty() == true)
+    if (File.isEmpty() == true) {
         return -1;
+    }
 
-    if (this->imported != false)
+    if (this->imported != false) {
         this->clear();
+    }
 
     if (is_url(File)) {
         gnutls_x509_crt_init(&this->crt);
 
-        ret = gnutls_x509_crt_import_pkcs11_url(this->crt, File.toLatin1().data(),
-                                                0);
-        if (ret < 0)
+        int ret = gnutls_x509_crt_import_pkcs11_url(this->crt, File.toLatin1().data(), 0);
+        if (ret < 0) {
             ret = gnutls_x509_crt_import_pkcs11_url(this->crt,
-                                                    File.toLatin1().data(),
-                                                    GNUTLS_PKCS11_OBJ_FLAG_LOGIN);
+                File.toLatin1().data(),
+                GNUTLS_PKCS11_OBJ_FLAG_LOGIN);
+        }
 
         if (ret < 0) {
             this->last_err = gnutls_strerror(ret);
@@ -146,7 +144,8 @@ int Cert::import_file(QString& File)
     }
 
     /* normal file */
-    ret = gnutls_load_file(File.toLatin1().data(), &contents);
+    gnutls_datum_t contents = { nullptr, 0 };
+    int ret = gnutls_load_file(File.toLatin1().data(), &contents);
     if (ret < 0) {
         this->last_err = gnutls_strerror(ret);
         return -1;
@@ -165,22 +164,20 @@ int Cert::import_file(QString& File)
 
 int Cert::tmpfile_export(QString& filename)
 {
-    int ret;
     gnutls_datum_t out;
-    QByteArray qa;
-
-    tmpfile.resize(0);
-    filename = TMP_CERT_PREFIX;
-
-    tmpfile.setFileTemplate(filename);
-    ret = gnutls_x509_crt_export2(this->crt, GNUTLS_X509_FMT_PEM, &out);
+    int ret = gnutls_x509_crt_export2(this->crt, GNUTLS_X509_FMT_PEM, &out);
     if (ret < 0) {
         this->last_err = gnutls_strerror(ret);
         return -1;
     }
 
+    QByteArray qa;
     qa.append((const char*)out.data, out.size);
     gnutls_free(out.data);
+
+    tmpfile.resize(0);
+    filename = TMP_CERT_PREFIX;
+    tmpfile.setFileTemplate(filename);
 
     tmpfile.open();
     ret = tmpfile.write(qa);
@@ -193,34 +190,28 @@ int Cert::tmpfile_export(QString& filename)
     return 0;
 }
 
-QString Cert::sha1_hash(void)
+QString Cert::sha1_hash()
 {
-    unsigned char id[32];
-    int ret;
-    size_t len;
-    QString s;
-    QByteArray array, hex;
-
-    if (imported == false)
+    if (imported == false) {
         return "";
+    }
 
-    len = sizeof(id);
-    ret = gnutls_x509_crt_get_key_id(this->crt, 0, id, &len);
-
+    unsigned char id[32];
+    size_t len = sizeof(id);
+    int ret = gnutls_x509_crt_get_key_id(this->crt, 0, id, &len);
     if (ret < 0) {
         this->last_err = gnutls_strerror(ret);
         return "";
     }
 
+    QByteArray array;
     array.append((const char*)id, len);
-    hex = array.toHex();
-    s = QObject::tr("SHA1:") + hex;
+    QByteArray hex = array.toHex();
+    QString s = QObject::tr("SHA1:") + hex;
     return s;
 }
 
-bool Cert::is_ok()
+const bool Cert::is_ok() const
 {
-    if (imported != false)
-        return true;
-    return false;
+    return imported;
 }

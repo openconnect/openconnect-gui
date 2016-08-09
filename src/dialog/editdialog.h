@@ -17,32 +17,24 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef EDITDIALOG_H
-#define EDITDIALOG_H
+#pragma once
 
 #include <QDialog>
 
 class StoredServer;
 class QSettings;
 
-struct win_cert_st {
-    QString label;
-    QString key_url;
-    QString cert_url;
-};
-
 namespace Ui {
 class EditDialog;
 }
 
 class EditDialog : public QDialog {
-    Q_OBJECT public : EditDialog(QString server,
-                                 QSettings* settings,
-                                 QWidget* parent = 0);
+    Q_OBJECT
+public:
+    EditDialog(QString server, QWidget* parent = 0);
     ~EditDialog();
 
 private slots:
-    void load_win_certs();
     void on_buttonBox_accepted();
     void on_buttonBox_rejected();
     void on_userCertButton_clicked();
@@ -53,13 +45,26 @@ private slots:
     void on_caCertClear_clicked();
     void on_serverCertClear_clicked();
     void on_tokenClear_clicked();
-    void on_toolButton_clicked();
+    void on_groupnameClear_clicked();
     void on_loadWinCert_clicked();
 
+    void on_groupnameEdit_textChanged(const QString &arg1);
+    void on_caCertEdit_textChanged(const QString &arg1);
+    void on_serverCertHash_textChanged(const QString &arg1);
+    void on_tokenEdit_textChanged(const QString &arg1);
+    void on_userCertEdit_textChanged(const QString &arg1);
+    void on_userKeyEdit_textChanged(const QString &arg1);
+
 private:
+    void load_win_certs();
+
+    struct win_cert_st {
+        QString label;
+        QString key_url;
+        QString cert_url;
+    };
+
     Ui::EditDialog* ui;
     std::vector<win_cert_st> winCerts;
     StoredServer* ss;
 };
-
-#endif // EDITDIALOG_H

@@ -17,8 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef VPNINFO_H
-#define VPNINFO_H
+#pragma once
 
 #include <QString>
 #ifdef _WIN32
@@ -30,9 +29,7 @@ class StoredServer;
 
 class VpnInfo {
 public:
-    VpnInfo(QString name,
-            StoredServer* ss,
-            MainWindow* m);
+    VpnInfo(QString name, StoredServer* ss, MainWindow* m);
     ~VpnInfo();
 
     void parse_url(const char* url);
@@ -41,9 +38,9 @@ public:
     void mainloop();
     void get_info(QString& dns, QString& ip, QString& ip6);
     void get_cipher_info(QString& cstp, QString& dtls);
-    SOCKET get_cmd_fd();
+    SOCKET get_cmd_fd() const;
     void reset_vpn();
-    bool get_minimize();
+    bool get_minimize() const;
 
     QString last_err;
     MainWindow* m;
@@ -55,7 +52,7 @@ public:
     unsigned int form_pass_attempt;
 
 private:
+    void logVpncScriptOutput();
+
     SOCKET cmd_fd;
 };
-
-#endif // VPNINFO_H

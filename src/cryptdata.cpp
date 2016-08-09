@@ -25,21 +25,21 @@
 #include <winbase.h>
 
 typedef WINBOOL(WINAPI* CryptProtectDataFunc)(DATA_BLOB* pDataIn,
-                                              LPCWSTR szDataDescr,
-                                              DATA_BLOB* pOptionalEntropy,
-                                              PVOID pvReserved,
-                                              CRYPTPROTECT_PROMPTSTRUCT*
-                                                  pPromptStruct,
-                                              DWORD dwFlags,
-                                              DATA_BLOB* pDataOut);
+    LPCWSTR szDataDescr,
+    DATA_BLOB* pOptionalEntropy,
+    PVOID pvReserved,
+    CRYPTPROTECT_PROMPTSTRUCT*
+        pPromptStruct,
+    DWORD dwFlags,
+    DATA_BLOB* pDataOut);
 typedef WINBOOL(WINAPI* CryptUnprotectDataFunc)(DATA_BLOB* pDataIn,
-                                                LPWSTR* ppszDataDescr,
-                                                DATA_BLOB* pOptionalEntropy,
-                                                PVOID pvReserved,
-                                                CRYPTPROTECT_PROMPTSTRUCT*
-                                                    pPromptStruct,
-                                                DWORD dwFlags,
-                                                DATA_BLOB* pDataOut);
+    LPWSTR* ppszDataDescr,
+    DATA_BLOB* pOptionalEntropy,
+    PVOID pvReserved,
+    CRYPTPROTECT_PROMPTSTRUCT*
+        pPromptStruct,
+    DWORD dwFlags,
+    DATA_BLOB* pDataOut);
 
 static CryptProtectDataFunc pCryptProtectData;
 static CryptUnprotectDataFunc pCryptUnprotectData;
@@ -63,25 +63,27 @@ static void __attribute__((constructor)) init(void)
 
 QByteArray CryptData::encode(QString& txt, QString password)
 {
-    BOOL r;
-    DATA_BLOB DataIn;
-    DATA_BLOB Opt;
-    DATA_BLOB DataOut;
-    QByteArray res, data;
 
-    if (lib_init == 0)
+    if (lib_init == 0) {
         return password.toUtf8();
+    }
 
+    DATA_BLOB DataIn;
     DataIn.pbData = (BYTE*)password.toUtf8().data();
     DataIn.cbData = password.toUtf8().size();
 
+    DATA_BLOB Opt;
     Opt.pbData = (BYTE*)txt.toUtf8().data();
     Opt.cbData = txt.toUtf8().size();
 
-    r = pCryptProtectData(&DataIn, NULL, &Opt, NULL, NULL, 0, &DataOut);
-    if (r == false)
+    DATA_BLOB DataOut;
+    QByteArray res;
+    BOOL r = pCryptProtectData(&DataIn, NULL, &Opt, NULL, NULL, 0, &DataOut);
+    if (r == false) {
         return res;
+    }
 
+    QByteArray data;
     data.setRawData((const char*)DataOut.pbData, DataOut.cbData);
 
     res.clear();
@@ -94,12 +96,6 @@ QByteArray CryptData::encode(QString& txt, QString password)
 
 bool CryptData::decode(QString& txt, QByteArray _enc, QString& res)
 {
-    BOOL r;
-    DATA_BLOB DataIn;
-    DATA_BLOB Opt;
-    DATA_BLOB DataOut;
-    QByteArray enc;
-
     res.clear();
 
     if (lib_init == 0 || _enc.startsWith("xxxx") == false) {
@@ -107,17 +103,22 @@ bool CryptData::decode(QString& txt, QByteArray _enc, QString& res)
         return true;
     }
 
+    QByteArray enc;
     enc = QByteArray::fromBase64(_enc.mid(4));
 
+    DATA_BLOB DataIn;
     DataIn.pbData = (BYTE*)enc.data();
     DataIn.cbData = enc.size();
 
+    DATA_BLOB Opt;
     Opt.pbData = (BYTE*)txt.toLatin1().data();
     Opt.cbData = txt.toLatin1().size();
 
-    r = pCryptUnprotectData(&DataIn, NULL, &Opt, NULL, NULL, 0, &DataOut);
-    if (r == false)
+    DATA_BLOB DataOut;
+    BOOL r = pCryptUnprotectData(&DataIn, NULL, &Opt, NULL, NULL, 0, &DataOut);
+    if (r == false) {
         return false;
+    }
 
     res = QString::fromUtf8((const char*)DataOut.pbData, DataOut.cbData);
     LocalFree(DataOut.pbData);

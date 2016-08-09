@@ -112,6 +112,8 @@ int gnutls_openpgp_crt_check_hostname(gnutls_openpgp_crt_t key,
 				      const char *hostname);
 int gnutls_openpgp_crt_check_hostname2(gnutls_openpgp_crt_t key,
 				      const char *hostname, unsigned int flags);
+int
+gnutls_openpgp_crt_check_email(gnutls_openpgp_crt_t key, const char *email, unsigned flags);
 
 int gnutls_openpgp_crt_get_revoked_status(gnutls_openpgp_crt_t key);
 
