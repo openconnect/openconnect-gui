@@ -104,7 +104,7 @@ if(WIN32 AND MINGW)
         libnettle.dll.a
         libopenconnect.dll.a
         libp11-kit.dll.a
-        #libstoken.dll.a
+        libstoken.dll.a
         libxml2.dll.a
         libz.dll.a
     )
