@@ -130,11 +130,23 @@ install(TARGETS ${PROJECT_NAME}
 if(WIN32 AND MINGW)
     set(APPS "\${CMAKE_INSTALL_PREFIX}/${PROJECT_NAME}.exe")
     list(APPEND libSearchDirs ${CMAKE_SOURCE_DIR}/nsis)
+
+	# Qt Platform Plugin
+	install(FILES
+		${_qwindows_dll}
+		DESTINATION plugins/platforms
+		COMPONENT App
+	)
+	install(FILES
+		${CMAKE_SOURCE_DIR}/nsis/qt.conf
+		DESTINATION .
+		COMPONENT App
+	)
 else()
     set(APPS "\${CMAKE_INSTALL_PREFIX}/${PROJECT_NAME}.app")
     list(APPEND libSearchDirs "")
 endif()
-set(additionalLib ${QT_LIBRARY_DIR})
+set(additionalLib ${_qwindows_dll})
 install(CODE "
     include(BundleUtilities)
     fixup_bundle(\"${APPS}\" \"${additionalLib}\" \"${libSearchDirs}\")
