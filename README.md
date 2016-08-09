@@ -18,6 +18,10 @@ Newer or older versions may work... feel free tweak main CMakeLists.txt as you n
 #### Fedora 24
 TODO...
 
+### Compilation & package preparation
+Hints related to command line compilation and release package preparation
+may be found in 'build_mingw@win.cmd' shell script in project root.
+
 ### Development with QtCreator
 - checkout project from GitHub
 - start QtCreator
