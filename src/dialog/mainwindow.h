@@ -63,8 +63,6 @@ public:
     void updateStats(const struct oc_stats* stats, QString dtls);
     void reload_settings();
 
-    void disable_cmd_fd();
-
     void vpn_status_changed(int connected);
     void vpn_status_changed(int connected,
         QString& dns,
