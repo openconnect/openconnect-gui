@@ -17,8 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef MYMSGBOX_H
-#define MYMSGBOX_H
+#pragma once
 
 #include <QApplication>
 #include <QInputDialog>
@@ -44,5 +43,3 @@ private:
     QString t2;
     QString oktxt;
 };
-
-#endif // MYMSGBOX_H

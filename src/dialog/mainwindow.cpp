@@ -19,26 +19,37 @@
 
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
-extern "C" {
-#include <stdarg.h>
-#include <stdio.h>
-}
+#include "config.h"
 #include "editdialog.h"
 #include "logdialog.h"
+#include "openconnect-gui.h"
+#include "server_storage.h"
+#include "vpninfo.h"
+
+extern "C" {
+#include <gnutls/gnutls.h>
+}
 #include <QCloseEvent>
 #include <QDateTime>
 #include <QDialog>
 #include <QFutureWatcher>
 #include <QLineEdit>
 #include <QMessageBox>
+#include <QSettings>
 #include <QUrl>
 #include <QtConcurrent/QtConcurrentRun>
 #include <QtNetwork/QNetworkProxy>
 #include <QtNetwork/QNetworkProxyFactory>
 #include <QtNetwork/QNetworkProxyQuery>
-#include <gnutls/gnutls.h>
-#include <storage.h>
-#include <vpninfo.h>
+#include <QStateMachine>
+#include <QSignalTransition>
+#include <QEventTransition>
+#include <QCheckBox>
+
+#include <cstdarg>
+#include <cstdio>
+#include <cmath>
+
 #ifdef _WIN32
 #define pipe_write(x, y, z) send(x, y, z, 0)
 #else
@@ -49,56 +60,208 @@ MainWindow::MainWindow(QWidget* parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
 {
-    const char* version = openconnect_get_version();
-    QString txt;
-
     ui->setupUi(this);
-
-    txt = QLatin1String("Based on libopenconnect ") + QLatin1String(version);
-    txt += QLatin1String("\nGnuTLS: ") + QLatin1String(gnutls_check_version(NULL));
-    ui->versionLabel->setText(txt);
 
     timer = new QTimer(this);
     blink_timer = new QTimer(this);
     this->cmd_fd = INVALID_SOCKET;
 
-    connect(ui->actionQuit, SIGNAL(triggered()), qApp, SLOT(quit()));
+    connect(ui->actionQuit, &QAction::triggered,
+        qApp, &QApplication::quit);
 
-    connect(blink_timer, SIGNAL(timeout(void)), this, SLOT(blink_ui(void)),
-            Qt::QueuedConnection);
-    connect(timer, SIGNAL(timeout()), this, SLOT(request_update_stats()),
-            Qt::QueuedConnection);
-    connect(ui->comboBox->lineEdit(), SIGNAL(returnPressed()), this,
-            SLOT(on_connectBtn_clicked()), Qt::QueuedConnection);
-    connect(this, SIGNAL(vpn_status_changed_sig(int)), this,
-            SLOT(changeStatus(int)), Qt::QueuedConnection);
-    QObject::connect(this, SIGNAL(log_changed(QString)), this,
-                     SLOT(writeProgressBar(QString)), Qt::QueuedConnection);
-    QObject::connect(this, SIGNAL(stats_changed_sig(QString, QString, QString)),
-                     this, SLOT(statsChanged(QString, QString, QString)),
-                     Qt::QueuedConnection);
+    connect(blink_timer, &QTimer::timeout,
+        this, &MainWindow::blink_ui,
+        Qt::QueuedConnection);
+    connect(timer, &QTimer::timeout,
+        this, &MainWindow::request_update_stats,
+        Qt::QueuedConnection);
+    connect(this, &MainWindow::vpn_status_changed_sig,
+        this, &MainWindow::changeStatus,
+        Qt::QueuedConnection);
+    connect(ui->connectionButton, &QPushButton::clicked,
+        this, &MainWindow::on_connectClicked,
+        Qt::QueuedConnection);
+
+    connect(this, &MainWindow::log_changed,
+        this, &MainWindow::writeProgressBar,
+        Qt::QueuedConnection);
+    connect(this, &MainWindow::stats_changed_sig,
+        this, &MainWindow::statsChanged,
+        Qt::QueuedConnection);
+
     ui->iconLabel->setPixmap(OFF_ICON);
     QNetworkProxyFactory::setUseSystemConfiguration(true);
 
     if (QSystemTrayIcon::isSystemTrayAvailable()) {
-        QIcon icon;
-        createActions();
         createTrayIcon();
 
-        connect(trayIcon, SIGNAL(activated(QSystemTrayIcon::ActivationReason)),
-                this, SLOT(iconActivated(QSystemTrayIcon::ActivationReason)));
+        connect(m_trayIcon, &QSystemTrayIcon::activated,
+            this, &MainWindow::iconActivated);
 
+        QIcon icon;
         icon.addPixmap(TRAY_OFF_ICON, QIcon::Normal, QIcon::Off);
-        trayIcon->setIcon(icon);
-        trayIcon->show();
+        m_trayIcon->setIcon(icon);
+        m_trayIcon->show();
+    } else {
+        updateProgressBar(QLatin1String("System doesn't support tray icon"), false);
+        m_trayIcon = nullptr;
     }
-    else {
-        updateProgressBar(QLatin1String("System doesn't support tray icon"),
-                          false);
-        trayIcon = NULL;
-    }
+
+    // TODO: initial state machine
+    QStateMachine* machine = new QStateMachine(this);
+    QState* s1_noProfiles = new QState();
+    s1_noProfiles->assignProperty(ui->connectionButton, "enabled", false);
+    s1_noProfiles->assignProperty(ui->serverList, "enabled", false);
+    s1_noProfiles->assignProperty(ui->actionEditSelectedProfile, "enabled", false);
+    s1_noProfiles->assignProperty(ui->actionRemoveSelectedProfile, "enabled", false);
+
+    s1_noProfiles->assignProperty(m_trayIconMenuConnections, "title", tr("(no servers to connect)"));
+    s1_noProfiles->assignProperty(m_trayIconMenuConnections, "enabled", false);
+    s1_noProfiles->assignProperty(m_disconnectAction, "enabled", false);
+    machine->addState(s1_noProfiles);
+
+    QState* s2_connectionReady = new QState();
+    s2_connectionReady->assignProperty(ui->connectionButton, "enabled", true);
+    s2_connectionReady->assignProperty(ui->serverList, "enabled", true);
+    s2_connectionReady->assignProperty(ui->actionEditSelectedProfile, "enabled", true);
+    s2_connectionReady->assignProperty(ui->actionRemoveSelectedProfile, "enabled", true);
+
+    s2_connectionReady->assignProperty(m_trayIconMenuConnections, "title", tr("Connect to..."));
+    s2_connectionReady->assignProperty(m_trayIconMenuConnections, "enabled", true);
+    machine->addState(s2_connectionReady);
+
+    class ServerListTransition : public QSignalTransition
+    {
+    public:
+        ServerListTransition(QComboBox *cb, bool hasServers)
+            : QSignalTransition(cb, SIGNAL(currentIndexChanged(int))), hasServers(hasServers) {}
+    protected:
+        bool eventTest(QEvent *e) {
+            if (!QSignalTransition::eventTest(e)) {
+                return false;
+            }
+            QStateMachine::SignalEvent *se = static_cast<QStateMachine::SignalEvent*>(e);
+            bool isEmpty = se->arguments().at(0).toInt() == -1;
+            return (hasServers ? !isEmpty : isEmpty);
+        }
+
+    private:
+        bool hasServers;
+    };
+
+    ServerListTransition* t1 = new ServerListTransition(ui->serverList, true);
+    t1->setTargetState(s2_connectionReady);
+    s1_noProfiles->addTransition(t1);
+
+    ServerListTransition* t2 = new ServerListTransition(ui->serverList, false);
+    t2->setTargetState(s1_noProfiles);
+    s2_connectionReady->addTransition(t2);
+
+    machine->setInitialState(s1_noProfiles);
+    machine->start();
+    connect(machine, &QStateMachine::started, [=]() {
+        // LCA: find better way to load/fill combobox...
+        this->reload_settings();
+
+        QSettings settings;
+        const int currentIndex = settings.value("Profiles/currentIndex", -1).toInt();
+        if (currentIndex != -1 && currentIndex < ui->serverList->count()) {
+            ui->serverList->setCurrentIndex(currentIndex);
+        }
+    });
+
+    QMenu* serverProfilesMenu = new QMenu(this);
+    serverProfilesMenu->addAction(ui->actionNewProfile);
+    serverProfilesMenu->addAction(ui->actionEditSelectedProfile);
+    serverProfilesMenu->addAction(ui->actionRemoveSelectedProfile);
+    ui->serverListControl->setMenu(serverProfilesMenu);
 
     readSettings();
+    // TODO: initial app window state machine
+    m_appWindowStateMachine = new QStateMachine(this);
+
+    QState* s111_normalWindow = new QState();
+    m_appWindowStateMachine->addState(s111_normalWindow);
+    s111_normalWindow->assignProperty(ui->actionRestore, "enabled", false);
+    s111_normalWindow->assignProperty(ui->actionMinimize, "enabled", true);
+
+    QState* s112_minimizedWindow = new QState();
+    m_appWindowStateMachine->addState(s112_minimizedWindow);
+    connect(s112_minimizedWindow, &QState::entered, [=]() {
+        showMinimized();
+        if (ui->actionMinimizeToTheNotificationArea->isChecked()) {
+            QTimer::singleShot(10, this, SLOT(hide()));
+        }
+    });
+    connect(s112_minimizedWindow, &QState::exited, [=]() {
+        this->showNormal();
+        if (ui->actionMinimizeToTheNotificationArea->isChecked()) {
+            show();
+            raise();
+            activateWindow();
+        }
+    });
+    s112_minimizedWindow->assignProperty(ui->actionRestore, "enabled", true);
+    s112_minimizedWindow->assignProperty(ui->actionMinimize, "enabled", false);
+
+    if (ui->actionStartMinimized->isChecked()) {
+        m_appWindowStateMachine->setInitialState(s112_minimizedWindow);
+    } else {
+        m_appWindowStateMachine->setInitialState(s111_normalWindow);
+    }
+
+    // TODO: move outside...
+    class MinimizeEventTransition : public QEventTransition
+    {
+    public:
+        MinimizeEventTransition(QMainWindow* mw,  Qt::WindowState state)
+            : QEventTransition(mw, QEvent::WindowStateChange), m_mw(mw), m_state(state) {}
+    protected:
+        bool eventTest(QEvent *e) override {
+            if (!QEventTransition::eventTest(e)) {
+                return false;
+            }
+            QStateMachine::WrappedEvent *we = static_cast<QStateMachine::WrappedEvent*>(e);
+            if(we->event()->type() == QEvent::WindowStateChange) {
+                return (m_mw->windowState() == m_state);
+            }
+            return false;
+        }
+    private:
+        QMainWindow* m_mw;
+        Qt::WindowState m_state;
+    };
+    // TODO: move outside...
+    class RestoreEventTransition : public QEventTransition
+    {
+    public:
+        RestoreEventTransition(QMainWindow* mw,  Qt::WindowState state)
+            : QEventTransition(mw, QEvent::WindowStateChange), m_mw(mw), m_state(state) {}
+    protected:
+        bool eventTest(QEvent *e) override {
+            if (!QEventTransition::eventTest(e)) {
+                return false;
+            }
+            QStateMachine::WrappedEvent *we = static_cast<QStateMachine::WrappedEvent*>(e);
+            if(we->event()->type() == QEvent::WindowStateChange) {
+                return (m_mw->windowState() == m_state);
+            }
+            return false;
+        }
+    private:
+        QMainWindow* m_mw;
+        Qt::WindowState m_state;
+    };
+
+    MinimizeEventTransition* minimizeEvent = new MinimizeEventTransition(this, Qt::WindowMinimized);
+    minimizeEvent->setTargetState(s112_minimizedWindow);
+    s111_normalWindow->addTransition(minimizeEvent);
+
+    RestoreEventTransition* restoreEvent = new RestoreEventTransition(this, Qt::WindowNoState);
+    restoreEvent->setTargetState(s111_normalWindow);
+    s112_minimizedWindow->addTransition(restoreEvent);
+
+    m_appWindowStateMachine->start();
 }
 
 static void term_thread(MainWindow* m, SOCKET* fd)
@@ -111,8 +274,7 @@ static void term_thread(MainWindow* m, SOCKET* fd)
             m->updateProgressBar(QObject::tr("term_thread: IPC error: ") + QString::number(net_errno));
         *fd = INVALID_SOCKET;
         ms_sleep(200);
-    }
-    else {
+    } else {
         m->vpn_status_changed(STATUS_DISCONNECTED);
     }
 }
@@ -120,8 +282,9 @@ static void term_thread(MainWindow* m, SOCKET* fd)
 MainWindow::~MainWindow()
 {
     int counter = 10;
-    if (this->timer->isActive())
+    if (this->timer->isActive()) {
         timer->stop();
+    }
 
     if (this->futureWatcher.isRunning() == true) {
         term_thread(this, &this->cmd_fd);
@@ -130,15 +293,28 @@ MainWindow::~MainWindow()
         ms_sleep(200);
         counter--;
     }
-    delete ui;
-    delete timer;
 
     writeSettings();
+
+    delete ui;
+    delete timer;
+    delete blink_timer;
 }
 
-void MainWindow::disable_cmd_fd()
+void MainWindow::vpn_status_changed(int connected)
 {
-    cmd_fd = INVALID_SOCKET;
+    emit vpn_status_changed_sig(connected);
+}
+
+void MainWindow::vpn_status_changed(int connected, QString& dns, QString& ip, QString& ip6, QString& cstp_cipher, QString& dtls_cipher)
+{
+    this->dns = dns;
+    this->ip = ip;
+    this->ip6 = ip6;
+    this->dtls_cipher = dtls_cipher;
+    this->cstp_cipher = cstp_cipher;
+
+    emit vpn_status_changed_sig(connected);
 }
 
 QStringList* MainWindow::get_log()
@@ -146,76 +322,69 @@ QStringList* MainWindow::get_log()
     return &this->log;
 }
 
-QString value_to_string(uint64_t bytes)
+QString MainWindow::normalize_byte_size(uint64_t bytes)
 {
-    QString r;
-    if (bytes > 1000 && bytes < 1000 * 1000) {
-        bytes /= 1000;
-        r = QString::number((int)bytes);
-        r += QObject::tr(" KB");
-        return r;
+    const unsigned unit = 1024;// TODO: add support for SI units? (optional)
+    if (bytes < unit) {
+        return QString("%1 B").arg(QString::number(bytes));
     }
-    else if (bytes >= 1000 * 1000 && bytes < 1000 * 1000 * 1000) {
-        bytes /= 1000 * 1000;
-        r = QString::number((int)bytes);
-        r += QObject::tr(" MB");
-        return r;
-    }
-    else if (bytes >= 1000 * 1000 * 1000) {
-        bytes /= 1000 * 1000 * 1000;
-        r = QString::number((int)bytes);
-        r += QObject::tr(" GB");
-        return r;
-    }
-    else {
-        r = QString::number((int)bytes);
-        r += QObject::tr(" bytes");
-        return r;
-    }
+    const int exp = static_cast<int>(std::log(bytes) / std::log(unit));
+    static const char suffixChar[] = "KMGTPE";
+    return QString("%1 %2B").arg(QString::number(bytes / std::pow(unit, exp), 'f', 3)).arg(suffixChar[exp-1]);
 }
 
 void MainWindow::statsChanged(QString tx, QString rx, QString dtls)
 {
-    ui->lcdDown->setText(rx);
-    ui->lcdUp->setText(tx);
-    ui->DTLSLabel->setText(dtls);
+    ui->downloadLabel->setText(rx);
+    ui->uploadLabel->setText(tx);
+    ui->cipherDTLSLabel->setText(dtls);
 }
 
 void MainWindow::updateStats(const struct oc_stats* stats, QString dtls)
 {
-    emit stats_changed_sig(value_to_string(stats->tx_bytes),
-                           value_to_string(stats->rx_bytes), dtls);
+    emit stats_changed_sig(
+        normalize_byte_size(stats->tx_bytes),
+        normalize_byte_size(stats->rx_bytes),
+        dtls);
 }
 
+#define PREFIX "server:" // LCA: remot this...
 void MainWindow::reload_settings()
 {
-    QStringList servers;
-    ui->comboBox->clear();
+    ui->serverList->clear();
+    m_trayIconMenuConnections->clear();
 
-    servers = get_server_list(this->settings);
+    QSettings settings;
+    for (const auto& key : settings.allKeys()) {
+        if (key.startsWith(PREFIX) && key.endsWith("/server")) {
+            QString str{ key };
+            str.remove(0, sizeof(PREFIX) - 1); /* remove prefix */
+            str.remove(str.size() - 7, 7); /* remove /server suffix */
+            ui->serverList->addItem(str);
 
-    for (int i = 0; i < servers.size(); i++) {
-        ui->comboBox->addItem(servers.at(i));
+            QAction* act = m_trayIconMenuConnections->addAction(str);
+            connect(act, &QAction::triggered, [act, this]() {
+                int idx = ui->serverList->findText(act->text());
+                if (idx != -1) {
+                    ui->serverList->setCurrentIndex(idx);
+                    on_connectClicked();
+                }
+            });
+        }
     }
 }
 
-void MainWindow::set_settings(QSettings* s)
-{
-    this->settings = s;
-    reload_settings();
-};
-
-void MainWindow::writeProgressBar(QString str)
+void MainWindow::writeProgressBar(const QString& str)
 {
     ui->statusBar->showMessage(str, 20 * 1000);
 }
 
-void MainWindow::updateProgressBar(QString str)
+void MainWindow::updateProgressBar(const QString& str)
 {
     updateProgressBar(str, true);
 }
 
-void MainWindow::updateProgressBar(QString str, bool show)
+void MainWindow::updateProgressBar(QString str, bool show) // LCA: const ???
 {
     QMutexLocker locker(&this->progress_mutex);
     if (str.isEmpty() == false) {
@@ -238,100 +407,125 @@ void MainWindow::blink_ui()
 
     if (t % 2 == 0) {
         ui->iconLabel->setPixmap(CONNECTING_ICON);
-    }
-    else {
+    } else {
         ui->iconLabel->setPixmap(CONNECTING_ICON2);
     }
-    t++;
+    ++t;
 }
 
 void MainWindow::changeStatus(int val)
 {
-    QIcon icon;
     if (val == STATUS_CONNECTED) {
 
         blink_timer->stop();
+
+        ui->serverList->setEnabled(false);
+
+        m_trayIconMenuConnections->setEnabled(false);
+        m_disconnectAction->setEnabled(true);
+
         ui->iconLabel->setPixmap(ON_ICON);
-        ui->disconnectBtn->setEnabled(true);
-        ui->connectBtn->setEnabled(false);
+        ui->connectionButton->setIcon(QIcon(":/new/resource/images/process-stop.png"));
+        ui->connectionButton->setText(tr("Disconnect"));
 
-        icon.addPixmap(TRAY_ON_ICON, QIcon::Normal, QIcon::Off);
-        trayIcon->setIcon(icon);
+        QIcon icon(TRAY_ON_ICON);
+        m_trayIcon->setIcon(icon);
 
-        this->ui->IPLabel->setText(ip);
-        this->ui->IP6Label->setText(ip6);
-        this->ui->DNSLabel->setText(dns);
-        this->ui->CSTPLabel->setText(cstp_cipher);
-        this->ui->DTLSLabel->setText(dtls_cipher);
+        this->ui->ipV4Label->setText(ip);
+        this->ui->ipV6Label->setText(ip6);
+        this->ui->dnsLabel->setText(dns);
+        this->ui->cipherCSTPLabel->setText(cstp_cipher);
+        this->ui->cipherDTLSLabel->setText(dtls_cipher);
 
         timer->start(UPDATE_TIMER);
 
         if (this->minimize_on_connect) {
-            if (trayIcon) {
-                this->hideWindow();
-                trayIcon->showMessage(QLatin1String("Connected"), QLatin1String("You were connected to ") + ui->comboBox->currentText(),
-                                      QSystemTrayIcon::Information,
-                                      10000);
-            }
-            else {
+            if (m_trayIcon) {
+                hide();
+                m_trayIcon->showMessage(QLatin1String("Connected"), QLatin1String("You were connected to ") + ui->serverList->currentText(),
+                    QSystemTrayIcon::Information,
+                    10000);
+            } else {
                 this->setWindowState(Qt::WindowMinimized);
             }
         }
-    }
-    else if (val == STATUS_CONNECTING) {
+        disconnect(ui->connectionButton, &QPushButton::clicked,
+            this, &MainWindow::on_connectClicked);
+        connect(ui->connectionButton, &QPushButton::clicked,
+            this, &MainWindow::on_disconnectClicked,
+            Qt::QueuedConnection);
+    } else if (val == STATUS_CONNECTING) {
 
-        if (trayIcon) {
-            icon.addPixmap(TRAY_OFF_ICON, QIcon::Normal, QIcon::Off);
-            trayIcon->setIcon(icon);
+        if (m_trayIcon) {
+            QIcon icon(TRAY_OFF_ICON);
+            m_trayIcon->setIcon(icon);
         }
-        ui->iconLabel->setPixmap(CONNECTING_ICON);
-        ui->disconnectBtn->setEnabled(true);
-        ui->connectBtn->setEnabled(false);
-        blink_timer->start(1500);
-    }
-    else if (val == STATUS_DISCONNECTED) {
-        blink_timer->stop();
-        if (this->timer->isActive())
-            timer->stop();
-        disable_cmd_fd();
 
-        ui->CSTPLabel->setText("");
-        ui->DTLSLabel->setText("");
-        ui->IPLabel->setText("");
-        ui->DNSLabel->setText("");
-        ui->IP6Label->setText("");
+        ui->serverList->setEnabled(false);
+
+        m_trayIconMenuConnections->setEnabled(false);
+        m_disconnectAction->setEnabled(true);
+
+        ui->iconLabel->setPixmap(CONNECTING_ICON);
+        ui->connectionButton->setIcon(QIcon(":/new/resource/images/process-stop.png"));
+        ui->connectionButton->setText(tr("Cancel"));
+        blink_timer->start(1500);
+    } else if (val == STATUS_DISCONNECTED) {
+        blink_timer->stop();
+        if (this->timer->isActive()) {
+            timer->stop();
+        }
+        cmd_fd = INVALID_SOCKET;
+
+        ui->ipV4Label->clear();
+        ui->ipV6Label->clear();
+        ui->dnsLabel->clear();
+        ui->uploadLabel->clear();
+        ui->downloadLabel->clear();
+        ui->cipherCSTPLabel->clear();
+        ui->cipherDTLSLabel->clear();
         this->updateProgressBar(QObject::tr("Disconnected"));
 
-        ui->disconnectBtn->setEnabled(false);
-        ui->connectBtn->setEnabled(true);
-        ui->iconLabel->setPixmap(OFF_ICON);
+        ui->serverList->setEnabled(true);
 
-        if (trayIcon) {
-            icon.addPixmap(TRAY_OFF_ICON, QIcon::Normal, QIcon::Off);
-            trayIcon->setIcon(icon);
+        m_trayIconMenuConnections->setEnabled(true);
+        m_disconnectAction->setEnabled(false);
+
+        ui->iconLabel->setPixmap(OFF_ICON);
+        ui->connectionButton->setIcon(QIcon(":/new/resource/images/network-wired.png"));
+        ui->connectionButton->setText(tr("Connect"));
+
+        if (m_trayIcon) {
+            QIcon icon(TRAY_OFF_ICON);
+            m_trayIcon->setIcon(icon);
 
             if (this->isHidden() == true)
-                trayIcon->showMessage(QLatin1String("Disconnected"), QLatin1String("You were disconnected from the VPN"),
-                                      QSystemTrayIcon::Warning,
-                                      10000);
+                m_trayIcon->showMessage(QLatin1String("Disconnected"), QLatin1String("You were disconnected from the VPN"),
+                    QSystemTrayIcon::Warning,
+                    10000);
         }
+        disconnect(ui->connectionButton, &QPushButton::clicked,
+            this, &MainWindow::on_disconnectClicked);
+        connect(ui->connectionButton, &QPushButton::clicked,
+            this, &MainWindow::on_connectClicked,
+            Qt::QueuedConnection);
+    } else {
+        qDebug() << "TODO: was is das?";
     }
 }
 
 static void main_loop(VpnInfo* vpninfo, MainWindow* m)
 {
-    int ret;
-    QString ip, ip6, dns, cstp, dtls;
-    bool retry = false;
-    QString oldpass, oldgroup;
-    bool reset_password = false;
-    int retries = 2;
-    bool pass_was_empty;
-
     m->vpn_status_changed(STATUS_CONNECTING);
 
+    bool pass_was_empty;
     pass_was_empty = vpninfo->ss->get_password().isEmpty();
 
+    QString ip, ip6, dns, cstp, dtls;
+
+    int ret = 0;
+    bool retry = false;
+    int retries = 2;
     do {
         retry = false;
         ret = vpninfo->connect();
@@ -339,6 +533,8 @@ static void main_loop(VpnInfo* vpninfo, MainWindow* m)
             if (retries-- <= 0)
                 goto fail;
 
+            QString oldpass, oldgroup;
+            bool reset_password = false;
             if (pass_was_empty != true) {
                 /* authentication failed in batch mode? switch to non
                  * batch and retry */
@@ -376,70 +572,65 @@ static void main_loop(VpnInfo* vpninfo, MainWindow* m)
     m->vpn_status_changed(STATUS_CONNECTED, dns, ip, ip6, cstp, dtls);
 
     vpninfo->ss->save();
-
     vpninfo->mainloop();
 
-fail:
+fail: // LCA: drop this 'goto' and optimize values...
     m->vpn_status_changed(STATUS_DISCONNECTED);
 
     delete vpninfo;
-    return;
 }
 
-void MainWindow::on_disconnectBtn_clicked()
+void MainWindow::on_disconnectClicked()
 {
-    if (this->timer->isActive())
+    if (this->timer->isActive()) {
         this->timer->stop();
+    }
     this->updateProgressBar(QObject::tr("Disconnecting..."));
     term_thread(this, &this->cmd_fd);
 }
 
-void MainWindow::on_connectBtn_clicked()
+void MainWindow::on_connectClicked()
 {
-    VpnInfo* vpninfo = NULL;
-    StoredServer* ss = new StoredServer(this->settings);
+    VpnInfo* vpninfo = nullptr;
+    StoredServer* ss = new StoredServer();
     QFuture<void> future;
     QString name, str, url;
     QList<QNetworkProxy> proxies;
     QUrl turl;
     QNetworkProxyQuery query;
 
-    if (ui->connectBtn->isEnabled() == false) {
-        return;
-    }
-
     if (this->cmd_fd != INVALID_SOCKET) {
         QMessageBox::information(this,
-                                 qApp->applicationName(),
-                                 tr("A previous VPN instance is still running (socket is active)"));
+            qApp->applicationName(),
+            tr("A previous VPN instance is still running (socket is active)"));
         return;
     }
 
     if (this->futureWatcher.isRunning() == true) {
         QMessageBox::information(this,
-                                 qApp->applicationName(),
-                                 tr("A previous VPN instance is still running"));
+            qApp->applicationName(),
+            tr("A previous VPN instance is still running"));
         return;
     }
 
-    if (ui->comboBox->currentText().isEmpty()) {
+    if (ui->serverList->currentText().isEmpty()) {
         QMessageBox::information(this,
-                                 qApp->applicationName(),
-                                 tr("You need to specify a gateway. E.g. vpn.example.com:443"));
+            qApp->applicationName(),
+            tr("You need to specify a gateway. e.g. vpn.example.com:443"));
         return;
     }
 
-    name = ui->comboBox->currentText();
+    name = ui->serverList->currentText();
     ss->load(name);
     turl.setUrl("https://" + ss->get_servername());
     query.setUrl(turl);
 
     /* ss is now deallocated by vpninfo */
     vpninfo = new VpnInfo(QString("%1 %2").arg(qApp->applicationName()).arg(qApp->applicationVersion()), ss, this);
-    if (vpninfo == NULL) {
+    if (vpninfo == nullptr) {
         QMessageBox::information(this,
-                                 qApp->applicationName(),
-                                 tr("There was an issue initializing the VPN."));
+            qApp->applicationName(),
+            tr("There was an issue initializing the VPN."));
         goto fail;
     }
 
@@ -450,8 +641,8 @@ void MainWindow::on_connectBtn_clicked()
     this->cmd_fd = vpninfo->get_cmd_fd();
     if (this->cmd_fd == INVALID_SOCKET) {
         QMessageBox::information(this,
-                                 qApp->applicationName(),
-                                 tr("There was an issue establishing IPC with openconnect; try restarting the application."));
+            qApp->applicationName(),
+            tr("There was an issue establishing IPC with openconnect; try restarting the application."));
         goto fail;
     }
 
@@ -460,7 +651,7 @@ void MainWindow::on_connectBtn_clicked()
         if (proxies.at(0).type() == QNetworkProxy::Socks5Proxy)
             url = "socks5://";
         else if (proxies.at(0).type() == QNetworkProxy::HttpCachingProxy
-                 || proxies.at(0).type() == QNetworkProxy::HttpProxy)
+            || proxies.at(0).type() == QNetworkProxy::HttpProxy)
             url = "http://";
 
         if (url.isEmpty() == false) {
@@ -479,92 +670,72 @@ void MainWindow::on_connectBtn_clicked()
     this->futureWatcher.setFuture(future);
 
     return;
-fail:
-    if (vpninfo != NULL)
+fail: // LCA: remote 'fail' label :/
+    if (vpninfo != nullptr)
         delete vpninfo;
     return;
 }
 
-void MainWindow::on_toolButton_clicked()
-{
-    int idx;
-    EditDialog dialog(ui->comboBox->currentText(), this->settings);
-    dialog.exec();
-    idx = ui->comboBox->currentIndex();
-    reload_settings();
-    if (idx < ui->comboBox->maxVisibleItems() && idx >= 0) {
-        ui->comboBox->setCurrentIndex(idx);
-    }
-    else if (ui->comboBox->maxVisibleItems() == 0) {
-        ui->comboBox->setCurrentIndex(0);
-    }
-}
-
-void MainWindow::on_toolButton_2_clicked()
-{
-    if (ui->comboBox->currentText().isEmpty() == false) {
-        QMessageBox mbox;
-        int ret;
-
-        mbox.setText(QObject::tr("Are you sure you want to remove ") + ui->comboBox->currentText() + "?");
-        mbox.setStandardButtons(QMessageBox::Cancel | QMessageBox::Ok);
-        mbox.setDefaultButton(QMessageBox::Cancel);
-        mbox.setButtonText(QMessageBox::Ok, tr("Remove"));
-
-        ret = mbox.exec();
-        if (ret == QMessageBox::Ok) {
-            remove_server(settings, ui->comboBox->currentText());
-            reload_settings();
-        }
-    }
-}
-
-static LogDialog* logdialog = NULL;
+static LogDialog* logdialog = nullptr;
 void MainWindow::clear_logdialog()
 {
-    logdialog = NULL;
+    logdialog = nullptr;
 }
 
 void MainWindow::closeEvent(QCloseEvent* event)
 {
-    if (logdialog) {
-        logdialog->close();
-        logdialog = NULL;
-    }
+    if (m_trayIcon && m_trayIcon->isVisible() && ui->actionMinimizeTheApplicationInsteadOfClosing->isChecked()) {
+        QSettings settings;
+        const bool showTheMessageAgain = settings.value("showTheMessageAgain/minimizeToNotificationArea", true).toBool();
 
-    if (trayIcon && trayIcon->isVisible()) {
-        static int shown = 0;
+        if (showTheMessageAgain == true) {
+            QMessageBox msg(this);
+            msg.setWindowTitle(tr("Minimize to notification area"));
+            msg.setIcon(QMessageBox::Warning);
+            msg.setText(tr("The program will keep running in the notification area.<br> "
+                           "To terminate the program, choose <b>Quit</b> in application menu or "
+                           "in the context menu of the notification area entry."));
+            msg.setCheckBox(new QCheckBox(tr("&Show this message again")));
+            msg.checkBox()->setChecked(showTheMessageAgain);
+            msg.exec();
 
-        if (shown == 0) {
-            QMessageBox::information(this, tr("Systray"),
-                                     tr("The program will keep running in the "
-                                        "system tray. To terminate the program, "
-                                        "choose <b>Quit</b> in the system tray entry."));
-            shown = 1;
+            settings.setValue("showTheMessageAgain/minimizeToNotificationArea", msg.checkBox()->isChecked());
         }
-        hideWindow();
+        this->showMinimized();
         event->ignore();
+    } else {
+        if (logdialog) {
+            logdialog->close();
+            logdialog = nullptr;
+        }
+
+        event->accept();
+        qApp->quit();
     }
+    QMainWindow::closeEvent(event);
 }
 
-void MainWindow::on_pushButton_3_clicked()
+void MainWindow::on_viewLogButton_clicked()
 {
-    if (logdialog == NULL) {
+    if (logdialog == nullptr) {
         logdialog = new LogDialog(this->log);
 
-        QObject::connect(this, SIGNAL(log_changed(QString)), logdialog,
-                         SLOT(append(QString)), Qt::QueuedConnection);
-        QObject::connect(logdialog, SIGNAL(clear_log(void)), this,
-                         SLOT(clear_log(void)), Qt::QueuedConnection);
-        QObject::connect(logdialog, SIGNAL(clear_logdialog(void)), this,
-                         SLOT(clear_logdialog(void)), Qt::DirectConnection);
+        QObject::connect(this, &MainWindow::log_changed,
+            logdialog, &LogDialog::append,
+            Qt::QueuedConnection);
+        QObject::connect(logdialog, &LogDialog::clear_log,
+            this, &MainWindow::clear_log,
+            Qt::QueuedConnection);
+        QObject::connect(logdialog, &LogDialog::clear_logdialog,
+            this, &MainWindow::clear_logdialog,
+            Qt::DirectConnection);
 
         logdialog->show();
         logdialog->raise();
         logdialog->activateWindow();
-    }
-    else {
+    } else {
         logdialog->raise();
+        logdialog->activateWindow();
     }
 }
 
@@ -578,86 +749,11 @@ void MainWindow::request_update_stats()
             if (this->timer->isActive())
                 this->timer->stop();
         }
-    }
-    else {
+    } else {
         this->updateProgressBar(QObject::tr("update_stats: invalid socket"));
         if (this->timer->isActive())
             this->timer->stop();
     }
-}
-
-void MainWindow::toggleWindow()
-{
-    if (trayIcon == NULL)
-        return;
-
-    if (this->isHidden()) {
-        setVisible(true);
-    }
-    else {
-        setVisible(false);
-    }
-}
-
-void MainWindow::hideWindow()
-{
-    if (trayIcon == NULL)
-        return;
-
-    if (this->isHidden() == false) {
-        setVisible(false);
-    }
-}
-
-/****************************************************************************
- **
- ** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
- ** All rights reserved.
- ** Contact: Nokia Corporation (qt-info@nokia.com)
- **
- ** This file is part of the examples of the Qt Toolkit.
- **
- ** $QT_BEGIN_LICENSE:BSD$
- ** You may use this file under the terms of the BSD license as follows:
- **
- ** "Redistribution and use in source and binary forms, with or without
- ** modification, are permitted provided that the following conditions are
- ** met:
- **   * Redistributions of source code must retain the above copyright
- **     notice, this list of conditions and the following disclaimer.
- **   * Redistributions in binary form must reproduce the above copyright
- **     notice, this list of conditions and the following disclaimer in
- **     the documentation and/or other materials provided with the
- **     distribution.
- **   * Neither the name of Nokia Corporation and its Subsidiary(-ies) nor
- **     the names of its contributors may be used to endorse or promote
- **     products derived from this software without specific prior written
- **     permission.
- **
- ** THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
- ** "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
- ** LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
- ** A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
- ** OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- ** SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
- ** LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
- ** DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
- ** THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- ** (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE."
- ** $QT_END_LICENSE$
- **
- ****************************************************************************/
-void MainWindow::createTrayIcon()
-{
-    trayIconMenu = new QMenu(this);
-    trayIconMenu->addAction(minimizeAction);
-    trayIconMenu->addAction(restoreAction);
-    trayIconMenu->addSeparator();
-    trayIconMenu->addAction(quitAction);
-
-    trayIcon = new QSystemTrayIcon(this);
-    trayIcon->setContextMenu(trayIconMenu);
 }
 
 void MainWindow::readSettings()
@@ -669,6 +765,12 @@ void MainWindow::readSettings()
         move(settings.value("pos").toPoint());
     }
     settings.endGroup();
+
+    settings.beginGroup("Settings");
+    ui->actionMinimizeToTheNotificationArea->setChecked(settings.value("minimizeToTheNotificationArea", true).toBool());
+    ui->actionMinimizeTheApplicationInsteadOfClosing->setChecked(settings.value("minimizeTheApplicationInsteadOfClosing", true).toBool());
+    ui->actionStartMinimized->setChecked(settings.value("startMinimized", false).toBool());
+    settings.endGroup();
 }
 
 void MainWindow::writeSettings()
@@ -678,13 +780,37 @@ void MainWindow::writeSettings()
     settings.setValue("size", size());
     settings.setValue("pos", pos());
     settings.endGroup();
+
+    settings.beginGroup("Settings");
+    settings.setValue("minimizeToTheNotificationArea", ui->actionMinimizeToTheNotificationArea->isChecked());
+    settings.setValue("minimizeTheApplicationInsteadOfClosing", ui->actionMinimizeTheApplicationInsteadOfClosing->isChecked());
+    settings.setValue("startMinimized", ui->actionStartMinimized->isChecked());
+    settings.endGroup();
+
+    settings.setValue("Profiles/currentIndex", ui->serverList->currentIndex());
 }
 
-void MainWindow::setVisible(bool visible)
+void MainWindow::createTrayIcon()
 {
-    minimizeAction->setEnabled(visible);
-    restoreAction->setEnabled(isMaximized() || !visible);
-    QMainWindow::setVisible(visible);
+    m_trayIconMenu = new QMenu(this);
+
+    m_trayIconMenuConnections = new QMenu(this);
+    m_trayIconMenu->addMenu(m_trayIconMenuConnections);
+    m_disconnectAction = new QAction(tr("Disconnect"), this);
+    m_trayIconMenu->addAction(m_disconnectAction);
+    connect(m_disconnectAction, &QAction::triggered,
+            this, &MainWindow::on_disconnectClicked);
+
+    m_trayIconMenu->addSeparator();
+    m_trayIconMenu->addAction(ui->actionLogWindow);
+    m_trayIconMenu->addSeparator();
+    m_trayIconMenu->addAction(ui->actionMinimize);
+    m_trayIconMenu->addAction(ui->actionRestore);
+    m_trayIconMenu->addSeparator();
+    m_trayIconMenu->addAction(ui->actionQuit);
+
+    m_trayIcon = new QSystemTrayIcon(this);
+    m_trayIcon->setContextMenu(m_trayIconMenu);
 }
 
 void MainWindow::iconActivated(QSystemTrayIcon::ActivationReason reason)
@@ -692,20 +818,96 @@ void MainWindow::iconActivated(QSystemTrayIcon::ActivationReason reason)
     switch (reason) {
     case QSystemTrayIcon::Trigger:
     case QSystemTrayIcon::DoubleClick:
-        this->toggleWindow();
+    case QSystemTrayIcon::MiddleClick:
+#ifdef Q_OS_WIN
+        if (isMinimized()) {
+            showNormal();
+        } else {
+            showMinimized();
+        }
+#endif
         break;
-    default:;
+    default:
+        break;
     }
 }
 
-void MainWindow::createActions()
+void MainWindow::on_actionNewProfile_triggered()
 {
-    minimizeAction = new QAction(tr("Mi&nimize"), this);
-    connect(minimizeAction, SIGNAL(triggered()), this, SLOT(hide()));
+    // TODO: the new profile has no name yet...
+    EditDialog dialog("", this);
+    if (dialog.exec() != QDialog::Accepted) {
+        return;
+    }
 
-    restoreAction = new QAction(tr("&Restore"), this);
-    connect(restoreAction, SIGNAL(triggered()), this, SLOT(showNormal()));
+    int idx = ui->serverList->currentIndex();
+    reload_settings();
+    if (idx < ui->serverList->maxVisibleItems() && idx >= 0) {
+        ui->serverList->setCurrentIndex(idx);
+    } else if (ui->serverList->maxVisibleItems() == 0) {
+        ui->serverList->setCurrentIndex(0);
+    }
+    // LCA: else ???
+}
 
-    quitAction = new QAction(tr("&Quit"), this);
-    connect(quitAction, SIGNAL(triggered()), qApp, SLOT(quit()));
+void MainWindow::on_actionEditSelectedProfile_triggered()
+{
+    EditDialog dialog(ui->serverList->currentText(), this);
+    if (dialog.exec() != QDialog::Accepted) {
+        return;
+    }
+
+    int idx = ui->serverList->currentIndex();
+    reload_settings();
+    // TODO: may be signal/slot?
+    if (idx < ui->serverList->maxVisibleItems() && idx >= 0) {
+        ui->serverList->setCurrentIndex(idx);
+    } else if (ui->serverList->maxVisibleItems() == 0) {
+        ui->serverList->setCurrentIndex(0);
+    }
+    // LCA: else ???
+}
+
+#define PREFIX "server:" // LCA: remote this...
+void MainWindow::on_actionRemoveSelectedProfile_triggered()
+{
+    QMessageBox mbox;
+    mbox.setText(tr("Are you sure you want to remove '%1' host?").arg(ui->serverList->currentText()));
+    mbox.setStandardButtons(QMessageBox::Cancel | QMessageBox::Ok);
+    mbox.setDefaultButton(QMessageBox::Cancel);
+    mbox.setButtonText(QMessageBox::Ok, tr("Remove"));
+    if (mbox.exec() == QMessageBox::Ok) {
+        QSettings settings;
+        QString prefix = PREFIX;
+        for (const auto& key : settings.allKeys()) {
+            //qDebug() << key << ":" << QString(prefix + ui->serverList->currentText());
+            if (key.startsWith(prefix + ui->serverList->currentText() + "/")) {
+                settings.remove(key);
+            }
+        }
+
+        reload_settings(); // LCA: remove this feature...
+    }
+}
+
+void MainWindow::on_actionAbout_triggered()
+{
+    QString txt = QLatin1String("<h2>") + QLatin1String(appDescriptionLong) + QLatin1String("</h2>");
+    txt += tr("Version: ") + QLatin1String("<i>") + QLatin1String(appVersion) + QLatin1String("</i>");
+    txt += tr("<br><br>Based on:");
+    txt += tr("<br>- libopenconnect ") + QLatin1String(openconnect_get_version());
+    txt += tr("<br>- GnuTLS ") + QLatin1String(gnutls_check_version(nullptr));
+    txt += tr("<br>- Qt %1 (%2 bit)").arg(QT_VERSION_STR).arg(QSysInfo::buildCpuArchitecture() == "i386" ? 32 : 64);
+    txt += tr("<br><br>%1<br>").arg(appCopyright);
+    txt += tr("<br><i>%1</i> comes with ABSOLUTELY NO WARRANTY. This is free software, "
+              "and you are welcome to redistribute it under the conditions "
+              "of the GNU General Public License version 2.").arg(appDescriptionLong);
+
+    QMessageBox::about(this, "", txt);
+
+}
+
+void MainWindow::on_actionAboutQt_triggered()
+{
+    qApp->aboutQt();
 }

@@ -17,8 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef MYINPUTDIALOG_H
-#define MYINPUTDIALOG_H
+#pragma once
 
 #include <QApplication>
 #include <QInputDialog>
@@ -41,12 +40,10 @@ private:
     QString text;
     bool res;
     QMutex mutex;
-    bool have_list;
     QWidget* w;
     QString t1;
     QString t2;
     QStringList list;
+    bool have_list;
     QLineEdit::EchoMode type;
 };
-
-#endif // MYINPUTDIALOG_H

@@ -1,11 +1,11 @@
-prefix=/home/nmavrogi/cvs/openconnect-gui
-exec_prefix=${prefix}
-libdir=/home/nmavrogi/cvs/openconnect-gui/lib
-includedir=/home/nmavrogi/cvs/openconnect-gui/include
+prefix=/usr/i686-w64-mingw32/sys-root/mingw
+exec_prefix=/usr/i686-w64-mingw32/sys-root/mingw
+libdir=/usr/i686-w64-mingw32/sys-root/mingw/lib
+includedir=/usr/i686-w64-mingw32/sys-root/mingw/include
 
 Name: stoken
 Description: Software token
-Version: 0.8
-Requires.private: nettle, hogweed
-Libs: -L${libdir} -lstoken -lnettle -lhogweed -lgmp
+Version: 0.90
+Requires.private: libxml-2.0, nettle, hogweed
+Libs: -L${libdir} -lstoken 
 Cflags: -I${includedir}

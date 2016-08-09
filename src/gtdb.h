@@ -17,21 +17,20 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef GTDB_H
-#define GTDB_H
+#pragma once
 
-#include "storage.h"
+class StoredServer;
+extern "C" {
 #include <gnutls/gnutls.h>
+}
 
 class gtdb {
 public:
     gtdb(StoredServer* ss);
     ~gtdb();
 
-    gnutls_tdb_t get_tdb();
+    gnutls_tdb_t get_tdb() const;
 
     StoredServer* ss;
     gnutls_tdb_t tdb;
 };
-
-#endif // GTDB_H

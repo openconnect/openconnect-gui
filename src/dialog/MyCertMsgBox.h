@@ -17,8 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef MYCERTMSGBOX_H
-#define MYCERTMSGBOX_H
+#pragma once
 
 #include <QApplication>
 #include <QInputDialog>
@@ -45,5 +44,3 @@ private:
     QString oktxt;
     QString details;
 };
-
-#endif // MYCERTMSGBOX_H

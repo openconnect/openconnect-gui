@@ -17,29 +17,32 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef MAINWINDOW_H
-#define MAINWINDOW_H
+#pragma once
 
 #include "common.h"
+
+extern "C" {
+#include <openconnect.h>
+}
+
 #include <QCoreApplication>
 #include <QFutureWatcher>
 #include <QMainWindow>
 #include <QMenu>
 #include <QMutex>
-#include <QSettings>
 #include <QSystemTrayIcon>
 #include <QTimer>
+
 #ifndef _WIN32
-#include <errno.h>
+#include <cerrno>
 #include <sys/socket.h>
 #include <sys/types.h>
 #else
 #include <winsock2.h>
 #endif
 
-extern "C" {
-#include <openconnect.h>
-}
+class QStateMachine;
+
 namespace Ui {
 class MainWindow;
 }
@@ -50,45 +53,30 @@ enum status_t {
 };
 
 class MainWindow : public QMainWindow {
-    Q_OBJECT public : explicit MainWindow(QWidget* parent = 0);
-    void updateProgressBar(QString str);
+    Q_OBJECT
+public:
+    explicit MainWindow(QWidget* parent = 0);
+    ~MainWindow();
+
+    void updateProgressBar(const QString& str);
     void updateProgressBar(QString str, bool show);
-    void set_settings(QSettings* s);
     void updateStats(const struct oc_stats* stats, QString dtls);
     void reload_settings();
-    void toggleWindow();
-    void hideWindow();
-    void setVisible(bool visible);
-    void createActions();
 
-    ~MainWindow();
-    void disable_cmd_fd();
-
-    void vpn_status_changed(int connected)
-    {
-        emit vpn_status_changed_sig(connected);
-    }
-
+    void vpn_status_changed(int connected);
     void vpn_status_changed(int connected,
-                            QString& dns,
-                            QString& ip,
-                            QString& ip6,
-                            QString& cstp_cipher,
-                            QString& dtls_cipher)
-    {
-        this->dns = dns;
-        this->ip = ip;
-        this->ip6 = ip6;
-        this->dtls_cipher = dtls_cipher;
-        this->cstp_cipher = cstp_cipher;
-        emit vpn_status_changed_sig(connected);
-    }
+        QString& dns,
+        QString& ip,
+        QString& ip6,
+        QString& cstp_cipher,
+        QString& dtls_cipher);
 
     QStringList* get_log(void);
+
 private slots:
     void iconActivated(QSystemTrayIcon::ActivationReason reason);
     void statsChanged(QString, QString, QString);
-    void writeProgressBar(QString str);
+    void writeProgressBar(const QString& str);
     void changeStatus(int);
 
     void blink_ui(void);
@@ -97,17 +85,18 @@ private slots:
 
     void request_update_stats();
 
-    void on_disconnectBtn_clicked();
+    void on_disconnectClicked();
+    void on_connectClicked();
+    void on_viewLogButton_clicked();
 
-    void on_connectBtn_clicked();
+    void closeEvent(QCloseEvent* bar) override;
 
-    void on_toolButton_clicked();
+    void on_actionAbout_triggered();
+    void on_actionAboutQt_triggered();
 
-    void on_toolButton_2_clicked();
-
-    void closeEvent(QCloseEvent* bar);
-
-    void on_pushButton_3_clicked();
+    void on_actionNewProfile_triggered();
+    void on_actionEditSelectedProfile_triggered();
+    void on_actionRemoveSelectedProfile_triggered();
 
 signals:
     void log_changed(QString val);
@@ -116,6 +105,7 @@ signals:
     void timeout(void);
 
 private:
+    static QString normalize_byte_size(uint64_t bytes);
     void createTrayIcon();
 
     void readSettings();
@@ -126,22 +116,24 @@ private:
     SOCKET cmd_fd;
     bool minimize_on_connect;
     Ui::MainWindow* ui;
-    QSettings* settings;
     QMutex progress_mutex;
     QStringList log;
     QTimer* timer;
     QTimer* blink_timer;
     QFutureWatcher<void> futureWatcher; // watches the vpninfo
 
-    QString dns, ip, ip6;
+    QString dns;
+    QString ip;
+    QString ip6;
     QString cstp_cipher;
     QString dtls_cipher;
 
-    QSystemTrayIcon* trayIcon;
-    QMenu* trayIconMenu;
-    QAction* minimizeAction;
-    QAction* restoreAction;
-    QAction* quitAction;
+    QStateMachine* m_appWindowStateMachine;
+    QSystemTrayIcon* m_trayIcon;
+    QMenu* m_trayIconMenu;
+    QMenu* m_trayIconMenuConnections;
+    QAction* m_disconnectAction;
+    QAction* m_minimizeAction;
+    QAction* m_restoreAction;
+    QAction* m_quitAction;
 };
-
-#endif // MAINWINDOW_H
