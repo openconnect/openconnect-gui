@@ -162,3 +162,6 @@ and package to deploy on windows development machine via these commands:
 	    mingw32-libxml2
 
 These commands and paths may vary...
+
+# License
+The content of this project itself is licensed under the [GNU General Public License v2](LICENSE.txt)
