@@ -301,11 +301,6 @@ MainWindow::~MainWindow()
     delete blink_timer;
 }
 
-void MainWindow::disable_cmd_fd()
-{
-    cmd_fd = INVALID_SOCKET;
-}
-
 void MainWindow::vpn_status_changed(int connected)
 {
     emit vpn_status_changed_sig(connected);
@@ -480,7 +475,7 @@ void MainWindow::changeStatus(int val)
         if (this->timer->isActive()) {
             timer->stop();
         }
-        disable_cmd_fd();
+        cmd_fd = INVALID_SOCKET;
 
         ui->ipV4Label->clear();
         ui->ipV6Label->clear();
