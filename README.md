@@ -23,6 +23,12 @@ TODO...
 Hints related to command line compilation and release package preparation
 may be found in 'build_mingw@win.cmd' shell script in project root.
 
+Project use git-flow technique i.e. the master contains stable/released versions
+and main programming activities are in 'develop' or 'feature/*' branches.
+Version string auto=generated on compilation from Git info into following format:
+	
+	<major>.<minor>.<patch>[-rev_count-sha1][-dirty]
+
 ### Development with QtCreator
 - checkout project from GitHub
 - start QtCreator
