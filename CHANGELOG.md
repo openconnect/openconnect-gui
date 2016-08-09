@@ -1,6 +1,6 @@
 History of user-visible changes.
 
-## [v1.4.0](https://github.com/openconnect/openconnect-gui/tree/v1.4.0) (unreleased)
+## [v1.4.0](https://github.com/openconnect/openconnect-gui/tree/v1.4.0) (2016-08-10)
 - updated gnutls(3.4.14), stoken (0.90), gmp(6.1.0), nettle(3.2), p11-kit(0.23.2), zlib (1.2.8), libxml2 (2.9.3)
 - updated TAP-windows(9.21.2), Qt(5.6)
 - new component based NSIS installer (with optional console client, vcredist/tap drivers)
