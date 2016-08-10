@@ -171,21 +171,21 @@
        <layout class="QVBoxLayout" name="verticalLayout_3">
         <item>
          <layout class="QFormLayout" name="formLayout">
+          <property name="fieldGrowthPolicy">
+           <enum>QFormLayout::ExpandingFieldsGrow</enum>
+          </property>
+          <property name="formAlignment">
+           <set>Qt::AlignJustify|Qt::AlignTop</set>
+          </property>
           <item row="0" column="0">
            <widget class="QLabel" name="ipV4LabelText">
             <property name="text">
              <string>IPv4:</string>
             </property>
-            <property name="alignment">
-             <set>Qt::AlignCenter</set>
-            </property>
            </widget>
           </item>
           <item row="0" column="1">
            <widget class="QLabel" name="ipV4Label">
-            <property name="text">
-             <string/>
-            </property>
             <property name="alignment">
              <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
             </property>
@@ -206,9 +206,6 @@
           </item>
           <item row="1" column="1">
            <widget class="QLabel" name="ipV6Label">
-            <property name="text">
-             <string/>
-            </property>
             <property name="alignment">
              <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
             </property>
@@ -225,16 +222,10 @@
             <property name="text">
              <string>DNS:</string>
             </property>
-            <property name="alignment">
-             <set>Qt::AlignCenter</set>
-            </property>
            </widget>
           </item>
           <item row="2" column="1">
            <widget class="QLabel" name="dnsLabel">
-            <property name="text">
-             <string/>
-            </property>
             <property name="alignment">
              <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
             </property>
@@ -255,9 +246,6 @@
           </item>
           <item row="3" column="1">
            <widget class="QLabel" name="cipherCSTPLabel">
-            <property name="text">
-             <string/>
-            </property>
             <property name="alignment">
              <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
             </property>
@@ -272,40 +260,27 @@
           </item>
           <item row="4" column="1">
            <widget class="QLabel" name="cipherDTLSLabel">
-            <property name="text">
-             <string/>
-            </property>
             <property name="alignment">
              <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
             </property>
            </widget>
           </item>
-         </layout>
-        </item>
-        <item>
-         <widget class="Line" name="line">
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <layout class="QFormLayout" name="formLayout_2">
-          <item row="0" column="0">
+          <item row="5" column="0">
+           <widget class="QLabel" name="downloadLabelText">
+            <property name="text">
+             <string>Download:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="6" column="0">
            <widget class="QLabel" name="uploadLaberText">
             <property name="text">
              <string>Upload:</string>
             </property>
-            <property name="alignment">
-             <set>Qt::AlignCenter</set>
-            </property>
            </widget>
           </item>
-          <item row="0" column="1">
-           <widget class="QLabel" name="uploadLabel">
-            <property name="text">
-             <string/>
-            </property>
+          <item row="5" column="1">
+           <widget class="QLabel" name="downloadLabel">
             <property name="alignment">
              <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
             </property>
@@ -317,21 +292,8 @@
             </property>
            </widget>
           </item>
-          <item row="1" column="0">
-           <widget class="QLabel" name="downloadLabelText">
-            <property name="text">
-             <string>Download:</string>
-            </property>
-            <property name="alignment">
-             <set>Qt::AlignCenter</set>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="1">
-           <widget class="QLabel" name="downloadLabel">
-            <property name="text">
-             <string/>
-            </property>
+          <item row="6" column="1">
+           <widget class="QLabel" name="uploadLabel">
             <property name="alignment">
              <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
             </property>
