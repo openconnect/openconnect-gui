@@ -81,8 +81,8 @@ if(APPLE)
         MACOSX_BUNDLE_GUI_IDENTIFIER "io.github.openconnect.openconnect-gui"
         MACOSX_BUNDLE_ICON_FILE "mono_lock.icns"
         MACOSX_BUNDLE_INFO_STRING ${PRODUCT_NAME_LONG}
-        MACOSX_BUNDLE_LONG_VERSION_STRING ${PROJECT_VERSION}
-        MACOSX_BUNDLE_SHORT_VERSION_STRING "${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}"
+#        MACOSX_BUNDLE_LONG_VERSION_STRING ${PROJECT_VERSION}
+#        MACOSX_BUNDLE_SHORT_VERSION_STRING "${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}"
     )
 endif()
 
@@ -124,9 +124,11 @@ install(TARGETS ${PROJECT_NAME}
 )
 
 # fixup the bundle
-#get_target_property(QT_LIBRARY_DIR Qt5::Core LOCATION)
-#get_filename_component(QT_LIBRARY_DIR ${QT_LIBRARY_DIR} PATH)
-#get_filename_component(QT_LIBRARY_DIR "${QT_LIBRARY_DIR}/.." ABSOLUTE)
+get_target_property(QT_LIBRARY_DIR Qt5::Core LOCATION)
+get_filename_component(QT_LIBRARY_DIR ${QT_LIBRARY_DIR} PATH)
+get_filename_component(QT_LIBRARY_DIR "${QT_LIBRARY_DIR}/.." ABSOLUTE)
+list(APPEND libSearchDirs ${QT_LIBRARY_DIR})
+
 if(WIN32 AND MINGW)
     set(APPS "\${CMAKE_INSTALL_PREFIX}/${PROJECT_NAME}.exe")
     list(APPEND libSearchDirs ${CMAKE_SOURCE_DIR}/nsis)
@@ -142,13 +144,34 @@ if(WIN32 AND MINGW)
 		DESTINATION .
 		COMPONENT App
 	)
-else()
+
+	set(additionalLib ${_qwindows_dll})
+elseif(APPLE)
     set(APPS "\${CMAKE_INSTALL_PREFIX}/${PROJECT_NAME}.app")
     list(APPEND libSearchDirs "")
+
+	# Qt Platform Plugin
+	install(FILES
+		${_qcocoa_dylib}
+		DESTINATION ${PROJECT_NAME}.app/Contents/PlugIns/platforms
+		COMPONENT App
+	)
+	install(FILES
+		${CMAKE_SOURCE_DIR}/bundle/qt.conf
+		DESTINATION ${PROJECT_NAME}.app/Contents/Resources
+		COMPONENT App
+	)
+
+	set(additionalLib \${CMAKE_INSTALL_PREFIX}/${PROJECT_NAME}.app/Contents/PlugIns/platforms/libqcocoa.dylib)
+else()
+	message(FATAL_ERROR "XXX: only mingw and apple build supported yet")
 endif()
-set(additionalLib ${_qwindows_dll})
+
 install(CODE "
     include(BundleUtilities)
+	if(APPLE)
+		set(BU_CHMOD_BUNDLE_ITEMS on)
+	endif()
     fixup_bundle(\"${APPS}\" \"${additionalLib}\" \"${libSearchDirs}\")
     " DESTINATION . COMPONENT App
 )

@@ -47,6 +47,7 @@ Version string auto=generated on compilation from Git info into following format
 	#include <winsock2.h>
 - update 3rd party DLL's in build folder i.e. copy all DLL's from nsis folder
 into build's bin folder (this may/will be fixed later automatically bu Cmake)
+- temporary remove 'libpcslite' requirement in openconnect.pc on MacOS provided via homebrew package
 
 ### Webpage maintenance
 1. images/screenshots preaparation:
