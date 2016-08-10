@@ -143,14 +143,13 @@ int main(int argc, char* argv[])
     app.setOrganizationName(appOrganizationName);
     app.setOrganizationDomain(appOrganizationDomain);
 
-#if !defined(_WIN32) && !defined(PROJ_GNUTLS_DEBUG)
-    if (geteuid() != 0) {
 #ifdef __MACH__
+    if (geteuid() != 0) {
         if (relaunch_as_root()) {
             /* We have re-launched with root privs. Exit this process. */
             return 0;
         }
-#endif
+
         QMessageBox msgBox;
         msgBox.setText(QObject::tr("This program requires root privileges to fully function."));
         msgBox.setInformativeText(QObject::tr("VPN connection establishment would fail."));
