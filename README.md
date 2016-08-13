@@ -74,6 +74,7 @@ The 'openconnect' binary and libraries incl. dependent libraries used in this pr
 
 	sudo dnf install mingw32-gnutls mingw32-libxml2
 	sudo dnf install gcc libtool
+	sudo dnf install git p7zip
 	
 	mkdir work && cd work
 	
@@ -158,6 +159,9 @@ and package to deploy on windows development machine via these commands:
 	cd ../../
 	
 	7za a pkg_"$(date)".7z pkg
+	
+	cd stoken/build32
+	sudo mingw32-make uninstall
 	
 	echo "List of system-wide used packages versions:"
 	rpm -qv \
