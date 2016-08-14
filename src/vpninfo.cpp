@@ -421,7 +421,16 @@ int VpnInfo::connect()
         openconnect_set_cafile(vpninfo, ca_file.toLatin1().data());
     }
 
-    openconnect_set_reported_os(vpninfo, "win");
+#ifdef Q_OS_WIN32
+    const QString osName{"win"};
+#elif Q_OS_OSX
+    const QString osName{"mac-intel"};
+#elif Q_OS_LINUX
+    const QString osName = QString("linux%1").arg(QSysInfo::buildCpuArchitecture() == "i386" ? "" : "-64").toStdString().c_str();
+#else
+#error Define OS string of other platforms...
+#endif
+    openconnect_set_reported_os(vpninfo, osName.toStdString().c_str());
 
     ret = openconnect_obtain_cookie(vpninfo);
     if (ret != 0) {
