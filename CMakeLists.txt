@@ -31,6 +31,8 @@ add_compile_options("-pedantic")
 #add_compile_options("-Weffc++")
 #add_compile_options("-Werror")
 
+set(CMAKE_OSX_DEPLOYMENT_TARGET 10.9)
+
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 set(CMAKE_AUTOMOC ON)
