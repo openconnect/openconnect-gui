@@ -109,8 +109,8 @@ if(WIN32 AND MINGW)
         libz.dll.a
     )
 endif()
-if(APPLE)
-    target_link_libraries (${PROJECT_NAME}
+if(UNIX)
+    target_link_libraries(${PROJECT_NAME}
         ${OPENCONNECT_LIBRARIES}
         ${GNUTLS_LIBRARY}
     )

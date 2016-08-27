@@ -42,7 +42,9 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/CMake/Includes/")
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_BINARY_DIR}/src/")
 
 find_package(Qt5 5.6 REQUIRED COMPONENTS Core Gui Widgets Network)
-get_target_property(_qwindows_dll Qt5::QWindowsIntegrationPlugin LOCATION)
+if(WIN32 AND MINGW)
+    get_target_property(_qwindows_dll Qt5::QWindowsIntegrationPlugin LOCATION)
+endif()
 
 if(IS_DIRECTORY ${PROJECT_SOURCE_DIR}/.git)
 	find_package(Git 2.0 REQUIRED)
