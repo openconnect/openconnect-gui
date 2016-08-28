@@ -1,4 +1,3 @@
-include(scm)
 
 set(${PROJECT_NAME}_SRCS
     ${PROJECT_NAME}.cpp
@@ -37,6 +36,22 @@ set(${PROJECT_NAME}_SRCS
     server_storage.h
     vpninfo.cpp
     vpninfo.h
+)
+set_source_files_properties(
+    ${PROJECT_NAME}.cpp
+    PROPERTIES
+        GENERATED true
+)
+set_source_files_properties(
+    build_timestamp.h
+    PROPERTIES
+        GENERATED true
+        HEADER_FILE_ONLY true
+)
+set_source_files_properties(
+   ${PROJECT_NAME}.rc
+    PROPERTIES
+        GENERATED true
 )
 
 configure_file(
