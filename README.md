@@ -1,6 +1,8 @@
 # OpenConnect-GUI
 
-[![Join the chat at https://gitter.im/openconnect-gui/Lobby](https://badges.gitter.im/openconnect-gui/Lobby.svg)](https://gitter.im/openconnect-gui/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+[![Join the chat at https://gitter.im/openconnect-gui/Lobby](https://badges.gitter.im/openconnect-gui/Lobby.svg)](https://gitter.im/openconnect-gui/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge) 
+
+[![Build Status](https://travis-ci.org/openconnect/openconnect-gui.svg?branch=master)](https://travis-ci.org/openconnect/openconnect-gui)
 
 This is the GUI client for openconnect VPN.
 This client is in beta testing phase. It cannot be assumed to provide
