@@ -40,7 +40,6 @@ extern "C" {
 #include <csignal>
 #include <cstdio>
 
-#ifdef PROJ_GNUTLS_DEBUG
 static QStringList* logger = nullptr;
 
 static void log_func(int level, const char* str)
@@ -50,7 +49,6 @@ static void log_func(int level, const char* str)
         logger->append(s.trimmed());
     }
 }
-#endif
 
 int pin_callback(void* userdata, int attempt, const char* token_url,
     const char* token_label, unsigned flags, char* pin,
@@ -118,10 +116,10 @@ int main(int argc, char* argv[])
     gnutls_pkcs11_set_pin_function(pin_callback, &mainWindow);
 #endif
 
-#ifdef PROJ_GNUTLS_DEBUG
     gnutls_global_set_log_function(log_func);
-    gnutls_global_set_log_level(3);
     logger = mainWindow.get_log();
+#ifdef PROJ_GNUTLS_DEBUG
+    gnutls_global_set_log_level(3);
     log_func(1, "started logging");
 #endif
 
