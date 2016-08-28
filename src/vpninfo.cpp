@@ -356,13 +356,13 @@ VpnInfo::VpnInfo(QString name, StoredServer* ss, MainWindow* m)
     this->vpninfo = openconnect_vpninfo_new(name.toLatin1().data(), validate_peer_cert, nullptr,
         process_auth_form, progress_vfn, this);
     if (this->vpninfo == nullptr) {
-        throw;
+        throw std::runtime_error("initial setup fails");
     }
 
     this->cmd_fd = openconnect_setup_cmd_pipe(vpninfo);
     if (this->cmd_fd == INVALID_SOCKET) {
         m->updateProgressBar(QObject::tr("invalid socket"));
-        throw;
+        throw std::runtime_error("pipe setup fails");
     }
     set_sock_block(this->cmd_fd);
 
@@ -421,7 +421,16 @@ int VpnInfo::connect()
         openconnect_set_cafile(vpninfo, ca_file.toLatin1().data());
     }
 
-    openconnect_set_reported_os(vpninfo, "win");
+#ifdef Q_OS_WIN32
+    const QString osName{"win"};
+#elif Q_OS_OSX
+    const QString osName{"mac-intel"};
+#elif defined Q_OS_LINUX
+    const QString osName = QString("linux%1").arg(QSysInfo::buildCpuArchitecture() == "i386" ? "" : "-64").toStdString().c_str();
+#else
+#error Define OS string of other platforms...
+#endif
+    openconnect_set_reported_os(vpninfo, osName.toStdString().c_str());
 
     ret = openconnect_obtain_cookie(vpninfo);
     if (ret != 0) {
