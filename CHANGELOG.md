@@ -1,6 +1,6 @@
 History of user-visible changes.
 
-## [v1.4.1](https://github.com/openconnect/openconnect-gui/tree/v1.4/1) (unreleased)
+## [v1.4.1](https://github.com/openconnect/openconnect-gui/tree/v1.4/1) (2016-08-28)
 - Flushing Route Breaks OpenConnect-GUI (#113)
 - building from source code snapshots fixed (i.e. without cloning the repo)
 
