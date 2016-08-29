@@ -626,11 +626,12 @@ void MainWindow::on_connectClicked()
     query.setUrl(turl);
 
     /* ss is now deallocated by vpninfo */
-    vpninfo = new VpnInfo(QString("%1 %2").arg(qApp->applicationName()).arg(qApp->applicationVersion()), ss, this);
-    if (vpninfo == nullptr) {
+    try {
+        vpninfo = new VpnInfo(QString("%1 %2").arg(qApp->applicationName()).arg(qApp->applicationVersion()), ss, this);
+    } catch (std::exception& ex) {
         QMessageBox::information(this,
-            qApp->applicationName(),
-            tr("There was an issue initializing the VPN."));
+                                 qApp->applicationName(),
+                                 tr("There was an issue initializing the VPN ") + "(" + ex.what() + ").");
         goto fail;
     }
 
