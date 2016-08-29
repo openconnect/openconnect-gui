@@ -25,6 +25,9 @@
 #else
 #include "common.h"
 #endif
+#ifdef __linux__
+#define SOCKET int
+#endif
 
 class MainWindow;
 class StoredServer;

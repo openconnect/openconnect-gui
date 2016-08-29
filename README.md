@@ -17,7 +17,17 @@ Look to [OpenConnect-GUI](http://openconnect.github.io/openconnect-gui/) project
 Newer or older versions may work... feel free tweak main CMakeLists.txt as you need.
 
 #### Fedora 24
-TODO...
+Minimum of required packages to build this GUI should be installed by following commands:
+
+    sudo dnf install cmake
+    sudo dnf install qt5-qtbase-devel
+    sudo dnf install gnutls-devel openconnect-devel
+
+##### Fedora 24 (MinGW)
+Just try install following packages:
+
+    sudo dnf install cmake
+    sudo dnf install mingw32-qt5-qtbase
 
 ### Compilation & package preparation
 Hints related to command line compilation and release package preparation
@@ -75,6 +85,7 @@ The 'openconnect' binary and libraries incl. dependent libraries used in this pr
 
 	sudo dnf install mingw32-gnutls mingw32-libxml2
 	sudo dnf install gcc libtool
+	sudo dnf install git p7zip
 	
 	mkdir work && cd work
 	
@@ -159,6 +170,9 @@ and package to deploy on windows development machine via these commands:
 	cd ../../
 	
 	7za a pkg_"$(date)".7z pkg
+	
+	cd stoken/build32
+	sudo mingw32-make uninstall
 	
 	echo "List of system-wide used packages versions:"
 	rpm -qv \
