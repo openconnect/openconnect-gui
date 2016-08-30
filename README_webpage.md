@@ -1,3 +1,7 @@
+### Webpage maintenance
+Following stesp summarize how to update OpenConnect-GUI web page,
+screen shots and its conten:
+
 1. images/screenshots preaparation:
 	- prepare desired screen shots (common width is 650px)
 	- checkout project into 'gh-pages' branch
