@@ -1,0 +1,38 @@
+### Software requirements
+This chapter summarize actual development environment. Newer or older versions may work - feel free tweak main CMakeLists.txt and dependencies as you need.
+
+#### Windows 10
+This is target platform for the product.
+
+- [Qt 5.6.x LTS (incl. mingw32) & QtCreator 4+](http://download.qt.io/official_releases/online_installers/qt-unified-windows-x86-online.exe) and choose:
+    - 5.6/MinGW 4.9.2 (32-bit)
+    - Tools/MinGW 4.9.2 component
+    - Tools/QtCreator component
+- [NSIS 3.0+](http://nsis.sourceforge.net/Main_Page)
+- [CMake 3.6+](https://cmake.org/)
+- [Git 2.7+](https://git-scm.com/)
+
+#### GNU/Linux
+##### Fedora 24 (MinGW)
+Just try install following packages:
+
+    sudo dnf install cmake
+    sudo dnf install mingw32-qt5-qtbase
+    sudo dnf install mingw32-nsis
+
+##### Fedora 24
+This is not main target platform, because openconnect is used by other projects integrated into desktop environments. On the other side - the minimum of required packages to build this GUI should be installed by following commands:
+
+    sudo dnf install cmake
+    sudo dnf install qt5-qtbase-devel
+    sudo dnf install gnutls-devel openconnect-devel
+
+#### MacOS
+- MacOS 10.11+
+- Xcode 7.3+ incl. command line tools
+- [Qt online installer](http://download.qt.io/official_releases/online_installers/qt-unified-mac-x64-online.dmg) and choose:
+    - 5.6/"OS X" component
+    - Tools/QtCreator component
+
+
+
