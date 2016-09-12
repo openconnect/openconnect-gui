@@ -269,6 +269,7 @@ static void term_thread(MainWindow* m, SOCKET* fd)
     char cmd = OC_CMD_CANCEL;
 
     if (*fd != INVALID_SOCKET) {
+        m->vpn_status_changed(STATUS_DISCONNECTING);
         int ret = pipe_write(*fd, &cmd, 1);
         if (ret < 0)
             m->updateProgressBar(QObject::tr("term_thread: IPC error: ") + QString::number(net_errno));
@@ -493,6 +494,7 @@ void MainWindow::changeStatus(int val)
         m_disconnectAction->setEnabled(false);
 
         ui->iconLabel->setPixmap(OFF_ICON);
+        ui->connectionButton->setEnabled(true);
         ui->connectionButton->setIcon(QIcon(":/new/resource/images/network-wired.png"));
         ui->connectionButton->setText(tr("Connect"));
 
@@ -510,6 +512,11 @@ void MainWindow::changeStatus(int val)
         connect(ui->connectionButton, &QPushButton::clicked,
             this, &MainWindow::on_connectClicked,
             Qt::QueuedConnection);
+    } else if (val == STATUS_DISCONNECTING) {
+        ui->iconLabel->setPixmap(CONNECTING_ICON);
+        ui->connectionButton->setIcon(QIcon(":/new/resource/images/process-stop.png"));
+        ui->connectionButton->setEnabled(false);
+        blink_timer->start(1500);
     } else {
         qDebug() << "TODO: was is das?";
     }

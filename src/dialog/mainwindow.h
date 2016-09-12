@@ -47,6 +47,7 @@ namespace Ui {
 class MainWindow;
 }
 enum status_t {
+    STATUS_DISCONNECTING,
     STATUS_DISCONNECTED,
     STATUS_CONNECTING,
     STATUS_CONNECTED
