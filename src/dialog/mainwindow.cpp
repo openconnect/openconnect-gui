@@ -687,22 +687,6 @@ void MainWindow::clear_logdialog()
 void MainWindow::closeEvent(QCloseEvent* event)
 {
     if (m_trayIcon && m_trayIcon->isVisible() && ui->actionMinimizeTheApplicationInsteadOfClosing->isChecked()) {
-        QSettings settings;
-        const bool showTheMessageAgain = settings.value("showTheMessageAgain/minimizeToNotificationArea", true).toBool();
-
-        if (showTheMessageAgain == true) {
-            QMessageBox msg(this);
-            msg.setWindowTitle(tr("Minimize to notification area"));
-            msg.setIcon(QMessageBox::Warning);
-            msg.setText(tr("The program will keep running in the notification area.<br> "
-                           "To terminate the program, choose <b>Quit</b> in application menu or "
-                           "in the context menu of the notification area entry."));
-            msg.setCheckBox(new QCheckBox(tr("&Show this message again")));
-            msg.checkBox()->setChecked(showTheMessageAgain);
-            msg.exec();
-
-            settings.setValue("showTheMessageAgain/minimizeToNotificationArea", msg.checkBox()->isChecked());
-        }
         this->showMinimized();
         event->ignore();
     } else {
