@@ -449,11 +449,6 @@ void MainWindow::changeStatus(int val)
                 this->setWindowState(Qt::WindowMinimized);
             }
         }
-        disconnect(ui->connectionButton, &QPushButton::clicked,
-            this, &MainWindow::on_connectClicked);
-        connect(ui->connectionButton, &QPushButton::clicked,
-            this, &MainWindow::on_disconnectClicked,
-            Qt::QueuedConnection);
     } else if (val == STATUS_CONNECTING) {
 
         if (m_trayIcon) {
@@ -470,6 +465,12 @@ void MainWindow::changeStatus(int val)
         ui->connectionButton->setIcon(QIcon(":/new/resource/images/process-stop.png"));
         ui->connectionButton->setText(tr("Cancel"));
         blink_timer->start(1500);
+
+        disconnect(ui->connectionButton, &QPushButton::clicked,
+            this, &MainWindow::on_connectClicked);
+        connect(ui->connectionButton, &QPushButton::clicked,
+            this, &MainWindow::on_disconnectClicked,
+            Qt::QueuedConnection);
     } else if (val == STATUS_DISCONNECTED) {
         blink_timer->stop();
         if (this->timer->isActive()) {

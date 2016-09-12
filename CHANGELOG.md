@@ -1,6 +1,12 @@
 History of user-visible changes.
 
-## [v1.4.1](https://github.com/openconnect/openconnect-gui/tree/v1.4/1) (2016-08-28)
+## [v1.5.0](https://github.com/openconnect/openconnect-gui/tree/v1.5.0) (unreleased)
+- Incorrect message "A previous VPN instance is still running (socket is active)" (#137)
+
+[Full Changelog](https://github.com/openconnect/openconnect-gui/compare/v1.4.1...v1.5.0)
+
+
+## [v1.4.1](https://github.com/openconnect/openconnect-gui/tree/v1.4.1) (2016-08-28)
 - Flushing Route Breaks OpenConnect-GUI (#113)
 - building from source code snapshots fixed (i.e. without cloning the repo)
 
