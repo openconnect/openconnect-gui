@@ -57,7 +57,7 @@ cp /usr/i686-w64-mingw32/sys-root/mingw/include/stoken.h .
 cp ../../openconnect/openconnect.h .
 cd ../../
 
-7za a pkg_"$(date)".7z pkg
+7za a pkg_w32_"$(date)".7z pkg
 
 cd stoken/build32
 sudo mingw32-make uninstall
