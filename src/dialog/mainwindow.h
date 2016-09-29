@@ -41,6 +41,7 @@ extern "C" {
 #include <winsock2.h>
 #endif
 
+class LogDialog;
 class QStateMachine;
 
 namespace Ui {
@@ -137,4 +138,6 @@ private:
     QAction* m_minimizeAction;
     QAction* m_restoreAction;
     QAction* m_quitAction;
+
+    std::unique_ptr<LogDialog> m_logDialog;
 };

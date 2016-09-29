@@ -24,6 +24,7 @@
 #include "dialog/mainwindow.h"
 #include "gtdb.h"
 #include "server_storage.h"
+#include "base/logger.h"
 
 #include <QDir>
 
@@ -63,7 +64,7 @@ static void progress_vfn(void* privdata, int level, const char* fmt, ...)
     len = strlen(buf);
     if (buf[len - 1] == '\n')
         buf[len - 1] = 0;
-    vpn->m->updateProgressBar(buf);
+    Logger::instance().addMessage(buf);
 }
 
 static int process_auth_form(void* privdata, struct oc_auth_form* form)
@@ -76,14 +77,16 @@ static int process_auth_form(void* privdata, struct oc_auth_form* form)
     QStringList ditems;
     int i, idx;
 
-    if (form->banner)
-        vpn->m->updateProgressBar(QLatin1String(form->banner));
+    if (form->banner) {
+        Logger::instance().addMessage(QLatin1String(form->banner));
+    }
 
-    if (form->message)
-        vpn->m->updateProgressBar(QLatin1String(form->message));
+    if (form->message) {
+        Logger::instance().addMessage(QLatin1String(form->message));
+    }
 
     if (form->error) {
-        vpn->m->updateProgressBar(QLatin1String(form->error));
+        Logger::instance().addMessage(QLatin1String(form->error));
         return -1;
     }
 
@@ -120,7 +123,7 @@ static int process_auth_form(void* privdata, struct oc_auth_form* form)
                 select_opt->choices[idx]->name);
             text = QLatin1String(select_opt->choices[idx]->name);
 
-            vpn->m->updateProgressBar(QLatin1String("Saving group: ") + text);
+            Logger::instance().addMessage(QLatin1String("Saving group: ") + text);
             vpn->ss->set_groupname(text);
         }
 
@@ -139,7 +142,7 @@ static int process_auth_form(void* privdata, struct oc_auth_form* form)
             QStringList items;
             struct oc_form_opt_select* select_opt = reinterpret_cast<oc_form_opt_select*>(opt);
 
-            vpn->m->updateProgressBar(QLatin1String("Select form: ") + QLatin1String(opt->name));
+            Logger::instance().addMessage(QLatin1String("Select form: ") + QLatin1String(opt->name));
 
             if (select_opt == form->authgroup_opt) {
                 continue;
@@ -165,7 +168,7 @@ static int process_auth_form(void* privdata, struct oc_auth_form* form)
 
             openconnect_set_option_value(opt, select_opt->choices[idx]->name);
         } else if (opt->type == OC_FORM_OPT_TEXT) {
-            vpn->m->updateProgressBar(QLatin1String("Text form: ") + QLatin1String(opt->name));
+            Logger::instance().addMessage(QLatin1String("Text form: ") + QLatin1String(opt->name));
 
             if (vpn->form_attempt == 0
                 && vpn->ss->get_username().isEmpty() == false
@@ -193,7 +196,7 @@ static int process_auth_form(void* privdata, struct oc_auth_form* form)
             openconnect_set_option_value(opt, text.toLatin1().data());
             vpn->form_attempt++;
         } else if (opt->type == OC_FORM_OPT_PASSWORD) {
-            vpn->m->updateProgressBar(QLatin1String("Password form: ") + QLatin1String(opt->name));
+            Logger::instance().addMessage(QLatin1String("Password form: ") + QLatin1String(opt->name));
 
             if (vpn->form_pass_attempt == 0
                 && vpn->ss->get_password().isEmpty() == false
@@ -222,7 +225,7 @@ static int process_auth_form(void* privdata, struct oc_auth_form* form)
             openconnect_set_option_value(opt, text.toLatin1().data());
             vpn->form_pass_attempt++;
         } else {
-            vpn->m->updateProgressBar(QLatin1String("unknown type ") + QString::number((int)opt->type));
+            Logger::instance().addMessage(QLatin1String("unknown type ") + QString::number((int)opt->type));
         }
     }
 
@@ -237,13 +240,13 @@ static int validate_peer_cert(void* privdata, const char* reason)
     unsigned char* der = nullptr;
     int der_size = openconnect_get_peer_cert_DER(vpn->vpninfo, &der);
     if (der_size <= 0) {
-        vpn->m->updateProgressBar(QObject::tr("Peer's certificate has invalid size!"));
+        Logger::instance().addMessage(QObject::tr("Peer's certificate has invalid size!"));
         return -1;
     }
 
     const char* hash = openconnect_get_peer_cert_hash(vpn->vpninfo);
     if (hash == nullptr) {
-        vpn->m->updateProgressBar(QObject::tr("Error getting peer's certificate hash"));
+        Logger::instance().addMessage(QObject::tr("Error getting peer's certificate hash"));
         return -1;
     }
 
@@ -264,7 +267,7 @@ static int validate_peer_cert(void* privdata, const char* reason)
 
     bool save = false;
     if (ret == GNUTLS_E_NO_CERTIFICATE_FOUND) {
-        vpn->m->updateProgressBar(QObject::tr("peer is unknown"));
+        Logger::instance().addMessage(QObject::tr("peer is unknown"));
 
         QString str = QObject::tr("Host: ") + vpn->ss->get_servername() + QObject::tr("\n") + hash;
 
@@ -281,7 +284,7 @@ static int validate_peer_cert(void* privdata, const char* reason)
 
         save = true;
     } else if (ret == GNUTLS_E_CERTIFICATE_KEY_MISMATCH) {
-        vpn->m->updateProgressBar(QObject::tr("peer's key has changed!"));
+        Logger::instance().addMessage(QObject::tr("peer's key has changed!"));
 
         QString str = QObject::tr("Host: ") + vpn->ss->get_servername() + QObject::tr("\n") + hash;
 
@@ -302,18 +305,18 @@ static int validate_peer_cert(void* privdata, const char* reason)
     } else if (ret < 0) {
         QString str = QObject::tr("Could not verify certificate: ");
         str += gnutls_strerror(ret);
-        vpn->m->updateProgressBar(str);
+        Logger::instance().addMessage(str);
         return -1;
     }
 
     if (save != false) {
-        vpn->m->updateProgressBar(QObject::tr("saving peer's public key"));
+        Logger::instance().addMessage(QObject::tr("saving peer's public key"));
         ret = gnutls_store_pubkey(reinterpret_cast<const char*>(&tdb), tdb.tdb,
             "", "", GNUTLS_CRT_X509, &raw, 0, 0);
         if (ret < 0) {
             QString str = QObject::tr("Could not store certificate: ");
             str += gnutls_strerror(ret);
-            vpn->m->updateProgressBar(str);
+            Logger::instance().addMessage(str);
         } else {
             vpn->ss->save();
         }
@@ -361,7 +364,7 @@ VpnInfo::VpnInfo(QString name, StoredServer* ss, MainWindow* m)
 
     this->cmd_fd = openconnect_setup_cmd_pipe(vpninfo);
     if (this->cmd_fd == INVALID_SOCKET) {
-        m->updateProgressBar(QObject::tr("invalid socket"));
+        Logger::instance().addMessage(QObject::tr("invalid socket"));
         throw std::runtime_error("pipe setup fails");
     }
     set_sock_block(this->cmd_fd);
@@ -561,12 +564,14 @@ void VpnInfo::logVpncScriptOutput()
 
         while (!in.atEnd()) {
             QString line = in.readLine();
-            this->m->updateProgressBar(line, false);
+            Logger::instance().addMessage(line);
         }
         file.close();
-        QFile::remove(tfile);
+        if (QFile::remove(tfile) != true) {
+            Logger::instance().addMessage(QLatin1String("Could not open ") + tfile + ": " + QString::number((int)file.error()));
+        }
     } else {
-        this->m->updateProgressBar(QLatin1String("Could not open ") + tfile + ": " + QString::number((int)file.error()));
+        Logger::instance().addMessage(QLatin1String("Could not open ") + tfile + ": " + QString::number((int)file.error()));
     }
 
 }
