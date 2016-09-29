@@ -22,6 +22,10 @@
 #include <QDialog>
 
 #include "base/logger.h"
+
+#include <memory>
+
+class QTimer;
 namespace Ui {
 class LogDialog;
 }
@@ -47,6 +51,8 @@ private slots:
 
     void onItemSelectionChanged();
 
+    void on_checkBox_autoScroll_toggled(bool checked);
+
 signals:
     void clear_log(void);
     void clear_logdialog(void);
@@ -56,4 +62,5 @@ private:
     void saveSettings();
 
     Ui::LogDialog* ui;
+    std::unique_ptr<QTimer> m_timer;
 };
