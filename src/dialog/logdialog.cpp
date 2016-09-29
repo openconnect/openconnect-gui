@@ -23,10 +23,12 @@
 #include <QClipboard>
 #include <QMessageBox>
 #include <QSettings>
+#include <QTimer>
 
 LogDialog::LogDialog(QWidget* parent)
     : QDialog(parent)
     , ui(new Ui::LogDialog)
+    , m_timer(std::make_unique<QTimer>())
 {
     ui->setupUi(this);
 
@@ -43,6 +45,11 @@ LogDialog::LogDialog(QWidget* parent)
 
     connect(&Logger::instance(), &Logger::newLogMessage,
             this, &LogDialog::append, Qt::QueuedConnection);
+
+    m_timer->setSingleShot(true);
+    m_timer->setInterval(10);
+    connect(m_timer.get(), &QTimer::timeout,
+            ui->listWidget, &QListWidget::scrollToBottom);
 }
 
 LogDialog::~LogDialog()
@@ -68,7 +75,7 @@ void LogDialog::append(const Logger::Message& message)
 {
     ui->listWidget->addItem(message.text);
     if (ui->checkBox_autoScroll->checkState() == Qt::Checked) {
-        ui->listWidget->scrollToBottom();
+        m_timer->start();
     }
 }
 
@@ -132,4 +139,13 @@ void LogDialog::saveSettings()
     settings.setValue("size", size());
     settings.setValue("pos", pos());
     settings.endGroup();
+}
+
+void LogDialog::on_checkBox_autoScroll_toggled(bool checked)
+{
+    if (checked) {
+        m_timer->start();
+    } else {
+        m_timer->stop();
+    }
 }
