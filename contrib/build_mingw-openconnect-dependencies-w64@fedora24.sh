@@ -7,7 +7,7 @@ rm -rf pkg
 mkdir -p pkg/nsis && cd pkg/nsis
 cp /usr/x86_64-w64-mingw32/sys-root/mingw/bin/iconv.dll .
 cp /usr/x86_64-w64-mingw32/sys-root/mingw/bin/libffi-6.dll .
-cp /usr/x86_64-w64-mingw32/sys-root/mingw/bin/libgcc_s_sjlj-1.dll .
+cp /usr/x86_64-w64-mingw32/sys-root/mingw/bin/libgcc_s_seh-1.dll .
 cp /usr/x86_64-w64-mingw32/sys-root/mingw/bin/libgmp-10.dll .
 cp /usr/x86_64-w64-mingw32/sys-root/mingw/bin/libgnutls-30.dll .
 cp /usr/x86_64-w64-mingw32/sys-root/mingw/bin/libhogweed-4-2.dll .
