@@ -19,26 +19,37 @@
 
 #include "logdialog.h"
 #include "ui_logdialog.h"
+
 #include <QClipboard>
 #include <QMessageBox>
 #include <QSettings>
 
-LogDialog::LogDialog(QStringList items, QWidget* parent)
+LogDialog::LogDialog(QWidget* parent)
     : QDialog(parent)
     , ui(new Ui::LogDialog)
 {
     ui->setupUi(this);
 
     loadSettings();
-
     ui->listWidget->setSelectionMode(QAbstractItemView::ContiguousSelection);
 
-    ui->listWidget->addItems(items);
-    ui->listWidget->scrollToBottom();
+    for (const auto& msg : Logger::instance().getMessages()) {
+        ui->listWidget->addItem(msg.text);
+    }
+
+    if (ui->checkBox_autoScroll->checkState() == Qt::Checked) {
+        ui->listWidget->scrollToBottom();
+    }
+
+    connect(&Logger::instance(), &Logger::newLogMessage,
+            this, &LogDialog::append, Qt::QueuedConnection);
 }
 
 LogDialog::~LogDialog()
 {
+    disconnect(&Logger::instance(), &Logger::newLogMessage,
+               this, &LogDialog::append);
+
     delete ui;
 }
 
@@ -53,9 +64,9 @@ void LogDialog::on_pushButtonSelectAll_clicked()
     ui->listWidget->selectAll();
 }
 
-void LogDialog::append(QString item)
+void LogDialog::append(const Logger::Message& message)
 {
-    ui->listWidget->addItem(item);
+    ui->listWidget->addItem(message.text);
     if (ui->checkBox_autoScroll->checkState() == Qt::Checked) {
         ui->listWidget->scrollToBottom();
     }

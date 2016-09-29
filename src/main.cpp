@@ -24,6 +24,8 @@
 #include "dialog/mainwindow.h"
 #include "openconnect-gui.h"
 
+#include "base/logger.h"
+
 extern "C" {
 #include <gnutls/pkcs11.h>
 #include <openconnect.h>
@@ -40,14 +42,12 @@ extern "C" {
 #include <csignal>
 #include <cstdio>
 
-static QStringList* logger = nullptr;
-
-static void log_func(int level, const char* str)
+static void log_callback(int level, const char* str)
 {
-    if (logger != nullptr) {
-        QString s = QLatin1String(str);
-        logger->append(s.trimmed());
-    }
+    Logger::instance().addMessage(QString(str).trimmed(),
+                                  Logger::MessageType::DEBUG,
+                                  Logger::ComponentType::GNUTLS
+                                  );
 }
 
 int pin_callback(void* userdata, int attempt, const char* token_url,
@@ -115,12 +115,10 @@ int main(int argc, char* argv[])
 #ifdef PROJ_PKCS11
     gnutls_pkcs11_set_pin_function(pin_callback, &mainWindow);
 #endif
-
-    gnutls_global_set_log_function(log_func);
-    logger = mainWindow.get_log();
+    gnutls_global_set_log_function(log_callback);
 #ifdef PROJ_GNUTLS_DEBUG
     gnutls_global_set_log_level(3);
-    log_func(1, "started logging");
+    log_callback(1, "started logging");
 #endif
 
     mainWindow.show();

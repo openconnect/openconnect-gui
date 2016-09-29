@@ -21,6 +21,7 @@
 
 #include <QDialog>
 
+#include "base/logger.h"
 namespace Ui {
 class LogDialog;
 }
@@ -28,17 +29,17 @@ class LogDialog;
 class LogDialog : public QDialog {
     Q_OBJECT
 public:
-    LogDialog(QStringList items, QWidget* parent = 0);
+    LogDialog(QWidget* parent = 0);
     ~LogDialog();
 
 public slots:
-    void append(QString item);
+    void append(const Logger::Message& message);
 
 protected slots:
     void closeEvent(QCloseEvent* event) override;
 
 private slots:
-    void reject();
+    void reject() override;
 
     void on_pushButtonClear_clicked();
     void on_pushButtonSelectAll_clicked();
