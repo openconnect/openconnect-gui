@@ -34,6 +34,9 @@ public:
 public slots:
     void append(QString item);
 
+protected slots:
+    void closeEvent(QCloseEvent* event) override;
+
 private slots:
     void reject();
 

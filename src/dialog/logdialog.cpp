@@ -44,8 +44,6 @@ LogDialog::~LogDialog()
 
 void LogDialog::reject()
 {
-    saveSettings();
-
     emit clear_logdialog();
     QDialog::reject();
 }
@@ -61,6 +59,13 @@ void LogDialog::append(QString item)
     if (ui->checkBox_autoScroll->checkState() == Qt::Checked) {
         ui->listWidget->scrollToBottom();
     }
+}
+
+void LogDialog::closeEvent(QCloseEvent* event)
+{
+    saveSettings();
+
+    QDialog::closeEvent(event);
 }
 
 void LogDialog::on_pushButtonClear_clicked()
