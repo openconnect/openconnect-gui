@@ -1,4 +1,15 @@
 cmake_minimum_required(VERSION 3.5 FATAL_ERROR)
+
+if(APPLE)
+	if(NOT CMAKE_OSX_SYSROOT)
+		set(CMAKE_OSX_SYSROOT "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.12.sdk" CACHE STRING "" FORCE)
+	endif()
+
+	if(NOT CMAKE_OSX_DEPLOYMENT_TARGET)
+		set(CMAKE_OSX_DEPLOYMENT_TARGET "10.9" CACHE STRING "" FORCE)
+	endif()
+endif()
+
 project(openconnect-gui
     VERSION 1.4.1
     LANGUAGES CXX
@@ -33,8 +44,6 @@ add_compile_options("-Wall")
 add_compile_options("-pedantic")
 #add_compile_options("-Weffc++")
 #add_compile_options("-Werror")
-
-set(CMAKE_OSX_DEPLOYMENT_TARGET 10.9)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
