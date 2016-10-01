@@ -26,7 +26,7 @@
 #include "server_storage.h"
 #include "vpninfo.h"
 
-#include "base/logger.h"
+#include "logger.h"
 
 extern "C" {
 #include <gnutls/gnutls.h>
@@ -82,10 +82,6 @@ MainWindow::MainWindow(QWidget* parent)
         Qt::QueuedConnection);
     connect(ui->connectionButton, &QPushButton::clicked,
         this, &MainWindow::on_connectClicked,
-        Qt::QueuedConnection);
-
-    connect(this, &MainWindow::log_changed,
-        this, &MainWindow::writeProgressBar,
         Qt::QueuedConnection);
     connect(this, &MainWindow::stats_changed_sig,
         this, &MainWindow::statsChanged,
@@ -321,11 +317,6 @@ void MainWindow::vpn_status_changed(int connected, QString& dns, QString& ip, QS
     emit vpn_status_changed_sig(connected);
 }
 
-QStringList* MainWindow::get_log()
-{
-    return &this->log;
-}
-
 QString MainWindow::normalize_byte_size(uint64_t bytes)
 {
     const unsigned unit = 1024;// TODO: add support for SI units? (optional)
@@ -376,33 +367,6 @@ void MainWindow::reload_settings()
             });
         }
     }
-}
-
-void MainWindow::writeProgressBar(const QString& str)
-{
-    ui->statusBar->showMessage(str, 20 * 1000);
-}
-
-void MainWindow::updateProgressBar(const QString& str)
-{
-    updateProgressBar(str, true);
-}
-
-void MainWindow::updateProgressBar(QString str, bool show) // LCA: const ???
-{
-    QMutexLocker locker(&this->progress_mutex);
-    if (str.isEmpty() == false) {
-        QDateTime now;
-        if (show == true)
-            emit log_changed(str);
-        str.prepend(now.currentDateTime().toString("yyyy-MM-dd hh:mm "));
-        log.append(str);
-    }
-}
-
-void MainWindow::clear_log()
-{
-    this->log.clear();
 }
 
 void MainWindow::blink_ui()
@@ -688,12 +652,6 @@ fail: // LCA: remote 'fail' label :/
     return;
 }
 
-// TODO: ??? drop dialog via slot ???
-void MainWindow::clear_logdialog()
-{
-    delete (m_logDialog.release());
-}
-
 void MainWindow::closeEvent(QCloseEvent* event)
 {
     if (m_trayIcon && m_trayIcon->isVisible() && ui->actionMinimizeTheApplicationInsteadOfClosing->isChecked()) {
@@ -702,7 +660,7 @@ void MainWindow::closeEvent(QCloseEvent* event)
     } else {
         if (m_logDialog) {
             m_logDialog->close();
-            delete (m_logDialog.release());
+            m_logDialog.reset();
         }
 
         event->accept();
@@ -714,22 +672,15 @@ void MainWindow::closeEvent(QCloseEvent* event)
 void MainWindow::on_viewLogButton_clicked()
 {
     if (!m_logDialog) {
-        m_logDialog = std::make_unique<LogDialog>(/*this*/);
+        m_logDialog.reset(new LogDialog());
+
+        connect(m_logDialog.data(), &LogDialog::finished,
+                [&]() { m_logDialog.reset(); }
+        );
     }
     m_logDialog->show();
     m_logDialog->raise();
     m_logDialog->activateWindow();
-
-        QObject::connect(this, &MainWindow::log_changed,
-            logdialog, &LogDialog::append,
-            Qt::QueuedConnection);
-        QObject::connect(logdialog, &LogDialog::clear_log,
-            this, &MainWindow::clear_log,
-            Qt::QueuedConnection);
-        QObject::connect(logdialog, &LogDialog::clear_logdialog,
-            this, &MainWindow::clear_logdialog,
-            Qt::DirectConnection);
-
 }
 
 void MainWindow::request_update_stats()

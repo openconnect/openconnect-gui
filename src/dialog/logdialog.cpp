@@ -23,6 +23,7 @@
 #include <QClipboard>
 #include <QMessageBox>
 #include <QSettings>
+#include <QDateTime>
 #include <QTimer>
 
 LogDialog::LogDialog(QWidget* parent)
@@ -36,7 +37,7 @@ LogDialog::LogDialog(QWidget* parent)
     ui->listWidget->setSelectionMode(QAbstractItemView::ContiguousSelection);
 
     for (const auto& msg : Logger::instance().getMessages()) {
-        ui->listWidget->addItem(msg.text);
+        append(msg);
     }
 
     if (ui->checkBox_autoScroll->checkState() == Qt::Checked) {
@@ -60,12 +61,6 @@ LogDialog::~LogDialog()
     delete ui;
 }
 
-void LogDialog::reject()
-{
-    emit clear_logdialog();
-    QDialog::reject();
-}
-
 void LogDialog::on_pushButtonSelectAll_clicked()
 {
     ui->listWidget->selectAll();
@@ -73,7 +68,9 @@ void LogDialog::on_pushButtonSelectAll_clicked()
 
 void LogDialog::append(const Logger::Message& message)
 {
-    ui->listWidget->addItem(message.text);
+    QDateTime dt;
+    dt.setMSecsSinceEpoch(message.timeStamp);
+    ui->listWidget->addItem(QString("%1 | %2").arg(dt.toString("yyyy-MM-dd hh:mm:ss")).arg(message.text));
     if (ui->checkBox_autoScroll->checkState() == Qt::Checked) {
         m_timer->start();
     }
@@ -95,8 +92,9 @@ void LogDialog::on_pushButtonClear_clicked()
                 QMessageBox::Yes | QMessageBox::No,
                 QMessageBox::No)
             == QMessageBox::Yes) {
-            emit clear_log();
+
             ui->listWidget->clear();
+            Logger::instance().clear();
         }
     }
 }

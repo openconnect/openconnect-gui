@@ -24,7 +24,7 @@
 #include "dialog/mainwindow.h"
 #include "gtdb.h"
 #include "server_storage.h"
-#include "base/logger.h"
+#include "logger.h"
 
 #include <QDir>
 

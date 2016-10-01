@@ -21,7 +21,7 @@
 
 #include <QDialog>
 
-#include "base/logger.h"
+#include "logger.h"
 
 #include <memory>
 
@@ -36,6 +36,8 @@ public:
     LogDialog(QWidget* parent = 0);
     ~LogDialog();
 
+signals:
+
 public slots:
     void append(const Logger::Message& message);
 
@@ -43,8 +45,6 @@ protected slots:
     void closeEvent(QCloseEvent* event) override;
 
 private slots:
-    void reject() override;
-
     void on_pushButtonClear_clicked();
     void on_pushButtonSelectAll_clicked();
     void on_pushButtonCopy_clicked();
@@ -52,10 +52,6 @@ private slots:
     void onItemSelectionChanged();
 
     void on_checkBox_autoScroll_toggled(bool checked);
-
-signals:
-    void clear_log(void);
-    void clear_logdialog(void);
 
 private:
     void loadSettings();

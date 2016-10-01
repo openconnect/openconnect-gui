@@ -1,4 +1,4 @@
-#include "base/logger.h"
+#include "logger.h"
 
 #include <QDateTime>
 
@@ -37,6 +37,12 @@ QVector<Logger::Message> Logger::getMessages(int lastKnownId) const
     }
 
     return m_messages.mid(size - diff);
+}
+
+void Logger::clear()
+{
+    QWriteLocker lock(&m_lock);
+    m_messages.clear();
 }
 
 Logger::Logger(QObject *parent) : QObject(parent),

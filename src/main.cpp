@@ -24,7 +24,7 @@
 #include "dialog/mainwindow.h"
 #include "openconnect-gui.h"
 
-#include "base/logger.h"
+#include "logger.h"
 
 extern "C" {
 #include <gnutls/pkcs11.h>
@@ -83,6 +83,8 @@ int pin_callback(void* userdata, int attempt, const char* token_url,
 
 int main(int argc, char* argv[])
 {
+    qRegisterMetaType<Logger::Message>();
+
 #ifdef PROJ_INI_SETTINGS
     QSettings::setDefaultFormat(QSettings::IniFormat);
 #endif
