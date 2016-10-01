@@ -33,6 +33,7 @@ public:
         ComponentType componentType;
         QString text;
         int id;
+        // TODO: thread_id
     };
 
     static Logger& instance() {
@@ -43,8 +44,8 @@ public:
     void addMessage(const QString& message,
                     const MessageType& type = MessageType::NORMAL,
                     const ComponentType& componentType = ComponentType::UNKNOWN);
-
     QVector<Message> getMessages(int lastKnownId = -1) const;
+    void clear();
 
 
 signals:

@@ -37,8 +37,8 @@ set(${PROJECT_NAME}_SRCS
 	vpninfo.cpp
 	vpninfo.h
 
-	base/logger.cpp
-	base/logger.h
+	logger.cpp
+	logger.h
 )
 set_source_files_properties(
 	${PROJECT_NAME}.cpp
