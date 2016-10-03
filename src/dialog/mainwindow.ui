@@ -358,7 +358,7 @@
      <x>0</x>
      <y>0</y>
      <width>436</width>
-     <height>21</height>
+     <height>20</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -381,6 +381,8 @@
     <property name="title">
      <string>&amp;Help</string>
     </property>
+    <addaction name="actionWebSite"/>
+    <addaction name="separator"/>
     <addaction name="actionAbout"/>
     <addaction name="actionAboutQt"/>
    </widget>
@@ -517,6 +519,14 @@
    </property>
    <property name="text">
     <string>Start &amp;minimized</string>
+   </property>
+  </action>
+  <action name="actionWebSite">
+   <property name="text">
+    <string>&amp;Web site...</string>
+   </property>
+   <property name="statusTip">
+    <string>Open the browser and go to product site</string>
    </property>
   </action>
  </widget>

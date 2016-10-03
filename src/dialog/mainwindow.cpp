@@ -44,7 +44,7 @@ extern "C" {
 #include <QStateMachine>
 #include <QSignalTransition>
 #include <QEventTransition>
-#include <QCheckBox>
+#include <QDesktopServices>
 
 #include <cstdarg>
 #include <cstdio>
@@ -903,4 +903,9 @@ void MainWindow::on_actionAbout_triggered()
 void MainWindow::on_actionAboutQt_triggered()
 {
     qApp->aboutQt();
+}
+
+void MainWindow::on_actionWebSite_triggered()
+{
+    QDesktopServices::openUrl(QUrl("https://openconnect.github.io/openconnect-gui"));
 }
