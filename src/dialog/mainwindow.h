@@ -99,6 +99,8 @@ private slots:
     void on_actionEditSelectedProfile_triggered();
     void on_actionRemoveSelectedProfile_triggered();
 
+    void on_actionWebSite_triggered();
+
 signals:
     void log_changed(QString val);
     void stats_changed_sig(QString, QString, QString);
