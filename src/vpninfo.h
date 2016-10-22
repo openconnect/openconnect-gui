@@ -56,6 +56,7 @@ public:
 
 private:
     void logVpncScriptOutput();
+    void showBanner(VpnInfo* vpn);
 
     SOCKET cmd_fd;
 };
