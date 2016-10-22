@@ -63,6 +63,7 @@ public:
     void updateProgressBar(QString str, bool show);
     void updateStats(const struct oc_stats* stats, QString dtls);
     void reload_settings();
+    void on_disconnectClicked();
 
     void vpn_status_changed(int connected);
     void vpn_status_changed(int connected,
@@ -86,7 +87,7 @@ private slots:
 
     void request_update_stats();
 
-    void on_disconnectClicked();
+
     void on_connectClicked();
     void on_viewLogButton_clicked();
 

@@ -23,6 +23,7 @@ var REDIRECT_GATEWAY_METHOD = 0;
 var fs = WScript.CreateObject("Scripting.FileSystemObject");
 var tmpdir = fs.GetSpecialFolder(2)+"\\";
 var log = fs.OpenTextFile(tmpdir + "vpnc.log", 8, true);
+var banner = fs.OpenTextFile(tmpdir + "openconnect-banner.log", 8, true);
 
 function echo(msg) {
 	log.WriteLine(msg);
@@ -200,6 +201,7 @@ case "connect":
 	}
 
 	if (env("CISCO_BANNER")) {
+		banner.WriteLine(env("CISCO_BANNER"));
 		echo("--------------------------------------------------");
 		echo(env("CISCO_BANNER"));
 		echo("--------------------------------------------------");
