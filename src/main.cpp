@@ -25,6 +25,7 @@
 #include "openconnect-gui.h"
 
 #include "logger.h"
+#include "FileLogger.h"
 
 extern "C" {
 #include <gnutls/pkcs11.h>
@@ -97,7 +98,8 @@ int main(int argc, char* argv[])
     app.setOrganizationName(appOrganizationName);
     app.setOrganizationDomain(appOrganizationDomain);
 
-    Logger::instance().addMessage(QString("%1 (%2) logging started").arg(app.applicationDisplayName()).arg(app.applicationVersion()));
+    auto fileLog = std::make_unique<FileLogger>();
+    Logger::instance().addMessage(QString("%1 (%2) logging started...").arg(app.applicationDisplayName()).arg(app.applicationVersion()));
 
 #if !defined(_WIN32) && !defined(PROJ_GNUTLS_DEBUG)
     if (getuid() != 0) {
@@ -116,6 +118,7 @@ int main(int argc, char* argv[])
     openconnect_init_ssl();
 
     MainWindow mainWindow;
+
 #ifdef PROJ_PKCS11
     gnutls_pkcs11_set_pin_function(pin_callback, &mainWindow);
 #endif
