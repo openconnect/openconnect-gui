@@ -21,6 +21,11 @@
 
 #include <QDialog>
 
+#include "logger.h"
+
+#include <memory>
+
+class QTimer;
 namespace Ui {
 class LogDialog;
 }
@@ -28,28 +33,30 @@ class LogDialog;
 class LogDialog : public QDialog {
     Q_OBJECT
 public:
-    LogDialog(QStringList items, QWidget* parent = 0);
+    LogDialog(QWidget* parent = 0);
     ~LogDialog();
 
+signals:
+
 public slots:
-    void append(QString item);
+    void append(const Logger::Message& message);
+
+protected slots:
+    void closeEvent(QCloseEvent* event) override;
 
 private slots:
-    void reject();
-
     void on_pushButtonClear_clicked();
     void on_pushButtonSelectAll_clicked();
     void on_pushButtonCopy_clicked();
 
     void onItemSelectionChanged();
 
-signals:
-    void clear_log(void);
-    void clear_logdialog(void);
+    void on_checkBox_autoScroll_toggled(bool checked);
 
 private:
     void loadSettings();
     void saveSettings();
 
     Ui::LogDialog* ui;
+    std::unique_ptr<QTimer> m_timer;
 };

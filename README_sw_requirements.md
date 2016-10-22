@@ -8,6 +8,7 @@ This is target platform for the product.
     - 5.6/MinGW 4.9.2 (32-bit)
     - Tools/MinGW 4.9.2 component
     - Tools/QtCreator component
+- [spdlog 0.11.0](https://github.com/gabime/spdlog) ... as Git-submodule
 - [NSIS 3.0+](http://nsis.sourceforge.net/Main_Page)
 - [CMake 3.6+](https://cmake.org/)
 - [Git 2.7+](https://git-scm.com/)

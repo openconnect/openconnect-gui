@@ -1,5 +1,6 @@
 ### Development with QtCreator
 - checkout project from [GitHub](https://github.com/openconnect/openconnect-gui)
+- update project submodules
 - optionally initialize [git-flow](http://danielkummer.github.io/git-flow-cheatsheet/) developmenet scheme if you like
 - and switch to 'develop' branch
 - start QtCreator
