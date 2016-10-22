@@ -1,6 +1,7 @@
 #include "logger.h"
 
 #include <QDateTime>
+#include <QThread>
 
 void Logger::addMessage(const QString& message, const MessageType& messageType, const ComponentType& componentType)
 {
@@ -10,7 +11,8 @@ void Logger::addMessage(const QString& message, const MessageType& messageType, 
                 messageType,
                 componentType,
                 message,
-                ++m_messageCounter
+                ++m_messageCounter,
+                QThread::currentThreadId()
                };
     m_messages.push_back(tmp);
 
