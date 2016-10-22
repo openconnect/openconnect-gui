@@ -42,7 +42,7 @@ void FileLogger::addLogMessage(const Logger::Message& message)
     dt.setMSecsSinceEpoch(message.timeStamp);
 
     m_logger->log(spdlog::level::off,
-                  "{:<24} | {} | {}",
+                  "{:<24} | {:>4} | {}",
                   dt.toString("yyyy-MM-dd hh:mm:ss.ms").toStdString(),
                   QString::number((long long)message.threadId, 16).toStdString(),
                   message.text.toStdString());
