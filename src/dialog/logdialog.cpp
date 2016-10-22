@@ -72,7 +72,7 @@ void LogDialog::append(const Logger::Message& message)
     dt.setMSecsSinceEpoch(message.timeStamp);
     ui->listWidget->addItem(QString("%1 | %2 | %3")
                             .arg(dt.toString("yyyy-MM-dd hh:mm:ss"))
-                            .arg(QString::number((long long)message.threadId, 16))
+                            .arg(QString::number((long long)message.threadId, 16), 4)
                             .arg(message.text)
                             );
     if (ui->checkBox_autoScroll->checkState() == Qt::Checked) {
