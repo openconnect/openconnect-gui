@@ -97,6 +97,8 @@ int main(int argc, char* argv[])
     app.setOrganizationName(appOrganizationName);
     app.setOrganizationDomain(appOrganizationDomain);
 
+    Logger::instance().addMessage(QString("%1 (%2) logging started").arg(app.applicationDisplayName()).arg(app.applicationVersion()));
+
 #if !defined(_WIN32) && !defined(PROJ_GNUTLS_DEBUG)
     if (getuid() != 0) {
         QMessageBox msgBox;
@@ -120,7 +122,6 @@ int main(int argc, char* argv[])
     gnutls_global_set_log_function(log_callback);
 #ifdef PROJ_GNUTLS_DEBUG
     gnutls_global_set_log_level(3);
-    log_callback(1, "started logging");
 #endif
 
     mainWindow.show();
