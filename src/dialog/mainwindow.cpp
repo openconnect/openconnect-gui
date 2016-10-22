@@ -26,6 +26,8 @@
 #include "server_storage.h"
 #include "vpninfo.h"
 
+#include "logger.h"
+
 extern "C" {
 #include <gnutls/gnutls.h>
 }
@@ -81,10 +83,6 @@ MainWindow::MainWindow(QWidget* parent)
     connect(ui->connectionButton, &QPushButton::clicked,
         this, &MainWindow::on_connectClicked,
         Qt::QueuedConnection);
-
-    connect(this, &MainWindow::log_changed,
-        this, &MainWindow::writeProgressBar,
-        Qt::QueuedConnection);
     connect(this, &MainWindow::stats_changed_sig,
         this, &MainWindow::statsChanged,
         Qt::QueuedConnection);
@@ -103,7 +101,7 @@ MainWindow::MainWindow(QWidget* parent)
         m_trayIcon->setIcon(icon);
         m_trayIcon->show();
     } else {
-        updateProgressBar(QLatin1String("System doesn't support tray icon"), false);
+        Logger::instance().addMessage(QLatin1String("System doesn't support tray icon"));
         m_trayIcon = nullptr;
     }
 
@@ -271,8 +269,9 @@ static void term_thread(MainWindow* m, SOCKET* fd)
     if (*fd != INVALID_SOCKET) {
         m->vpn_status_changed(STATUS_DISCONNECTING);
         int ret = pipe_write(*fd, &cmd, 1);
-        if (ret < 0)
-            m->updateProgressBar(QObject::tr("term_thread: IPC error: ") + QString::number(net_errno));
+        if (ret < 0) {
+            Logger::instance().addMessage(QObject::tr("term_thread: IPC error: ") + QString::number(net_errno));
+        }
         *fd = INVALID_SOCKET;
         ms_sleep(200);
     } else {
@@ -316,11 +315,6 @@ void MainWindow::vpn_status_changed(int connected, QString& dns, QString& ip, QS
     this->cstp_cipher = cstp_cipher;
 
     emit vpn_status_changed_sig(connected);
-}
-
-QStringList* MainWindow::get_log()
-{
-    return &this->log;
 }
 
 QString MainWindow::normalize_byte_size(uint64_t bytes)
@@ -373,33 +367,6 @@ void MainWindow::reload_settings()
             });
         }
     }
-}
-
-void MainWindow::writeProgressBar(const QString& str)
-{
-    ui->statusBar->showMessage(str, 20 * 1000);
-}
-
-void MainWindow::updateProgressBar(const QString& str)
-{
-    updateProgressBar(str, true);
-}
-
-void MainWindow::updateProgressBar(QString str, bool show) // LCA: const ???
-{
-    QMutexLocker locker(&this->progress_mutex);
-    if (str.isEmpty() == false) {
-        QDateTime now;
-        if (show == true)
-            emit log_changed(str);
-        str.prepend(now.currentDateTime().toString("yyyy-MM-dd hh:mm "));
-        log.append(str);
-    }
-}
-
-void MainWindow::clear_log()
-{
-    this->log.clear();
 }
 
 void MainWindow::blink_ui()
@@ -486,7 +453,7 @@ void MainWindow::changeStatus(int val)
         ui->downloadLabel->clear();
         ui->cipherCSTPLabel->clear();
         ui->cipherDTLSLabel->clear();
-        this->updateProgressBar(QObject::tr("Disconnected"));
+        Logger::instance().addMessage(QObject::tr("Disconnected"));
 
         ui->serverList->setEnabled(true);
 
@@ -552,7 +519,7 @@ static void main_loop(VpnInfo* vpninfo, MainWindow* m)
                 vpninfo->ss->clear_groupname();
                 retry = true;
                 reset_password = true;
-                m->updateProgressBar(QObject::tr("Authentication failed in batch mode, retrying with batch mode disabled"));
+                Logger::instance().addMessage(QObject::tr("Authentication failed in batch mode, retrying with batch mode disabled"));
                 vpninfo->reset_vpn();
                 continue;
             }
@@ -564,7 +531,7 @@ static void main_loop(VpnInfo* vpninfo, MainWindow* m)
                 vpninfo->ss->set_groupname(oldgroup);
             }
 
-            m->updateProgressBar(vpninfo->last_err);
+            Logger::instance().addMessage(vpninfo->last_err);
             goto fail;
         }
 
@@ -572,7 +539,7 @@ static void main_loop(VpnInfo* vpninfo, MainWindow* m)
 
     ret = vpninfo->dtls_connect();
     if (ret != 0) {
-        m->updateProgressBar(vpninfo->last_err);
+        Logger::instance().addMessage(vpninfo->last_err);
     }
 
     vpninfo->get_info(dns, ip, ip6);
@@ -593,7 +560,7 @@ void MainWindow::on_disconnectClicked()
     if (this->timer->isActive()) {
         this->timer->stop();
     }
-    this->updateProgressBar(QObject::tr("Disconnecting..."));
+    Logger::instance().addMessage(QObject::tr("Disconnecting..."));
     term_thread(this, &this->cmd_fd);
 }
 
@@ -669,7 +636,7 @@ void MainWindow::on_connectClicked()
             if (proxies.at(0).port() != 0) {
                 str += ":" + QString::number(proxies.at(0).port());
             }
-            this->updateProgressBar(tr("Setting proxy to: ") + str);
+            Logger::instance().addMessage(tr("Setting proxy to: ") + str);
             openconnect_set_http_proxy(vpninfo->vpninfo, str.toLatin1().data());
         }
     }
@@ -685,21 +652,15 @@ fail: // LCA: remote 'fail' label :/
     return;
 }
 
-static LogDialog* logdialog = nullptr;
-void MainWindow::clear_logdialog()
-{
-    logdialog = nullptr;
-}
-
 void MainWindow::closeEvent(QCloseEvent* event)
 {
     if (m_trayIcon && m_trayIcon->isVisible() && ui->actionMinimizeTheApplicationInsteadOfClosing->isChecked()) {
         this->showMinimized();
         event->ignore();
     } else {
-        if (logdialog) {
-            logdialog->close();
-            logdialog = nullptr;
+        if (m_logDialog) {
+            m_logDialog->close();
+            m_logDialog.reset();
         }
 
         event->accept();
@@ -710,26 +671,16 @@ void MainWindow::closeEvent(QCloseEvent* event)
 
 void MainWindow::on_viewLogButton_clicked()
 {
-    if (logdialog == nullptr) {
-        logdialog = new LogDialog(this->log);
+    if (!m_logDialog) {
+        m_logDialog.reset(new LogDialog());
 
-        QObject::connect(this, &MainWindow::log_changed,
-            logdialog, &LogDialog::append,
-            Qt::QueuedConnection);
-        QObject::connect(logdialog, &LogDialog::clear_log,
-            this, &MainWindow::clear_log,
-            Qt::QueuedConnection);
-        QObject::connect(logdialog, &LogDialog::clear_logdialog,
-            this, &MainWindow::clear_logdialog,
-            Qt::DirectConnection);
-
-        logdialog->show();
-        logdialog->raise();
-        logdialog->activateWindow();
-    } else {
-        logdialog->raise();
-        logdialog->activateWindow();
+        connect(m_logDialog.data(), &LogDialog::finished,
+                [&]() { m_logDialog.reset(); }
+        );
     }
+    m_logDialog->show();
+    m_logDialog->raise();
+    m_logDialog->activateWindow();
 }
 
 void MainWindow::request_update_stats()
@@ -738,12 +689,12 @@ void MainWindow::request_update_stats()
     if (this->cmd_fd != INVALID_SOCKET) {
         int ret = pipe_write(this->cmd_fd, &cmd, 1);
         if (ret < 0) {
-            this->updateProgressBar(QObject::tr("update_stats: IPC error: ") + QString::number(net_errno));
+            Logger::instance().addMessage(QObject::tr("update_stats: IPC error: ") + QString::number(net_errno));
             if (this->timer->isActive())
                 this->timer->stop();
         }
     } else {
-        this->updateProgressBar(QObject::tr("update_stats: invalid socket"));
+        Logger::instance().addMessage(QObject::tr("update_stats: invalid socket"));
         if (this->timer->isActive())
             this->timer->stop();
     }

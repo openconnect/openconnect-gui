@@ -4,6 +4,7 @@ History of user-visible changes.
 - Incorrect message "A previous VPN instance is still running (socket is active)" (#137)
 - friendly windows shutdown behaviour (#100)
 - Change Traffic Light To Yellow When Disconnecting (#105)
+- Re-implemented logging & store log on filesystem (configuration will come in next version) (#111)
 
 [Full Changelog](https://github.com/openconnect/openconnect-gui/compare/v1.4.1...v1.5.0)
 

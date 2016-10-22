@@ -41,6 +41,7 @@ extern "C" {
 #include <winsock2.h>
 #endif
 
+class LogDialog;
 class QStateMachine;
 
 namespace Ui {
@@ -59,8 +60,6 @@ public:
     explicit MainWindow(QWidget* parent = 0);
     ~MainWindow();
 
-    void updateProgressBar(const QString& str);
-    void updateProgressBar(QString str, bool show);
     void updateStats(const struct oc_stats* stats, QString dtls);
     void reload_settings();
     void on_disconnectClicked();
@@ -73,17 +72,12 @@ public:
         QString& cstp_cipher,
         QString& dtls_cipher);
 
-    QStringList* get_log(void);
-
 private slots:
     void iconActivated(QSystemTrayIcon::ActivationReason reason);
     void statsChanged(QString, QString, QString);
-    void writeProgressBar(const QString& str);
     void changeStatus(int);
 
     void blink_ui(void);
-    void clear_logdialog(void);
-    void clear_log(void);
 
     void request_update_stats();
 
@@ -91,7 +85,7 @@ private slots:
     void on_connectClicked();
     void on_viewLogButton_clicked();
 
-    void closeEvent(QCloseEvent* bar) override;
+    void closeEvent(QCloseEvent* event) override;
 
     void on_actionAbout_triggered();
     void on_actionAboutQt_triggered();
@@ -103,7 +97,6 @@ private slots:
     void on_actionWebSite_triggered();
 
 signals:
-    void log_changed(QString val);
     void stats_changed_sig(QString, QString, QString);
     void vpn_status_changed_sig(int);
     void timeout(void);
@@ -120,8 +113,6 @@ private:
     SOCKET cmd_fd;
     bool minimize_on_connect;
     Ui::MainWindow* ui;
-    QMutex progress_mutex;
-    QStringList log;
     QTimer* timer;
     QTimer* blink_timer;
     QFutureWatcher<void> futureWatcher; // watches the vpninfo
@@ -140,4 +131,6 @@ private:
     QAction* m_minimizeAction;
     QAction* m_restoreAction;
     QAction* m_quitAction;
+
+    QScopedPointer<LogDialog> m_logDialog;
 };
