@@ -33,7 +33,7 @@ public:
         ComponentType componentType;
         QString text;
         int id;
-        // TODO: thread_id
+        Qt::HANDLE threadId;
     };
 
     static Logger& instance() {
