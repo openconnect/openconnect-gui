@@ -20,6 +20,7 @@
 #include "vpninfo.h"
 #include "config.h"
 #include "dialog/MyCertMsgBox.h"
+#include "dialog/MyMsgBox.h"
 #include "dialog/MyInputDialog.h"
 #include "dialog/mainwindow.h"
 #include "gtdb.h"
@@ -455,6 +456,8 @@ int VpnInfo::connect()
     }
 
     logVpncScriptOutput();
+    VpnInfo* vpn = this;
+    showBanner(vpn);
 
     return 0;
 }
@@ -569,4 +572,30 @@ void VpnInfo::logVpncScriptOutput()
         this->m->updateProgressBar(QLatin1String("Could not open ") + tfile + ": " + QString::number((int)file.error()));
     }
 
+
+}
+
+void VpnInfo::showBanner(VpnInfo* vpn) {
+    QString tfile = QDir::tempPath() + QDir::separator() + QLatin1String("openconnect-banner.log");
+    QFile file(tfile);
+    QString message = "";
+    if (file.open(QIODevice::ReadOnly) == true) {
+        QTextStream in(&file);
+
+        while (!in.atEnd()) {
+            QString line = in.readLine();
+            message += line + "\n";
+        }
+        file.close();
+        QFile::remove(tfile);
+    } else {
+    }
+    MyMsgBox msgBox(vpn->m,
+        message,
+        QString(""),
+        QString("Accept"));
+    msgBox.show();
+    if (msgBox.result() == false) {
+        this->m->on_disconnectClicked();
+    }
 }
