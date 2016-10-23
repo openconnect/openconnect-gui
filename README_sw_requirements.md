@@ -8,6 +8,7 @@ This is target platform for the product.
     - 5.6/MinGW 4.9.2 (32-bit)
     - Tools/MinGW 4.9.2 component
     - Tools/QtCreator component
+- [OpenConnect 7.06 for MinGW32] (https://github.com/horar/openconnect/releases/tag/v7.06)
 - [spdlog 0.11.0](https://github.com/gabime/spdlog) ... as Git-submodule
 - [NSIS 3.0+](http://nsis.sourceforge.net/Main_Page)
 - [CMake 3.6+](https://cmake.org/)
