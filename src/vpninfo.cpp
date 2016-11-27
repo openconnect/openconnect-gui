@@ -594,6 +594,7 @@ void VpnInfo::showBanner(VpnInfo* vpn) {
         file.close();
         QFile::remove(tfile);
     } else {
+        return;
     }
     MyMsgBox msgBox(vpn->m,
         message,
