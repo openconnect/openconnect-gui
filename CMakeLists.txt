@@ -1,4 +1,15 @@
 cmake_minimum_required(VERSION 3.5 FATAL_ERROR)
+
+if(APPLE)
+	if(NOT CMAKE_OSX_SYSROOT)
+		set(CMAKE_OSX_SYSROOT "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.12.sdk" CACHE STRING "" FORCE)
+	endif()
+
+	if(NOT CMAKE_OSX_DEPLOYMENT_TARGET)
+		set(CMAKE_OSX_DEPLOYMENT_TARGET "10.9" CACHE STRING "" FORCE)
+	endif()
+endif()
+
 project(openconnect-gui
 	VERSION 1.4.1
 	LANGUAGES CXX
@@ -48,6 +59,9 @@ find_package(Qt5 5.6 REQUIRED COMPONENTS Core Gui Widgets Network)
 if(WIN32 AND MINGW)
 	get_target_property(_qwindows_dll Qt5::QWindowsIntegrationPlugin LOCATION)
 endif()
+if(APPLE)
+	get_target_property(_qcocoa_dylib Qt5::QCocoaIntegrationPlugin LOCATION)
+endif()
 
 include(clang-format)
 
@@ -60,12 +74,23 @@ if(WIN32 AND MINGW)
 	include_directories(SYSTEM ${CMAKE_SOURCE_DIR}/include)
 	link_directories(SYSTEM ${CMAKE_SOURCE_DIR}/lib)
 else()
-	find_package(GnuTLS)
-	include_directories(SYSTEM ${GNUTLS_INCLUDE_DIR})
+    find_package(GnuTLS)
+    include_directories(SYSTEM ${GNUTLS_INCLUDE_DIR})
 
-	find_package(OpenConnect REQUIRED)
-	link_directories(${OPENCONNECT_LIBRARY_DIRS})
-	include_directories(SYSTEM ${OPENCONNECT_INCLUDE_DIRS})
+    find_package(OpenConnect REQUIRED)
+    link_directories(${OPENCONNECT_LIBRARY_DIRS})
+    include_directories(SYSTEM ${OPENCONNECT_INCLUDE_DIRS})
+
+    find_library(SECURITY_LIBRARY Security REQUIRED)
+    if(SECURITY_LIBRARY)
+        message(STATUS "Framework 'Security' found at ${SECURITY_LIBRARY}")
+
+        link_directories(${SECURITY_LIBRARY_DIRS})
+        include_directories(SYSTEM ${SECURITY_LIBRARY_INCLUDE_DIRS})
+    else()
+        message(FATAL_ERROR "Framework 'Security' not found!")
+    endif()
+    mark_as_advanced(SECURITY_LIBRARY)
 endif()
 
 add_subdirectory(src)

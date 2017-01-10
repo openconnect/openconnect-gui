@@ -40,6 +40,11 @@ extern "C" {
 #include <QSettings>
 #endif
 
+#ifdef __MACH__
+#include <mach-o/dyld.h>
+#include <Security/Security.h>
+#endif
+
 #include <csignal>
 #include <cstdio>
 
@@ -50,6 +55,43 @@ static void log_callback(int level, const char* str)
                                   Logger::ComponentType::GNUTLS
                                   );
 }
+
+#ifdef __MACH__
+bool relaunch_as_root()
+{
+    QMessageBox msgBox;
+    char appPath[2048];
+    uint32_t size = sizeof(appPath);
+    AuthorizationRef authRef;
+    OSStatus status;
+
+    /* Get the path of the current program */
+    if (_NSGetExecutablePath(appPath, &size) != 0) {
+        msgBox.setText(QObject::tr
+            ("Could not get program path to elevate privileges."));
+        return false;
+    }
+
+    status = AuthorizationCreate(NULL, kAuthorizationEmptyEnvironment,
+        kAuthorizationFlagDefaults, &authRef);
+
+    if (status != errAuthorizationSuccess) {
+        msgBox.setText(QObject::tr
+            ("Failed to create authorization reference."));
+        return false;
+    }
+    status = AuthorizationExecuteWithPrivileges(authRef, appPath,
+        kAuthorizationFlagDefaults, NULL, NULL);
+    AuthorizationFree(authRef, kAuthorizationFlagDestroyRights);
+
+    if (status == errAuthorizationSuccess) {
+        /* We've successfully re-launched with root privs. */
+        return true;
+    }
+
+    return false;
+}
+#endif
 
 int pin_callback(void* userdata, int attempt, const char* token_url,
     const char* token_label, unsigned flags, char* pin,
@@ -90,6 +132,10 @@ int main(int argc, char* argv[])
     QSettings::setDefaultFormat(QSettings::IniFormat);
 #endif
 
+#ifdef __MACH__
+    /* Re-launching with root privs on OS X needs Qt to allow setsuid */
+    QApplication::setSetuidAllowed(true);
+#endif
     QApplication app(argc, argv);
     app.setQuitOnLastWindowClosed(false);
     app.setApplicationName(appDescription);
@@ -101,10 +147,14 @@ int main(int argc, char* argv[])
     auto fileLog = std::make_unique<FileLogger>();
     Logger::instance().addMessage(QString("%1 (%2) logging started...").arg(app.applicationDisplayName()).arg(app.applicationVersion()));
 
-#if !defined(_WIN32) && !defined(PROJ_GNUTLS_DEBUG)
-    if (getuid() != 0) {
-        QMessageBox msgBox;
+#ifdef __MACH__
+    if (geteuid() != 0) {
+        if (relaunch_as_root()) {
+            /* We have re-launched with root privs. Exit this process. */
+            return 0;
+        }
 
+        QMessageBox msgBox;
         msgBox.setText(QObject::tr("This program requires root privileges to fully function."));
         msgBox.setInformativeText(QObject::tr("VPN connection establishment would fail."));
         msgBox.exec();

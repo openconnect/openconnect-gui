@@ -16,6 +16,9 @@
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
     <layout class="QFormLayout" name="settingsProfileLayout">
+     <property name="fieldGrowthPolicy">
+      <enum>QFormLayout::ExpandingFieldsGrow</enum>
+     </property>
      <item row="0" column="0">
       <widget class="QLabel" name="nameLabel">
        <property name="text">
@@ -278,6 +281,9 @@
       <layout class="QVBoxLayout" name="verticalLayout_2">
        <item>
         <layout class="QFormLayout" name="formLayout_2">
+         <property name="fieldGrowthPolicy">
+          <enum>QFormLayout::ExpandingFieldsGrow</enum>
+         </property>
          <item row="1" column="0">
           <widget class="QLabel" name="userCertificateLabel">
            <property name="text">
@@ -409,6 +415,9 @@
      <layout class="QVBoxLayout" name="verticalLayout_3">
       <item>
        <layout class="QFormLayout" name="formLayout_3">
+        <property name="fieldGrowthPolicy">
+         <enum>QFormLayout::ExpandingFieldsGrow</enum>
+        </property>
         <item row="0" column="0">
          <widget class="QLabel" name="reconnectTimeoutLabel">
           <property name="text">
