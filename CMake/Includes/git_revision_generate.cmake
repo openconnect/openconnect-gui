@@ -51,16 +51,14 @@ if(NOT APPLE)
 		set(UAC_FLAG "//")
 	endif()
 
-	message(STATUS "Processing resource file...")
-	file(READ ${INPUT_DIR}/${PROJECT_NAME}.rc.in rc_temporary)
-	string(CONFIGURE ${rc_temporary} rc_updated)
-	file(WRITE ${OUTPUT_DIR}/${PROJECT_NAME}.rc.tmp ${rc_updated})
-	execute_process(
-		COMMAND ${CMAKE_COMMAND} -E copy_if_different
-		${OUTPUT_DIR}/${PROJECT_NAME}.rc.tmp ${OUTPUT_DIR}/${PROJECT_NAME}.rc
-	)
-else()
-	message(FATAL_ERROR " === ERROR ===")
+    message(STATUS "Processing resource file...")
+    file(READ ${INPUT_DIR}/${PROJECT_NAME}.rc.in rc_temporary)
+    string(CONFIGURE ${rc_temporary} rc_updated)
+    file(WRITE ${OUTPUT_DIR}/${PROJECT_NAME}.rc.tmp ${rc_updated})
+    execute_process(
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        ${OUTPUT_DIR}/${PROJECT_NAME}.rc.tmp ${OUTPUT_DIR}/${PROJECT_NAME}.rc
+    )
 endif()
 
 message(STATUS "Processing app info file...")

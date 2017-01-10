@@ -96,17 +96,17 @@ if(WIN32 AND MINGW)
 	)
 endif()
 if(APPLE)
-	set_target_properties(${PROJECT_NAME} PROPERTIES
-		MACOSX_BUNDLE true
-		MACOSX_BUNDLE_BUNDLE_NAME ${PRODUCT_NAME_SHORT}
-		MACOSX_BUNDLE_BUNDLE_VERSION "1.0.0"
-		MACOSX_BUNDLE_COPYRIGHT ${PRODUCT_NAME_COPYRIGHT}
-		MACOSX_BUNDLE_GUI_IDENTIFIER "io.github.openconnect.openconnect-gui"
-		MACOSX_BUNDLE_ICON_FILE "mono_lock.icns"
-		MACOSX_BUNDLE_INFO_STRING ${PRODUCT_NAME_LONG}
-		MACOSX_BUNDLE_LONG_VERSION_STRING ${PROJECT_VERSION}
-		MACOSX_BUNDLE_SHORT_VERSION_STRING "${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}"
-	)
+    set_target_properties(${PROJECT_NAME} PROPERTIES
+        MACOSX_BUNDLE true
+        MACOSX_BUNDLE_BUNDLE_NAME ${PRODUCT_NAME_SHORT}
+        MACOSX_BUNDLE_BUNDLE_VERSION "1.0.0"
+        MACOSX_BUNDLE_COPYRIGHT ${PRODUCT_NAME_COPYRIGHT}
+        MACOSX_BUNDLE_GUI_IDENTIFIER "io.github.openconnect.openconnect-gui"
+        MACOSX_BUNDLE_ICON_FILE "mono_lock.icns"
+        MACOSX_BUNDLE_INFO_STRING ${PRODUCT_NAME_LONG}
+#        MACOSX_BUNDLE_LONG_VERSION_STRING ${PROJECT_VERSION}
+#        MACOSX_BUNDLE_SHORT_VERSION_STRING "${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}"
+    )
 endif()
 
 target_link_libraries (${PROJECT_NAME}
@@ -135,10 +135,15 @@ if(WIN32 AND MINGW)
 	)
 endif()
 if(UNIX)
-	target_link_libraries(${PROJECT_NAME}
-		${OPENCONNECT_LIBRARIES}
-		${GNUTLS_LIBRARY}
-	)
+    target_link_libraries(${PROJECT_NAME}
+        ${OPENCONNECT_LIBRARIES}
+        ${GNUTLS_LIBRARY}
+    )
+    if(APPLE)
+        target_link_libraries (${PROJECT_NAME}
+            ${SECURITY_LIBRARY}
+        )
+    endif()
 endif()
 
 # install executable
@@ -149,9 +154,11 @@ install(TARGETS ${PROJECT_NAME}
 )
 
 # fixup the bundle
-#get_target_property(QT_LIBRARY_DIR Qt5::Core LOCATION)
-#get_filename_component(QT_LIBRARY_DIR ${QT_LIBRARY_DIR} PATH)
-#get_filename_component(QT_LIBRARY_DIR "${QT_LIBRARY_DIR}/.." ABSOLUTE)
+get_target_property(QT_LIBRARY_DIR Qt5::Core LOCATION)
+get_filename_component(QT_LIBRARY_DIR ${QT_LIBRARY_DIR} PATH)
+get_filename_component(QT_LIBRARY_DIR "${QT_LIBRARY_DIR}/.." ABSOLUTE)
+list(APPEND libSearchDirs ${QT_LIBRARY_DIR})
+
 if(WIN32 AND MINGW)
 	set(APPS "\${CMAKE_INSTALL_PREFIX}/${PROJECT_NAME}.exe")
 	list(APPEND libSearchDirs ${CMAKE_SOURCE_DIR}/nsis)
@@ -167,13 +174,34 @@ if(WIN32 AND MINGW)
 		DESTINATION .
 		COMPONENT App
 	)
+
+	set(additionalLib ${_qwindows_dll})
+elseif(APPLE)
+    set(APPS "\${CMAKE_INSTALL_PREFIX}/${PROJECT_NAME}.app")
+    list(APPEND libSearchDirs "")
+
+	# Qt Platform Plugin
+	install(FILES
+		${_qcocoa_dylib}
+		DESTINATION ${PROJECT_NAME}.app/Contents/PlugIns/platforms
+		COMPONENT App
+	)
+	install(FILES
+		${CMAKE_SOURCE_DIR}/bundle/qt.conf
+		DESTINATION ${PROJECT_NAME}.app/Contents/Resources
+		COMPONENT App
+	)
+
+	set(additionalLib \${CMAKE_INSTALL_PREFIX}/${PROJECT_NAME}.app/Contents/PlugIns/platforms/libqcocoa.dylib)
 else()
-	set(APPS "\${CMAKE_INSTALL_PREFIX}/${PROJECT_NAME}.app")
-	list(APPEND libSearchDirs "")
+	message(FATAL_ERROR "XXX: only mingw and apple build supported yet")
 endif()
-set(additionalLib ${_qwindows_dll})
+
 install(CODE "
-	include(BundleUtilities)
-	fixup_bundle(\"${APPS}\" \"${additionalLib}\" \"${libSearchDirs}\")
-	" DESTINATION . COMPONENT App
+    include(BundleUtilities)
+	if(APPLE)
+		set(BU_CHMOD_BUNDLE_ITEMS on)
+	endif()
+    fixup_bundle(\"${APPS}\" \"${additionalLib}\" \"${libSearchDirs}\")
+    " DESTINATION . COMPONENT App
 )

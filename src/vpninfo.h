@@ -22,6 +22,8 @@
 #include <QString>
 #ifdef _WIN32
 #include <winsock2.h>
+#else
+#include "common.h"
 #endif
 #ifdef __linux__
 #define SOCKET int

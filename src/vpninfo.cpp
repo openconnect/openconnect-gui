@@ -427,7 +427,7 @@ int VpnInfo::connect()
 
 #ifdef Q_OS_WIN32
     const QString osName{"win"};
-#elif Q_OS_OSX
+#elif defined Q_OS_OSX
     const QString osName{"mac-intel"};
 #elif defined Q_OS_LINUX
     const QString osName = QString("linux%1").arg(QSysInfo::buildCpuArchitecture() == "i386" ? "" : "-64").toStdString().c_str();
