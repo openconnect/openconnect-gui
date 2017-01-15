@@ -99,6 +99,11 @@ if(WIN32 AND MINGW)
 	add_subdirectory(nsis)
 endif()
 
+install(FILES LICENSE.txt
+	DESTINATION .
+	COMPONENT App
+)
+
 include(git_revision_main)
 include(build_timestamp_main)
 
