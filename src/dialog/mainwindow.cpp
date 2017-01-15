@@ -714,6 +714,11 @@ void MainWindow::readSettings()
     ui->actionMinimizeToTheNotificationArea->setChecked(settings.value("minimizeToTheNotificationArea", true).toBool());
     ui->actionMinimizeTheApplicationInsteadOfClosing->setChecked(settings.value("minimizeTheApplicationInsteadOfClosing", true).toBool());
     ui->actionStartMinimized->setChecked(settings.value("startMinimized", false).toBool());
+    ui->actionSingleInstanceMode->setChecked(settings.value("singleInstanceMode", true).toBool());
+    connect(ui->actionSingleInstanceMode, &QAction::toggled, [](bool checked) {
+        QSettings settings;
+        settings.setValue("Settings/singleInstanceMode", checked);
+    });
     settings.endGroup();
 }
 
@@ -729,6 +734,7 @@ void MainWindow::writeSettings()
     settings.setValue("minimizeToTheNotificationArea", ui->actionMinimizeToTheNotificationArea->isChecked());
     settings.setValue("minimizeTheApplicationInsteadOfClosing", ui->actionMinimizeTheApplicationInsteadOfClosing->isChecked());
     settings.setValue("startMinimized", ui->actionStartMinimized->isChecked());
+    settings.setValue("singleInstanceMode", ui->actionSingleInstanceMode->isChecked());
     settings.endGroup();
 
     settings.setValue("Profiles/currentIndex", ui->serverList->currentIndex());

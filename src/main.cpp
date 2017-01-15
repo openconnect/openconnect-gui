@@ -36,9 +36,8 @@ extern "C" {
 #if !defined(_WIN32) && !defined(PROJ_GNUTLS_DEBUG)
 #include <QMessageBox>
 #endif
-#ifdef PROJ_INI_SETTINGS
 #include <QSettings>
-#endif
+#include <QtSingleApplication>
 
 #ifdef __MACH__
 #include <mach-o/dyld.h>
@@ -136,13 +135,21 @@ int main(int argc, char* argv[])
     /* Re-launching with root privs on OS X needs Qt to allow setsuid */
     QApplication::setSetuidAllowed(true);
 #endif
-    QApplication app(argc, argv);
-    app.setQuitOnLastWindowClosed(false);
-    app.setApplicationName(appDescription);
+    QCoreApplication::setApplicationName(appDescription);
+    QCoreApplication::setApplicationVersion(appVersion);
+    QCoreApplication::setOrganizationName(appOrganizationName);
+    QCoreApplication::setOrganizationDomain(appOrganizationDomain);
+
+    QtSingleApplication  app(argc, argv);
+    if (app.isRunning()) {
+        QSettings settings;
+        if (settings.value(QLatin1Literal("Settings/singleInstanceMode"), true).toBool()) {
+            app.sendMessage("Wake up!");
+            return 0;
+        }
+    }
     app.setApplicationDisplayName(appDescriptionLong);
-    app.setApplicationVersion(appVersion);
-    app.setOrganizationName(appOrganizationName);
-    app.setOrganizationDomain(appOrganizationDomain);
+    app.setQuitOnLastWindowClosed(false);
 
     auto fileLog = std::make_unique<FileLogger>();
     Logger::instance().addMessage(QString("%1 (%2) logging started...").arg(app.applicationDisplayName()).arg(app.applicationVersion()));
@@ -168,7 +175,7 @@ int main(int argc, char* argv[])
     openconnect_init_ssl();
 
     MainWindow mainWindow;
-
+    app.setActivationWindow(&mainWindow);
 #ifdef PROJ_PKCS11
     gnutls_pkcs11_set_pin_function(pin_callback, &mainWindow);
 #endif
@@ -178,5 +185,10 @@ int main(int argc, char* argv[])
 #endif
 
     mainWindow.show();
+    QObject::connect(&app, &QtSingleApplication::messageReceived,
+                     [&mainWindow](const QString &message) {
+        Logger::instance().addMessage(message);
+    }
+    );
     return app.exec();
 }
