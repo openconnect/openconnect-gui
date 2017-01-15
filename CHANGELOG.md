@@ -2,6 +2,8 @@ History of user-visible changes.
 
 ## [v1.5.0](https://github.com/openconnect/openconnect-gui/tree/v1.5.0) (unreleased)
 - update build scripts to Qt 5.7
+- update to OpenConnect v7.08
+- updated gnutls(3.5.5), stoken (0.91), gmp(6.1.1)
 - Single instance checking (#99)
 - Incorrect message "A previous VPN instance is still running (socket is active)" (#137)
 - friendly windows shutdown behaviour (#100)

@@ -10,7 +10,7 @@
 /src/scm_version.cmake
 
 # temporary build folder
-build-release/
+build-release*/
 
 
 # temporary...
@@ -20,19 +20,5 @@ _xxx/
 # openconnect 3rd party artifacts
 /include
 /lib
-/nsis/iconv.dll
-/nsis/libffi-6.dll
-/nsis/libgcc_s_sjlj-1.dll
-/nsis/libgmp-10.dll
-/nsis/libgnutls-30.dll
-/nsis/libhogweed-4-2.dll
-/nsis/libintl-8.dll
-/nsis/libnettle-6-2.dll
-/nsis/libopenconnect-5.dll
-/nsis/libp11-kit-0.dll
-/nsis/libstoken-1.dll
-/nsis/libtasn1-6.dll
-/nsis/libwinpthread-1.dll
-/nsis/libxml2-2.dll
+/nsis/*.dll
 /nsis/openconnect.exe
-/nsis/zlib1.dll 
