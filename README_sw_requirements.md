@@ -10,7 +10,7 @@ This is target platform for the product.
     - Tools/MinGW 4.9.2 component or
     - Tools/MinGW 5.3.0 component
     - Tools/QtCreator component
-- [OpenConnect 7.06 for MinGW32] (https://github.com/horar/openconnect/releases/tag/v7.06)
+- [OpenConnect 7.08 for MinGW32] (https://github.com/horar/openconnect/releases/tag/v7.08)
 - [spdlog 0.11.0](https://github.com/gabime/spdlog) ... as Git-submodule
 - [qt-solutions] (https://github.com/qtproject/qt-solutions.git) ... as Git-submodule
 - [NSIS 3.0+](http://nsis.sourceforge.net/Main_Page)
@@ -18,14 +18,14 @@ This is target platform for the product.
 - [Git 2.7+](https://git-scm.com/)
 
 #### GNU/Linux
-##### Fedora 24 (MinGW)
+##### Fedora 25 (MinGW)
 Just try install following packages:
 
     sudo dnf install cmake
     sudo dnf install mingw32-qt5-qtbase
     sudo dnf install mingw32-nsis
 
-##### Fedora 24
+##### Fedora 25
 This is not main target platform, because openconnect is used by other projects integrated into desktop environments. On the other side - the minimum of required packages to build this GUI should be installed by following commands:
 
     sudo dnf install cmake

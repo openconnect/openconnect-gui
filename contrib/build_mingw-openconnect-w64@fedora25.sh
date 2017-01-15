@@ -3,12 +3,14 @@
 # with mingw64 toolchain
 #
 
-export OC_TAG=v7.07
-export STOKEN_TAG=v0.90
+export OC_TAG=v7.08
+export STOKEN_TAG=v0.91
 
 #sudo dnf install mingw64-gnutls mingw64-libxml2
 #sudo dnf install gcc libtool
+#sudo dnf install gettext
 #sudo dnf install git p7zip
+#sudo dnf install patch
 
 mkdir work
 cd work
@@ -29,22 +31,6 @@ cd openconnect
 git reset --hard
 git checkout ${OC_TAG}
 ./autogen.sh
-
-cat <<EOF | patch -p1
-diff --git a/ntlm.c b/ntlm.c
-index cb49085..2798554 100644
---- a/ntlm.c
-+++ b/ntlm.c
-@@ -37,7 +37,7 @@
-
- #include "openconnect-internal.h"
-
--#define auth_is_proxy(v, a) ((unsigned long)(a) >= ((unsigned long)(v)->proxy_auth))
-+#define auth_is_proxy(v, a) ((uintptr_t)(a) >= ((uintptr_t)(v)->proxy_auth))
-
- #define NTLM_SSO_REQ           2       /* SSO type1 packet sent */
- #define NTLM_MANUAL            3       /* SSO challenge/response sent or skipped; manual next */
-EOF
 
 mkdir build64
 cd build64
@@ -67,9 +53,9 @@ cp ${MINGW_PREFIX}/bin/libffi-6.dll .
 cp ${MINGW_PREFIX}/bin/libgcc_*-1.dll .
 cp ${MINGW_PREFIX}/bin/libgmp-10.dll .
 cp ${MINGW_PREFIX}/bin/libgnutls-30.dll .
-cp ${MINGW_PREFIX}/bin/libhogweed-4-2.dll .
+cp ${MINGW_PREFIX}/bin/libhogweed-4.dll .
 cp ${MINGW_PREFIX}/bin/libintl-8.dll .
-cp ${MINGW_PREFIX}/bin/libnettle-6-2.dll .
+cp ${MINGW_PREFIX}/bin/libnettle-6.dll .
 cp ${MINGW_PREFIX}/bin/libp11-kit-0.dll .
 cp ${MINGW_PREFIX}/bin/libtasn1-6.dll .
 cp ${MINGW_PREFIX}/bin/libwinpthread-1.dll .
@@ -129,6 +115,8 @@ cd ../
 
 echo "List of system-wide used packages versions:" \
 	> openconnect-${OC_TAG}_mingw64.txt
+echo "stoken-${STOKEN_TAG}" \
+	>> openconnect-${OC_TAG}_mingw32.txt
 rpm -qv \
     mingw64-gnutls \
     mingw64-gmp \

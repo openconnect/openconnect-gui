@@ -3,11 +3,12 @@
 # with mingw32 toolchain
 #
 
-export OC_TAG=v7.07
-export STOKEN_TAG=v0.90
+export OC_TAG=v7.08
+export STOKEN_TAG=v0.91
 
 #sudo dnf install mingw32-gnutls mingw32-libxml2
 #sudo dnf install gcc libtool
+#sudo dnf install gettext
 #sudo dnf install git p7zip
 
 mkdir work
@@ -50,9 +51,9 @@ cp ${MINGW_PREFIX}/bin/libffi-6.dll .
 cp ${MINGW_PREFIX}/bin/libgcc_*-1.dll .
 cp ${MINGW_PREFIX}/bin/libgmp-10.dll .
 cp ${MINGW_PREFIX}/bin/libgnutls-30.dll .
-cp ${MINGW_PREFIX}/bin/libhogweed-4-2.dll .
+cp ${MINGW_PREFIX}/bin/libhogweed-4.dll .
 cp ${MINGW_PREFIX}/bin/libintl-8.dll .
-cp ${MINGW_PREFIX}/bin/libnettle-6-2.dll .
+cp ${MINGW_PREFIX}/bin/libnettle-6.dll .
 cp ${MINGW_PREFIX}/bin/libp11-kit-0.dll .
 cp ${MINGW_PREFIX}/bin/libtasn1-6.dll .
 cp ${MINGW_PREFIX}/bin/libwinpthread-1.dll .
@@ -112,6 +113,8 @@ cd ../
 
 echo "List of system-wide used packages versions:" \
 	> openconnect-${OC_TAG}_mingw32.txt
+echo "stoken-${STOKEN_TAG}" \
+	>> openconnect-${OC_TAG}_mingw32.txt
 rpm -qv \
     mingw32-gnutls \
     mingw32-gmp \
