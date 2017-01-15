@@ -48,7 +48,7 @@ LogDialog::LogDialog(QWidget* parent)
             this, &LogDialog::append, Qt::QueuedConnection);
 
     m_timer->setSingleShot(true);
-    m_timer->setInterval(10);
+    m_timer->setInterval(100);
     connect(m_timer.get(), &QTimer::timeout,
             ui->listWidget, &QListWidget::scrollToBottom);
 }
