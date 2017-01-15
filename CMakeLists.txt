@@ -99,6 +99,7 @@ if(WIN32 AND MINGW)
 endif()
 
 include(git_revision_main)
+include(build_timestamp_main)
 
 include(InstallRequiredSystemLibraries)
 

@@ -36,4 +36,5 @@ add_custom_command(
 		COMMENT "Analyzing Git revision/tag changes..." VERBATIM
 )
 
+# explicitly say that the executable depends on the git_revision
 add_dependencies(${PROJECT_NAME} git_revision)
