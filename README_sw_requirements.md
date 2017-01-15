@@ -4,9 +4,11 @@ This chapter summarize actual development environment. Newer or older versions m
 #### Windows 10
 This is target platform for the product.
 
-- [Qt 5.6.x LTS (incl. mingw32) & QtCreator 4+](http://download.qt.io/official_releases/online_installers/qt-unified-windows-x86-online.exe) and choose:
-    - 5.6/MinGW 4.9.2 (32-bit)
-    - Tools/MinGW 4.9.2 component
+- [Qt 5 (incl. mingw32) & QtCreator 4+](http://download.qt.io/official_releases/online_installers/qt-unified-windows-x86-online.exe) and choose:
+    - 5.6/MinGW 4.9.2 (32-bit) or
+    - 5.7/MinGW 5.3.0 (32-bit)
+    - Tools/MinGW 4.9.2 component or
+    - Tools/MinGW 5.3.0 component
     - Tools/QtCreator component
 - [OpenConnect 7.06 for MinGW32] (https://github.com/horar/openconnect/releases/tag/v7.06)
 - [spdlog 0.11.0](https://github.com/gabime/spdlog) ... as Git-submodule
@@ -31,11 +33,9 @@ This is not main target platform, because openconnect is used by other projects 
     sudo dnf install gnutls-devel openconnect-devel
 
 #### MacOS
-- MacOS 10.11+
-- Xcode 7.3+ incl. command line tools
+- MacOS 10.12+
+- Xcode 7.4+ incl. command line tools
 - [Qt online installer](http://download.qt.io/official_releases/online_installers/qt-unified-mac-x64-online.dmg) and choose:
-    - 5.6/"OS X" component
+    - 5.6/"OS X" component or
+    - 5.7/"OS X" component
     - Tools/QtCreator component
-
-
-
