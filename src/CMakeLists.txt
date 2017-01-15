@@ -1,6 +1,15 @@
 
 add_subdirectory(spdlog)
 
+add_definitions(-DUNICODE)
+include_directories(SYSTEM ${CMAKE_SOURCE_DIR}/src/qt-solutions/qtsingleapplication/src)
+set(${PROJECT_NAME}_SingleApplication_SRC
+	qt-solutions/qtsingleapplication/src/qtsingleapplication.cpp
+	qt-solutions/qtsingleapplication/src/qtsingleapplication.h
+	qt-solutions/qtsingleapplication/src/qtlocalpeer.cpp
+	qt-solutions/qtsingleapplication/src/qtlocalpeer.h
+)
+
 set(${PROJECT_NAME}_SRCS
 	${PROJECT_NAME}.cpp
 	${PROJECT_NAME}.h
@@ -89,6 +98,10 @@ endif()
 add_executable(${PROJECT_NAME}
 	${${PROJECT_NAME}_SRCS}
 	${${PROJECT_NAME}_RESOURCES}
+
+	# TODO: introduce CMake support in 'SingleApplication' library
+	${${PROJECT_NAME}_SingleApplication_SRC}
+	${${PROJECT_NAME}_SingleApplication_HDRS}
 )
 if(WIN32 AND MINGW)
 	set_target_properties(${PROJECT_NAME} PROPERTIES
@@ -111,6 +124,8 @@ endif()
 
 target_link_libraries (${PROJECT_NAME}
     spdlog
+
+	${${PROJECT_NAME}_qtsingleapplication}
 
 	Qt5::Core
 	Qt5::Gui

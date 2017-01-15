@@ -362,6 +362,8 @@
     <addaction name="actionMinimizeTheApplicationInsteadOfClosing"/>
     <addaction name="separator"/>
     <addaction name="actionStartMinimized"/>
+    <addaction name="separator"/>
+    <addaction name="actionSingleInstanceMode"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuView"/>
@@ -489,6 +491,17 @@
    </property>
    <property name="statusTip">
     <string>Open the browser and go to product site</string>
+   </property>
+  </action>
+  <action name="actionSingleInstanceMode">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>&amp;Single instance mode</string>
    </property>
   </action>
  </widget>
