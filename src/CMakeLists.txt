@@ -45,6 +45,10 @@ set(${PROJECT_NAME}_SRCS
 	main.cpp
 	server_storage.cpp
 	server_storage.h
+
+	timestamp.h
+	timestamp.cpp
+
 	vpninfo.cpp
 	vpninfo.h
 
@@ -60,10 +64,9 @@ set_source_files_properties(
 		GENERATED true
 )
 set_source_files_properties(
-	build_timestamp.h
+	timestamp.cpp
 	PROPERTIES
 		GENERATED true
-		HEADER_FILE_ONLY true
 )
 set_source_files_properties(
    ${PROJECT_NAME}.rc

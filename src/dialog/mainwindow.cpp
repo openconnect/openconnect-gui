@@ -23,6 +23,7 @@
 #include "editdialog.h"
 #include "logdialog.h"
 #include "openconnect-gui.h"
+#include "timestamp.h"
 #include "server_storage.h"
 #include "vpninfo.h"
 
@@ -848,6 +849,7 @@ void MainWindow::on_actionAbout_triggered()
     txt += tr("<br>- libopenconnect ") + QLatin1String(openconnect_get_version());
     txt += tr("<br>- GnuTLS ") + QLatin1String(gnutls_check_version(nullptr));
     txt += tr("<br>- Qt %1 (%2 bit)").arg(QT_VERSION_STR).arg(QSysInfo::buildCpuArchitecture() == "i386" ? 32 : 64);
+    txt += tr("<br><br>Build on ") + QLatin1String("<i>") + QLatin1String(appBuildOn) + QLatin1String("</i>");
     txt += tr("<br><br>%1<br>").arg(appCopyright);
     txt += tr("<br><i>%1</i> comes with ABSOLUTELY NO WARRANTY. This is free software, "
               "and you are welcome to redistribute it under the conditions "
