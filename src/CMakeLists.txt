@@ -55,8 +55,8 @@ set(${PROJECT_NAME}_SRCS
 	logger.cpp
 	logger.h
 
-    FileLogger.cpp
-    FileLogger.h
+	FileLogger.cpp
+	FileLogger.h
 )
 set_source_files_properties(
 	${PROJECT_NAME}.cpp
@@ -126,7 +126,7 @@ if(APPLE)
 endif()
 
 target_link_libraries (${PROJECT_NAME}
-    spdlog
+	spdlog
 
 	${${PROJECT_NAME}_qtsingleapplication}
 
