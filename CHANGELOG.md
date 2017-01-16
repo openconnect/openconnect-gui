@@ -1,6 +1,7 @@
 History of user-visible changes.
 
 ## [v1.5.0](https://github.com/openconnect/openconnect-gui/tree/v1.5.0) (unreleased)
+- Simple MacOS installer (#81)
 - update build scripts to Qt 5.7
 - update to OpenConnect v7.08
 - updated gnutls(3.5.5), stoken (0.91), gmp(6.1.1)
