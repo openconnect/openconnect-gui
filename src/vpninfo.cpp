@@ -384,6 +384,8 @@ VpnInfo::VpnInfo(QString name, StoredServer* ss, MainWindow* m)
             (oc_token_mode_t)ss->get_token_type(),
             ss->get_token_str().toLatin1().data());
     }
+
+    openconnect_set_protocol(vpninfo, ss->get_protocol());
 }
 
 VpnInfo::~VpnInfo()
@@ -576,8 +578,6 @@ void VpnInfo::logVpncScriptOutput()
     } else {
         Logger::instance().addMessage(QLatin1String("Could not open ") + tfile + ": " + QString::number((int)file.error()));
     }
-
-
 }
 
 void VpnInfo::showBanner(VpnInfo* vpn) {

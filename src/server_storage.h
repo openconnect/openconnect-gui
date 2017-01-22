@@ -86,6 +86,10 @@ public:
     int get_token_type();
     void set_token_type(const int type);
 
+    const char* get_protocol() const;
+    int get_protocol_id() const;
+    void set_protocol_id(const int id);
+
     unsigned get_server_hash(QByteArray& hash) const;
     void get_server_hash(QString& hash) const;
     void set_server_hash(const unsigned algo, const QByteArray& hash);
@@ -112,8 +116,11 @@ private:
     QString m_token_string;
     QString m_label;
     int m_token_type;
+    int m_protocol_id;
     QByteArray m_server_hash;
     unsigned m_server_hash_algo;
     Cert m_ca_cert;
     KeyPair m_client;
+
+    static const char* const m_vpnProtocol[];
 };

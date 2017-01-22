@@ -153,6 +153,8 @@ EditDialog::EditDialog(QString server, QWidget* parent)
         ui->tokenEdit->setText(ss->get_token_str());
     }
 
+    ui->protocolComboBox->setCurrentIndex(ss->get_protocol_id());
+
     QString hash;
     ss->get_server_hash(hash);
     ui->serverCertHash->setText(hash);
@@ -246,6 +248,8 @@ void EditDialog::on_buttonBox_accepted()
         ss->set_token_str("");
         ss->set_token_type(-1);
     }
+
+    ss->set_protocol_id(ui->protocolComboBox->currentIndex());
 
     ss->save();
     this->accept();
