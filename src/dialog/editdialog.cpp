@@ -164,6 +164,11 @@ EditDialog::~EditDialog()
     delete ss;
 }
 
+QString EditDialog::getEditedProfileName() const
+{
+    return ss->get_label();
+}
+
 void EditDialog::on_buttonBox_accepted()
 {
     if (ui->gatewayEdit->text().isEmpty() == true) {
