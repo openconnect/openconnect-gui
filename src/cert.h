@@ -37,7 +37,7 @@ public:
     int tmpfile_export(QString& File);
     QString sha1_hash();
 
-    const bool is_ok() const;
+    bool is_ok() const;
     void clear();
 
     QString last_err;

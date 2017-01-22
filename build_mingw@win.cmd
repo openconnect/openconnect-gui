@@ -22,11 +22,16 @@ set PATH=c:\Dev\Qt\Tools\mingw530_32\bin\;%PATH%
 echo Setting up environment for CMake usage...
 set PATH="C:\Program Files\CMake\bin";%PATH%
 
-echo Setting up environment for 7Z usage...
+echo Setting up environment for 7z usage...
 set PATH="C:\Program Files\7-Zip\";%PATH%
 
 echo Setting up environment for 'clang' usage...
-set PATH="C:\Dev\LLVM64\bin\";%PATH%
+set PATH="C:\Dev\LLVM\bin\";%PATH%
+
+echo Setting up environment for 'wix' toolset usage...
+set PATH="C:\Program Files (x86)\WiX Toolset v3.10\bin";%PATH%
+set WIX="C:\Program Files (x86)\WiX Toolset v3.10\"
+set CPACK_WIX_ROOT="C:\Program Files (x86)\WiX Toolset v3.10\"
 
 echo "======================================================================="
 echo " Preparing sandbox..."
@@ -45,7 +50,7 @@ cmake -G "MinGW Makefiles" ^
 echo "======================================================================="
 echo " Compiling..."
 echo "======================================================================="
-mingw32-make -j10
+mingw32-make -j5
 
 REM echo "======================================================================="
 REM echo " LC: Bundling... (dynamic Qt only)"
