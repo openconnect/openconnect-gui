@@ -62,7 +62,6 @@ public:
 
     void updateStats(const struct oc_stats* stats, QString dtls);
     void reload_settings();
-    void on_disconnectClicked();
 
     void vpn_status_changed(int connected);
     void vpn_status_changed(int connected,
@@ -72,7 +71,7 @@ public:
         QString& cstp_cipher,
         QString& dtls_cipher);
 
-private slots:
+public slots:
     void iconActivated(QSystemTrayIcon::ActivationReason reason);
     void statsChanged(QString, QString, QString);
     void changeStatus(int);
@@ -83,6 +82,7 @@ private slots:
 
 
     void on_connectClicked();
+    void on_disconnectClicked();
     void on_viewLogButton_clicked();
 
     void closeEvent(QCloseEvent* event) override;

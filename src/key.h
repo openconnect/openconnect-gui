@@ -41,7 +41,7 @@ public:
     int data_export(QByteArray& data);
     int tmpfile_export(QString& File);
 
-    const bool is_ok() const;
+    bool is_ok() const;
     void get_url(QString& url) const;
 
     void clear();
