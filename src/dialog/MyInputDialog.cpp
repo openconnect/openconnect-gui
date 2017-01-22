@@ -57,7 +57,7 @@ bool MyInputDialog::event(QEvent* ev)
     res = false;
     if (ev->type() == QEvent::User) {
         if (this->have_list) {
-            text = QInputDialog::getItem(w, t1, t2, list, 0, true, &res);
+            text = QInputDialog::getItem(w, t1, t2, list, 0, false, &res);
         } else {
             text = QInputDialog::getText(w, t1, t2, type, QString(), &res);
         }
