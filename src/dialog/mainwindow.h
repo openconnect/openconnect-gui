@@ -91,6 +91,7 @@ private slots:
     void on_actionAboutQt_triggered();
 
     void on_actionNewProfile_triggered();
+    void on_actionNewProfileAdvanced_triggered();
     void on_actionEditSelectedProfile_triggered();
     void on_actionRemoveSelectedProfile_triggered();
 

@@ -34,6 +34,8 @@ public:
     EditDialog(QString server, QWidget* parent = 0);
     ~EditDialog();
 
+    QString getEditedProfileName() const;
+
 private slots:
     void on_buttonBox_accepted();
     void on_buttonBox_rejected();

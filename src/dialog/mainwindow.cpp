@@ -20,6 +20,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "config.h"
+#include "NewProfileDialog.h"
 #include "editdialog.h"
 #include "logdialog.h"
 #include "openconnect-gui.h"
@@ -171,6 +172,7 @@ MainWindow::MainWindow(QWidget* parent)
 
     QMenu* serverProfilesMenu = new QMenu(this);
     serverProfilesMenu->addAction(ui->actionNewProfile);
+    serverProfilesMenu->addAction(ui->actionNewProfileAdvanced);
     serverProfilesMenu->addAction(ui->actionEditSelectedProfile);
     serverProfilesMenu->addAction(ui->actionRemoveSelectedProfile);
     ui->serverListControl->setMenu(serverProfilesMenu);
@@ -785,20 +787,28 @@ void MainWindow::iconActivated(QSystemTrayIcon::ActivationReason reason)
 
 void MainWindow::on_actionNewProfile_triggered()
 {
+    NewProfileDialog dialog(this);
+    connect(&dialog, &NewProfileDialog::connect,
+            this, &MainWindow::on_connectClicked,
+            Qt::QueuedConnection);
+    if (dialog.exec() != QDialog::Accepted) {
+        return;
+    }
+
+    reload_settings();
+    ui->serverList->setCurrentText(dialog.getNewProfileName());
+}
+
+void MainWindow::on_actionNewProfileAdvanced_triggered()
+{
     // TODO: the new profile has no name yet...
     EditDialog dialog("", this);
     if (dialog.exec() != QDialog::Accepted) {
         return;
     }
 
-    int idx = ui->serverList->currentIndex();
     reload_settings();
-    if (idx < ui->serverList->maxVisibleItems() && idx >= 0) {
-        ui->serverList->setCurrentIndex(idx);
-    } else if (ui->serverList->maxVisibleItems() == 0) {
-        ui->serverList->setCurrentIndex(0);
-    }
-    // LCA: else ???
+    ui->serverList->setCurrentText(dialog.getEditedProfileName());
 }
 
 void MainWindow::on_actionEditSelectedProfile_triggered()

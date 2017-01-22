@@ -32,7 +32,7 @@
         <string>This is a friendly name to distinguish the connection</string>
        </property>
        <property name="placeholderText">
-        <string>User friendly connection name</string>
+        <string>User friendly unique connection name</string>
        </property>
       </widget>
      </item>

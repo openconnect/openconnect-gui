@@ -30,6 +30,9 @@ set(${PROJECT_NAME}_SRCS
 	dialog/editdialog.cpp
 	dialog/editdialog.h
 	dialog/editdialog.ui
+	dialog/NewProfileDialog.cpp
+	dialog/NewProfileDialog.h
+	dialog/NewProfileDialog.ui
 	dialog/logdialog.cpp
 	dialog/logdialog.h
 	dialog/logdialog.ui
