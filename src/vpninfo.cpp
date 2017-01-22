@@ -433,6 +433,8 @@ int VpnInfo::connect()
     const QString osName{"mac-intel"};
 #elif defined Q_OS_LINUX
     const QString osName = QString("linux%1").arg(QSysInfo::buildCpuArchitecture() == "i386" ? "" : "-64").toStdString().c_str();
+#elif defined Q_OS_FREEBSD
+    const QString osName = QString("freebsd%1").arg(QSysInfo::buildCpuArchitecture() == "i386" ? "" : "-64").toStdString().c_str();
 #else
 #error Define OS string of other platforms...
 #endif
