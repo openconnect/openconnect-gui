@@ -11,10 +11,10 @@ REM
 echo "======================================================================="
 echo " Preparing environment..."
 echo "======================================================================="
-REM look for "Qt 5.7 for Desktop (MinGW 5.3.0 32 bit)" StartMenu item
+REM look for "Qt 5.8 for Desktop (MinGW 5.3.0 32 bit)" StartMenu item
 REM and check 'qtenv2.bat'
 echo Setting up environment for Qt usage...
-set PATH=C:\Dev\Qt\5.7\mingw53_32\bin\;%PATH%
+set PATH=C:\Dev\Qt\5.8\mingw53_32\bin\;%PATH%
 
 echo Setting up environment for 'mingw32' usage...
 set PATH=c:\Dev\Qt\Tools\mingw530_32\bin\;%PATH%

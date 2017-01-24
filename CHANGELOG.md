@@ -1,10 +1,10 @@
 History of user-visible changes.
 
 ## [v1.5.0](https://github.com/openconnect/openconnect-gui/tree/v1.5.0) (unreleased)
+- update build scripts to Qt 5.8
 - Initial support for experimental Juniper server (#121, #69)
 - New simple profile setup&connect dialog
 - Simple MacOS installer (#81)
-- update build scripts to Qt 5.7
 - update to OpenConnect v7.08
 - updated gnutls(3.5.5), stoken (0.91), gmp(6.1.1)
 - Single instance checking (#99)
