@@ -10,15 +10,15 @@ the required security.
 Look to [OpenConnect-GUI](http://openconnect.github.io/openconnect-gui/) project webpage for detailed description, screen shots and other related projects.
 
 ## Development info
-- [Software requirements](README_sw_requirements.md)
-- [Development with QtCreator](README_dev_QtCreator.md)
-- [Command line compilation](README_dev_commandLine.md)
-- [Known build issues](README_known_build_issues.md)
+- [Software requirements](docs/sw_requirements.md)
+- [Development with QtCreator](docs/dev_QtCreator.md)
+- [Command line compilation](docs/dev_commandLine.md)
+- [Known build issues](docs/known_build_issues.md)
 
 ## Other
-- [Creating release package](README_release.md)
-- [OpenConnect library compilation and dependencies](README_openconnect.md)
-- [Web page maintenance](README_webpage.md)
+- [Creating release package](docs/release.md)
+- [OpenConnect library compilation and dependencies](docs/openconnect.md)
+- [Web page maintenance](docs/webpage.md)
 
 # License
 The content of this project itself is licensed under the [GNU General Public License v2](LICENSE.txt)
