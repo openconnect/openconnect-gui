@@ -26,7 +26,8 @@ To build a release package, start a release process with target tag:
 
     $ git flow release start X.Y.Z
 
-Now review released changes in CHANGELOG.md and update planned release version in CMakeLists.txt. If all is done, continue with:
+Now review released changes in `CHANGELOG.md`, update planned release version in `CMakeLists.txt`
+and commit all changes. If all is done, continue with:
 
     $ git flow release finish X.Y.Z
     $ git checkout master
