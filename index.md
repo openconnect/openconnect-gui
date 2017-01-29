@@ -11,13 +11,18 @@ The client is currently at beta testing phase.
  * [Frequently Asked Questions](https://github.com/openconnect/openconnect-gui/wiki/FAQ)
 
 ***
-## Screenshots (pre-1.4.0)
+
+## Screenshots (1.5.0)
 
 ### Application
 
 ![oc-gui-main_profiles](https://raw.githubusercontent.com/openconnect/openconnect-gui/gh-pages/screenshots/win_app_main.png)
 
 ![oc-gui-main_info](https://raw.githubusercontent.com/openconnect/openconnect-gui/gh-pages/screenshots/win_app_info.png)
+
+![oc-gui-main_info](https://raw.githubusercontent.com/openconnect/openconnect-gui/gh-pages/screenshots/win_app_new.png)
+
+![oc-gui-main_info](https://raw.githubusercontent.com/openconnect/openconnect-gui/gh-pages/screenshots/win_app_edit.png)
 
 ![oc-gui-systray](https://raw.githubusercontent.com/openconnect/openconnect-gui/gh-pages/screenshots/win_app_about.png)
 
