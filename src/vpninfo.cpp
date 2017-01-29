@@ -270,14 +270,17 @@ static int validate_peer_cert(void* privdata, const char* reason)
     if (ret == GNUTLS_E_NO_CERTIFICATE_FOUND) {
         Logger::instance().addMessage(QObject::tr("peer is unknown"));
 
-        QString str = QObject::tr("Host: ") + vpn->ss->get_servername() + QObject::tr("\n") + hash;
-
-        MyCertMsgBox msgBox(vpn->m,
-            QObject::tr("You are connecting for the first time to this peer."
-                        "Is the information provided below accurate?"),
-            str,
-            QObject::tr("Accurate information"),
-            dstr);
+        QString hostInfoStr = QObject::tr("Host: ") + vpn->ss->get_servername() + QObject::tr("\n") + hash;
+        MyCertMsgBox msgBox(
+                    vpn->m,
+                    QObject::tr("You are connecting for the first time to this peer.\n"
+                                "You have no guarantee that the server is the computer you think it is.\n\n"
+                                "If the information provided bellow is valid and you trust this host, "
+                                "hit 'Accurate information' to remember it and to carry on connecting.\n"
+                                "If you do not trust this host, hit Cancel to abandon the connection."),
+                    hostInfoStr,
+                    QObject::tr("Accurate information"),
+                    dstr);
         msgBox.show();
         if (msgBox.result() == false) {
             return -1;

@@ -1,6 +1,7 @@
 History of user-visible changes.
 
 ## [v1.5.0](https://github.com/openconnect/openconnect-gui/tree/v1.5.0) (unreleased)
+- better Warning message if there is a Name Missmatch (#135)
 - update build scripts to Qt 5.8
 - Initial support for experimental Juniper server (#121, #69)
 - New simple profile setup&connect dialog
