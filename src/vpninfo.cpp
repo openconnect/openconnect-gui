@@ -463,9 +463,6 @@ int VpnInfo::connect()
     }
 
     logVpncScriptOutput();
-    VpnInfo* vpn = this;
-    showBanner(vpn);
-
     return 0;
 }
 
@@ -569,41 +566,42 @@ void VpnInfo::logVpncScriptOutput()
     if (file.open(QIODevice::ReadOnly) == true) {
         QTextStream in(&file);
 
+        QString bannerMessage;
+        bool processBannerMessage = false;
+
         while (!in.atEnd()) {
-            QString line = in.readLine();
+            const QString line{in.readLine()};
             Logger::instance().addMessage(line);
+
+            if (line == QLatin1String("--------------------- BANNER ---------------------")) {
+                processBannerMessage = true;
+                continue;
+            }
+            if (line == QLatin1String("------------------- BANNER end -------------------")) {
+                processBannerMessage = false;
+                continue;
+            }
+            if (processBannerMessage) {
+                bannerMessage += line + "\n";
+            }
         }
         file.close();
-        if (QFile::remove(tfile) != true) {
-            Logger::instance().addMessage(QLatin1String("Could not open ") + tfile + ": " + QString::number((int)file.error()));
+        if (file.remove() != true) {
+            Logger::instance().addMessage(QLatin1String("Could not remove ") + tfile + ": " + QString::number((int)file.error()));
+        }
+
+        if (bannerMessage.isEmpty() == false) {
+            // TODO: msgbox title; e.g. Accept/Continue + Disconnect on buttons
+            MyMsgBox msgBox(this->m,
+                bannerMessage,
+                QString(""),
+                QString("Accept"));
+            msgBox.show();
+            if (msgBox.result() == false) {
+                this->m->on_disconnectClicked();
+            }
         }
     } else {
         Logger::instance().addMessage(QLatin1String("Could not open ") + tfile + ": " + QString::number((int)file.error()));
-    }
-}
-
-void VpnInfo::showBanner(VpnInfo* vpn) {
-    QString tfile = QDir::tempPath() + QDir::separator() + QLatin1String("openconnect-banner.log");
-    QFile file(tfile);
-    QString message = "";
-    if (file.open(QIODevice::ReadOnly) == true) {
-        QTextStream in(&file);
-
-        while (!in.atEnd()) {
-            QString line = in.readLine();
-            message += line + "\n";
-        }
-        file.close();
-        QFile::remove(tfile);
-    } else {
-        return;
-    }
-    MyMsgBox msgBox(vpn->m,
-        message,
-        QString(""),
-        QString("Accept"));
-    msgBox.show();
-    if (msgBox.result() == false) {
-        this->m->on_disconnectClicked();
     }
 }
