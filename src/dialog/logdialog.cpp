@@ -19,35 +19,46 @@
 
 #include "logdialog.h"
 #include "ui_logdialog.h"
+
 #include <QClipboard>
 #include <QMessageBox>
 #include <QSettings>
+#include <QDateTime>
+#include <QTimer>
 
-LogDialog::LogDialog(QStringList items, QWidget* parent)
+LogDialog::LogDialog(QWidget* parent)
     : QDialog(parent)
     , ui(new Ui::LogDialog)
+    , m_timer(std::make_unique<QTimer>())
 {
     ui->setupUi(this);
 
     loadSettings();
-
     ui->listWidget->setSelectionMode(QAbstractItemView::ContiguousSelection);
 
-    ui->listWidget->addItems(items);
-    ui->listWidget->scrollToBottom();
+    for (const auto& msg : Logger::instance().getMessages()) {
+        append(msg);
+    }
+
+    if (ui->checkBox_autoScroll->checkState() == Qt::Checked) {
+        ui->listWidget->scrollToBottom();
+    }
+
+    connect(&Logger::instance(), &Logger::newLogMessage,
+            this, &LogDialog::append, Qt::QueuedConnection);
+
+    m_timer->setSingleShot(true);
+    m_timer->setInterval(100);
+    connect(m_timer.get(), &QTimer::timeout,
+            ui->listWidget, &QListWidget::scrollToBottom);
 }
 
 LogDialog::~LogDialog()
 {
+    disconnect(&Logger::instance(), &Logger::newLogMessage,
+               this, &LogDialog::append);
+
     delete ui;
-}
-
-void LogDialog::reject()
-{
-    saveSettings();
-
-    emit clear_logdialog();
-    QDialog::reject();
 }
 
 void LogDialog::on_pushButtonSelectAll_clicked()
@@ -55,12 +66,25 @@ void LogDialog::on_pushButtonSelectAll_clicked()
     ui->listWidget->selectAll();
 }
 
-void LogDialog::append(QString item)
+void LogDialog::append(const Logger::Message& message)
 {
-    ui->listWidget->addItem(item);
+    QDateTime dt;
+    dt.setMSecsSinceEpoch(message.timeStamp);
+    ui->listWidget->addItem(QString("%1 | %2 | %3")
+                            .arg(dt.toString("yyyy-MM-dd hh:mm:ss"))
+                            .arg(QString::number((long long)message.threadId, 16), 4)
+                            .arg(message.text)
+                            );
     if (ui->checkBox_autoScroll->checkState() == Qt::Checked) {
-        ui->listWidget->scrollToBottom();
+        m_timer->start();
     }
+}
+
+void LogDialog::closeEvent(QCloseEvent* event)
+{
+    saveSettings();
+
+    QDialog::closeEvent(event);
 }
 
 void LogDialog::on_pushButtonClear_clicked()
@@ -72,8 +96,9 @@ void LogDialog::on_pushButtonClear_clicked()
                 QMessageBox::Yes | QMessageBox::No,
                 QMessageBox::No)
             == QMessageBox::Yes) {
-            emit clear_log();
+
             ui->listWidget->clear();
+            Logger::instance().clear();
         }
     }
 }
@@ -116,4 +141,13 @@ void LogDialog::saveSettings()
     settings.setValue("size", size());
     settings.setValue("pos", pos());
     settings.endGroup();
+}
+
+void LogDialog::on_checkBox_autoScroll_toggled(bool checked)
+{
+    if (checked) {
+        m_timer->start();
+    } else {
+        m_timer->stop();
+    }
 }

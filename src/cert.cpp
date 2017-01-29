@@ -211,7 +211,7 @@ QString Cert::sha1_hash()
     return s;
 }
 
-const bool Cert::is_ok() const
+bool Cert::is_ok() const
 {
     return imported;
 }

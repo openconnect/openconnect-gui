@@ -26,6 +26,6 @@
 const char* const appDescription = "@PRODUCT_NAME_SHORT@";
 const char* const appDescriptionLong = "@PRODUCT_NAME_LONG@";
 const char* const appVersion = "@PROJECT_VERSION@";
-const char* const appCopyright = "@PRODUCT_NAME_COPYRIGHT@";
+const char* const appCopyright = "@PRODUCT_NAME_COPYRIGHT_FULL@";
 const char* const appOrganizationName = "@PRODUCT_NAME_COMPANY@";
 const char* const appOrganizationDomain = "@PRODUCT_NAME_COMPANY_DOMAIN@";

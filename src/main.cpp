@@ -24,6 +24,9 @@
 #include "dialog/mainwindow.h"
 #include "openconnect-gui.h"
 
+#include "logger.h"
+#include "FileLogger.h"
+
 extern "C" {
 #include <gnutls/pkcs11.h>
 #include <openconnect.h>
@@ -33,22 +36,59 @@ extern "C" {
 #if !defined(_WIN32) && !defined(PROJ_GNUTLS_DEBUG)
 #include <QMessageBox>
 #endif
-#ifdef PROJ_INI_SETTINGS
 #include <QSettings>
+#include <QtSingleApplication>
+
+#ifdef __MACH__
+#include <mach-o/dyld.h>
+#include <Security/Security.h>
 #endif
 
 #include <csignal>
 #include <cstdio>
 
-#ifdef PROJ_GNUTLS_DEBUG
-static QStringList* logger = nullptr;
-
-static void log_func(int level, const char* str)
+static void log_callback(int level, const char* str)
 {
-    if (logger != nullptr) {
-        QString s = QLatin1String(str);
-        logger->append(s.trimmed());
+    Logger::instance().addMessage(QString(str).trimmed(),
+                                  Logger::MessageType::DEBUG,
+                                  Logger::ComponentType::GNUTLS
+                                  );
+}
+
+#ifdef __MACH__
+bool relaunch_as_root()
+{
+    QMessageBox msgBox;
+    char appPath[2048];
+    uint32_t size = sizeof(appPath);
+    AuthorizationRef authRef;
+    OSStatus status;
+
+    /* Get the path of the current program */
+    if (_NSGetExecutablePath(appPath, &size) != 0) {
+        msgBox.setText(QObject::tr
+            ("Could not get program path to elevate privileges."));
+        return false;
     }
+
+    status = AuthorizationCreate(NULL, kAuthorizationEmptyEnvironment,
+        kAuthorizationFlagDefaults, &authRef);
+
+    if (status != errAuthorizationSuccess) {
+        msgBox.setText(QObject::tr
+            ("Failed to create authorization reference."));
+        return false;
+    }
+    status = AuthorizationExecuteWithPrivileges(authRef, appPath,
+        kAuthorizationFlagDefaults, NULL, NULL);
+    AuthorizationFree(authRef, kAuthorizationFlagDestroyRights);
+
+    if (status == errAuthorizationSuccess) {
+        /* We've successfully re-launched with root privs. */
+        return true;
+    }
+
+    return false;
 }
 #endif
 
@@ -85,22 +125,43 @@ int pin_callback(void* userdata, int attempt, const char* token_url,
 
 int main(int argc, char* argv[])
 {
+    qRegisterMetaType<Logger::Message>();
+
 #ifdef PROJ_INI_SETTINGS
     QSettings::setDefaultFormat(QSettings::IniFormat);
 #endif
 
-    QApplication app(argc, argv);
-    app.setQuitOnLastWindowClosed(false);
-    app.setApplicationName(appDescription);
+#ifdef __MACH__
+    /* Re-launching with root privs on OS X needs Qt to allow setsuid */
+    QApplication::setSetuidAllowed(true);
+#endif
+    QCoreApplication::setApplicationName(appDescription);
+    QCoreApplication::setApplicationVersion(appVersion);
+    QCoreApplication::setOrganizationName(appOrganizationName);
+    QCoreApplication::setOrganizationDomain(appOrganizationDomain);
+
+    QtSingleApplication  app(argc, argv);
+    if (app.isRunning()) {
+        QSettings settings;
+        if (settings.value(QLatin1Literal("Settings/singleInstanceMode"), true).toBool()) {
+            app.sendMessage("Wake up!");
+            return 0;
+        }
+    }
     app.setApplicationDisplayName(appDescriptionLong);
-    app.setApplicationVersion(appVersion);
-    app.setOrganizationName(appOrganizationName);
-    app.setOrganizationDomain(appOrganizationDomain);
+    app.setQuitOnLastWindowClosed(false);
 
-#if !defined(_WIN32) && !defined(PROJ_GNUTLS_DEBUG)
-    if (getuid() != 0) {
+    auto fileLog = std::make_unique<FileLogger>();
+    Logger::instance().addMessage(QString("%1 (%2) logging started...").arg(app.applicationDisplayName()).arg(app.applicationVersion()));
+
+#ifdef __MACH__
+    if (geteuid() != 0) {
+        if (relaunch_as_root()) {
+            /* We have re-launched with root privs. Exit this process. */
+            return 0;
+        }
+
         QMessageBox msgBox;
-
         msgBox.setText(QObject::tr("This program requires root privileges to fully function."));
         msgBox.setInformativeText(QObject::tr("VPN connection establishment would fail."));
         msgBox.exec();
@@ -114,17 +175,20 @@ int main(int argc, char* argv[])
     openconnect_init_ssl();
 
     MainWindow mainWindow;
+    app.setActivationWindow(&mainWindow);
 #ifdef PROJ_PKCS11
     gnutls_pkcs11_set_pin_function(pin_callback, &mainWindow);
 #endif
-
+    gnutls_global_set_log_function(log_callback);
 #ifdef PROJ_GNUTLS_DEBUG
-    gnutls_global_set_log_function(log_func);
     gnutls_global_set_log_level(3);
-    logger = mainWindow.get_log();
-    log_func(1, "started logging");
 #endif
 
     mainWindow.show();
+    QObject::connect(&app, &QtSingleApplication::messageReceived,
+                     [&mainWindow](const QString &message) {
+        Logger::instance().addMessage(message);
+    }
+    );
     return app.exec();
 }

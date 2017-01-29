@@ -22,12 +22,15 @@
 #include <QSettings>
 #include <cstdio>
 
+const char* const StoredServer::m_vpnProtocol[] = {"anyconnect", "nc"};
+
 StoredServer::~StoredServer(void)
 {
 }
 
-StoredServer::StoredServer()
-    : m_server_hash_algo(0)
+StoredServer::StoredServer() :
+    m_protocol_id(0),
+    m_server_hash_algo(0)
 {
     set_window(nullptr);
 }
@@ -209,6 +212,8 @@ int StoredServer::load(QString& name)
 
     this->m_token_type = settings.value("token-type").toInt();
 
+    m_protocol_id = settings.value("protocol-id", 0).toInt();
+
     settings.endGroup();
     return rval;
 }
@@ -249,6 +254,8 @@ int StoredServer::save()
     settings.setValue("token-str",
         CryptData::encode(this->m_servername, this->m_token_string));
     settings.setValue("token-type", this->m_token_type);
+
+    settings.setValue("protocol-id", m_protocol_id);
 
     settings.endGroup();
     return 0;
@@ -402,6 +409,21 @@ int StoredServer::get_token_type()
 void StoredServer::set_token_type(const int type)
 {
     this->m_token_type = type;
+}
+
+const char* StoredServer::get_protocol() const
+{
+    return m_vpnProtocol[m_protocol_id];
+}
+
+int StoredServer::get_protocol_id() const
+{
+    return m_protocol_id;
+}
+
+void StoredServer::set_protocol_id(const int id)
+{
+    m_protocol_id = id;
 }
 
 void StoredServer::set_server_hash(const unsigned algo, const QByteArray& hash)

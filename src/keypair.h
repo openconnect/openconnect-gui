@@ -36,7 +36,7 @@ public:
     int cert_export(QByteArray& data);
     int key_export(QByteArray& data);
 
-    const bool is_complete() const;
+    bool is_complete() const;
 
     QString last_err;
 

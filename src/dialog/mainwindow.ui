@@ -171,21 +171,21 @@
        <layout class="QVBoxLayout" name="verticalLayout_3">
         <item>
          <layout class="QFormLayout" name="formLayout">
+          <property name="fieldGrowthPolicy">
+           <enum>QFormLayout::ExpandingFieldsGrow</enum>
+          </property>
+          <property name="formAlignment">
+           <set>Qt::AlignJustify|Qt::AlignTop</set>
+          </property>
           <item row="0" column="0">
            <widget class="QLabel" name="ipV4LabelText">
             <property name="text">
              <string>IPv4:</string>
             </property>
-            <property name="alignment">
-             <set>Qt::AlignCenter</set>
-            </property>
            </widget>
           </item>
           <item row="0" column="1">
            <widget class="QLabel" name="ipV4Label">
-            <property name="text">
-             <string/>
-            </property>
             <property name="alignment">
              <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
             </property>
@@ -206,9 +206,6 @@
           </item>
           <item row="1" column="1">
            <widget class="QLabel" name="ipV6Label">
-            <property name="text">
-             <string/>
-            </property>
             <property name="alignment">
              <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
             </property>
@@ -225,16 +222,10 @@
             <property name="text">
              <string>DNS:</string>
             </property>
-            <property name="alignment">
-             <set>Qt::AlignCenter</set>
-            </property>
            </widget>
           </item>
           <item row="2" column="1">
            <widget class="QLabel" name="dnsLabel">
-            <property name="text">
-             <string/>
-            </property>
             <property name="alignment">
              <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
             </property>
@@ -255,9 +246,6 @@
           </item>
           <item row="3" column="1">
            <widget class="QLabel" name="cipherCSTPLabel">
-            <property name="text">
-             <string/>
-            </property>
             <property name="alignment">
              <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
             </property>
@@ -272,40 +260,27 @@
           </item>
           <item row="4" column="1">
            <widget class="QLabel" name="cipherDTLSLabel">
-            <property name="text">
-             <string/>
-            </property>
             <property name="alignment">
              <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
             </property>
            </widget>
           </item>
-         </layout>
-        </item>
-        <item>
-         <widget class="Line" name="line">
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <layout class="QFormLayout" name="formLayout_2">
-          <item row="0" column="0">
+          <item row="5" column="0">
+           <widget class="QLabel" name="downloadLabelText">
+            <property name="text">
+             <string>Download:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="6" column="0">
            <widget class="QLabel" name="uploadLaberText">
             <property name="text">
              <string>Upload:</string>
             </property>
-            <property name="alignment">
-             <set>Qt::AlignCenter</set>
-            </property>
            </widget>
           </item>
-          <item row="0" column="1">
-           <widget class="QLabel" name="uploadLabel">
-            <property name="text">
-             <string/>
-            </property>
+          <item row="5" column="1">
+           <widget class="QLabel" name="downloadLabel">
             <property name="alignment">
              <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
             </property>
@@ -317,21 +292,8 @@
             </property>
            </widget>
           </item>
-          <item row="1" column="0">
-           <widget class="QLabel" name="downloadLabelText">
-            <property name="text">
-             <string>Download:</string>
-            </property>
-            <property name="alignment">
-             <set>Qt::AlignCenter</set>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="1">
-           <widget class="QLabel" name="downloadLabel">
-            <property name="text">
-             <string/>
-            </property>
+          <item row="6" column="1">
+           <widget class="QLabel" name="uploadLabel">
             <property name="alignment">
              <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
             </property>
@@ -358,7 +320,7 @@
      <x>0</x>
      <y>0</y>
      <width>436</width>
-     <height>21</height>
+     <height>20</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -370,6 +332,7 @@
       <string>&amp;Profiles</string>
      </property>
      <addaction name="actionNewProfile"/>
+     <addaction name="actionNewProfileAdvanced"/>
      <addaction name="actionEditSelectedProfile"/>
      <addaction name="actionRemoveSelectedProfile"/>
     </widget>
@@ -381,6 +344,8 @@
     <property name="title">
      <string>&amp;Help</string>
     </property>
+    <addaction name="actionWebSite"/>
+    <addaction name="separator"/>
     <addaction name="actionAbout"/>
     <addaction name="actionAboutQt"/>
    </widget>
@@ -398,6 +363,8 @@
     <addaction name="actionMinimizeTheApplicationInsteadOfClosing"/>
     <addaction name="separator"/>
     <addaction name="actionStartMinimized"/>
+    <addaction name="separator"/>
+    <addaction name="actionSingleInstanceMode"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuView"/>
@@ -451,6 +418,9 @@
    </property>
    <property name="text">
     <string>&amp;New profile</string>
+   </property>
+   <property name="toolTip">
+    <string>New quick connect profile</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+N</string>
@@ -517,6 +487,40 @@
    </property>
    <property name="text">
     <string>Start &amp;minimized</string>
+   </property>
+  </action>
+  <action name="actionWebSite">
+   <property name="text">
+    <string>&amp;Web site...</string>
+   </property>
+   <property name="statusTip">
+    <string>Open the browser and go to product site</string>
+   </property>
+  </action>
+  <action name="actionSingleInstanceMode">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>&amp;Single instance mode</string>
+   </property>
+  </action>
+  <action name="actionNewProfileAdvanced">
+   <property name="icon">
+    <iconset resource="../openconnect-gui.qrc">
+     <normaloff>:/new/resource/images/text-new.png</normaloff>:/new/resource/images/text-new.png</iconset>
+   </property>
+   <property name="text">
+    <string>New profile (&amp;advanced)</string>
+   </property>
+   <property name="toolTip">
+    <string>New profile (advanced setup)</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+N</string>
    </property>
   </action>
  </widget>

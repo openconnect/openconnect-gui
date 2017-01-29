@@ -5,28 +5,33 @@ REM
 REM It should be used only as illustration how to build application
 REM and create an installer package
 REM
-REM (c) 2016, Lubomir Carik
+REM (c) 2016-2017, Lubomir Carik
 REM
 
 echo "======================================================================="
 echo " Preparing environment..."
 echo "======================================================================="
-REM look for "Qt 5.6 for Desktop (MinGW 4.9.2 32 bit)" StartMenu item
+REM look for "Qt 5.8 for Desktop (MinGW 5.3.0 32 bit)" StartMenu item
 REM and check 'qtenv2.bat'
 echo Setting up environment for Qt usage...
-set PATH=C:\Dev\Qt\5.6\mingw49_32\bin\;%PATH%
+set PATH=C:\Dev\Qt\5.8\mingw53_32\bin\;%PATH%
 
 echo Setting up environment for 'mingw32' usage...
-set PATH=C:\Dev\Qt\Tools\mingw492_32\bin;%PATH%
+set PATH=c:\Dev\Qt\Tools\mingw530_32\bin\;%PATH%
 
 echo Setting up environment for CMake usage...
 set PATH="C:\Program Files\CMake\bin";%PATH%
 
-echo Setting up environment for 7Z usage...
+echo Setting up environment for 7z usage...
 set PATH="C:\Program Files\7-Zip\";%PATH%
 
 echo Setting up environment for 'clang' usage...
-set PATH="C:\Dev\LLVM64\bin\";%PATH%
+set PATH="C:\Dev\LLVM\bin\";%PATH%
+
+echo Setting up environment for 'wix' toolset usage...
+set PATH="C:\Program Files (x86)\WiX Toolset v3.10\bin";%PATH%
+set WIX="C:\Program Files (x86)\WiX Toolset v3.10\"
+set CPACK_WIX_ROOT="C:\Program Files (x86)\WiX Toolset v3.10\"
 
 echo "======================================================================="
 echo " Preparing sandbox..."
@@ -45,7 +50,7 @@ cmake -G "MinGW Makefiles" ^
 echo "======================================================================="
 echo " Compiling..."
 echo "======================================================================="
-mingw32-make -j10
+mingw32-make -j5
 
 REM echo "======================================================================="
 REM echo " LC: Bundling... (dynamic Qt only)"
@@ -67,6 +72,6 @@ echo " Packaging..."
 echo "======================================================================="
 cmake .
 mingw32-make package VERBOSE=1
-mingw32-make package_source VERBOSE=1
+REM mingw32-make package_source VERBOSE=1
 
 cd ..
