@@ -208,7 +208,7 @@ int Key::tmpfile_export(QString& filename)
     return 0;
 }
 
-const bool Key::is_ok() const
+bool Key::is_ok() const
 {
     return imported;
 }

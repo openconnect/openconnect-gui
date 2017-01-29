@@ -20,11 +20,15 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "config.h"
+#include "NewProfileDialog.h"
 #include "editdialog.h"
 #include "logdialog.h"
 #include "openconnect-gui.h"
+#include "timestamp.h"
 #include "server_storage.h"
 #include "vpninfo.h"
+
+#include "logger.h"
 
 extern "C" {
 #include <gnutls/gnutls.h>
@@ -44,7 +48,7 @@ extern "C" {
 #include <QStateMachine>
 #include <QSignalTransition>
 #include <QEventTransition>
-#include <QCheckBox>
+#include <QDesktopServices>
 
 #include <cstdarg>
 #include <cstdio>
@@ -81,10 +85,6 @@ MainWindow::MainWindow(QWidget* parent)
     connect(ui->connectionButton, &QPushButton::clicked,
         this, &MainWindow::on_connectClicked,
         Qt::QueuedConnection);
-
-    connect(this, &MainWindow::log_changed,
-        this, &MainWindow::writeProgressBar,
-        Qt::QueuedConnection);
     connect(this, &MainWindow::stats_changed_sig,
         this, &MainWindow::statsChanged,
         Qt::QueuedConnection);
@@ -103,7 +103,7 @@ MainWindow::MainWindow(QWidget* parent)
         m_trayIcon->setIcon(icon);
         m_trayIcon->show();
     } else {
-        updateProgressBar(QLatin1String("System doesn't support tray icon"), false);
+        Logger::instance().addMessage(QLatin1String("System doesn't support tray icon"));
         m_trayIcon = nullptr;
     }
 
@@ -172,6 +172,7 @@ MainWindow::MainWindow(QWidget* parent)
 
     QMenu* serverProfilesMenu = new QMenu(this);
     serverProfilesMenu->addAction(ui->actionNewProfile);
+    serverProfilesMenu->addAction(ui->actionNewProfileAdvanced);
     serverProfilesMenu->addAction(ui->actionEditSelectedProfile);
     serverProfilesMenu->addAction(ui->actionRemoveSelectedProfile);
     ui->serverListControl->setMenu(serverProfilesMenu);
@@ -269,9 +270,11 @@ static void term_thread(MainWindow* m, SOCKET* fd)
     char cmd = OC_CMD_CANCEL;
 
     if (*fd != INVALID_SOCKET) {
+        m->vpn_status_changed(STATUS_DISCONNECTING);
         int ret = pipe_write(*fd, &cmd, 1);
-        if (ret < 0)
-            m->updateProgressBar(QObject::tr("term_thread: IPC error: ") + QString::number(net_errno));
+        if (ret < 0) {
+            Logger::instance().addMessage(QObject::tr("term_thread: IPC error: ") + QString::number(net_errno));
+        }
         *fd = INVALID_SOCKET;
         ms_sleep(200);
     } else {
@@ -315,11 +318,6 @@ void MainWindow::vpn_status_changed(int connected, QString& dns, QString& ip, QS
     this->cstp_cipher = cstp_cipher;
 
     emit vpn_status_changed_sig(connected);
-}
-
-QStringList* MainWindow::get_log()
-{
-    return &this->log;
 }
 
 QString MainWindow::normalize_byte_size(uint64_t bytes)
@@ -374,33 +372,6 @@ void MainWindow::reload_settings()
     }
 }
 
-void MainWindow::writeProgressBar(const QString& str)
-{
-    ui->statusBar->showMessage(str, 20 * 1000);
-}
-
-void MainWindow::updateProgressBar(const QString& str)
-{
-    updateProgressBar(str, true);
-}
-
-void MainWindow::updateProgressBar(QString str, bool show) // LCA: const ???
-{
-    QMutexLocker locker(&this->progress_mutex);
-    if (str.isEmpty() == false) {
-        QDateTime now;
-        if (show == true)
-            emit log_changed(str);
-        str.prepend(now.currentDateTime().toString("yyyy-MM-dd hh:mm "));
-        log.append(str);
-    }
-}
-
-void MainWindow::clear_log()
-{
-    this->log.clear();
-}
-
 void MainWindow::blink_ui()
 {
     static unsigned t = 1;
@@ -449,11 +420,6 @@ void MainWindow::changeStatus(int val)
                 this->setWindowState(Qt::WindowMinimized);
             }
         }
-        disconnect(ui->connectionButton, &QPushButton::clicked,
-            this, &MainWindow::on_connectClicked);
-        connect(ui->connectionButton, &QPushButton::clicked,
-            this, &MainWindow::on_disconnectClicked,
-            Qt::QueuedConnection);
     } else if (val == STATUS_CONNECTING) {
 
         if (m_trayIcon) {
@@ -470,6 +436,12 @@ void MainWindow::changeStatus(int val)
         ui->connectionButton->setIcon(QIcon(":/new/resource/images/process-stop.png"));
         ui->connectionButton->setText(tr("Cancel"));
         blink_timer->start(1500);
+
+        disconnect(ui->connectionButton, &QPushButton::clicked,
+            this, &MainWindow::on_connectClicked);
+        connect(ui->connectionButton, &QPushButton::clicked,
+            this, &MainWindow::on_disconnectClicked,
+            Qt::QueuedConnection);
     } else if (val == STATUS_DISCONNECTED) {
         blink_timer->stop();
         if (this->timer->isActive()) {
@@ -484,7 +456,7 @@ void MainWindow::changeStatus(int val)
         ui->downloadLabel->clear();
         ui->cipherCSTPLabel->clear();
         ui->cipherDTLSLabel->clear();
-        this->updateProgressBar(QObject::tr("Disconnected"));
+        Logger::instance().addMessage(QObject::tr("Disconnected"));
 
         ui->serverList->setEnabled(true);
 
@@ -492,6 +464,7 @@ void MainWindow::changeStatus(int val)
         m_disconnectAction->setEnabled(false);
 
         ui->iconLabel->setPixmap(OFF_ICON);
+        ui->connectionButton->setEnabled(true);
         ui->connectionButton->setIcon(QIcon(":/new/resource/images/network-wired.png"));
         ui->connectionButton->setText(tr("Connect"));
 
@@ -509,6 +482,11 @@ void MainWindow::changeStatus(int val)
         connect(ui->connectionButton, &QPushButton::clicked,
             this, &MainWindow::on_connectClicked,
             Qt::QueuedConnection);
+    } else if (val == STATUS_DISCONNECTING) {
+        ui->iconLabel->setPixmap(CONNECTING_ICON);
+        ui->connectionButton->setIcon(QIcon(":/new/resource/images/process-stop.png"));
+        ui->connectionButton->setEnabled(false);
+        blink_timer->start(1500);
     } else {
         qDebug() << "TODO: was is das?";
     }
@@ -544,7 +522,7 @@ static void main_loop(VpnInfo* vpninfo, MainWindow* m)
                 vpninfo->ss->clear_groupname();
                 retry = true;
                 reset_password = true;
-                m->updateProgressBar(QObject::tr("Authentication failed in batch mode, retrying with batch mode disabled"));
+                Logger::instance().addMessage(QObject::tr("Authentication failed in batch mode, retrying with batch mode disabled"));
                 vpninfo->reset_vpn();
                 continue;
             }
@@ -556,7 +534,7 @@ static void main_loop(VpnInfo* vpninfo, MainWindow* m)
                 vpninfo->ss->set_groupname(oldgroup);
             }
 
-            m->updateProgressBar(vpninfo->last_err);
+            Logger::instance().addMessage(vpninfo->last_err);
             goto fail;
         }
 
@@ -564,7 +542,7 @@ static void main_loop(VpnInfo* vpninfo, MainWindow* m)
 
     ret = vpninfo->dtls_connect();
     if (ret != 0) {
-        m->updateProgressBar(vpninfo->last_err);
+        Logger::instance().addMessage(vpninfo->last_err);
     }
 
     vpninfo->get_info(dns, ip, ip6);
@@ -585,7 +563,7 @@ void MainWindow::on_disconnectClicked()
     if (this->timer->isActive()) {
         this->timer->stop();
     }
-    this->updateProgressBar(QObject::tr("Disconnecting..."));
+    Logger::instance().addMessage(QObject::tr("Disconnecting..."));
     term_thread(this, &this->cmd_fd);
 }
 
@@ -661,7 +639,7 @@ void MainWindow::on_connectClicked()
             if (proxies.at(0).port() != 0) {
                 str += ":" + QString::number(proxies.at(0).port());
             }
-            this->updateProgressBar(tr("Setting proxy to: ") + str);
+            Logger::instance().addMessage(tr("Setting proxy to: ") + str);
             openconnect_set_http_proxy(vpninfo->vpninfo, str.toLatin1().data());
         }
     }
@@ -677,37 +655,15 @@ fail: // LCA: remote 'fail' label :/
     return;
 }
 
-static LogDialog* logdialog = nullptr;
-void MainWindow::clear_logdialog()
-{
-    logdialog = nullptr;
-}
-
 void MainWindow::closeEvent(QCloseEvent* event)
 {
     if (m_trayIcon && m_trayIcon->isVisible() && ui->actionMinimizeTheApplicationInsteadOfClosing->isChecked()) {
-        QSettings settings;
-        const bool showTheMessageAgain = settings.value("showTheMessageAgain/minimizeToNotificationArea", true).toBool();
-
-        if (showTheMessageAgain == true) {
-            QMessageBox msg(this);
-            msg.setWindowTitle(tr("Minimize to notification area"));
-            msg.setIcon(QMessageBox::Warning);
-            msg.setText(tr("The program will keep running in the notification area.<br> "
-                           "To terminate the program, choose <b>Quit</b> in application menu or "
-                           "in the context menu of the notification area entry."));
-            msg.setCheckBox(new QCheckBox(tr("&Show this message again")));
-            msg.checkBox()->setChecked(showTheMessageAgain);
-            msg.exec();
-
-            settings.setValue("showTheMessageAgain/minimizeToNotificationArea", msg.checkBox()->isChecked());
-        }
         this->showMinimized();
         event->ignore();
     } else {
-        if (logdialog) {
-            logdialog->close();
-            logdialog = nullptr;
+        if (m_logDialog) {
+            m_logDialog->close();
+            m_logDialog.reset();
         }
 
         event->accept();
@@ -718,26 +674,16 @@ void MainWindow::closeEvent(QCloseEvent* event)
 
 void MainWindow::on_viewLogButton_clicked()
 {
-    if (logdialog == nullptr) {
-        logdialog = new LogDialog(this->log);
+    if (!m_logDialog) {
+        m_logDialog.reset(new LogDialog());
 
-        QObject::connect(this, &MainWindow::log_changed,
-            logdialog, &LogDialog::append,
-            Qt::QueuedConnection);
-        QObject::connect(logdialog, &LogDialog::clear_log,
-            this, &MainWindow::clear_log,
-            Qt::QueuedConnection);
-        QObject::connect(logdialog, &LogDialog::clear_logdialog,
-            this, &MainWindow::clear_logdialog,
-            Qt::DirectConnection);
-
-        logdialog->show();
-        logdialog->raise();
-        logdialog->activateWindow();
-    } else {
-        logdialog->raise();
-        logdialog->activateWindow();
+        connect(m_logDialog.data(), &LogDialog::finished,
+                [&]() { m_logDialog.reset(); }
+        );
     }
+    m_logDialog->show();
+    m_logDialog->raise();
+    m_logDialog->activateWindow();
 }
 
 void MainWindow::request_update_stats()
@@ -746,12 +692,12 @@ void MainWindow::request_update_stats()
     if (this->cmd_fd != INVALID_SOCKET) {
         int ret = pipe_write(this->cmd_fd, &cmd, 1);
         if (ret < 0) {
-            this->updateProgressBar(QObject::tr("update_stats: IPC error: ") + QString::number(net_errno));
+            Logger::instance().addMessage(QObject::tr("update_stats: IPC error: ") + QString::number(net_errno));
             if (this->timer->isActive())
                 this->timer->stop();
         }
     } else {
-        this->updateProgressBar(QObject::tr("update_stats: invalid socket"));
+        Logger::instance().addMessage(QObject::tr("update_stats: invalid socket"));
         if (this->timer->isActive())
             this->timer->stop();
     }
@@ -771,6 +717,11 @@ void MainWindow::readSettings()
     ui->actionMinimizeToTheNotificationArea->setChecked(settings.value("minimizeToTheNotificationArea", true).toBool());
     ui->actionMinimizeTheApplicationInsteadOfClosing->setChecked(settings.value("minimizeTheApplicationInsteadOfClosing", true).toBool());
     ui->actionStartMinimized->setChecked(settings.value("startMinimized", false).toBool());
+    ui->actionSingleInstanceMode->setChecked(settings.value("singleInstanceMode", true).toBool());
+    connect(ui->actionSingleInstanceMode, &QAction::toggled, [](bool checked) {
+        QSettings settings;
+        settings.setValue("Settings/singleInstanceMode", checked);
+    });
     settings.endGroup();
 }
 
@@ -786,6 +737,7 @@ void MainWindow::writeSettings()
     settings.setValue("minimizeToTheNotificationArea", ui->actionMinimizeToTheNotificationArea->isChecked());
     settings.setValue("minimizeTheApplicationInsteadOfClosing", ui->actionMinimizeTheApplicationInsteadOfClosing->isChecked());
     settings.setValue("startMinimized", ui->actionStartMinimized->isChecked());
+    settings.setValue("singleInstanceMode", ui->actionSingleInstanceMode->isChecked());
     settings.endGroup();
 
     settings.setValue("Profiles/currentIndex", ui->serverList->currentIndex());
@@ -835,20 +787,28 @@ void MainWindow::iconActivated(QSystemTrayIcon::ActivationReason reason)
 
 void MainWindow::on_actionNewProfile_triggered()
 {
+    NewProfileDialog dialog(this);
+    connect(&dialog, &NewProfileDialog::connect,
+            this, &MainWindow::on_connectClicked,
+            Qt::QueuedConnection);
+    if (dialog.exec() != QDialog::Accepted) {
+        return;
+    }
+
+    reload_settings();
+    ui->serverList->setCurrentText(dialog.getNewProfileName());
+}
+
+void MainWindow::on_actionNewProfileAdvanced_triggered()
+{
     // TODO: the new profile has no name yet...
     EditDialog dialog("", this);
     if (dialog.exec() != QDialog::Accepted) {
         return;
     }
 
-    int idx = ui->serverList->currentIndex();
     reload_settings();
-    if (idx < ui->serverList->maxVisibleItems() && idx >= 0) {
-        ui->serverList->setCurrentIndex(idx);
-    } else if (ui->serverList->maxVisibleItems() == 0) {
-        ui->serverList->setCurrentIndex(0);
-    }
-    // LCA: else ???
+    ui->serverList->setCurrentText(dialog.getEditedProfileName());
 }
 
 void MainWindow::on_actionEditSelectedProfile_triggered()
@@ -894,11 +854,12 @@ void MainWindow::on_actionRemoveSelectedProfile_triggered()
 void MainWindow::on_actionAbout_triggered()
 {
     QString txt = QLatin1String("<h2>") + QLatin1String(appDescriptionLong) + QLatin1String("</h2>");
-    txt += tr("Version: ") + QLatin1String("<i>") + QLatin1String(appVersion) + QLatin1String("</i>");
-    txt += tr("<br><br>Based on:");
-    txt += tr("<br>- libopenconnect ") + QLatin1String(openconnect_get_version());
-    txt += tr("<br>- GnuTLS ") + QLatin1String(gnutls_check_version(nullptr));
-    txt += tr("<br>- Qt %1 (%2 bit)").arg(QT_VERSION_STR).arg(QSysInfo::buildCpuArchitecture() == "i386" ? 32 : 64);
+    txt += tr("Version ") + QLatin1String("<i>") + QLatin1String(appVersion) + QLatin1String("</i>");
+    txt += tr("<br><br>Build on ") + QLatin1String("<i>") + QLatin1String(appBuildOn) + QLatin1String("</i>");
+    txt += tr("<br>Based on");
+    txt += tr("<br>- <a href=\"https://www.infradead.org/openconnect\">OpenConnect</a> ") + QLatin1String(openconnect_get_version());
+    txt += tr("<br>- <a href=\"https://www.gnutls.org\">GnuTLS</a> v") + QLatin1String(gnutls_check_version(nullptr));
+    txt += tr("<br>- <a href=\"https://www.qt.io\">Qt</a> v%1 (%2 bit)").arg(QT_VERSION_STR).arg(QSysInfo::buildCpuArchitecture() == "i386" ? 32 : 64);
     txt += tr("<br><br>%1<br>").arg(appCopyright);
     txt += tr("<br><i>%1</i> comes with ABSOLUTELY NO WARRANTY. This is free software, "
               "and you are welcome to redistribute it under the conditions "
@@ -911,4 +872,9 @@ void MainWindow::on_actionAbout_triggered()
 void MainWindow::on_actionAboutQt_triggered()
 {
     qApp->aboutQt();
+}
+
+void MainWindow::on_actionWebSite_triggered()
+{
+    QDesktopServices::openUrl(QUrl("https://openconnect.github.io/openconnect-gui"));
 }

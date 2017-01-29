@@ -1,0 +1,6 @@
+[submodule "src/spdlog"]
+	path = src/spdlog
+	url = https://github.com/gabime/spdlog
+[submodule "src/qt-solutions"]
+	path = src/qt-solutions
+	url = https://github.com/qtproject/qt-solutions.git

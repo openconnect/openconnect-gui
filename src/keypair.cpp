@@ -173,7 +173,7 @@ int KeyPair::key_export(QByteArray& data)
     return key.data_export(data);
 }
 
-const bool KeyPair::is_complete() const
+bool KeyPair::is_complete() const
 {
     if (key.is_ok() == cert.is_ok()) {
         return true;

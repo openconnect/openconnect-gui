@@ -1,9 +1,13 @@
 /*
+ * Auto-generated source code file for 'openconnect-gui'.
+ * See main CMake project file variables if you need to modify the original.
+ *
  * Copyright (C) 2014 Red Hat
+ * Copyright (C) 2017 by Lubomír Carik <Lubomir.Carik@gmail.com>
  *
  * This file is part of openconnect-gui.
  *
- * openconnect-gui is free software: you can redistribute it and/or modify
+ * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 2 of the License, or
  * (at your option) any later version.
@@ -17,32 +21,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#pragma once
+#include "timestamp.h"
 
-#include "cert.h"
-#include "key.h"
-
-class KeyPair {
-public:
-    KeyPair();
-    ~KeyPair();
-
-    /* functions return zero on success */
-    int import_pfx(const QString& File);
-    int import_cert(const QString& File);
-    int import_key(const QString& File);
-    void set_window(QWidget* w);
-
-    int cert_export(QByteArray& data);
-    int key_export(QByteArray& data);
-
-    bool is_complete() const;
-
-    QString last_err;
-
-    Key key;
-    Cert cert;
-
-private:
-    QWidget* w;
-};
+const char* const appBuildOn = "@formattedTimestamp@";
