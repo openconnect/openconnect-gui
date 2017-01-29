@@ -1,6 +1,6 @@
 History of user-visible changes.
 
-## [v1.5.0](https://github.com/openconnect/openconnect-gui/tree/v1.5.0) (unreleased)
+## [v1.5.0](https://github.com/openconnect/openconnect-gui/tree/v1.5.0) (2017-01-29)
 - better Warning message if there is a Name Missmatch (#135)
 - update build scripts to Qt 5.8
 - Initial support for experimental Juniper server (#121, #69)
@@ -13,6 +13,10 @@ History of user-visible changes.
 - friendly windows shutdown behaviour (#100)
 - Change Traffic Light To Yellow When Disconnecting (#105)
 - Re-implemented logging & store log on filesystem (configuration will come in next version) (#111)
+
+Known issues:
+- MacOS DMG installer contain extra/redundant files
+- MacOS crash on log dialog close
 
 [Full Changelog](https://github.com/openconnect/openconnect-gui/compare/v1.4.1...v1.5.0)
 
