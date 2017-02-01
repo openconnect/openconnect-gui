@@ -83,7 +83,6 @@ public slots:
 
     void on_connectClicked();
     void on_disconnectClicked();
-    void on_viewLogButton_clicked();
 
     void closeEvent(QCloseEvent* event) override;
 
@@ -101,6 +100,9 @@ signals:
     void stats_changed_sig(QString, QString, QString);
     void vpn_status_changed_sig(int);
     void timeout(void);
+
+private slots:
+    void createLogDialog();
 
 private:
     static QString normalize_byte_size(uint64_t bytes);
@@ -132,6 +134,4 @@ private:
     QAction* m_minimizeAction;
     QAction* m_restoreAction;
     QAction* m_quitAction;
-
-    QScopedPointer<LogDialog> m_logDialog;
 };
