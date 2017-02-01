@@ -66,6 +66,9 @@ MainWindow::MainWindow(QWidget* parent)
 {
     ui->setupUi(this);
 
+    connect(ui->viewLogButton, &QPushButton::clicked,
+            this, &MainWindow::createLogDialog);
+
     timer = new QTimer(this);
     blink_timer = new QTimer(this);
     this->cmd_fd = INVALID_SOCKET;
@@ -661,29 +664,10 @@ void MainWindow::closeEvent(QCloseEvent* event)
         this->showMinimized();
         event->ignore();
     } else {
-        if (m_logDialog) {
-            m_logDialog->close();
-            m_logDialog.reset();
-        }
-
         event->accept();
         qApp->quit();
     }
     QMainWindow::closeEvent(event);
-}
-
-void MainWindow::on_viewLogButton_clicked()
-{
-    if (!m_logDialog) {
-        m_logDialog.reset(new LogDialog());
-
-        connect(m_logDialog.data(), &LogDialog::finished,
-                [&]() { m_logDialog.reset(); }
-        );
-    }
-    m_logDialog->show();
-    m_logDialog->raise();
-    m_logDialog->activateWindow();
 }
 
 void MainWindow::request_update_stats()
@@ -741,6 +725,33 @@ void MainWindow::writeSettings()
     settings.endGroup();
 
     settings.setValue("Profiles/currentIndex", ui->serverList->currentIndex());
+}
+
+void MainWindow::createLogDialog()
+{
+    auto dialog{new LogDialog()};
+
+    disconnect(ui->viewLogButton, &QPushButton::clicked,
+            this, &MainWindow::createLogDialog);
+
+    connect(ui->viewLogButton, &QPushButton::clicked,
+            dialog, &QDialog::show);
+    connect(ui->viewLogButton, &QPushButton::clicked,
+            dialog, &QDialog::raise);
+    connect(ui->viewLogButton, &QPushButton::clicked,
+            dialog, &QDialog::activateWindow);
+
+    connect(dialog, &QDialog::finished,
+            [this]() {
+        connect(ui->viewLogButton, &QPushButton::clicked,
+                this, &MainWindow::createLogDialog);
+    });
+    connect(dialog, &QDialog::finished,
+            dialog, &QDialog::deleteLater);
+
+    dialog->show();
+    dialog->raise();
+    dialog->activateWindow();
 }
 
 void MainWindow::createTrayIcon()
