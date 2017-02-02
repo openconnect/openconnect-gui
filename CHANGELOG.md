@@ -1,5 +1,13 @@
 History of user-visible changes.
 
+## [v1.5.1](https://github.com/openconnect/openconnect-gui/tree/v1.5.1) (unreleased)
+- Don't show Cisco banner in 'batch mode' (resolve #156)
+- Use other approach to show log dialog to solve crash on macOS
+- new profile dialog layout improved
+
+[Full Changelog](https://github.com/openconnect/openconnect-gui/compare/v1.5.0...v1.5.1)
+
+
 ## [v1.5.0](https://github.com/openconnect/openconnect-gui/tree/v1.5.0) (2017-01-29)
 - better Warning message if there is a Name Missmatch (#135)
 - update build scripts to Qt 5.8
