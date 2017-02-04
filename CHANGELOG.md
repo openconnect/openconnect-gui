@@ -1,9 +1,10 @@
 History of user-visible changes.
 
 ## [v1.5.1](https://github.com/openconnect/openconnect-gui/tree/v1.5.1) (unreleased)
+- Missing second DNS on info tab
 - Don't show Cisco banner in 'batch mode' (resolve #156)
 - Use other approach to show log dialog to solve crash on macOS
-- new profile dialog layout improved
+- new profile dialog layout improved (macOS)
 
 [Full Changelog](https://github.com/openconnect/openconnect-gui/compare/v1.5.0...v1.5.1)
 
