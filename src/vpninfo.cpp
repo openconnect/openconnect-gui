@@ -593,7 +593,7 @@ void VpnInfo::logVpncScriptOutput()
             Logger::instance().addMessage(QLatin1String("Could not remove ") + tfile + ": " + QString::number((int)file.error()));
         }
 
-        if (bannerMessage.isEmpty() == false) {
+        if (ss->get_batch_mode() != true && bannerMessage.isEmpty() == false) {
             // TODO: msgbox title; e.g. Accept/Continue + Disconnect on buttons
             MyMsgBox msgBox(this->m,
                 bannerMessage,
