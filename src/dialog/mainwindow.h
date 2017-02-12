@@ -57,7 +57,7 @@ enum status_t {
 class MainWindow : public QMainWindow {
     Q_OBJECT
 public:
-    explicit MainWindow(QWidget* parent = 0);
+    explicit MainWindow(QWidget* parent = 0, const QString profileName = {});
     ~MainWindow();
 
     void updateStats(const struct oc_stats* stats, QString dtls);

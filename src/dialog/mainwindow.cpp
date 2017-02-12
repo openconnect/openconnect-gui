@@ -60,7 +60,7 @@ extern "C" {
 #define pipe_write(x, y, z) write(x, y, z)
 #endif
 
-MainWindow::MainWindow(QWidget* parent)
+MainWindow::MainWindow(QWidget* parent, const QString profileName)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
 {
@@ -165,6 +165,20 @@ MainWindow::MainWindow(QWidget* parent)
     connect(machine, &QStateMachine::started, [=]() {
         // LCA: find better way to load/fill combobox...
         this->reload_settings();
+
+        if (!profileName.isEmpty()) {
+            // TODO: better place when refactor SM...
+            const int profileIndex = ui->serverList->findText(profileName);
+            if (profileIndex != -1) {
+                ui->serverList->setCurrentIndex(profileIndex);
+                emit on_connectClicked();
+                return;
+            } else {
+                QMessageBox::warning(this,
+                                     tr("Connection failed"),
+                                     tr("Selected VPN profile '<b>%1</b>' does not exists.").arg(profileName));
+            }
+        }
 
         QSettings settings;
         const int currentIndex = settings.value("Profiles/currentIndex", -1).toInt();
