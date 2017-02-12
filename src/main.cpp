@@ -37,6 +37,7 @@ extern "C" {
 #include <QMessageBox>
 #endif
 #include <QSettings>
+#include <QCommandLineParser>
 #include <QtSingleApplication>
 
 #ifdef __MACH__
@@ -174,7 +175,24 @@ int main(int argc, char* argv[])
 #endif
     openconnect_init_ssl();
 
-    MainWindow mainWindow;
+    QCommandLineParser parser;
+    parser.setApplicationDescription(
+                QObject::tr("OpenConnect is a VPN client, that utilizes TLS and DTLS "
+                            "for secure session establishment, and is compatible "
+                            "with the CISCO AnyConnect SSL VPN protocol."));
+    parser.addHelpOption();
+    parser.addVersionOption();
+    parser.addOption({
+                         {"s", "server"},
+                         QObject::tr("auto-connect to existing profile <name>"),
+                         QObject::tr("name")
+
+                     });
+
+    parser.process(app);
+
+    const QString profileName{parser.value(QLatin1String("server"))};
+    MainWindow mainWindow(nullptr, profileName);
     app.setActivationWindow(&mainWindow);
 #ifdef PROJ_PKCS11
     gnutls_pkcs11_set_pin_function(pin_callback, &mainWindow);
