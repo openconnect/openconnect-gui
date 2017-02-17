@@ -1,15 +1,4 @@
 
-add_subdirectory(spdlog)
-
-add_definitions(-DUNICODE)
-include_directories(SYSTEM ${CMAKE_SOURCE_DIR}/src/qt-solutions/qtsingleapplication/src)
-set(${PROJECT_NAME}_SingleApplication_SRC
-    qt-solutions/qtsingleapplication/src/qtsingleapplication.cpp
-    qt-solutions/qtsingleapplication/src/qtsingleapplication.h
-    qt-solutions/qtsingleapplication/src/qtlocalpeer.cpp
-    qt-solutions/qtsingleapplication/src/qtlocalpeer.h
-)
-
 set(${PROJECT_NAME}_SRCS
     ${PROJECT_NAME}.cpp
     ${PROJECT_NAME}.h
@@ -61,18 +50,10 @@ set(${PROJECT_NAME}_SRCS
     FileLogger.cpp
     FileLogger.h
 )
+
 set_source_files_properties(
     ${PROJECT_NAME}.cpp
-    PROPERTIES
-        GENERATED true
-)
-set_source_files_properties(
     timestamp.cpp
-    PROPERTIES
-        GENERATED true
-)
-set_source_files_properties(
-   ${PROJECT_NAME}.rc
     PROPERTIES
         GENERATED true
 )
@@ -83,10 +64,16 @@ configure_file(
     @ONLY
 )
 
-if(WIN32 AND MINGW)
+if(MINGW)
     list(APPEND ${PROJECT_NAME}_RESOURCES
         ${PROJECT_NAME}.rc.in
         ${PROJECT_NAME}.rc
+    )
+
+    set_source_files_properties(
+       ${PROJECT_NAME}.rc
+        PROPERTIES
+            GENERATED true
     )
 endif()
 if(APPLE)
@@ -104,16 +91,48 @@ endif()
 add_executable(${PROJECT_NAME}
     ${${PROJECT_NAME}_SRCS}
     ${${PROJECT_NAME}_RESOURCES}
-
-    # TODO: introduce CMake support in 'SingleApplication' library
-    ${${PROJECT_NAME}_SingleApplication_SRC}
-    ${${PROJECT_NAME}_SingleApplication_HDRS}
 )
-if(WIN32 AND MINGW)
+
+add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_SOURCE_DIR}/external/vpnc-script.js $<TARGET_FILE_DIR:${PROJECT_NAME}>
+    COMMENT "Deploying vpnc script..." 
+    VERBATIM
+)
+if(MINGW)
+    add_dependencies(${PROJECT_NAME}
+        openconnect-devel-${openconnect-TAG}
+        openconnect-${openconnect-TAG}
+        vpnc-scripts-${vpnc-scripts-TAG}
+        qt-solutions-${qt-solutions-TAG}
+
+        spdlog-${spdlog-TAG}
+    )
+
     set_target_properties(${PROJECT_NAME} PROPERTIES
         WIN32_EXECUTABLE true
     )
+
+    target_link_libraries (${PROJECT_NAME}
+        # system libraries
+        wsock32
+
+        # 3rd party dependencies
+        libgmp
+        libgnutls
+        libhogweed
+        libnettle
+        libopenconnect
+        libp11-kit
+        libstoken
+        libxml2
+        
+        libopenconnect
+        
+        qtsingleapplication
+    )
+    include_directories(SYSTEM ${CMAKE_BINARY_DIR}/external/src/qt-solutions/qtsingleapplication/src)
 endif()
+
 if(APPLE)
     set_target_properties(${PROJECT_NAME} PROPERTIES
         MACOSX_BUNDLE true
@@ -128,33 +147,18 @@ if(APPLE)
     )
 endif()
 
-target_link_libraries (${PROJECT_NAME}
-    spdlog
 
-    ${${PROJECT_NAME}_qtsingleapplication}
+# common stuff to link...
+target_link_libraries (${PROJECT_NAME}
+    spdlog::spdlog
 
     Qt5::Core
     Qt5::Gui
     Qt5::Widgets
     Qt5::Network
 )
-if(WIN32 AND MINGW)
-    target_link_libraries (${PROJECT_NAME}
-        # system libraries
-        wsock32
 
-        # 3rd party libraries
-        libgmp.dll.a
-        libgnutls.dll.a
-        libhogweed.dll.a
-        libnettle.dll.a
-        libopenconnect.dll.a
-        libp11-kit.dll.a
-        libstoken.dll.a
-        libxml2.dll.a
-        libz.dll.a
-    )
-endif()
+
 if(UNIX)
     target_link_libraries(${PROJECT_NAME}
         ${OPENCONNECT_LIBRARIES}
@@ -182,7 +186,7 @@ list(APPEND libSearchDirs ${QT_LIBRARY_DIR})
 
 if(WIN32 AND MINGW)
     set(APPS "\${CMAKE_INSTALL_PREFIX}/${PROJECT_NAME}.exe")
-    list(APPEND libSearchDirs ${CMAKE_SOURCE_DIR}/nsis)
+    list(APPEND libSearchDirs ${CMAKE_SOURCE_DIR}/external/lib)
 
     # Qt Platform Plugin
     install(FILES
@@ -215,6 +219,7 @@ elseif(APPLE)
 
     set(additionalLib \${CMAKE_INSTALL_PREFIX}/${PROJECT_NAME}.app/Contents/PlugIns/platforms/libqcocoa.dylib)
 else()
+    # FIXME: we don't want this...
     message(FATAL_ERROR "XXX: only mingw and apple build supported yet")
 endif()
 

@@ -17,8 +17,7 @@ build-release*/
 _xxx/
 *.zip
 
-# openconnect 3rd party artifacts
-/include
-/lib
-/nsis/*.dll
-/nsis/openconnect.exe
+# 3rd party artifacts
+/external/include/
+/external/lib/
+/external/*.js
