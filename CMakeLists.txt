@@ -75,7 +75,7 @@ if(WIN32 AND MINGW)
     include_directories(SYSTEM ${CMAKE_SOURCE_DIR}/include)
     link_directories(SYSTEM ${CMAKE_SOURCE_DIR}/lib)
 else()
-    find_package(GnuTLS)
+    find_package(GnuTLS REQUIRED)
     include_directories(SYSTEM ${GNUTLS_INCLUDE_DIR})
 
     find_package(OpenConnect REQUIRED)
