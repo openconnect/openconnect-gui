@@ -1,0 +1,42 @@
+cmake_minimum_required(VERSION 3.5 FATAL_ERROR)
+
+project(qtsingleapplication
+    LANGUAGES CXX
+)
+
+set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTOUIC ON)
+set(CMAKE_AUTORCC ON)
+
+find_package(Qt5 5.6 REQUIRED COMPONENTS Core Gui Widgets Network)
+
+add_definitions(-DUNICODE)
+add_library(qtsingleapplication STATIC
+    qtsingleapplication/src/qtsingleapplication.cpp
+    qtsingleapplication/src/qtsingleapplication.h
+    qtsingleapplication/src/qtlocalpeer.cpp
+)
+
+target_link_libraries(qtsingleapplication
+    Qt5::Core
+    Qt5::Gui
+    Qt5::Widgets
+    Qt5::Network
+)
+
+install(TARGETS qtsingleapplication
+    DESTINATION lib
+)
+install(
+    FILES
+        qtsingleapplication/src/qtlocalpeer.h
+        qtsingleapplication/src/qtlockedfile.h
+        qtsingleapplication/src/qtsingleapplication.h
+        qtsingleapplication/src/qtsinglecoreapplication.h
+        qtsingleapplication/src/QtLockedFile
+        qtsingleapplication/src/QtSingleApplication
+    DESTINATION include
+)
