@@ -21,10 +21,6 @@
 
 #include "common.h"
 
-extern "C" {
-#include <openconnect.h>
-}
-
 #include <QCoreApplication>
 #include <QFutureWatcher>
 #include <QMainWindow>
@@ -40,6 +36,10 @@ extern "C" {
 #else
 #include <winsock2.h>
 #endif
+
+extern "C" {
+#include <openconnect.h>
+}
 
 class LogDialog;
 class QStateMachine;
