@@ -125,12 +125,7 @@ if(MINGW)
         libp11-kit
         libstoken
         libxml2
-        
-        libopenconnect
-        
-        qtsingleapplication
     )
-    include_directories(SYSTEM ${CMAKE_BINARY_DIR}/external/src/qt-solutions/qtsingleapplication/src)
 endif()
 
 if(APPLE)
@@ -151,6 +146,7 @@ endif()
 # common stuff to link...
 target_link_libraries (${PROJECT_NAME}
     spdlog::spdlog
+    qtsingleapplication
 
     Qt5::Core
     Qt5::Gui

@@ -130,34 +130,23 @@ set_target_properties(spdlog::spdlog PROPERTIES
 # --------------------------------------------------------------------------------------------------
 ExternalProject_Add(qt-solutions-${qt-solutions-TAG}
     PREFIX ${CMAKE_BINARY_DIR}/external/
-    #DOWNLOAD_DIR ${CMAKE_BINARY_DIR}/download
-    #SOURCE_DIR ${CMAKE_BINARY_DIR}/external
-    
-    ##INSTALL_DIR ${CMAKE_BINARY_DIR}/external
-    ##CMAKE_ARGS -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR> -DSPDLOG_BUILD_TESTING=off
+    INSTALL_DIR ${CMAKE_SOURCE_DIR}/external
+    CMAKE_ARGS -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
     
     UPDATE_DISCONNECTED 0
     UPDATE_COMMAND ""
     
-    #DOWNLOAD_NO_PROGRESS 1
-    
-    #GIT_REPOSITORY https://github.com/qtproject/qt-solutions.git
     GIT_REPOSITORY https://code.qt.io/qt-solutions/qt-solutions.git
     GIT_TAG ${qt-solutions-TAG}
     GIT_SHALLOW 1
     
     BUILD_IN_SOURCE 1
-    
-    #SOURCE_SUBDIR qtsingleapplication
-    #SOURCE_DIR ${CMAKE_BINARY_DIR}/external/src/qt-solutions/qtsingleapplication/qtsingleapplication
-    #CONFIGURE_COMMAND configure -library
-    #CONFIGURE_COMMAND qmake qtsingleapplication/qtsingleapplication.pro PREFIX=${CMAKE_SOURCE_DIR}/external
-    CONFIGURE_COMMAND ""#cd qtsingleapplication && configure.bat -library && qmake qtsingleapplication.pro
-   
-    BUILD_COMMAND ""#cd qtsingleapplication && mingw32-make
-    INSTALL_COMMAND ""#cd qtsingleapplication && mingw32-make install
+        
+    PATCH_COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_SOURCE_DIR}/external/CMakeLists_qt-solutions.txt ${CMAKE_BINARY_DIR}/external/src/qt-solutions-master/CMakeLists.txt
+    #CONFIGURE_COMMAND ""
+    #BUILD_COMMAND ""
+    #INSTALL_COMMAND ""
 )
-
 
 
 
@@ -167,39 +156,21 @@ ExternalProject_Add(qt-solutions-${qt-solutions-TAG}
 # --------------------------------------------------------------------------------------------------
 ExternalProject_Add(vpnc-scripts-${vpnc-scripts-TAG}
     PREFIX ${CMAKE_BINARY_DIR}/external/
-    #DOWNLOAD_DIR ${CMAKE_BINARY_DIR}/download
-    #SOURCE_DIR ${CMAKE_BINARY_DIR}/external
-    
-    ##INSTALL_DIR ${CMAKE_BINARY_DIR}/external
-    ##CMAKE_ARGS -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR> -DSPDLOG_BUILD_TESTING=off
-    
+
     UPDATE_DISCONNECTED 0
     UPDATE_COMMAND ""
-    
-    #DOWNLOAD_NO_PROGRESS 1
-    
-    #GIT_REPOSITORY https://github.com/qtproject/qt-solutions.git
+
     GIT_REPOSITORY git://git.infradead.org/users/dwmw2/vpnc-scripts.git
     GIT_TAG ${vpnc-scripts-TAG}
     GIT_SHALLOW 1
     
     BUILD_IN_SOURCE 1
-    
-    #SOURCE_SUBDIR qtsingleapplication
-    #SOURCE_DIR ${CMAKE_BINARY_DIR}/external/src/qt-solutions/qtsingleapplication/qtsingleapplication
-    #CONFIGURE_COMMAND configure -library
-    #CONFIGURE_COMMAND qmake qtsingleapplication/qtsingleapplication.pro PREFIX=${CMAKE_SOURCE_DIR}/external
+
     CONFIGURE_COMMAND ""
-   
     BUILD_COMMAND ""
     INSTALL_COMMAND ${CMAKE_COMMAND} -E copy_if_different vpnc-script-win.js ${CMAKE_SOURCE_DIR}/external/vpnc-script.js
 )
-#ExternalProject_Add_Step(openconnect-devel-${openconnect-TAG} deploy_headers
-#    COMMAND ${CMAKE_COMMAND} -E copy_directory include <INSTALL_DIR>/include
-#    COMMENT "...deploing openconnect-${openconnect-TAG} headers"
-#    WORKING_DIRECTORY <SOURCE_DIR>
-#    DEPENDEES install
-#)
+
 
 # --------------------------------------------------------------------------------------------------
 # tap-windows drivers
