@@ -42,7 +42,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 add_compile_options("-Wall")
 add_compile_options("-Wextra")
-add_compile_options("-pedantic")
+add_compile_options("-Wpedantic")
 #add_compile_options("-Weffc++")
 #add_compile_options("-Werror")
 
