@@ -25,6 +25,9 @@ set PATH="C:\Program Files\CMake\bin";%PATH%
 echo Setting up environment for 7z usage...
 set PATH="C:\Program Files\7-Zip\";%PATH%
 
+echo Setting up environment for 'Ninja' usage...
+set PATH="C:\Dev\";%PATH%
+
 echo Setting up environment for 'clang' usage...
 set PATH="C:\Dev\LLVM\bin\";%PATH%
 
