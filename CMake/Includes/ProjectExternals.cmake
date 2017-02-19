@@ -3,6 +3,7 @@ set(vpnc-scripts-TAG master)
 #set(spdlog-TAG v0.11.0)
 set(spdlog-TAG master)
 set(qt-solutions-TAG master)
+set(tap-driver-TAG 9.21.2)
 
 
 include(ExternalProject)
@@ -199,3 +200,25 @@ ExternalProject_Add(vpnc-scripts-${vpnc-scripts-TAG}
 #    WORKING_DIRECTORY <SOURCE_DIR>
 #    DEPENDEES install
 #)
+
+# --------------------------------------------------------------------------------------------------
+# tap-windows drivers
+# --------------------------------------------------------------------------------------------------
+ExternalProject_Add(tap-windows
+    PREFIX ${CMAKE_BINARY_DIR}/external
+    INSTALL_DIR ${CMAKE_SOURCE_DIR}/external
+    
+    UPDATE_DISCONNECTED 0
+    UPDATE_COMMAND ""
+
+    DOWNLOAD_NO_PROGRESS 1
+    DOWNLOAD_NO_EXTRACT 1
+
+    URL https://swupdate.openvpn.org/community/releases/tap-windows-${tap-driver-TAG}.exe
+
+    BUILD_IN_SOURCE 1
+
+    CONFIGURE_COMMAND ""
+    BUILD_COMMAND ""
+    INSTALL_COMMAND ${CMAKE_COMMAND} -E copy_if_different <DOWNLOADED_FILE> ${CMAKE_SOURCE_DIR}/external/tap-windows.exe
+)
