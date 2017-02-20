@@ -5,8 +5,7 @@
 The client is currently at beta testing phase.
 
 ***
- * [Download for Windows](https://github.com/openconnect/openconnect-gui/releases)
- * [Download for MacOSX](https://github.com/openconnect/openconnect-gui/wiki/MacOSX)
+ * [Download](https://github.com/openconnect/openconnect-gui/releases)
  * [Issue tracker](https://github.com/openconnect/openconnect-gui/issues)
  * [Frequently Asked Questions](https://github.com/openconnect/openconnect-gui/wiki/FAQ)
 
@@ -39,6 +38,7 @@ The client is currently at beta testing phase.
 
 ***
 ## Other OpenConnect clients
+
 OpenConnect is available in almost every platform.
 * [Portable command line](http://www.infradead.org/openconnect): The "main" OpenConnect client, that the gui client is based on. Runs almost everywhere.
 * [Gnome](https://wiki.gnome.org/Projects/NetworkManager/): Through the Network Manager.
