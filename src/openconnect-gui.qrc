@@ -8,11 +8,11 @@
         <file>images/traffic_light_green.png</file>
         <file>images/traffic_light_red.png</file>
         <file>images/traffic_light_yellow.png</file>
-        <file>images/mono_lock.png</file>
         <file>images/traffic_light_off.png</file>
         <file>images/network-connected.png</file>
         <file>images/network-disconnected.png</file>
         <file>images/profiles.png</file>
         <file>images/text-new.png</file>
+        <file>Resources/mono_lock.png</file>
     </qresource>
 </RCC>
