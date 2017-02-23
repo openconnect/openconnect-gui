@@ -91,11 +91,11 @@ if(WIN32 AND MINGW)
 endif()
 if(APPLE)
     list(APPEND ${PROJECT_NAME}_RESOURCES
-        images/mono_lock.icns
+        Resources/mono_lock.icns
         ${OPENCONNECT_VPNC_SCRIPT}
     )
     set_source_files_properties(
-        images/mono_lock.icns
+        Resources/mono_lock.icns
         ${OPENCONNECT_VPNC_SCRIPT}
         PROPERTIES MACOSX_PACKAGE_LOCATION Resources
     )
@@ -115,9 +115,15 @@ if(WIN32 AND MINGW)
     )
 endif()
 if(APPLE)
+    configure_file(
+        ${CMAKE_CURRENT_SOURCE_DIR}/Resources/${PROJECT_NAME}.plist.in
+        ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.plist
+        @ONLY
+    )
     set_target_properties(${PROJECT_NAME} PROPERTIES
         MACOSX_BUNDLE true
         OUTPUT_NAME ${PRODUCT_NAME_SHORT}
+        MACOSX_BUNDLE_INFO_PLIST "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.plist"
         MACOSX_BUNDLE_BUNDLE_NAME ${PRODUCT_NAME_SHORT}
         MACOSX_BUNDLE_BUNDLE_VERSION "1.0.0"
         MACOSX_BUNDLE_COPYRIGHT "${PRODUCT_NAME_COPYRIGHT_SHORT}"
