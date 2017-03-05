@@ -8,12 +8,19 @@ This is target platform for the product.
     - 5.8/MinGW 5.3.0 (32-bit)
     - Tools/MinGW 5.3.0 component
     - Tools/QtCreator component
-- [OpenConnect 7.08 for MinGW32] (https://github.com/horar/openconnect/releases/tag/v7.08)
-- [spdlog 0.11.0](https://github.com/gabime/spdlog) ... as Git-submodule
-- [qt-solutions] (https://github.com/qtproject/qt-solutions.git) ... as Git-submodule
 - [NSIS 3.0+](http://nsis.sourceforge.net/Main_Page)
 - [CMake 3.6+](https://cmake.org/)
 - [Git 2.7+](https://git-scm.com/)
+
+##### Externals
+
+These project will by downloaded automatically by CMake.
+
+- [OpenConnect 7.08 for MinGW32](https://github.com/horar/openconnect/releases/tag/v7.08)
+- [TAP-windoes 9.21.2](https://openvpn.net/index.php/open-source/downloads.html)
+- [spdlog 0.12.0](https://github.com/gabime/spdlog)
+- [qt-solutions](https://github.com/qtproject/qt-solutions.git)
+
 
 #### GNU/Linux
 ##### Fedora 25 (MinGW)
@@ -29,6 +36,7 @@ This is not main target platform, because openconnect is used by other projects 
     sudo dnf install cmake
     sudo dnf install qt5-qtbase-devel
     sudo dnf install gnutls-devel openconnect-devel
+    ~~sudo dnf install spdlog-devel~~
 
 #### MacOS
 - MacOS 10.12+

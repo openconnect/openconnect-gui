@@ -1,4 +1,4 @@
-include(InstallRequiredSystemLibraries)
+#include(InstallRequiredSystemLibraries)
 
 # common CPacke variables
 set(CPACK_PACKAGE_NAME ${PROJECT_NAME})
@@ -17,7 +17,11 @@ set(CPACK_RESOURCE_FILE_LICENSE ${CMAKE_CURRENT_SOURCE_DIR}/LICENSE.txt)
 #set(CPACK_RESOURCE_FILE_README ...)
 #set(CPACK_RESOURCE_FILE_WELCOME ...)
 if(WIN32 AND MINGW)
-    set(CPACK_GENERATOR "NSIS")
+    if(CMAKE_CROSSCOMPILING AND MINGW)
+        set(CPACK_GENERATOR "ZIP")
+    else()
+        set(CPACK_GENERATOR "NSIS")
+    endif()
 
     set(CPACK_NSIS_INSTALLED_ICON_NAME "${PROJECT_NAME}.exe")
     set(CPACK_NSIS_DISPLAY_NAME "${CPACK_PACKAGE_INSTALL_DIRECTORY}")
