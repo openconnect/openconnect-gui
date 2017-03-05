@@ -1,4 +1,4 @@
-find_program(CLANG_FORMAT clang-format)
+find_program(CLANG_FORMAT NAMES clang-format)
 if(CLANG_FORMAT)
     file(GLOB_RECURSE ALL_SOURCE_FILES *.cpp *.h)
     set(PROJECT_TRDPARTY_DIR ${PROJECT_SOURCE_DIR}/include)
@@ -12,5 +12,6 @@ if(CLANG_FORMAT)
     add_custom_target(clang-format
         COMMAND ${CLANG_FORMAT} -i ${ALL_SOURCE_FILES}
     )
+else()
+    message(STATUS " -----> clang-format nout found...")
 endif()
-

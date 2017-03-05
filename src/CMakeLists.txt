@@ -84,7 +84,7 @@ if(APPLE)
     set_source_files_properties(
         images/mono_lock.icns
         ${OPENCONNECT_VPNC_SCRIPT}
-        PROPERTIES MACOSX_PACKAGE_LOCATION Resources
+            PROPERTIES MACOSX_PACKAGE_LOCATION Resources
     )
 endif()
 
@@ -92,13 +92,13 @@ add_executable(${PROJECT_NAME}
     ${${PROJECT_NAME}_SRCS}
     ${${PROJECT_NAME}_RESOURCES}
 )
-
-add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_SOURCE_DIR}/external/vpnc-script.js $<TARGET_FILE_DIR:${PROJECT_NAME}>
-    COMMENT "Deploying vpnc script..." 
-    VERBATIM
-)
 if(MINGW)
+    add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_BINARY_DIR}/external/vpnc-script.js $<TARGET_FILE_DIR:${PROJECT_NAME}>
+        COMMENT "Deploying vpnc script..." 
+        VERBATIM
+    )
+
     add_dependencies(${PROJECT_NAME}
         openconnect-devel-${openconnect-TAG}
         openconnect-${openconnect-TAG}
@@ -117,14 +117,14 @@ if(MINGW)
         wsock32
 
         # 3rd party dependencies
-        libgmp
-        libgnutls
-        libhogweed
-        libnettle
-        libopenconnect
-        libp11-kit
-        libstoken
-        libxml2
+        openconnect::gmp
+        openconnect::gnutls
+        openconnect::hogweed
+        openconnect::nettle
+        openconnect::openconnect
+        openconnect::p11-kit
+        openconnect::stoken
+        openconnect::xml2
     )
 endif()
 
@@ -146,7 +146,7 @@ endif()
 # common stuff to link...
 target_link_libraries (${PROJECT_NAME}
     spdlog::spdlog
-    qtsingleapplication
+    qt-solutions::qtsingleapplication
 
     Qt5::Core
     Qt5::Gui
@@ -154,11 +154,12 @@ target_link_libraries (${PROJECT_NAME}
     Qt5::Network
 )
 
-
 if(UNIX)
     target_link_libraries(${PROJECT_NAME}
         ${OPENCONNECT_LIBRARIES}
         ${GNUTLS_LIBRARY}
+        
+        Threads::Threads
     )
     if(APPLE)
         target_link_libraries (${PROJECT_NAME}
@@ -180,9 +181,10 @@ get_filename_component(QT_LIBRARY_DIR ${QT_LIBRARY_DIR} PATH)
 get_filename_component(QT_LIBRARY_DIR "${QT_LIBRARY_DIR}/.." ABSOLUTE)
 list(APPEND libSearchDirs ${QT_LIBRARY_DIR})
 
-if(WIN32 AND MINGW)
+if(MINGW)
     set(APPS "\${CMAKE_INSTALL_PREFIX}/${PROJECT_NAME}.exe")
-    list(APPEND libSearchDirs ${CMAKE_SOURCE_DIR}/external/lib)
+    #set(APPS "\${CMAKE_INSTALL_PREFIX}/./${PROJECT_NAME}.exe")
+    list(APPEND libSearchDirs ${CMAKE_BINARY_DIR}/external/lib)
 
     # Qt Platform Plugin
     install(FILES
@@ -215,8 +217,7 @@ elseif(APPLE)
 
     set(additionalLib \${CMAKE_INSTALL_PREFIX}/${PROJECT_NAME}.app/Contents/PlugIns/platforms/libqcocoa.dylib)
 else()
-    # FIXME: we don't want this...
-    message(FATAL_ERROR "XXX: only mingw and apple build supported yet")
+    message(STATUS "Nothing to bundle...")
 endif()
 
 install(CODE "
