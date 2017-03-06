@@ -126,6 +126,11 @@ int pin_callback(void* userdata, int attempt, const char* token_url,
 
 int main(int argc, char* argv[])
 {
+#if !defined(Q_OS_MACOS)
+    QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
+#endif
+    QApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
+
     qRegisterMetaType<Logger::Message>();
 
 #ifdef PROJ_INI_SETTINGS
