@@ -13,7 +13,7 @@ endif()
 
 # macOS & GNU/Linux dependencies
 if(UNIX)
-    find_package(GnuTLS)
+    find_package(GnuTLS REQUIRED)
     if(GNUTLS_FOUND)
         message(STATUS "Library 'GnuTLS' found at ${GNUTLS_LIBRARIES}")
     include_directories(SYSTEM ${GNUTLS_INCLUDE_DIR})
