@@ -33,8 +33,9 @@ Just try install following packages:
 ##### Fedora 25
 This is not main target platform, because openconnect is used by other projects integrated into desktop environments. On the other side - the minimum of required packages to build this GUI should be installed by following commands:
 
+    sudo dnf install git gitflow
     sudo dnf install cmake
-    sudo dnf install qt5-qtbase-devel
+    sudo dnf install qt5-qtbase-devel gcc-c++
     sudo dnf install gnutls-devel openconnect-devel
     ~~sudo dnf install spdlog-devel~~
 
