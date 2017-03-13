@@ -15,7 +15,6 @@ Look to [OpenConnect-GUI](http://openconnect.github.io/openconnect-gui/) project
 - [Software requirements](docs/sw_requirements.md)
 - [Development with QtCreator](docs/dev_QtCreator.md)
 - [Command line compilation](docs/dev_commandLine.md)
-- [Known build issues](docs/known_build_issues.md)
 
 ## Other
 - [Creating release package](docs/release.md)
