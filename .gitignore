@@ -6,9 +6,6 @@
 /*.pro.user
 /CMakeLists.txt.user
 
-# in source generate files
-/src/scm_version.cmake
-
 # temporary build folder
 build-release*/
 
@@ -16,9 +13,3 @@ build-release*/
 # temporary...
 _xxx/
 *.zip
-
-# openconnect 3rd party artifacts
-/include
-/lib
-/nsis/*.dll
-/nsis/openconnect.exe
