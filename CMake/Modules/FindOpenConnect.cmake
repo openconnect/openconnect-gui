@@ -30,14 +30,25 @@ if(NOT WIN32)
 			NAMES openconnect
 		)
 		if(OPENCONNECT_EXECUTABLE)
-			execute_process(
-				COMMAND ${OPENCONNECT_EXECUTABLE} -help
-				OUTPUT_VARIABLE output
-				ERROR_VARIABLE output
-			)
-			string(REGEX MATCH "default: \".*\"" vpnc-script-location "${output}")
-			string(REPLACE "default: " "" vpnc-script-location ${vpnc-script-location})
-			string(REPLACE "\"" "" OPENCONNECT_VPNC_SCRIPT ${vpnc-script-location})
+			if(APPLE)
+				# Homebrew custom openconnect (bottle) installation
+				execute_process(
+					COMMAND dirname ${OPENCONNECT_EXECUTABLE}
+					OUTPUT_VARIABLE output
+					ERROR_VARIABLE output
+				)
+				string(STRIP ${output} output)
+				set(OPENCONNECT_VPNC_SCRIPT "${output}/../etc/vpnc-script")
+			else()
+				execute_process(
+					COMMAND ${OPENCONNECT_EXECUTABLE} -help
+					OUTPUT_VARIABLE output
+					ERROR_VARIABLE output
+				)
+				string(REGEX MATCH "default: \".*\"" vpnc-script-location "${output}")
+				string(REPLACE "default: " "" vpnc-script-location ${vpnc-script-location})
+				string(REPLACE "\"" "" OPENCONNECT_VPNC_SCRIPT ${vpnc-script-location})
+			endif()
 		endif()
 	endif()
 endif(NOT WIN32)
