@@ -1,5 +1,11 @@
 History of user-visible changes.
 
+## [v1.5.2](https://github.com/openconnect/openconnect-gui/tree/v1.5.2) (unreleased)
+- unicode windows home folder name support (#168)
+
+[Full Changelog](https://github.com/openconnect/openconnect-gui/compare/v1.5.1...v1.5.2)
+
+
 ## [v1.5.1](https://github.com/openconnect/openconnect-gui/tree/v1.5.1) (2017-02-11)
 - Missing second DNS on info tab
 - Don't show Cisco banner in 'batch mode' (resolve #156)
