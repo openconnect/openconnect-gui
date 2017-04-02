@@ -126,6 +126,8 @@ int pin_callback(void* userdata, int attempt, const char* token_url,
 
 int main(int argc, char* argv[])
 {
+    qputenv("LOG2FILE", "1");
+
 #if !defined(Q_OS_MACOS)
     QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
 #endif

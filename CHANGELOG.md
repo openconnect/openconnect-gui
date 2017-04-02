@@ -1,6 +1,7 @@
 History of user-visible changes.
 
 ## [v1.5.2](https://github.com/openconnect/openconnect-gui/tree/v1.5.2) (unreleased)
+- support for non-english interface names (resolve #145)
 - unicode windows home folder name support (#168)
 
 [Full Changelog](https://github.com/openconnect/openconnect-gui/compare/v1.5.1...v1.5.2)
