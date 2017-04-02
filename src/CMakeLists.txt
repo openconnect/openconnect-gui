@@ -93,9 +93,11 @@ add_executable(${PROJECT_NAME}
     ${${PROJECT_NAME}_RESOURCES}
 )
 if(MINGW)
+    add_definitions(-DSPDLOG_WCHAR_FILENAMES)
+
     add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_BINARY_DIR}/external/vpnc-script.js $<TARGET_FILE_DIR:${PROJECT_NAME}>
-        COMMENT "Deploying vpnc script..." 
+        COMMENT "Deploying vpnc script..."
         VERBATIM
     )
 
@@ -165,7 +167,7 @@ if(UNIX)
     target_link_libraries(${PROJECT_NAME}
         ${OPENCONNECT_LIBRARIES}
         ${GNUTLS_LIBRARY}
-        
+
         Threads::Threads
     )
     if(APPLE)
