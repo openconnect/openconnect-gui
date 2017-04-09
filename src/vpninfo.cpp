@@ -348,6 +348,23 @@ static int unlock_token_vfn(void* privdata, const char* newtok)
     return 0;
 }
 
+static void setup_tun_vfn(void *privdata)
+{
+    VpnInfo* vpn = static_cast<VpnInfo*>(privdata);
+
+    QByteArray vpncScriptFullPath;
+    vpncScriptFullPath.append(QCoreApplication::applicationDirPath());
+    vpncScriptFullPath.append(QDir::separator());
+    vpncScriptFullPath.append(DEFAULT_VPNC_SCRIPT);
+    int ret = openconnect_setup_tun_device(vpn->vpninfo, vpncScriptFullPath.constData(), NULL);
+    if (ret != 0) {
+        vpn->last_err = QObject::tr("Error setting up the TUN device");
+//FIXME: ???        return ret;
+    }
+
+    vpn->logVpncScriptOutput();
+}
+
 static inline int set_sock_block(int fd)
 {
 #ifdef _WIN32
@@ -389,6 +406,8 @@ VpnInfo::VpnInfo(QString name, StoredServer* ss, MainWindow* m)
     }
 
     openconnect_set_protocol(vpninfo, ss->get_protocol());
+
+    openconnect_set_setup_tun_handler(vpninfo, setup_tun_vfn);
 }
 
 VpnInfo::~VpnInfo()
@@ -455,17 +474,6 @@ int VpnInfo::connect()
         return ret;
     }
 
-    QByteArray vpncScriptFullPath;
-    vpncScriptFullPath.append(QCoreApplication::applicationDirPath());
-    vpncScriptFullPath.append(QDir::separator());
-    vpncScriptFullPath.append(DEFAULT_VPNC_SCRIPT);
-    ret = openconnect_setup_tun_device(vpninfo, vpncScriptFullPath.constData(), NULL);
-    if (ret != 0) {
-        this->last_err = QObject::tr("Error setting up the TUN device");
-        return ret;
-    }
-
-    logVpncScriptOutput();
     return 0;
 }
 

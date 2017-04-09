@@ -56,8 +56,7 @@ public:
     unsigned int form_attempt;
     unsigned int form_pass_attempt;
 
-private:
     void logVpncScriptOutput();
-
+private:
     SOCKET cmd_fd;
 };
