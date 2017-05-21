@@ -159,9 +159,6 @@ int main(int argc, char* argv[])
     app.setApplicationDisplayName(appDescriptionLong);
     app.setQuitOnLastWindowClosed(false);
 
-    auto fileLog = std::make_unique<FileLogger>();
-    Logger::instance().addMessage(QString("%1 (%2) logging started...").arg(app.applicationDisplayName()).arg(app.applicationVersion()));
-
 #ifdef Q_OS_MACOS
     if (geteuid() != 0) {
         if (relaunch_as_root()) {
@@ -176,6 +173,9 @@ int main(int argc, char* argv[])
         exit -1;
     }
 #endif
+
+    auto fileLog = std::make_unique<FileLogger>();
+    Logger::instance().addMessage(QString("%1 (%2) logging started...").arg(app.applicationDisplayName()).arg(app.applicationVersion()));
 
     gnutls_global_init();
 #ifndef _WIN32
