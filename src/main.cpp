@@ -170,7 +170,7 @@ int main(int argc, char* argv[])
         msgBox.setText(QObject::tr("This program requires root privileges to fully function."));
         msgBox.setInformativeText(QObject::tr("VPN connection establishment would fail."));
         msgBox.exec();
-        exit -1;
+        return -1;
     }
 #endif
 
