@@ -30,7 +30,7 @@ function echo(msg) {
 
 function exec(cmd) {
 	log.WriteLine("<<-- [EXEC] " + cmd);
-	var oExec = ws.Exec(comspec + " /c \"" + cmd + "\" 2>&1");
+	var oExec = ws.Exec(comspec + " /c \"mode con cp select=1250 > nul && " + cmd + "\" 2>&1");
 	var ret = oExec.Status;
     
 	var s = oExec.StdOut.ReadAll();
