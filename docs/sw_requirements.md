@@ -19,7 +19,7 @@ These project will by downloaded automatically by CMake.
 
 - [OpenConnect 7.08 for MinGW32](https://github.com/horar/openconnect/releases/tag/v7.08)
 - [TAP-windoes 9.21.2](https://openvpn.net/index.php/open-source/downloads.html)
-- [spdlog 0.12.0](https://github.com/gabime/spdlog)
+- [spdlog 0.13.0](https://github.com/gabime/spdlog)
 - [qt-solutions](https://github.com/qtproject/qt-solutions.git)
 
 
