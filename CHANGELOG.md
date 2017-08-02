@@ -2,7 +2,7 @@ History of user-visible changes.
 
 ## [v1.5.2](https://github.com/openconnect/openconnect-gui/tree/v1.5.2) (unreleased)
 - create a tun interface with the correct MTU (#147, #161)
-- spdlog 0.13.0
+- update GnuTLS (3.5.13), stoken (0.91), spdlog (0.13.0), gmp (6.1.2), nettle(3.3)
 - update Qt (5.9.1)
 - support for non-english interface names (#145)
 - unicode windows home folder name support (#168)
