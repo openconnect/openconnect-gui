@@ -3,7 +3,7 @@ if(MINGW)
     option(PROJ_UAC_ON "Enable UAC (don't turn it off in production)" ON)
 
     set(DEFAULT_VPNC_SCRIPT "vpnc-script.js")
-else(APPLE)
+elseif(APPLE)
     set(DEFAULT_VPNC_SCRIPT "../Resources/vpnc-script")
 else()
     set(DEFAULT_VPNC_SCRIPT "/etc/vpnc/vpnc-script")
