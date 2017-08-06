@@ -41,7 +41,7 @@ This is not main target platform, because openconnect is used by other projects 
     ~~sudo dnf install spdlog-devel~~
 
 #### MacOS
-- MacOS 10.12+
+- MacOS 10.10+
 - Xcode 8.2.1+ incl. command line tools
 - [Qt online installer](http://download.qt.io/official_releases/online_installers/qt-unified-mac-x64-online.dmg) and choose:
     - 5.9.1/"OS X" component
