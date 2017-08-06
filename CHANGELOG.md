@@ -10,6 +10,7 @@ History of user-visible changes.
 - v1.4.1 and previous (Win 10 x64) Tunnel UP, but no traffic (#132)
 - automatically pick a group if it is the only option (#176)
 - How do I specify the user/password and OTP RSA info? (#175)
+- Disconnect section needs to undo Custom Routes (#125)
 - Clarify the minimum macOS version (#182)
 - OpenConnect GUI v1.5.1 compatibility against Windows XP SP3 (#165)
 - accept VPN profile name in command line; connect immediatelly after start
