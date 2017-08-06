@@ -67,7 +67,7 @@
        <bool>false</bool>
       </property>
       <property name="movable">
-       <bool>true</bool>
+       <bool>false</bool>
       </property>
       <widget class="QWidget" name="tabWidget_main">
        <property name="accessibleName">
