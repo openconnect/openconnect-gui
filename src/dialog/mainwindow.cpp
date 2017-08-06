@@ -799,6 +799,9 @@ void MainWindow::createTrayIcon()
             this, &MainWindow::on_disconnectClicked);
 
     m_trayIconMenu->addSeparator();
+    m_trayIconMenu->addAction(ui->actionStartMinimized);
+
+    m_trayIconMenu->addSeparator();
 #ifdef Q_OS_MACOS
     m_trayIconMenu->addAction(tr("Main window"), [this]() {
         showNormal();
@@ -808,12 +811,15 @@ void MainWindow::createTrayIcon()
     });
 #endif
     m_trayIconMenu->addAction(ui->actionLogWindow);
-    m_trayIconMenu->addSeparator();
 #ifndef Q_OS_MACOS
+    m_trayIconMenu->addSeparator();
     m_trayIconMenu->addAction(ui->actionMinimize);
     m_trayIconMenu->addAction(ui->actionRestore);
-    m_trayIconMenu->addSeparator();
 #endif
+    m_trayIconMenu->addSeparator();
+    m_trayIconMenu->addAction(ui->actionAbout);
+    m_trayIconMenu->addAction(ui->actionWebSite);
+    m_trayIconMenu->addSeparator();
     m_trayIconMenu->addAction(ui->actionQuit);
 
     m_trayIcon = new QSystemTrayIcon(this);
