@@ -68,6 +68,10 @@ MainWindow::MainWindow(QWidget* parent, const QString profileName)
 {
     ui->setupUi(this);
 
+#ifdef Q_OS_MACOS
+    centralWidget()->layout()->setContentsMargins(0, 0, 0, 0);
+#endif
+
     connect(ui->viewLogButton, &QPushButton::clicked,
             this, &MainWindow::createLogDialog);
 

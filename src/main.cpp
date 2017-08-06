@@ -168,6 +168,8 @@ int main(int argc, char* argv[])
 
 #if !defined(Q_OS_MACOS)
     QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
+#else
+    QApplication::setAttribute(Qt::AA_DontShowIconsInMenus);
 #endif
     QApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
 
