@@ -7,6 +7,7 @@ History of user-visible changes.
 - support for non-english interface names (#145)
 - unicode windows home folder name support (#168)
 - enable HiDPI (#171)
+- automatically pick a group if it is the only option (#176)
 - accept VPN profile name in command line; connect immediatelly after start
 
 [Full Changelog](https://github.com/openconnect/openconnect-gui/compare/v1.5.1...v1.5.2)

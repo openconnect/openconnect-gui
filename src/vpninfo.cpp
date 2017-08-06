@@ -99,10 +99,12 @@ static int process_auth_form(void* privdata, struct oc_auth_form* form)
             gitems << select_opt->choices[i]->name;
         }
 
-        /* if the configured exists */
-        if (gitems.contains(vpn->ss->get_groupname())) {
+        if (select_opt->nr_choices == 1) {
             openconnect_set_option_value(&select_opt->form,
-                vpn->ss->get_groupname().toLatin1().data());
+                                         select_opt->choices[0]->name);
+        } else if (gitems.contains(vpn->ss->get_groupname())) {
+            openconnect_set_option_value(&select_opt->form,
+                                         vpn->ss->get_groupname().toLatin1().data());
         } else {
             {
                 MyInputDialog dialog(vpn->m,
