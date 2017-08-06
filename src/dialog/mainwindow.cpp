@@ -70,6 +70,13 @@ MainWindow::MainWindow(QWidget* parent, const QString profileName)
 
 #ifdef Q_OS_MACOS
     centralWidget()->layout()->setContentsMargins(0, 0, 0, 0);
+    ui->actionMinimizeToTheNotificationArea->setCheckable(false);
+    ui->actionMinimizeToTheNotificationArea->setVisible(false);
+    ui->actionSingleInstanceMode->setCheckable(false);
+    ui->actionSingleInstanceMode->setVisible(false);
+    ui->actionMinimizeTheApplicationInsteadOfClosing->setCheckable(false);
+    ui->actionMinimizeTheApplicationInsteadOfClosing->setVisible(false);
+    setWindowFlags(Qt::Window | Qt::WindowTitleHint | Qt::WindowCloseButtonHint | Qt::CustomizeWindowHint);
 #endif
 
     connect(ui->viewLogButton, &QPushButton::clicked,
@@ -212,7 +219,9 @@ MainWindow::MainWindow(QWidget* parent, const QString profileName)
     QState* s112_minimizedWindow = new QState();
     m_appWindowStateMachine->addState(s112_minimizedWindow);
     connect(s112_minimizedWindow, &QState::entered, [=]() {
+#ifndef Q_OS_MACOS
         showMinimized();
+#endif
         if (ui->actionMinimizeToTheNotificationArea->isChecked()) {
             QTimer::singleShot(10, this, SLOT(hide()));
         }
@@ -680,6 +689,9 @@ fail: // LCA: remote 'fail' label :/
 
 void MainWindow::closeEvent(QCloseEvent* event)
 {
+#ifdef Q_OS_MACOS
+    hide();
+#else
     if (m_trayIcon && m_trayIcon->isVisible() && ui->actionMinimizeTheApplicationInsteadOfClosing->isChecked()) {
         this->showMinimized();
         event->ignore();
@@ -687,6 +699,7 @@ void MainWindow::closeEvent(QCloseEvent* event)
         event->accept();
         qApp->quit();
     }
+#endif
     QMainWindow::closeEvent(event);
 }
 
@@ -786,11 +799,21 @@ void MainWindow::createTrayIcon()
             this, &MainWindow::on_disconnectClicked);
 
     m_trayIconMenu->addSeparator();
+#ifdef Q_OS_MACOS
+    m_trayIconMenu->addAction(tr("Main window"), [this]() {
+        showNormal();
+        show();
+        raise();
+        activateWindow();
+    });
+#endif
     m_trayIconMenu->addAction(ui->actionLogWindow);
     m_trayIconMenu->addSeparator();
+#ifndef Q_OS_MACOS
     m_trayIconMenu->addAction(ui->actionMinimize);
     m_trayIconMenu->addAction(ui->actionRestore);
     m_trayIconMenu->addSeparator();
+#endif
     m_trayIconMenu->addAction(ui->actionQuit);
 
     m_trayIcon = new QSystemTrayIcon(this);

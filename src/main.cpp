@@ -256,5 +256,17 @@ int main(int argc, char* argv[])
         Logger::instance().addMessage(message);
     }
     );
+#ifdef Q_OS_MACOS
+    // Re-show the application window when the dock icon is clicked
+    QObject::connect(&app, &QtSingleApplication::applicationStateChanged,
+                     [&mainWindow](Qt::ApplicationState state) {
+        if (state == Qt::ApplicationActive) {
+            mainWindow.showNormal();
+            mainWindow.show();
+            mainWindow.raise();
+            mainWindow.activateWindow();
+        }
+    });
+#endif
     return app.exec();
 }
