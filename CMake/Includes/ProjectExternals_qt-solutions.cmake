@@ -4,7 +4,7 @@
 ExternalProject_Add(qt-solutions-${qt-solutions-TAG}
     PREFIX ${CMAKE_BINARY_DIR}/external/
     INSTALL_DIR ${CMAKE_BINARY_DIR}/external
-    CMAKE_ARGS -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
+    CMAKE_ARGS "${CMAKE_ARGS};-DQt5_DIR=${Qt5_DIR};-DCMAKE_BUILD_TYPE=Release;-DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>"
     
     UPDATE_DISCONNECTED 0
     UPDATE_COMMAND ""
@@ -18,7 +18,7 @@ ExternalProject_Add(qt-solutions-${qt-solutions-TAG}
     PATCH_COMMAND ${CMAKE_COMMAND} -E copy_if_different
         ${CMAKE_SOURCE_DIR}/CMake/Includes/CMakeLists_qt-solutions.cmake.in
         ${CMAKE_BINARY_DIR}/external/src/qt-solutions-master/CMakeLists.txt
-		CMAKE_COMMAND ${CMAKE_CROSS_COMMAND} -DCMAKE_OSX_DEPLOYMENT_TARGET=${CMAKE_OSX_DEPLOYMENT_TARGET}
+        CMAKE_COMMAND ${CMAKE_CROSS_COMMAND} -DCMAKE_OSX_DEPLOYMENT_TARGET=${CMAKE_OSX_DEPLOYMENT_TARGET}
 )
 
 add_library(qt-solutions::qtsingleapplication STATIC IMPORTED)
