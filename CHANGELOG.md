@@ -11,6 +11,7 @@ History of user-visible changes.
 - automatically pick a group if it is the only option (#176)
 - How do I specify the user/password and OTP RSA info? (#175)
 - Clarify the minimum macOS version (#182)
+- OpenConnect GUI v1.5.1 compatibility against Windows XP SP3 (#165)
 - accept VPN profile name in command line; connect immediatelly after start
 
 [Full Changelog](https://github.com/openconnect/openconnect-gui/compare/v1.5.1...v1.5.2)
