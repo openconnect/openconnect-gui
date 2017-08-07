@@ -1,6 +1,12 @@
 History of user-visible changes.
 
-## [v1.5.2](https://github.com/openconnect/openconnect-gui/tree/v1.5.2) (unreleased)
+## [v1.5.3](https://github.com/openconnect/openconnect-gui/tree/v1.5.3) (unreleased)
+- TBD
+
+[Full Changelog](https://github.com/openconnect/openconnect-gui/compare/v1.5.2...v1.5.3)
+
+
+## [v1.5.2](https://github.com/openconnect/openconnect-gui/tree/v1.5.2) (2017-08-07)
 - create a tun interface with the correct MTU (#147, #161)
 - update GnuTLS (3.5.13), stoken (0.91), spdlog (0.13.0), gmp (6.1.2), nettle(3.3)
 - update Qt (5.9.1)
