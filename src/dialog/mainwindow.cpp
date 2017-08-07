@@ -33,6 +33,8 @@
 extern "C" {
 #include <gnutls/gnutls.h>
 }
+#include <spdlog/spdlog.h>
+
 #include <QCloseEvent>
 #include <QDateTime>
 #include <QDialog>
@@ -60,7 +62,7 @@ extern "C" {
 #define pipe_write(x, y, z) write(x, y, z)
 #endif
 
-MainWindow::MainWindow(QWidget* parent)
+MainWindow::MainWindow(QWidget* parent, const QString profileName)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
 {
@@ -165,6 +167,20 @@ MainWindow::MainWindow(QWidget* parent)
     connect(machine, &QStateMachine::started, [=]() {
         // LCA: find better way to load/fill combobox...
         this->reload_settings();
+
+        if (!profileName.isEmpty()) {
+            // TODO: better place when refactor SM...
+            const int profileIndex = ui->serverList->findText(profileName);
+            if (profileIndex != -1) {
+                ui->serverList->setCurrentIndex(profileIndex);
+                emit on_connectClicked();
+                return;
+            } else {
+                QMessageBox::warning(this,
+                                     tr("Connection failed"),
+                                     tr("Selected VPN profile '<b>%1</b>' does not exists.").arg(profileName));
+            }
+        }
 
         QSettings settings;
         const int currentIndex = settings.value("Profiles/currentIndex", -1).toInt();
@@ -865,12 +881,13 @@ void MainWindow::on_actionRemoveSelectedProfile_triggered()
 void MainWindow::on_actionAbout_triggered()
 {
     QString txt = QLatin1String("<h2>") + QLatin1String(appDescriptionLong) + QLatin1String("</h2>");
-    txt += tr("Version ") + QLatin1String("<i>") + QLatin1String(appVersion) + QLatin1String("</i>");
+    txt += tr("Version <i>%1</i> (%2 bit)").arg(appVersion).arg(QSysInfo::buildCpuArchitecture() == QLatin1String("i386") ? 32 : 64);
     txt += tr("<br><br>Build on ") + QLatin1String("<i>") + QLatin1String(appBuildOn) + QLatin1String("</i>");
     txt += tr("<br>Based on");
     txt += tr("<br>- <a href=\"https://www.infradead.org/openconnect\">OpenConnect</a> ") + QLatin1String(openconnect_get_version());
     txt += tr("<br>- <a href=\"https://www.gnutls.org\">GnuTLS</a> v") + QLatin1String(gnutls_check_version(nullptr));
-    txt += tr("<br>- <a href=\"https://www.qt.io\">Qt</a> v%1 (%2 bit)").arg(QT_VERSION_STR).arg(QSysInfo::buildCpuArchitecture() == "i386" ? 32 : 64);
+    txt += tr("<br>- <a href=\"https://github.com/gabime/spdlog\">spdlog</a> v") + QLatin1String(SPDLOG_VERSION);
+    txt += tr("<br>- <a href=\"https://www.qt.io\">Qt</a> v%1").arg(QT_VERSION_STR);
     txt += tr("<br><br>%1<br>").arg(appCopyright);
     txt += tr("<br><i>%1</i> comes with ABSOLUTELY NO WARRANTY. This is free software, "
               "and you are welcome to redistribute it under the conditions "

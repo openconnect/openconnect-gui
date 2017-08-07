@@ -1,15 +1,4 @@
 
-add_subdirectory(spdlog)
-
-add_definitions(-DUNICODE)
-include_directories(SYSTEM ${CMAKE_SOURCE_DIR}/src/qt-solutions/qtsingleapplication/src)
-set(${PROJECT_NAME}_SingleApplication_SRC
-    qt-solutions/qtsingleapplication/src/qtsingleapplication.cpp
-    qt-solutions/qtsingleapplication/src/qtsingleapplication.h
-    qt-solutions/qtsingleapplication/src/qtlocalpeer.cpp
-    qt-solutions/qtsingleapplication/src/qtlocalpeer.h
-)
-
 set(${PROJECT_NAME}_SRCS
     ${PROJECT_NAME}.cpp
     ${PROJECT_NAME}.h
@@ -61,18 +50,10 @@ set(${PROJECT_NAME}_SRCS
     FileLogger.cpp
     FileLogger.h
 )
+
 set_source_files_properties(
     ${PROJECT_NAME}.cpp
-    PROPERTIES
-        GENERATED true
-)
-set_source_files_properties(
     timestamp.cpp
-    PROPERTIES
-        GENERATED true
-)
-set_source_files_properties(
-   ${PROJECT_NAME}.rc
     PROPERTIES
         GENERATED true
 )
@@ -83,82 +64,111 @@ configure_file(
     @ONLY
 )
 
-if(WIN32 AND MINGW)
+if(MINGW)
     list(APPEND ${PROJECT_NAME}_RESOURCES
         ${PROJECT_NAME}.rc.in
         ${PROJECT_NAME}.rc
     )
+
+    set_source_files_properties(
+       ${PROJECT_NAME}.rc
+        PROPERTIES
+            GENERATED true
+    )
 endif()
 if(APPLE)
     list(APPEND ${PROJECT_NAME}_RESOURCES
-        images/mono_lock.icns
+        Resources/mono_lock.icns
         ${OPENCONNECT_VPNC_SCRIPT}
     )
     set_source_files_properties(
-        images/mono_lock.icns
+        Resources/mono_lock.icns
         ${OPENCONNECT_VPNC_SCRIPT}
-        PROPERTIES MACOSX_PACKAGE_LOCATION Resources
+            PROPERTIES MACOSX_PACKAGE_LOCATION Resources
     )
 endif()
 
 add_executable(${PROJECT_NAME}
     ${${PROJECT_NAME}_SRCS}
     ${${PROJECT_NAME}_RESOURCES}
-
-    # TODO: introduce CMake support in 'SingleApplication' library
-    ${${PROJECT_NAME}_SingleApplication_SRC}
-    ${${PROJECT_NAME}_SingleApplication_HDRS}
 )
-if(WIN32 AND MINGW)
+if(MINGW)
+    add_definitions(-DSPDLOG_WCHAR_FILENAMES)
+
+    add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_BINARY_DIR}/external/vpnc-script.js $<TARGET_FILE_DIR:${PROJECT_NAME}>
+        COMMENT "Deploying vpnc script..."
+        VERBATIM
+    )
+
+    add_dependencies(${PROJECT_NAME}
+        openconnect-devel-${openconnect-TAG}
+        openconnect-${openconnect-TAG}
+        vpnc-scripts-${vpnc-scripts-TAG}
+        qt-solutions-${qt-solutions-TAG}
+
+        spdlog-${spdlog-TAG}
+    )
+
     set_target_properties(${PROJECT_NAME} PROPERTIES
         WIN32_EXECUTABLE true
     )
-endif()
-if(APPLE)
-    set_target_properties(${PROJECT_NAME} PROPERTIES
-        MACOSX_BUNDLE true
-        MACOSX_BUNDLE_BUNDLE_NAME ${PRODUCT_NAME_SHORT}
-        MACOSX_BUNDLE_BUNDLE_VERSION "1.0.0"
-        MACOSX_BUNDLE_COPYRIGHT ${PRODUCT_NAME_COPYRIGHT_SHORT}
-        MACOSX_BUNDLE_GUI_IDENTIFIER "io.github.openconnect.openconnect-gui"
-        MACOSX_BUNDLE_ICON_FILE "mono_lock.icns"
-        MACOSX_BUNDLE_INFO_STRING ${PRODUCT_NAME_LONG}
-#        MACOSX_BUNDLE_LONG_VERSION_STRING ${PROJECT_VERSION}
-#        MACOSX_BUNDLE_SHORT_VERSION_STRING "${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}"
+
+    target_link_libraries (${PROJECT_NAME}
+        # system libraries
+        wsock32
+
+        # 3rd party dependencies
+        openconnect::gmp
+        openconnect::gnutls
+        openconnect::hogweed
+        openconnect::nettle
+        openconnect::openconnect
+        openconnect::p11-kit
+        openconnect::stoken
+        openconnect::xml2
     )
 endif()
 
-target_link_libraries (${PROJECT_NAME}
-    spdlog
+if(APPLE)
+    configure_file(
+        ${CMAKE_CURRENT_SOURCE_DIR}/Resources/${PROJECT_NAME}.plist.in
+        ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.plist
+        @ONLY
+    )
+    set_target_properties(${PROJECT_NAME} PROPERTIES
+        MACOSX_BUNDLE true
+        OUTPUT_NAME ${PRODUCT_NAME_SHORT}
+        MACOSX_BUNDLE_INFO_PLIST "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.plist"
+        MACOSX_BUNDLE_BUNDLE_NAME ${PRODUCT_NAME_SHORT}
+        MACOSX_BUNDLE_BUNDLE_VERSION "1.0.0"
+        MACOSX_BUNDLE_COPYRIGHT "${PRODUCT_NAME_COPYRIGHT_SHORT}"
+        MACOSX_BUNDLE_GUI_IDENTIFIER io.github.openconnect.openconnect-gui
+        MACOSX_BUNDLE_ICON_FILE mono_lock.icns
+        MACOSX_BUNDLE_INFO_STRING ${PRODUCT_NAME_LONG}
+        MACOSX_BUNDLE_LONG_VERSION_STRING ${PROJECT_VERSION}
+        MACOSX_BUNDLE_SHORT_VERSION_STRING "${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}"
+    )
+endif()
 
-    ${${PROJECT_NAME}_qtsingleapplication}
+
+# common stuff to link...
+target_link_libraries (${PROJECT_NAME}
+    spdlog::spdlog
+    qt-solutions::qtsingleapplication
 
     Qt5::Core
     Qt5::Gui
     Qt5::Widgets
     Qt5::Network
 )
-if(WIN32 AND MINGW)
-    target_link_libraries (${PROJECT_NAME}
-        # system libraries
-        wsock32
 
-        # 3rd party libraries
-        libgmp.dll.a
-        libgnutls.dll.a
-        libhogweed.dll.a
-        libnettle.dll.a
-        libopenconnect.dll.a
-        libp11-kit.dll.a
-        libstoken.dll.a
-        libxml2.dll.a
-        libz.dll.a
-    )
-endif()
 if(UNIX)
     target_link_libraries(${PROJECT_NAME}
         ${OPENCONNECT_LIBRARIES}
         ${GNUTLS_LIBRARY}
+
+        Threads::Threads
     )
     if(APPLE)
         target_link_libraries (${PROJECT_NAME}
@@ -180,9 +190,10 @@ get_filename_component(QT_LIBRARY_DIR ${QT_LIBRARY_DIR} PATH)
 get_filename_component(QT_LIBRARY_DIR "${QT_LIBRARY_DIR}/.." ABSOLUTE)
 list(APPEND libSearchDirs ${QT_LIBRARY_DIR})
 
-if(WIN32 AND MINGW)
+if(MINGW)
     set(APPS "\${CMAKE_INSTALL_PREFIX}/${PROJECT_NAME}.exe")
-    list(APPEND libSearchDirs ${CMAKE_SOURCE_DIR}/nsis)
+    #set(APPS "\${CMAKE_INSTALL_PREFIX}/./${PROJECT_NAME}.exe")
+    list(APPEND libSearchDirs ${CMAKE_BINARY_DIR}/external/lib)
 
     # Qt Platform Plugin
     install(FILES
@@ -215,7 +226,7 @@ elseif(APPLE)
 
     set(additionalLib \${CMAKE_INSTALL_PREFIX}/${PROJECT_NAME}.app/Contents/PlugIns/platforms/libqcocoa.dylib)
 else()
-    message(FATAL_ERROR "XXX: only mingw and apple build supported yet")
+    message(STATUS "Nothing to bundle...")
 endif()
 
 install(CODE "

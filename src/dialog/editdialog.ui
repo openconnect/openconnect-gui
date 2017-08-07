@@ -153,14 +153,14 @@
        </item>
       </layout>
      </item>
-     <item row="5" column="0">
+     <item row="6" column="0">
       <widget class="QLabel" name="serverCertificateLabel">
        <property name="text">
         <string>Server Certificate</string>
        </property>
       </widget>
      </item>
-     <item row="5" column="1">
+     <item row="6" column="1">
       <layout class="QHBoxLayout" name="serverCertificateLayout">
        <item>
         <widget class="QLineEdit" name="serverCertHash">
@@ -191,27 +191,14 @@
        </item>
       </layout>
      </item>
-     <item row="6" column="1">
-      <widget class="QLineEdit" name="caCertHash">
-       <property name="styleSheet">
-        <string notr="true">background-color:&quot;transparent&quot;</string>
-       </property>
-       <property name="frame">
-        <bool>false</bool>
-       </property>
-       <property name="readOnly">
-        <bool>true</bool>
-       </property>
-      </widget>
-     </item>
-     <item row="7" column="0">
+     <item row="8" column="0">
       <widget class="QLabel" name="otpTokenLabel">
        <property name="text">
         <string>OTP Token</string>
        </property>
       </widget>
      </item>
-     <item row="7" column="1">
+     <item row="8" column="1">
       <layout class="QHBoxLayout" name="otpTokenLayout">
        <item>
         <widget class="QComboBox" name="tokenBox">
@@ -267,7 +254,7 @@
        </item>
       </layout>
      </item>
-     <item row="8" column="0">
+     <item row="9" column="0">
       <widget class="QLabel" name="protocolLabel">
        <property name="text">
         <string>VPN protocol</string>
@@ -277,7 +264,7 @@
        </property>
       </widget>
      </item>
-     <item row="8" column="1">
+     <item row="9" column="1">
       <widget class="QComboBox" name="protocolComboBox">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
@@ -295,6 +282,19 @@
          <string>Juniper Network Connect</string>
         </property>
        </item>
+      </widget>
+     </item>
+     <item row="5" column="1">
+      <widget class="QLineEdit" name="caCertHash">
+       <property name="styleSheet">
+        <string notr="true">background-color:&quot;transparent&quot;</string>
+       </property>
+       <property name="frame">
+        <bool>false</bool>
+       </property>
+       <property name="readOnly">
+        <bool>true</bool>
+       </property>
       </widget>
      </item>
     </layout>
