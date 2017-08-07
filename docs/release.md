@@ -10,15 +10,15 @@ Note: nice graphical illustration how [gitflow branching work](http://nvie.com/p
 Project use git-flow technique i.e. the master contains stable/released versions
 and main programming activities are in 'develop' or 'feature/*' branches.
 Version string auto=generated on compilation from Git info into following format:
-	
-	<major>.<minor>.<patch>[-rev_count-sha1][-dirty]
+
+    <major>.<minor>.<patch>[-rev_count-sha1][-dirty]
 
 #### Building packages
 
 Always check if you have commited all changes or move work-in-progress work into stash!!
 Following steps illustrate how to create application:
 
-    $ git clone --recursive  https://github.com/openconnect/openconnect-gui
+    $ git clone https://github.com/openconnect/openconnect-gui
     $ cd openconnect-gui
     $ git flow init -d
 
