@@ -21,10 +21,6 @@
 
 #include "common.h"
 
-extern "C" {
-#include <openconnect.h>
-}
-
 #include <QCoreApplication>
 #include <QFutureWatcher>
 #include <QMainWindow>
@@ -40,6 +36,10 @@ extern "C" {
 #else
 #include <winsock2.h>
 #endif
+
+extern "C" {
+#include <openconnect.h>
+}
 
 class LogDialog;
 class QStateMachine;
@@ -57,7 +57,7 @@ enum status_t {
 class MainWindow : public QMainWindow {
     Q_OBJECT
 public:
-    explicit MainWindow(QWidget* parent = 0);
+    explicit MainWindow(QWidget* parent = 0, const QString profileName = {});
     ~MainWindow();
 
     void updateStats(const struct oc_stats* stats, QString dtls);

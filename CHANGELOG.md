@@ -1,5 +1,29 @@
 History of user-visible changes.
 
+## [v1.5.3](https://github.com/openconnect/openconnect-gui/tree/v1.5.3) (unreleased)
+- TBD
+
+[Full Changelog](https://github.com/openconnect/openconnect-gui/compare/v1.5.2...v1.5.3)
+
+
+## [v1.5.2](https://github.com/openconnect/openconnect-gui/tree/v1.5.2) (2017-08-07)
+- create a tun interface with the correct MTU (#147, #161)
+- update GnuTLS (3.5.13), stoken (0.91), spdlog (0.13.0), gmp (6.1.2), nettle(3.3)
+- update Qt (5.9.1)
+- support for non-english interface names (#145)
+- unicode windows home folder name support (#168)
+- enable HiDPI (#171)
+- v1.4.1 and previous (Win 10 x64) Tunnel UP, but no traffic (#132)
+- automatically pick a group if it is the only option (#176)
+- How do I specify the user/password and OTP RSA info? (#175)
+- Disconnect section needs to undo Custom Routes (#125)
+- Clarify the minimum macOS version (#182)
+- OpenConnect GUI v1.5.1 compatibility against Windows XP SP3 (#165)
+- accept VPN profile name in command line; connect immediatelly after start
+
+[Full Changelog](https://github.com/openconnect/openconnect-gui/compare/v1.5.1...v1.5.2)
+
+
 ## [v1.5.1](https://github.com/openconnect/openconnect-gui/tree/v1.5.1) (2017-02-11)
 - Missing second DNS on info tab
 - Don't show Cisco banner in 'batch mode' (resolve #156)
