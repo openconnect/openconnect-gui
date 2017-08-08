@@ -1,54 +1,34 @@
 
 set(${PROJECT_NAME}_SRCS
     ${PROJECT_NAME}.cpp
-    ${PROJECT_NAME}.h
     ${PROJECT_NAME}.qrc
     cert.cpp
-    cert.h
-    common.h
-    config.h
     config.h.in
     cryptdata.cpp
-    cryptdata.h
     dialog/MyCertMsgBox.cpp
-    dialog/MyCertMsgBox.h
     dialog/MyInputDialog.cpp
-    dialog/MyInputDialog.h
     dialog/MyMsgBox.cpp
-    dialog/MyMsgBox.h
     dialog/editdialog.cpp
-    dialog/editdialog.h
     dialog/editdialog.ui
     dialog/NewProfileDialog.cpp
-    dialog/NewProfileDialog.h
     dialog/NewProfileDialog.ui
     dialog/logdialog.cpp
-    dialog/logdialog.h
     dialog/logdialog.ui
     dialog/mainwindow.cpp
-    dialog/mainwindow.h
     dialog/mainwindow.ui
     gtdb.cpp
-    gtdb.h
     key.cpp
-    key.h
     keypair.cpp
-    keypair.h
     main.cpp
     server_storage.cpp
-    server_storage.h
 
-    timestamp.h
     timestamp.cpp
 
     vpninfo.cpp
-    vpninfo.h
 
     logger.cpp
-    logger.h
 
     FileLogger.cpp
-    FileLogger.h
 )
 
 set_source_files_properties(
