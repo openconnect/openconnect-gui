@@ -11,6 +11,8 @@ endif()
 option(PROJ_PKCS11 "Enable PKCS11" ON)
 option(PROJ_INI_SETTINGS "Store the settings in INI files." OFF)
 
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
