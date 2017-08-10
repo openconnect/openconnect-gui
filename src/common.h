@@ -30,9 +30,6 @@
 #define CONNECTING_ICON QPixmap(QString::fromLatin1(":/images/traffic_light_yellow.png"))
 #define CONNECTING_ICON2 QPixmap(QString::fromLatin1(":/images/traffic_light_off.png"))
 
-#define TRAY_OFF_ICON QPixmap(QString::fromLatin1(":/images/network-disconnected.png"))
-#define TRAY_ON_ICON QPixmap(QString::fromLatin1(":/images/network-connected.png"))
-
 #define UPDATE_TIMER 10000
 
 #ifdef _WIN32
