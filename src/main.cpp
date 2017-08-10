@@ -80,6 +80,44 @@ bool relaunch_as_root()
             ("Failed to create authorization reference."));
         return false;
     }
+
+    QByteArray prompt = QStringLiteral("OpenConnect needs permission to establish VPN connections.").toUtf8();
+
+    AuthorizationItem rightItems[] = {{
+        .name = kAuthorizationRightExecute,
+        .valueLength = 0,
+        .value = NULL,
+        .flags = 0
+    }};
+
+    AuthorizationRights rights = {
+        .count = sizeof(rightItems) / sizeof(*rightItems),
+        .items = rightItems
+    };
+
+    AuthorizationItem environmentItems[] = {{
+        .name = kAuthorizationEnvironmentPrompt,
+        .valueLength = size_t(prompt.size()),
+        .value = const_cast<char *>(prompt.constData()),
+        .flags = 0
+    }};
+
+    AuthorizationEnvironment environment = {
+        .count = sizeof(environmentItems) / sizeof(*environmentItems),
+        .items = environmentItems
+    };
+
+    AuthorizationFlags flags = static_cast<AuthorizationFlags>(
+        kAuthorizationFlagDefaults | kAuthorizationFlagInteractionAllowed |
+        kAuthorizationFlagExtendRights | kAuthorizationFlagPreAuthorize);
+
+    status = AuthorizationCopyRights(authRef, &rights, &environment, flags, NULL);
+    if (status != errAuthorizationSuccess) {
+        msgBox.setText(QObject::tr
+            ("Failed to copy authorization rights."));
+        return false;
+    }
+
     status = AuthorizationExecuteWithPrivileges(authRef, appPath,
         kAuthorizationFlagDefaults, NULL, NULL);
     AuthorizationFree(authRef, kAuthorizationFlagDestroyRights);
@@ -130,6 +168,8 @@ int main(int argc, char* argv[])
 
 #if !defined(Q_OS_MACOS)
     QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
+#else
+    QApplication::setAttribute(Qt::AA_DontShowIconsInMenus);
 #endif
     QApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
 
@@ -216,5 +256,17 @@ int main(int argc, char* argv[])
         Logger::instance().addMessage(message);
     }
     );
+#ifdef Q_OS_MACOS
+    // Re-show the application window when the dock icon is clicked
+    QObject::connect(&app, &QtSingleApplication::applicationStateChanged,
+                     [&mainWindow](Qt::ApplicationState state) {
+        if (state == Qt::ApplicationActive) {
+            mainWindow.showNormal();
+            mainWindow.show();
+            mainWindow.raise();
+            mainWindow.activateWindow();
+        }
+    });
+#endif
     return app.exec();
 }

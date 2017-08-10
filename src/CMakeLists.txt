@@ -189,22 +189,22 @@ if(MINGW)
 
     set(additionalLib ${_qwindows_dll})
 elseif(APPLE)
-    set(APPS "\${CMAKE_INSTALL_PREFIX}/${PROJECT_NAME}.app")
+    set(APPS "\${CMAKE_INSTALL_PREFIX}/${PRODUCT_NAME_SHORT}.app")
     list(APPEND libSearchDirs "")
 
     # Qt Platform Plugin
     install(FILES
         ${_qcocoa_dylib}
-        DESTINATION ${PROJECT_NAME}.app/Contents/PlugIns/platforms
+        DESTINATION ${PRODUCT_NAME_SHORT}.app/Contents/PlugIns/platforms
         COMPONENT App
     )
     install(FILES
         ${CMAKE_SOURCE_DIR}/bundle/qt.conf
-        DESTINATION ${PROJECT_NAME}.app/Contents/Resources
+        DESTINATION ${PRODUCT_NAME_SHORT}.app/Contents/Resources
         COMPONENT App
     )
 
-    set(additionalLib \${CMAKE_INSTALL_PREFIX}/${PROJECT_NAME}.app/Contents/PlugIns/platforms/libqcocoa.dylib)
+    set(additionalLib \${CMAKE_INSTALL_PREFIX}/${PRODUCT_NAME_SHORT}.app/Contents/PlugIns/platforms/libqcocoa.dylib)
 else()
     message(STATUS "Nothing to bundle...")
 endif()
