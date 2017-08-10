@@ -416,7 +416,7 @@ void MainWindow::changeStatus(int val)
         m_disconnectAction->setEnabled(true);
 
         ui->iconLabel->setPixmap(ON_ICON);
-        ui->connectionButton->setIcon(QIcon(":/new/resource/images/process-stop.png"));
+        ui->connectionButton->setIcon(QIcon(":/images/process-stop.png"));
         ui->connectionButton->setText(tr("Disconnect"));
 
         QIcon icon(TRAY_ON_ICON);
@@ -454,7 +454,7 @@ void MainWindow::changeStatus(int val)
         m_disconnectAction->setEnabled(true);
 
         ui->iconLabel->setPixmap(CONNECTING_ICON);
-        ui->connectionButton->setIcon(QIcon(":/new/resource/images/process-stop.png"));
+        ui->connectionButton->setIcon(QIcon(":/images/process-stop.png"));
         ui->connectionButton->setText(tr("Cancel"));
         blink_timer->start(1500);
 
@@ -486,7 +486,7 @@ void MainWindow::changeStatus(int val)
 
         ui->iconLabel->setPixmap(OFF_ICON);
         ui->connectionButton->setEnabled(true);
-        ui->connectionButton->setIcon(QIcon(":/new/resource/images/network-wired.png"));
+        ui->connectionButton->setIcon(QIcon(":/images/network-wired.png"));
         ui->connectionButton->setText(tr("Connect"));
 
         if (m_trayIcon) {
@@ -505,7 +505,7 @@ void MainWindow::changeStatus(int val)
             Qt::QueuedConnection);
     } else if (val == STATUS_DISCONNECTING) {
         ui->iconLabel->setPixmap(CONNECTING_ICON);
-        ui->connectionButton->setIcon(QIcon(":/new/resource/images/process-stop.png"));
+        ui->connectionButton->setIcon(QIcon(":/images/process-stop.png"));
         ui->connectionButton->setEnabled(false);
         blink_timer->start(1500);
     } else {

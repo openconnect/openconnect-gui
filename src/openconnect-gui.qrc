@@ -1,5 +1,5 @@
 <RCC>
-    <qresource prefix="/new/resource">
+    <qresource prefix="">
         <file>images/trashcan.png</file>
         <file>images/text-editor.png</file>
         <file>images/network-wired.png</file>
