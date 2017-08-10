@@ -445,6 +445,7 @@ void MainWindow::changeStatus(int val)
 
         if (m_trayIcon) {
             QIcon icon(TRAY_OFF_ICON);
+            icon.setIsMask(true);
             m_trayIcon->setIcon(icon);
         }
 
@@ -491,6 +492,7 @@ void MainWindow::changeStatus(int val)
 
         if (m_trayIcon) {
             QIcon icon(TRAY_OFF_ICON);
+            icon.setIsMask(true);
             m_trayIcon->setIcon(icon);
 
             if (this->isHidden() == true)
