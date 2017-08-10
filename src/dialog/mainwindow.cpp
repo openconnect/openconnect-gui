@@ -105,6 +105,7 @@ MainWindow::MainWindow(QWidget* parent, const QString profileName)
 
         QIcon icon;
         icon.addPixmap(TRAY_OFF_ICON, QIcon::Normal, QIcon::Off);
+        icon.setIsMask(true);
         m_trayIcon->setIcon(icon);
         m_trayIcon->show();
     } else {
@@ -419,6 +420,7 @@ void MainWindow::changeStatus(int val)
         ui->connectionButton->setText(tr("Disconnect"));
 
         QIcon icon(TRAY_ON_ICON);
+        icon.setIsMask(true);
         m_trayIcon->setIcon(icon);
 
         this->ui->ipV4Label->setText(ip);
