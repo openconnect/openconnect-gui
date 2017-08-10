@@ -51,6 +51,7 @@ extern "C" {
 #include <QSignalTransition>
 #include <QEventTransition>
 #include <QDesktopServices>
+#include <QFileSelector>
 
 #include <cstdarg>
 #include <cstdio>
@@ -103,8 +104,8 @@ MainWindow::MainWindow(QWidget* parent, const QString profileName)
         connect(m_trayIcon, &QSystemTrayIcon::activated,
             this, &MainWindow::iconActivated);
 
-        QIcon icon;
-        icon.addPixmap(TRAY_OFF_ICON, QIcon::Normal, QIcon::Off);
+        QFileSelector selector;
+        QIcon icon(selector.select(QStringLiteral(":/images/network-disconnected.png")));
         icon.setIsMask(true);
         m_trayIcon->setIcon(icon);
         m_trayIcon->show();
@@ -419,7 +420,8 @@ void MainWindow::changeStatus(int val)
         ui->connectionButton->setIcon(QIcon(":/images/process-stop.png"));
         ui->connectionButton->setText(tr("Disconnect"));
 
-        QIcon icon(TRAY_ON_ICON);
+        QFileSelector selector;
+        QIcon icon(selector.select(QStringLiteral(":/images/network-connected.png")));
         icon.setIsMask(true);
         m_trayIcon->setIcon(icon);
 
@@ -444,7 +446,8 @@ void MainWindow::changeStatus(int val)
     } else if (val == STATUS_CONNECTING) {
 
         if (m_trayIcon) {
-            QIcon icon(TRAY_OFF_ICON);
+            QFileSelector selector;
+            QIcon icon(selector.select(QStringLiteral(":/images/network-disconnected.png")));
             icon.setIsMask(true);
             m_trayIcon->setIcon(icon);
         }
@@ -491,7 +494,8 @@ void MainWindow::changeStatus(int val)
         ui->connectionButton->setText(tr("Connect"));
 
         if (m_trayIcon) {
-            QIcon icon(TRAY_OFF_ICON);
+            QFileSelector selector;
+            QIcon icon(selector.select(QStringLiteral(":/images/network-disconnected.png")));
             icon.setIsMask(true);
             m_trayIcon->setIcon(icon);
 
