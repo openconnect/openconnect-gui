@@ -599,7 +599,7 @@ void MainWindow::on_connectClicked()
     VpnInfo* vpninfo = nullptr;
     StoredServer* ss = new StoredServer();
     QFuture<void> future;
-    QString name, str, url;
+    QString name, url;
     QList<QNetworkProxy> proxies;
     QUrl turl;
     QNetworkProxyQuery query;
@@ -662,12 +662,17 @@ void MainWindow::on_connectClicked()
 
         if (url.isEmpty() == false) {
 
-            str = proxies.at(0).user() + ":" + proxies.at(0).password() + "@" + proxies.at(0).hostName();
+            QString str;
+            if (proxies.at(0).user() != 0) {
+                str = proxies.at(0).user() + ":" + proxies.at(0).password() + "@";
+            }
+            str += proxies.at(0).hostName();
             if (proxies.at(0).port() != 0) {
                 str += ":" + QString::number(proxies.at(0).port());
             }
             Logger::instance().addMessage(tr("Setting proxy to: ") + str);
-            openconnect_set_http_proxy(vpninfo->vpninfo, str.toLatin1().data());
+            // FIXME: ...
+            int ret = openconnect_set_http_proxy(vpninfo->vpninfo, str.toLatin1().data());
         }
     }
 
