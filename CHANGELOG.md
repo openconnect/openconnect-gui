@@ -1,7 +1,7 @@
 History of user-visible changes.
 
 ## [v1.5.3](https://github.com/openconnect/openconnect-gui/tree/v1.5.3) (unreleased)
-- TBD
+- Unable to use socks5 proxy built by ssh tunneling (#187)
 
 [Full Changelog](https://github.com/openconnect/openconnect-gui/compare/v1.5.2...v1.5.3)
 
