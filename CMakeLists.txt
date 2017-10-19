@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.5 FATAL_ERROR)
 
 if(APPLE)
     if(NOT CMAKE_OSX_SYSROOT)
-        set(CMAKE_OSX_SYSROOT "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.12.sdk" CACHE STRING "" FORCE)
+        set(CMAKE_OSX_SYSROOT "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.13.sdk" CACHE STRING "" FORCE)
     endif()
 
      if(NOT CMAKE_OSX_DEPLOYMENT_TARGET)
