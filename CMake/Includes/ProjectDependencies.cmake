@@ -3,7 +3,7 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTORCC ON)
 
-find_package(Qt5 5.6 REQUIRED COMPONENTS Core Gui Widgets Network)
+find_package(Qt5 5.10 REQUIRED COMPONENTS Core Gui Widgets Network)
 if(MINGW)
     get_target_property(_qwindows_dll Qt5::QWindowsIntegrationPlugin LOCATION)
 endif()
