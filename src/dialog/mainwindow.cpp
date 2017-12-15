@@ -652,27 +652,29 @@ void MainWindow::on_connectClicked()
         goto fail;
     }
 
-    proxies = QNetworkProxyFactory::systemProxyForQuery(query);
-    if (proxies.size() > 0 && proxies.at(0).type() != QNetworkProxy::NoProxy) {
-        if (proxies.at(0).type() == QNetworkProxy::Socks5Proxy)
-            url = "socks5://";
-        else if (proxies.at(0).type() == QNetworkProxy::HttpCachingProxy
-            || proxies.at(0).type() == QNetworkProxy::HttpProxy)
-            url = "http://";
+    if (ss->get_proxy()) {
+        proxies = QNetworkProxyFactory::systemProxyForQuery(query);
+        if (proxies.size() > 0 && proxies.at(0).type() != QNetworkProxy::NoProxy) {
+            if (proxies.at(0).type() == QNetworkProxy::Socks5Proxy)
+                url = "socks5://";
+            else if (proxies.at(0).type() == QNetworkProxy::HttpCachingProxy
+                || proxies.at(0).type() == QNetworkProxy::HttpProxy)
+                url = "http://";
 
-        if (url.isEmpty() == false) {
+            if (url.isEmpty() == false) {
 
-            QString str;
-            if (proxies.at(0).user() != 0) {
-                str = proxies.at(0).user() + ":" + proxies.at(0).password() + "@";
+                QString str;
+                if (proxies.at(0).user() != 0) {
+                    str = proxies.at(0).user() + ":" + proxies.at(0).password() + "@";
+                }
+                str += proxies.at(0).hostName();
+                if (proxies.at(0).port() != 0) {
+                    str += ":" + QString::number(proxies.at(0).port());
+                }
+                Logger::instance().addMessage(tr("Setting proxy to: ") + str);
+                // FIXME: ...
+                int ret = openconnect_set_http_proxy(vpninfo->vpninfo, str.toLatin1().data());
             }
-            str += proxies.at(0).hostName();
-            if (proxies.at(0).port() != 0) {
-                str += ":" + QString::number(proxies.at(0).port());
-            }
-            Logger::instance().addMessage(tr("Setting proxy to: ") + str);
-            // FIXME: ...
-            int ret = openconnect_set_http_proxy(vpninfo->vpninfo, str.toLatin1().data());
         }
     }
 
