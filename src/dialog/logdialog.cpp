@@ -21,9 +21,9 @@
 #include "ui_logdialog.h"
 
 #include <QClipboard>
+#include <QDateTime>
 #include <QMessageBox>
 #include <QSettings>
-#include <QDateTime>
 #include <QTimer>
 
 LogDialog::LogDialog(QWidget* parent)
@@ -45,18 +45,18 @@ LogDialog::LogDialog(QWidget* parent)
     }
 
     connect(&Logger::instance(), &Logger::newLogMessage,
-            this, &LogDialog::append, Qt::QueuedConnection);
+        this, &LogDialog::append, Qt::QueuedConnection);
 
     m_timer->setSingleShot(true);
     m_timer->setInterval(100);
     connect(m_timer.get(), &QTimer::timeout,
-            ui->listWidget, &QListWidget::scrollToBottom);
+        ui->listWidget, &QListWidget::scrollToBottom);
 }
 
 LogDialog::~LogDialog()
 {
     disconnect(&Logger::instance(), &Logger::newLogMessage,
-               this, &LogDialog::append);
+        this, &LogDialog::append);
 
     delete ui;
 }
@@ -71,10 +71,9 @@ void LogDialog::append(const Logger::Message& message)
     QDateTime dt;
     dt.setMSecsSinceEpoch(message.timeStamp);
     ui->listWidget->addItem(QString("%1 | %2 | %3")
-                            .arg(dt.toString("yyyy-MM-dd hh:mm:ss"))
-                            .arg(QString::number((long long)message.threadId, 16), 4)
-                            .arg(message.text)
-                            );
+                                .arg(dt.toString("yyyy-MM-dd hh:mm:ss"))
+                                .arg(QString::number((long long)message.threadId, 16), 4)
+                                .arg(message.text));
     if (ui->checkBox_autoScroll->checkState() == Qt::Checked) {
         m_timer->start();
     }

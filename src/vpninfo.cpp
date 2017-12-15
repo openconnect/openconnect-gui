@@ -20,12 +20,12 @@
 #include "vpninfo.h"
 #include "config.h"
 #include "dialog/MyCertMsgBox.h"
-#include "dialog/MyMsgBox.h"
 #include "dialog/MyInputDialog.h"
+#include "dialog/MyMsgBox.h"
 #include "dialog/mainwindow.h"
 #include "gtdb.h"
-#include "server_storage.h"
 #include "logger.h"
+#include "server_storage.h"
 
 #include <QDir>
 
@@ -103,10 +103,10 @@ static int process_auth_form(void* privdata, struct oc_auth_form* form)
 
         if (select_opt->nr_choices == 1) {
             openconnect_set_option_value(&select_opt->form,
-                                         select_opt->choices[0]->name);
+                select_opt->choices[0]->name);
         } else if (gitems.contains(vpn->ss->get_groupname())) {
             openconnect_set_option_value(&select_opt->form,
-                                         vpn->ss->get_groupname().toLatin1().data());
+                vpn->ss->get_groupname().toLatin1().data());
         } else {
             {
                 MyInputDialog dialog(vpn->m,
@@ -285,15 +285,15 @@ static int validate_peer_cert(void* privdata, const char* reason)
 
         QString hostInfoStr = QObject::tr("Host: ") + vpn->ss->get_servername() + QObject::tr("\n") + hash;
         MyCertMsgBox msgBox(
-                    vpn->m,
-                    QObject::tr("You are connecting for the first time to this peer.\n"
-                                "You have no guarantee that the server is the computer you think it is.\n\n"
-                                "If the information provided bellow is valid and you trust this host, "
-                                "hit 'Accurate information' to remember it and to carry on connecting.\n"
-                                "If you do not trust this host, hit Cancel to abandon the connection."),
-                    hostInfoStr,
-                    QObject::tr("Accurate information"),
-                    dstr);
+            vpn->m,
+            QObject::tr("You are connecting for the first time to this peer.\n"
+                        "You have no guarantee that the server is the computer you think it is.\n\n"
+                        "If the information provided bellow is valid and you trust this host, "
+                        "hit 'Accurate information' to remember it and to carry on connecting.\n"
+                        "If you do not trust this host, hit Cancel to abandon the connection."),
+            hostInfoStr,
+            QObject::tr("Accurate information"),
+            dstr);
         msgBox.show();
         if (msgBox.result() == false) {
             return -1;
@@ -361,7 +361,7 @@ static int unlock_token_vfn(void* privdata, const char* newtok)
     return 0;
 }
 
-static void setup_tun_vfn(void *privdata)
+static void setup_tun_vfn(void* privdata)
 {
     VpnInfo* vpn = static_cast<VpnInfo*>(privdata);
 
@@ -372,7 +372,7 @@ static void setup_tun_vfn(void *privdata)
     int ret = openconnect_setup_tun_device(vpn->vpninfo, vpncScriptFullPath.constData(), NULL);
     if (ret != 0) {
         vpn->last_err = QObject::tr("Error setting up the TUN device");
-//FIXME: ???        return ret;
+        //FIXME: ???        return ret;
     }
 
     vpn->logVpncScriptOutput();
@@ -463,9 +463,9 @@ int VpnInfo::connect()
     }
 
 #ifdef Q_OS_WIN32
-    const QString osName{"win"};
+    const QString osName{ "win" };
 #elif defined Q_OS_OSX
-    const QString osName{"mac-intel"};
+    const QString osName{ "mac-intel" };
 #elif defined Q_OS_LINUX
     const QString osName = QString("linux%1").arg(QSysInfo::buildCpuArchitecture() == "i386" ? "" : "-64").toStdString().c_str();
 #elif defined Q_OS_FREEBSD
@@ -494,7 +494,7 @@ int VpnInfo::dtls_connect()
 {
     if (this->ss->get_disable_udp() != true) {
         int ret = openconnect_setup_dtls(vpninfo,
-                                         ss->get_dtls_reconnect_timeout());
+            ss->get_dtls_reconnect_timeout());
         if (ret != 0) {
             this->last_err = QObject::tr("Error setting up DTLS");
             return ret;
@@ -508,8 +508,8 @@ void VpnInfo::mainloop()
 {
     while (true) {
         int ret = openconnect_mainloop(vpninfo,
-                                       ss->get_reconnect_timeout(),
-                                       RECONNECT_INTERVAL_MIN);
+            ss->get_reconnect_timeout(),
+            RECONNECT_INTERVAL_MIN);
         if (ret != 0) {
             this->last_err = QObject::tr("Disconnected");
             logVpncScriptOutput();
@@ -594,7 +594,7 @@ void VpnInfo::logVpncScriptOutput()
         bool processBannerMessage = false;
 
         while (!in.atEnd()) {
-            const QString line{in.readLine()};
+            const QString line{ in.readLine() };
             Logger::instance().addMessage(line);
 
             if (line == QLatin1String("--------------------- BANNER ---------------------")) {

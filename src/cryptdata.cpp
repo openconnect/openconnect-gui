@@ -21,8 +21,8 @@
 
 #if defined(_WIN32)
 // FIXME: these 2 files have to be in this order: windows.h, winbsae.h ???
-#include <windows.h>
 #include <winbase.h>
+#include <windows.h>
 
 typedef WINBOOL(WINAPI* CryptProtectDataFunc)(DATA_BLOB* pDataIn,
     LPCWSTR szDataDescr,

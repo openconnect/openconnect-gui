@@ -80,7 +80,6 @@ public slots:
 
     void request_update_stats();
 
-
     void on_connectClicked();
     void on_disconnectClicked();
 
