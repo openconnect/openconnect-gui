@@ -1,6 +1,7 @@
 History of user-visible changes.
 
 ## [v1.5.3](https://github.com/openconnect/openconnect-gui/tree/v1.5.3) (unreleased)
+- update Qt (5.10.0)
 - Unable to use socks5 proxy built by ssh tunneling (#187)
 - update spdlog (0.14.0)
 
