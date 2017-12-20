@@ -141,6 +141,7 @@ target_link_libraries (${PROJECT_NAME}
     Qt5::Gui
     Qt5::Widgets
     Qt5::Network
+    #??? Qt5::QMacStylePlugin
 )
 
 if(UNIX)
@@ -198,13 +199,23 @@ elseif(APPLE)
         DESTINATION ${PROJECT_NAME}.app/Contents/PlugIns/platforms
         COMPONENT App
     )
+    set(additionalLib \${CMAKE_INSTALL_PREFIX}/${PROJECT_NAME}.app/Contents/PlugIns/platforms/libqcocoa.dylib)
+    if(NOT Qt5Core_VERSION STRLESS "5.10")
+        install(FILES
+            ${_qmacstyle_dylib}
+            DESTINATION ${PROJECT_NAME}.app/Contents/PlugIns/styles
+            COMPONENT App
+        )
+        set(additionalLib 
+            ${additionalLib}
+            \${CMAKE_INSTALL_PREFIX}/${PROJECT_NAME}.app/Contents/PlugIns/styles/libqmacstyle.dylib
+        )
+    endif()
     install(FILES
         ${CMAKE_SOURCE_DIR}/bundle/qt.conf
         DESTINATION ${PROJECT_NAME}.app/Contents/Resources
         COMPONENT App
     )
-
-    set(additionalLib \${CMAKE_INSTALL_PREFIX}/${PROJECT_NAME}.app/Contents/PlugIns/platforms/libqcocoa.dylib)
 else()
     message(STATUS "Nothing to bundle...")
 endif()
