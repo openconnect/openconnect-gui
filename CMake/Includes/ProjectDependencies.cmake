@@ -9,6 +9,9 @@ if(MINGW)
 endif()
 if(APPLE)
     get_target_property(_qcocoa_dylib Qt5::QCocoaIntegrationPlugin LOCATION)
+    if(NOT Qt5Core_VERSION STRLESS "5.10")
+        get_target_property(_qmacstyle_dylib Qt5::QMacStylePlugin LOCATION)
+    endif()
 endif()
 
 # macOS & GNU/Linux dependencies
