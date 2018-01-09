@@ -15,7 +15,7 @@ This is target platform for the product.
 
 ##### Externals
 
-These project will by downloaded automatically by CMake.
+These projects will be downloaded automatically by CMake.
 
 - [OpenConnect 7.08 for MinGW32](https://github.com/horar/openconnect/releases/tag/v7.08)
 - [TAP-windoes 9.21.2](https://openvpn.net/index.php/open-source/downloads.html)
