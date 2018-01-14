@@ -189,6 +189,13 @@ if(MINGW)
     )
 
     set(additionalLib ${_qwindows_dll})
+    if(NOT Qt5Core_VERSION STRLESS "5.10")
+        install(FILES
+            ${_qwinstyle_dylib}
+            DESTINATION plugins/styles
+            COMPONENT App
+        )
+    endif()
 elseif(APPLE)
     set(APPS "\${CMAKE_INSTALL_PREFIX}/${PROJECT_NAME}.app")
     list(APPEND libSearchDirs "")
