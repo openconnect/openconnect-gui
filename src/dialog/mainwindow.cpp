@@ -77,7 +77,15 @@ MainWindow::MainWindow(QWidget* parent, const QString profileName)
     this->cmd_fd = INVALID_SOCKET;
 
     connect(ui->actionQuit, &QAction::triggered,
-        qApp, &QApplication::quit);
+        [=]() {
+            if (m_disconnectAction->isEnabled()) {
+                connect(this, &MainWindow::readyToShutdown,
+                    qApp, &QApplication::quit);
+                on_disconnectClicked();
+            } else {
+                qApp->quit();
+            }
+        });
 
     connect(blink_timer, &QTimer::timeout,
         this, &MainWindow::blink_ui,
@@ -525,6 +533,8 @@ void MainWindow::changeStatus(int val)
         connect(ui->connectionButton, &QPushButton::clicked,
             this, &MainWindow::on_connectClicked,
             Qt::QueuedConnection);
+
+        emit readyToShutdown();
     } else if (val == STATUS_DISCONNECTING) {
         ui->iconLabel->setPixmap(CONNECTING_ICON);
         ui->connectionButton->setIcon(QIcon(":/images/process-stop.png"));
@@ -712,7 +722,14 @@ void MainWindow::closeEvent(QCloseEvent* event)
         event->ignore();
     } else {
         event->accept();
-        qApp->quit();
+
+        if (m_disconnectAction->isEnabled()) {
+            connect(this, &MainWindow::readyToShutdown,
+                qApp, &QApplication::quit);
+            on_disconnectClicked();
+        } else {
+            qApp->quit();
+        }
     }
     QMainWindow::closeEvent(event);
 }
