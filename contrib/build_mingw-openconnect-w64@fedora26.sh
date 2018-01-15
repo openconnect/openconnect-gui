@@ -4,7 +4,7 @@
 #
 
 export OC_TAG=v7.08
-export STOKEN_TAG=v0.91
+export STOKEN_TAG=v0.92
 
 dnf -y install mingw64-gnutls mingw64-libxml2 mingw64-gettext
 dnf -y install gcc libtool
