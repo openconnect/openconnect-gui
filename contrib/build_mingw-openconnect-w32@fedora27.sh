@@ -32,7 +32,7 @@ git checkout ${OC_TAG}
 ./autogen.sh
 mkdir build32
 cd build32
-mingw32-configure --with-vpnc-script=vpnc-script.js
+mingw32-configure --with-vpnc-script=vpnc-script-win.js
 mingw32-make -j4
 cd ../../
 
@@ -62,6 +62,7 @@ cp ${MINGW_PREFIX}/bin/zlib1.dll .
 cp ${MINGW_PREFIX}/bin/libstoken-1.dll .
 cp ../../openconnect/build32/.libs/libopenconnect-5.dll .
 cp ../../openconnect/build32/.libs/openconnect.exe .
+curl -o vpnc-script-win.js http://git.infradead.org/users/dwmw2/vpnc-scripts.git/blob_plain/HEAD:/vpnc-script-win.js
 cd ../../
 
 mkdir -p pkg/lib && cd pkg/lib
