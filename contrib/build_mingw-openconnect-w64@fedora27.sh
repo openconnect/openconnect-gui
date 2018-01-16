@@ -31,10 +31,9 @@ cd openconnect
 git reset --hard
 git checkout ${OC_TAG}
 ./autogen.sh
-
 mkdir build64
 cd build64
-mingw64-configure --with-vpnc-script=vpnc-script.js
+mingw64-configure --with-vpnc-script=vpnc-script-win.js
 mingw64-make -j4
 cd ../../
 
@@ -64,6 +63,7 @@ cp ${MINGW_PREFIX}/bin/zlib1.dll .
 cp ${MINGW_PREFIX}/bin/libstoken-1.dll .
 cp ../../openconnect/build64/.libs/libopenconnect-5.dll .
 cp ../../openconnect/build64/.libs/openconnect.exe .
+curl -o vpnc-script-win.js http://git.infradead.org/users/dwmw2/vpnc-scripts.git/blob_plain/HEAD:/vpnc-script-win.js
 cd ../../
 
 mkdir -p pkg/lib && cd pkg/lib
