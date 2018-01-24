@@ -1,0 +1,30 @@
+version: 1.5.2.{build}
+branches:
+  only:
+  - develop
+skip_tags: true
+image: Visual Studio 2017
+environment:
+  matrix:
+  - GENERATOR: '"MinGW Makefiles"'
+    BUILD_TYPE: Debug
+  - GENERATOR: '"MinGW Makefiles"'
+    BUILD_TYPE: Release
+before_build:
+- cmd: >-
+    set
+
+    set PATH=%PATH%;C:\MinGW\bin
+
+    set PATH=C:\Qt\5.9.2\mingw53_32\bin;%PATH%
+
+    mkdir build
+
+    cd build
+
+    cmake -G %GENERATOR% -DCMAKE_BUILD_TYPE=%BUILD_TYPE% ..
+
+    cmake --build . --config %BUILD_TYPE%
+build:
+  verbosity: minimal
+test: off
