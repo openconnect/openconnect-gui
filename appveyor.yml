@@ -5,6 +5,8 @@ branches:
 skip_tags: true
 image: Visual Studio 2017
 environment:
+  QT5: C:\Qt\5.9.2\mingw53_32
+  MINGW: C:\Qt\Tools\mingw530_32
   matrix:
   - GENERATOR: '"MinGW Makefiles"'
     BUILD_TYPE: Debug
@@ -16,13 +18,11 @@ before_build:
 
     set PATH=%PATH:C:\Program Files\Git\usr\bin;=%
 
-    set PATH=%PATH%;C:\MinGW\bin
+    set PATH=%MINGW%\bin;%QT5%\bin;%PATH%
 
-    set PATH=C:\Qt\5.9.2\mingw53_32\bin;%PATH%
+    mkdir .\build
 
-    mkdir build
-
-    cd build
+    cd .\build
 
     cmake -G %GENERATOR% -DCMAKE_BUILD_TYPE=%BUILD_TYPE% ..
 
