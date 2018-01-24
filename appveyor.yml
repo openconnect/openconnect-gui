@@ -3,7 +3,7 @@ branches:
   only:
   - develop
 skip_tags: true
-image: Visual Studio 2015
+image: Visual Studio 2017
 environment:
   QT5: C:\Qt\5.9.2\mingw53_32
   MINGW: C:\Qt\Tools\mingw530_32
