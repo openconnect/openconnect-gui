@@ -4,7 +4,7 @@ pull_requests:
 skip_tags: true
 image: Visual Studio 2017
 environment:
-  QT5: C:\Qt\5.9.2\mingw53_32
+  QT5: C:\Qt\5.10.0\mingw53_32
   MINGW: C:\Qt\Tools\mingw530_32
   matrix:
   - GENERATOR: '"MinGW Makefiles"'
