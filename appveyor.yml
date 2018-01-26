@@ -12,6 +12,7 @@ environment:
     BUILD_TYPE: Debug
   - GENERATOR: '"MinGW Makefiles"'
     BUILD_TYPE: Release
+cache: .\build
 build_script:
 - cmd: >-
     set
