@@ -12,10 +12,6 @@ brew install openconnect
 
 cd openconnect-gui
 
-# Make sure all git submodules are up-to-date
-git submodule init
-git submodule update
-
 # Build it
 mkdir build-release
 cd build-release
