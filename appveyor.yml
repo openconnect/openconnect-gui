@@ -4,6 +4,14 @@ pull_requests:
 skip_tags: true
 image: Visual Studio 2017
 clone_depth: 100
+branches:
+  # whitelist
+  only:
+    - master
+    - develop
+    - /feature\/.*/ 
+  except:
+    - gh-pages
 environment:
   QT5: C:\Qt\5.10.0\mingw53_32
   MINGW: C:\Qt\Tools\mingw530_32
