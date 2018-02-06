@@ -34,4 +34,5 @@ build_script:
 
     cmake --build . --config %BUILD_TYPE% --target %TARGET%
 test: off
-
+artifacts:
+  - path: build\openconnect-gui*.exe
