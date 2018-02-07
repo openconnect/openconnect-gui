@@ -24,7 +24,7 @@ These projects will be downloaded automatically by CMake.
 
 
 #### GNU/Linux
-##### Fedora 27 (MinGW)
+##### Fedora 27 (MinGW32)
 Just try install following packages:
 
     sudo dnf install git
