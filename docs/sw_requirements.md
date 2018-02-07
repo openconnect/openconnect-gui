@@ -24,14 +24,14 @@ These projects will be downloaded automatically by CMake.
 
 
 #### GNU/Linux
-##### Fedora 26 (MinGW)
+##### Fedora 27 (MinGW)
 Just try install following packages:
 
     sudo dnf install cmake
     sudo dnf install mingw32-qt5-qtbase
     sudo dnf install mingw32-nsis
 
-##### Fedora 26
+##### Fedora 27
 This is not main target platform, because openconnect is used by other projects integrated into desktop environments. On the other side - the minimum of required packages to build this GUI should be installed by following commands:
 
     sudo dnf install git gitflow
