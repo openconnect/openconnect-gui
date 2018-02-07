@@ -27,6 +27,7 @@ These projects will be downloaded automatically by CMake.
 ##### Fedora 27 (MinGW)
 Just try install following packages:
 
+    sudo dnf install git
     sudo dnf install cmake
     sudo dnf install mingw32-qt5-qtbase
     sudo dnf install mingw32-nsis
