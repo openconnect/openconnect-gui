@@ -282,6 +282,11 @@
          <string>Juniper Network Connect</string>
         </property>
        </item>
+       <item>
+        <property name="text">
+         <string>Palo Alto Networks GlobalProtect</string>
+        </property>
+       </item>
       </widget>
      </item>
      <item row="5" column="1">
