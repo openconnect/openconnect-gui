@@ -22,7 +22,7 @@
 #include <QSettings>
 #include <cstdio>
 
-const char* const StoredServer::m_vpnProtocol[] = { "anyconnect", "nc" };
+const char* const StoredServer::m_vpnProtocol[] = { "anyconnect", "nc", "gp" };
 
 StoredServer::~StoredServer(void)
 {
