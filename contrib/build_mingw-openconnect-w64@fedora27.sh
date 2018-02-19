@@ -21,7 +21,7 @@ git checkout ${STOKEN_TAG}
 ./autogen.sh
 mkdir build64
 cd build64
-mingw64-configure
+mingw64-configure --disable-dependency-tracking --without-tomcrypt --without-gtk
 mingw64-make -j4
 mingw64-make install
 cd ../../
@@ -33,7 +33,7 @@ git checkout ${OC_TAG}
 ./autogen.sh
 mkdir build64
 cd build64
-mingw64-configure --with-vpnc-script=vpnc-script-win.js
+mingw64-configure --disable-dependency-tracking --with-gnutls --without-openssl --without-libpskc --with-vpnc-script=vpnc-script-win.js
 mingw64-make -j4
 cd ../../
 
@@ -115,6 +115,8 @@ cd ../
 
 echo "List of system-wide used packages versions:" \
 	> openconnect-${OC_TAG}_mingw64.txt
+echo "openconnect-${OC_TAG}" \
+	>> openconnect-${OC_TAG}_mingw64.txt
 echo "stoken-${STOKEN_TAG}" \
 	>> openconnect-${OC_TAG}_mingw64.txt
 rpm -qv \
@@ -126,3 +128,4 @@ rpm -qv \
     mingw64-libxml2 \
     >> openconnect-${OC_TAG}_mingw64.txt
 
+mv openconnect-*.zip openconnect-*.txt ..

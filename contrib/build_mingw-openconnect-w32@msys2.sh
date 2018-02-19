@@ -1,15 +1,30 @@
 #
 # Sample script to checkout & build 'openconnect' project
-# with mingw32 toolchain
+# with mingw32 on MSYS2 toolchain
 #
 
 export OC_TAG=v7.08
 export STOKEN_TAG=v0.92
 
-dnf -y install mingw32-gnutls mingw32-libxml2 mingw32-gettext
-dnf -y install gcc libtool
-dnf -y install gettext
-dnf -y install git p7zip
+#dnf -y install mingw64-gnutls mingw64-libxml2 mingw64-gettext
+#dnf -y install gcc libtool
+#dnf -y install gettext
+#dnf -y install git p7zip
+#dnf -y install patch
+
+pacman --needed -S \
+	mingw-w64-i686-gnutls \
+	mingw-w64-i686-libidn2 \
+	mingw-w64-i686-libunistring \
+	mingw-w64-i686-nettle \
+	mingw-w64-i686-gmp \
+	mingw-w64-i686-p11-kit \
+	mingw-w64-i686-zlib \
+	mingw-w64-i686-libxml2 \
+	mingw-w64-i686-zlib \
+	mingw-w64-i686-libxml2 \
+	mingw-w64-i686-lz4 \
+	mingw-w64-i686-libproxy
 
 mkdir work
 cd work
@@ -20,7 +35,7 @@ git checkout ${STOKEN_TAG}
 ./autogen.sh
 mkdir build32
 cd build32
-mingw32-configure --disable-dependency-tracking --without-tomcrypt --without-gtk
+../configure --disable-dependency-tracking --without-tomcrypt --without-gtk
 mingw32-make -j4
 mingw32-make install
 cd ../../
@@ -32,7 +47,7 @@ git checkout ${OC_TAG}
 ./autogen.sh
 mkdir build32
 cd build32
-mingw32-configure --disable-dependency-tracking --with-gnutls --without-openssl --without-libpskc --with-vpnc-script=vpnc-script-win.js
+../configure --disable-dependency-tracking --with-gnutls --without-openssl --without-libpskc --with-vpnc-script=vpnc-script-win.js
 mingw32-make -j4
 cd ../../
 
@@ -42,11 +57,11 @@ cd ../../
 # incl. all dependencies (hardcoded paths!)
 #
 
-export MINGW_PREFIX=/usr/i686-w64-mingw32/sys-root/mingw
+export MINGW_PREFIX=/mingw32
 
 rm -rf pkg
 mkdir -p pkg/nsis && cd pkg/nsis
-cp ${MINGW_PREFIX}/bin/iconv.dll .
+#cp ${MINGW_PREFIX}/bin/iconv.dll .
 cp ${MINGW_PREFIX}/bin/libffi-6.dll .
 cp ${MINGW_PREFIX}/bin/libgcc_*-1.dll .
 cp ${MINGW_PREFIX}/bin/libgmp-10.dll .
@@ -60,6 +75,13 @@ cp ${MINGW_PREFIX}/bin/libwinpthread-1.dll .
 cp ${MINGW_PREFIX}/bin/libxml2-2.dll .
 cp ${MINGW_PREFIX}/bin/zlib1.dll .
 cp ${MINGW_PREFIX}/bin/libstoken-1.dll .
+cp ${MINGW_PREFIX}/bin/libproxy-1.dll .
+cp ${MINGW_PREFIX}/bin/liblz4.dll .
+cp ${MINGW_PREFIX}/bin/libiconv-2.dll .
+cp ${MINGW_PREFIX}/bin/libunistring-2.dll .
+cp ${MINGW_PREFIX}/bin/libidn2-0.dll .
+cp ${MINGW_PREFIX}/bin/libstdc++-6.dll .
+cp ${MINGW_PREFIX}/bin/liblzma-5.dll .
 cp ../../openconnect/build32/.libs/libopenconnect-5.dll .
 cp ../../openconnect/build32/.libs/openconnect.exe .
 curl -o vpnc-script-win.js http://git.infradead.org/users/dwmw2/vpnc-scripts.git/blob_plain/HEAD:/vpnc-script-win.js
@@ -74,6 +96,12 @@ cp ${MINGW_PREFIX}/lib/libp11-kit.dll.a .
 cp ${MINGW_PREFIX}/lib/libxml2.dll.a .
 cp ${MINGW_PREFIX}/lib/libz.dll.a .
 cp ${MINGW_PREFIX}/lib/libstoken.dll.a .
+cp ${MINGW_PREFIX}/lib/libproxy.dll.a .
+cp ${MINGW_PREFIX}/lib/liblz4.dll.a .
+cp ${MINGW_PREFIX}/lib/libiconv.dll.a .
+cp ${MINGW_PREFIX}/lib/libunistring.dll.a .
+cp ${MINGW_PREFIX}/lib/libidn2.dll.a .
+cp ${MINGW_PREFIX}/lib/liblzma.dll.a .
 cp ../../openconnect/build32/.libs/libopenconnect.dll.a .
 cd ../../
 
@@ -118,13 +146,18 @@ echo "openconnect-${OC_TAG}" \
 	>> openconnect-${OC_TAG}_mingw32.txt
 echo "stoken-${STOKEN_TAG}" \
 	>> openconnect-${OC_TAG}_mingw32.txt
-rpm -qv \
-    mingw32-gnutls \
-    mingw32-gmp \
-    mingw32-nettle \
-    mingw32-p11-kit \
-    mingw32-zlib \
-    mingw32-libxml2 \
-    >> openconnect-${OC_TAG}_mingw32.txt
+pacman -Q \
+	mingw-w64-i686-gnutls \
+	mingw-w64-i686-libidn2 \
+	mingw-w64-i686-libunistring \
+	mingw-w64-i686-nettle \
+	mingw-w64-i686-gmp \
+	mingw-w64-i686-p11-kit \
+	mingw-w64-i686-libxml2 \
+	mingw-w64-i686-zlib \
+	mingw-w64-i686-libxml2 \
+	mingw-w64-i686-lz4 \
+	mingw-w64-i686-libproxy \
+	>> openconnect-${OC_TAG}_mingw32.txt
 
 mv -v openconnect-*.zip openconnect-*.txt ..
