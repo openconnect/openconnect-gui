@@ -13,3 +13,4 @@ build-release*/
 # temporary...
 _xxx/
 *.zip
+*.exe
