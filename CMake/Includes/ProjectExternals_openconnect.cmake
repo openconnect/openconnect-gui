@@ -99,7 +99,10 @@ set_property(TARGET openconnect::xml2 PROPERTY IMPORTED_LOCATION ${CMAKE_BINARY_
 set_property(TARGET openconnect::xml2 PROPERTY IMPORTED_IMPLIB ${CMAKE_BINARY_DIR}/external/lib/libxml2.dll.a)
 
 
-install(FILES  ${CMAKE_BINARY_DIR}/external/lib/openconnect.exe
+install(
+    FILES
+        ${CMAKE_BINARY_DIR}/external/lib/openconnect.exe
+        ${CMAKE_BINARY_DIR}/external/lib/vpnc-script-win.js
     DESTINATION .
     COMPONENT App_Console
 )
