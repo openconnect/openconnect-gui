@@ -126,3 +126,4 @@ rpm -qv \
     mingw64-libxml2 \
     >> openconnect-${OC_TAG}_mingw64.txt
 
+mv openconnect-*.zip openconnect-*.txt ..
