@@ -77,4 +77,6 @@ cmake .
 mingw32-make package VERBOSE=1
 REM mingw32-make package_source VERBOSE=1
 
+move /Y *.exe ..
+
 cd ..
