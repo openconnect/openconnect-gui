@@ -3,7 +3,7 @@ History of user-visible changes.
 ## [v1.5.3](https://github.com/openconnect/openconnect-gui/tree/v1.5.3) (unreleased)
 - No disconnection triggered before quit (#202)
 - Don't use system wide defined proxy when disabled in profile (#208)
-- update Qt (5.10.0)
+- update Qt (5.10.1)
 - Unable to use socks5 proxy built by ssh tunneling (#187)
 - update spdlog (0.16.3)
 
