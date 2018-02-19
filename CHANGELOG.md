@@ -1,6 +1,7 @@
 History of user-visible changes.
 
 ## [v1.5.3](https://github.com/openconnect/openconnect-gui/tree/v1.5.3) (unreleased)
+- update GnuTLS(3.6.1), p11-kit(0.23.9), stoken(0.92), libproxy(0.4.15), nettle(3.4), lz4(1.8.1.2), libxml2(2.9.7)
 - No disconnection triggered before quit (#202)
 - Don't use system wide defined proxy when disabled in profile (#208)
 - update Qt (5.10.0)
