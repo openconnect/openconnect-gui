@@ -141,9 +141,11 @@ cd ../
 #sudo mingw32-make uninstall
 
 echo "List of system-wide used packages versions:" \
-	> openconnect-${OC_TAG}_mingw64.txt
+	> openconnect-${OC_TAG}_mingw32.txt
+echo "openconnect-${OC_TAG}" \
+	>> openconnect-${OC_TAG}_mingw32.txt
 echo "stoken-${STOKEN_TAG}" \
-	>> openconnect-${OC_TAG}_mingw64.txt
+	>> openconnect-${OC_TAG}_mingw32.txt
 pacman -Q \
 	mingw-w64-i686-gnutls \
 	mingw-w64-i686-libidn2 \
