@@ -142,6 +142,8 @@ cd ../
 
 echo "List of system-wide used packages versions:" \
 	> openconnect-${OC_TAG}_mingw64.txt
+echo "openconnect-${OC_TAG}" \
+	>> openconnect-${OC_TAG}_mingw64.txt
 echo "stoken-${STOKEN_TAG}" \
 	>> openconnect-${OC_TAG}_mingw64.txt
 pacman -Q \
