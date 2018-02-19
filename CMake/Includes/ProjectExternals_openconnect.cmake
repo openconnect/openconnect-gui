@@ -10,7 +10,7 @@ endif()
 if(NOT EXISTS ${CMAKE_SOURCE_DIR}/external/openconnect-devel-${openconnect-TAG}_${MINGW_VARIANT}.zip)
     set(OPENCONNECT_DEV_URL https://github.com/horar/openconnect/releases/download/${openconnect-TAG})
 else()
-    message(STATUS "Using local openconnect-devel packages...")
+    message(STATUS "Using local openconnect-devel packages... (${MINGW_VARIANT})")
     set(OPENCONNECT_DEV_URL ${CMAKE_SOURCE_DIR}/external)
 endif()
 
@@ -46,7 +46,7 @@ ExternalProject_Add_Step(openconnect-devel-${openconnect-TAG} deploy_libraries
 if(NOT EXISTS ${CMAKE_SOURCE_DIR}/external/openconnect-${openconnect-TAG}_${MINGW_VARIANT}.zip)
     set(OPENCONNECT_URL https://github.com/horar/openconnect/releases/download/${openconnect-TAG})
 else()
-    message(STATUS "Using local openconnect-devel packages...")
+    message(STATUS "Using local openconnect packages... ${MINGW_VARIANT}")
     set(OPENCONNECT_URL ${CMAKE_SOURCE_DIR}/external)
 endif()
 
