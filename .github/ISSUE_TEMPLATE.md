@@ -37,4 +37,10 @@ possible. Thank you!
 <!--- What actually happend -->
 
 ### Other Information
-<!--- Feel free to include any other info, such as screenshots, log files etc -->
+<!--- Feel free to include any other info, such as screenshots, log files etc.
+
+If you paste any text into your issue, make sure to wrap it with a text fence so it renders correctly:
+```text
+# output goes here
+```
+-->
