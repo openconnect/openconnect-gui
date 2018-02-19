@@ -1,10 +1,16 @@
+if(CMAKE_SIZEOF_VOID_P EQUAL 8)
+    set(MINGW_VARIANT mingw64)
+else()
+    set(MINGW_VARIANT mingw32)
+endif()
+
 # --------------------------------------------------------------------------------------------------
 # openconnect (libs, headers, etc.)
 # --------------------------------------------------------------------------------------------------
-if(NOT EXISTS ${CMAKE_SOURCE_DIR}/external/openconnect-devel-${openconnect-TAG}_mingw32.zip)
+if(NOT EXISTS ${CMAKE_SOURCE_DIR}/external/openconnect-devel-${openconnect-TAG}_${MINGW_VARIANT}.zip)
     set(OPENCONNECT_DEV_URL https://github.com/horar/openconnect/releases/download/${openconnect-TAG})
 else()
-    message(STATUS "Using local openconnect-devel packages...")
+    message(STATUS "Using local openconnect-devel packages... (${MINGW_VARIANT})")
     set(OPENCONNECT_DEV_URL ${CMAKE_SOURCE_DIR}/external)
 endif()
 
@@ -14,7 +20,7 @@ ExternalProject_Add(openconnect-devel-${openconnect-TAG}
     
     DOWNLOAD_NO_PROGRESS 1
     
-    URL ${OPENCONNECT_DEV_URL}/openconnect-devel-${openconnect-TAG}_mingw32.zip
+    URL ${OPENCONNECT_DEV_URL}/openconnect-devel-${openconnect-TAG}_${MINGW_VARIANT}.zip
 
     CONFIGURE_COMMAND ""
     BUILD_COMMAND ""
@@ -37,10 +43,10 @@ ExternalProject_Add_Step(openconnect-devel-${openconnect-TAG} deploy_libraries
 # --------------------------------------------------------------------------------------------------
 # openconnect (util & libs)
 # --------------------------------------------------------------------------------------------------
-if(NOT EXISTS ${CMAKE_SOURCE_DIR}/external/openconnect-${openconnect-TAG}_mingw32.zip)
+if(NOT EXISTS ${CMAKE_SOURCE_DIR}/external/openconnect-${openconnect-TAG}_${MINGW_VARIANT}.zip)
     set(OPENCONNECT_URL https://github.com/horar/openconnect/releases/download/${openconnect-TAG})
 else()
-    message(STATUS "Using local openconnect-devel packages...")
+    message(STATUS "Using local openconnect packages... ${MINGW_VARIANT}")
     set(OPENCONNECT_URL ${CMAKE_SOURCE_DIR}/external)
 endif()
 
@@ -50,7 +56,7 @@ ExternalProject_Add(openconnect-${openconnect-TAG}
     
     DOWNLOAD_NO_PROGRESS 1
 
-    URL ${OPENCONNECT_URL}/openconnect-${openconnect-TAG}_mingw32.zip
+    URL ${OPENCONNECT_URL}/openconnect-${openconnect-TAG}_${MINGW_VARIANT}.zip
 
     CONFIGURE_COMMAND ""
     BUILD_COMMAND ""
