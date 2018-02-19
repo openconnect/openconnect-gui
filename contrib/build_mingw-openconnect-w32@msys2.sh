@@ -159,3 +159,4 @@ pacman -Q \
 	mingw-w64-i686-libproxy \
 	>> openconnect-${OC_TAG}_mingw32.txt
 
+mv -v openconnect-*.zip openconnect-*.txt ..
