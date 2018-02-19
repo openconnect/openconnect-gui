@@ -153,7 +153,6 @@ pacman -Q \
 	mingw-w64-i686-nettle \
 	mingw-w64-i686-gmp \
 	mingw-w64-i686-p11-kit \
-	mingw-w64-i686-zlib \
 	mingw-w64-i686-libxml2 \
 	mingw-w64-i686-zlib \
 	mingw-w64-i686-libxml2 \
