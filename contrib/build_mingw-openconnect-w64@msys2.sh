@@ -35,7 +35,7 @@ git checkout ${STOKEN_TAG}
 ./autogen.sh
 mkdir build64
 cd build64
-../configure ..
+../configure
 mingw32-make -j4
 mingw32-make install
 cd ../../
