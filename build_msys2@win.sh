@@ -47,4 +47,6 @@ cmake .
 make package VERBOSE=1
 # make package_source VERBOSE=1
 
+mv -vf *.exe ..
+
 cd ..
