@@ -10,12 +10,12 @@
 echo "======================================================================="
 echo " Preparing sandbox..."
 echo "======================================================================="
-mkdir -pv build-release
+mkdir -pv build-release-$MSYSTEM
 
 echo "======================================================================="
 echo " Generating project..."
 echo "======================================================================="
-cd build-release
+cd build-release-$MSYSTEM
 cmake -G "MSYS Makefiles" \
 	-DCMAKE_BUILD_TYPE=Release \
 	..
