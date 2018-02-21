@@ -26,26 +26,26 @@ pacman --needed -S \
 	mingw-w64-i686-lz4 \
 	mingw-w64-i686-libproxy
 
-mkdir work
+[ -d work ] || mkdir work
 cd work
 
-git clone https://github.com/cernekee/stoken
+[ -d stoken ] ||  git clone https://github.com/cernekee/stoken
 cd stoken
 git checkout ${STOKEN_TAG}
 ./autogen.sh
-mkdir build32
+[ -d build32 ] || mkdir build32
 cd build32
 ../configure --disable-dependency-tracking --without-tomcrypt --without-gtk
 mingw32-make -j4
 mingw32-make install
 cd ../../
 
-git clone git://git.infradead.org/users/dwmw2/openconnect.git
+[ -d openconnect ] || git clone git://git.infradead.org/users/dwmw2/openconnect.git
 cd openconnect
 git reset --hard
 git checkout ${OC_TAG}
 ./autogen.sh
-mkdir build32
+[ -d build32 ] || mkdir build32
 cd build32
 ../configure --disable-dependency-tracking --with-gnutls --without-openssl --without-libpskc --with-vpnc-script=vpnc-script-win.js
 mingw32-make -j4
