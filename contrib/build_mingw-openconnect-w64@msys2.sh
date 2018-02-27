@@ -84,7 +84,7 @@ cp ${MINGW_PREFIX}/bin/libstdc++-6.dll .
 cp ${MINGW_PREFIX}/bin/liblzma-5.dll .
 cp ../../openconnect/build64/.libs/libopenconnect-5.dll .
 cp ../../openconnect/build64/.libs/openconnect.exe .
-curl -o vpnc-script-win.js http://git.infradead.org/users/dwmw2/vpnc-scripts.git/blob_plain/HEAD:/vpnc-script-win.js
+curl -v -o vpnc-script-win.js http://git.infradead.org/users/dwmw2/vpnc-scripts.git/blob_plain/HEAD:/vpnc-script-win.js
 cd ../../
 
 mkdir -p pkg/lib && cd pkg/lib
