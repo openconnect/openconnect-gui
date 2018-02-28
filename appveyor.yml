@@ -39,9 +39,9 @@ build_script:
 test: off
 artifacts:
 - path: build\openconnect-gui*.exe
-  name: installer
+  name: 'Installer'
 - path: build\openconnect-gui*.exe.sha512
-  name: 'sha512 installer hash'
+  name: 'Installer - sha512 hash'
 deploy:
 - provider: GitHub
   tag: $(APPVEYOR_REPO_TAG_NAME)
@@ -54,3 +54,4 @@ deploy:
   force_update: true
   on:
     appveyor_repo_tag: true
+
