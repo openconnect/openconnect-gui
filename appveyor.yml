@@ -21,13 +21,21 @@ cache: .\build -> appveyor.yml
 build_script:
 - cmd: >-
     set
+
     set PATH=%PATH:C:\Program Files\Git\usr\bin;=%
+
     set PATH=%MINGW%\bin;%QT5%\bin;%PATH%
+
     set PATH="%NSIS%";%PATH%
+
     if not exist build md build
+
     cd .\build
+
     cmake -G %GENERATOR% -DCMAKE_BUILD_TYPE=%BUILD_TYPE% ..
+
     cmake --build . --config %BUILD_TYPE% --target %TARGET%
+
 test: off
 artifacts:
 - path: build\openconnect-gui*.exe
