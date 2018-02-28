@@ -4,8 +4,7 @@
 [![Downloades](https://img.shields.io/github/downloads/openconnect/openconnect-gui/latest/total.svg)](https://github.com/openconnect/openconnect-gui/releases)
 [![License: GPL v2](https://img.shields.io/badge/License-GPL%20v2-blue.svg)](https://img.shields.io/badge/License-GPL%20v2-blue.svg)
 [![Join the chat at https://gitter.im/openconnect-gui/Lobby](https://badges.gitter.im/openconnect-gui/Lobby.svg)](https://gitter.im/openconnect-gui/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge) 
-[![Build Status](https://travis-ci.org/openconnect/openconnect-gui.svg?branch=master)](https://travis-ci.org/openconnect/openconnect-gui)
-[![Build status](https://ci.appveyor.com/api/projects/status/frib67a4pa10e3ae/branch/develop?svg=true)](https://ci.appveyor.com/project/horar/openconnect-gui-58r26/branch/develop)
+[![Build status](https://ci.appveyor.com/api/projects/status/hueumkrrgut9r3d7?svg=true)](https://ci.appveyor.com/project/horar/openconnect-gui)
 
 This is the GUI client for openconnect VPN.
 This client is in beta testing phase. It cannot be assumed to provide
