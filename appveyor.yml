@@ -1,17 +1,14 @@
 version: 1.5.2-{build}
 pull_requests:
   do_not_increment_build_number: true
+branches:
+  only:
+  - master
+  - develop
+  - /feature\/.*/
 skip_tags: true
 image: Visual Studio 2017
 clone_depth: 100
-branches:
-  # whitelist
-  only:
-    - master
-    - develop
-    - /feature\/.*/ 
-  except:
-    - gh-pages
 environment:
   QT5: C:\Qt\5.10.1\mingw53_32
   MINGW: C:\Qt\Tools\mingw530_32
