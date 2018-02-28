@@ -13,7 +13,7 @@ branches:
   except:
     - gh-pages
 environment:
-  QT5: C:\Qt\5.10.0\mingw53_32
+  QT5: C:\Qt\5.10.1\mingw53_32
   MINGW: C:\Qt\Tools\mingw530_32
   NSIS: C:\Program Files (x86)\NSIS
   matrix:
