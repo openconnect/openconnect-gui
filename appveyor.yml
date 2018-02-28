@@ -1,0 +1,56 @@
+version: '{branch}-{build}'
+pull_requests:
+  do_not_increment_build_number: true
+branches:
+  except:
+  - gh-pages
+image: Visual Studio 2017
+clone_depth: 100
+environment:
+  QT5: C:\Qt\5.10.0\mingw53_32
+  MINGW: C:\Qt\Tools\mingw530_32
+  NSIS: C:\Program Files (x86)\NSIS
+  matrix:
+#  - GENERATOR: '"MinGW Makefiles"'
+#    BUILD_TYPE: Debug
+#    TARGET: all
+  - GENERATOR: '"MinGW Makefiles"'
+    BUILD_TYPE: Release
+    TARGET: package
+cache: .\build -> appveyor.yml
+build_script:
+- cmd: >-
+    set
+
+    set PATH=%PATH:C:\Program Files\Git\usr\bin;=%
+
+    set PATH=%MINGW%\bin;%QT5%\bin;%PATH%
+
+    set PATH="%NSIS%";%PATH%
+
+    if not exist build md build
+
+    cd .\build
+
+    cmake -G %GENERATOR% -DCMAKE_BUILD_TYPE=%BUILD_TYPE% ..
+
+    cmake --build . --config %BUILD_TYPE% --target %TARGET%
+
+test: off
+artifacts:
+- path: build\openconnect-gui*.exe
+  name: installer
+- path: build\openconnect-gui*.exe.sha512
+  name: 'sha512 installer hash'
+deploy:
+- provider: GitHub
+  tag: $(APPVEYOR_REPO_TAG_NAME)
+  release: $(APPVEYOR_REPO_TAG_NAME)
+  description: TBD...
+  auth_token:
+    secure: x7ZSG2iQyNioIlyguchg7/Tzl5NzY521hr8Op0H4EQt/kPIndb2KHe/OlGiX+GSK
+  artifact: /build\/openconnect-gui-.*\.exe.*
+  draft: true
+  force_update: true
+  on:
+    appveyor_repo_tag: true
