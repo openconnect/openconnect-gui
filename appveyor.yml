@@ -20,7 +20,7 @@ environment:
   - GENERATOR: '"MinGW Makefiles"'
     BUILD_TYPE: Release
     TARGET: package
-cache: .\build
+cache: .\build -> appveyor.yml
 build_script:
 - cmd: >-
     set
