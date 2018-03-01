@@ -49,7 +49,7 @@ deploy:
   description: TBD...
   auth_token:
     secure: x7ZSG2iQyNioIlyguchg7/Tzl5NzY521hr8Op0H4EQt/kPIndb2KHe/OlGiX+GSK
-  artifact: /build\/openconnect-gui-.*\.exe.*
+  artifact: /build\/openconnect-gui-.*\.exe.*/
   draft: true
   force_update: true
   on:
