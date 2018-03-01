@@ -6,13 +6,19 @@
 export OC_TAG=v7.08
 export STOKEN_TAG=v0.92
 
-dnf -y install mingw64-gnutls mingw64-libxml2 mingw64-gettext
-dnf -y install gcc libtool
-dnf -y install gettext
-dnf -y install git p7zip
-dnf -y install patch
 
 mkdir work
+dnf -y install \
+	mingw64-gnutls \
+	mingw64-libxml2 \
+	mingw64-gettext
+dnf -y install \
+	gcc \
+	libtool \
+	gettext \
+	git \
+	p7zip \
+	patch
 cd work
 
 git clone https://github.com/cernekee/stoken
