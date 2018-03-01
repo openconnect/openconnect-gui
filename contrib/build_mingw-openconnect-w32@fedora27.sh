@@ -6,10 +6,16 @@
 export OC_TAG=v7.08
 export STOKEN_TAG=v0.92
 
-dnf -y install mingw32-gnutls mingw32-libxml2 mingw32-gettext
-dnf -y install gcc libtool
-dnf -y install gettext
-dnf -y install git p7zip
+dnf -y install \
+	mingw32-gnutls \
+	mingw32-libxml2 \
+	mingw32-gettext
+dnf -y install \
+	gcc \
+	libtool \
+	gettext \
+	git \
+	p7zip
 
 mkdir work
 cd work

@@ -6,25 +6,19 @@
 export OC_TAG=v7.08
 export STOKEN_TAG=v0.92
 
-#dnf -y install mingw64-gnutls mingw64-libxml2 mingw64-gettext
-#dnf -y install gcc libtool
-#dnf -y install gettext
-#dnf -y install git p7zip
-#dnf -y install patch
-
 pacman --needed -S \
-	mingw-w64-x86_64-gnutls \
-	mingw-w64-x86_64-libidn2 \
-	mingw-w64-x86_64-libunistring \
-	mingw-w64-x86_64-nettle \
-	mingw-w64-x86_64-gmp \
-	mingw-w64-x86_64-p11-kit \
-	mingw-w64-x86_64-zlib \
-	mingw-w64-x86_64-libxml2 \
-	mingw-w64-x86_64-zlib \
-	mingw-w64-x86_64-libxml2 \
-	mingw-w64-x86_64-lz4 \
-	mingw-w64-x86_64-libproxy
+    mingw-w64-x86_64-gnutls \
+    mingw-w64-x86_64-libidn2 \
+    mingw-w64-x86_64-libunistring \
+    mingw-w64-x86_64-nettle \
+    mingw-w64-x86_64-gmp \
+    mingw-w64-x86_64-p11-kit \
+    mingw-w64-x86_64-zlib \
+    mingw-w64-x86_64-libxml2 \
+    mingw-w64-x86_64-zlib \
+    mingw-w64-x86_64-libxml2 \
+    mingw-w64-x86_64-lz4 \
+    mingw-w64-x86_64-libproxy
 
 [ -d work ] || mkdir work
 cd work
