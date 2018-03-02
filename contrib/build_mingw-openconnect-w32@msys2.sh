@@ -20,6 +20,7 @@ pacman --needed -S \
     mingw-w64-i686-lz4 \
     mingw-w64-i686-libproxy
 
+
 [ -d work ] || mkdir work
 cd work
 
