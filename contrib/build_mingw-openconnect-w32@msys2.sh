@@ -141,23 +141,23 @@ cd ../
 #sudo mingw32-make uninstall
 
 echo "List of system-wide used packages versions:" \
-	> openconnect-${OC_TAG}_mingw32.txt
+    > openconnect-${OC_TAG}_mingw32.txt
 echo "openconnect-${OC_TAG}" \
-	>> openconnect-${OC_TAG}_mingw32.txt
+    >> openconnect-${OC_TAG}_mingw32.txt
 echo "stoken-${STOKEN_TAG}" \
-	>> openconnect-${OC_TAG}_mingw32.txt
+    >> openconnect-${OC_TAG}_mingw32.txt
 pacman -Q \
-	mingw-w64-i686-gnutls \
-	mingw-w64-i686-libidn2 \
-	mingw-w64-i686-libunistring \
-	mingw-w64-i686-nettle \
-	mingw-w64-i686-gmp \
-	mingw-w64-i686-p11-kit \
-	mingw-w64-i686-libxml2 \
-	mingw-w64-i686-zlib \
-	mingw-w64-i686-libxml2 \
-	mingw-w64-i686-lz4 \
-	mingw-w64-i686-libproxy \
-	>> openconnect-${OC_TAG}_mingw32.txt
+    mingw-w64-i686-gnutls \
+    mingw-w64-i686-libidn2 \
+    mingw-w64-i686-libunistring \
+    mingw-w64-i686-nettle \
+    mingw-w64-i686-gmp \
+    mingw-w64-i686-p11-kit \
+    mingw-w64-i686-libxml2 \
+    mingw-w64-i686-zlib \
+    mingw-w64-i686-libxml2 \
+    mingw-w64-i686-lz4 \
+    mingw-w64-i686-libproxy \
+    >> openconnect-${OC_TAG}_mingw32.txt
 
 mv -v openconnect-*.zip openconnect-*.txt ..
