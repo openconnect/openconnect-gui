@@ -27,6 +27,7 @@ git checkout ${STOKEN_TAG}
 ./autogen.sh
 [ -d build32 ] || mkdir build32
 cd build32
+git clean -fdx
 mingw32-configure --disable-dependency-tracking --without-tomcrypt --without-gtk
 mingw32-make -j4
 mingw32-make install
@@ -39,6 +40,7 @@ git checkout ${OC_TAG}
 ./autogen.sh
 [ -d build32 ] || mkdir build32
 cd build32
+git clean -fdx
 mingw32-configure --disable-dependency-tracking --with-gnutls --without-openssl --without-libpskc --with-vpnc-script=vpnc-script-win.js
 mingw32-make -j4
 cd ../../
