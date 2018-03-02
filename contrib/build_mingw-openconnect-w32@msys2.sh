@@ -3,6 +3,9 @@
 # with mingw32 on MSYS2 toolchain
 #
 
+[ "$MSYSTEM" != "MINGW32" ] && exit -1
+echo "Starting under MINGW32 build environment..."
+
 export OC_TAG=v7.08
 export STOKEN_TAG=v0.92
 
