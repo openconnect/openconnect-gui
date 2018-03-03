@@ -69,16 +69,19 @@ QByteArray CryptData::encode(QString& txt, QString password)
     }
 
     DATA_BLOB DataIn;
-    DataIn.pbData = (BYTE*)password.toUtf8().data();
-    DataIn.cbData = password.toUtf8().size();
+    QByteArray passwordArray{password.toUtf8()};
+    DataIn.pbData = (BYTE*)passwordArray.data();
+    DataIn.cbData = passwordArray.size() + 1;
 
-    DATA_BLOB Opt;
-    Opt.pbData = (BYTE*)txt.toUtf8().data();
-    Opt.cbData = txt.toUtf8().size();
+    DATA_BLOB Entropy;
+    QByteArray txtArray{txt.toUtf8()};
+    Entropy.pbData = (BYTE*)txtArray.data();
+    Entropy.cbData = txtArray.size() + 1;
+
 
     DATA_BLOB DataOut;
     QByteArray res;
-    BOOL r = pCryptProtectData(&DataIn, NULL, &Opt, NULL, NULL, 0, &DataOut);
+    BOOL r = pCryptProtectData(&DataIn, NULL, &Entropy, NULL, NULL, 0, &DataOut);
     if (r == false) {
         return res;
     }
@@ -103,24 +106,24 @@ bool CryptData::decode(QString& txt, QByteArray _enc, QString& res)
         return true;
     }
 
-    QByteArray enc;
-    enc = QByteArray::fromBase64(_enc.mid(4));
-
     DATA_BLOB DataIn;
+    QByteArray enc{QByteArray::fromBase64(_enc.mid(4))};
     DataIn.pbData = (BYTE*)enc.data();
-    DataIn.cbData = enc.size();
+    DataIn.cbData = enc.size() + 1;
 
-    DATA_BLOB Opt;
-    Opt.pbData = (BYTE*)txt.toLatin1().data();
-    Opt.cbData = txt.toLatin1().size();
+    DATA_BLOB Entropy;
+    QByteArray txtArray{txt.toUtf8()};
+    Entropy.pbData = (BYTE*)txtArray.data();
+    Entropy.cbData = txtArray.size() + 1;
 
     DATA_BLOB DataOut;
-    BOOL r = pCryptUnprotectData(&DataIn, NULL, &Opt, NULL, NULL, 0, &DataOut);
+
+    BOOL r = pCryptUnprotectData(&DataIn, NULL, &Entropy, NULL, NULL, 0, &DataOut);
     if (r == false) {
         return false;
     }
 
-    res = QString::fromUtf8((const char*)DataOut.pbData, DataOut.cbData);
+    res = QString::fromUtf8((const char*)DataOut.pbData, DataOut.cbData - 1);
     LocalFree(DataOut.pbData);
     return true;
 }
