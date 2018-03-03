@@ -79,13 +79,6 @@ void LogDialog::append(const Logger::Message& message)
     }
 }
 
-void LogDialog::closeEvent(QCloseEvent* event)
-{
-    saveSettings();
-
-    QDialog::closeEvent(event);
-}
-
 void LogDialog::on_pushButtonClear_clicked()
 {
     if (ui->listWidget->count()) {
@@ -149,4 +142,9 @@ void LogDialog::on_checkBox_autoScroll_toggled(bool checked)
     } else {
         m_timer->stop();
     }
+}
+
+void LogDialog::on_LogDialog_rejected()
+{
+    saveSettings();
 }
