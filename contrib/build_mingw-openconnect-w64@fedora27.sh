@@ -6,21 +6,29 @@
 export OC_TAG=v7.08
 export STOKEN_TAG=v0.92
 
-dnf -y install mingw64-gnutls mingw64-libxml2 mingw64-gettext
-dnf -y install gcc libtool
-dnf -y install gettext
-dnf -y install git p7zip
-dnf -y install patch
+dnf -y install \
+	mingw64-gnutls \
+	mingw64-libxml2 \
+	mingw64-gettext
+dnf -y install \
+	gcc \
+	libtool \
+	gettext \
+	git \
+	p7zip \
+	patch
 
-mkdir work
+
+[ -d work ] || mkdir work
 cd work
 
-git clone https://github.com/cernekee/stoken
+[ -d stoken ] ||  git clone https://github.com/cernekee/stoken
 cd stoken
 git checkout ${STOKEN_TAG}
 ./autogen.sh
-mkdir build64
+[ -d build64 ] || mkdir build64
 cd build64
+git clean -fdx
 mingw64-configure --disable-dependency-tracking --without-tomcrypt --without-gtk
 mingw64-make -j4
 mingw64-make install
@@ -31,8 +39,9 @@ cd openconnect
 git reset --hard
 git checkout ${OC_TAG}
 ./autogen.sh
-mkdir build64
+[ -d build64 ] || mkdir build64
 cd build64
+git clean -fdx
 mingw64-configure --disable-dependency-tracking --with-gnutls --without-openssl --without-libpskc --with-vpnc-script=vpnc-script-win.js
 mingw64-make -j4
 cd ../../
@@ -128,4 +137,4 @@ rpm -qv \
     mingw64-libxml2 \
     >> openconnect-${OC_TAG}_mingw64.txt
 
-mv openconnect-*.zip openconnect-*.txt ..
+mv -v openconnect-*.zip openconnect-*.txt ..
