@@ -6,20 +6,28 @@
 export OC_TAG=v7.08
 export STOKEN_TAG=v0.92
 
-dnf -y install mingw32-gnutls mingw32-libxml2 mingw32-gettext
-dnf -y install gcc libtool
-dnf -y install gettext
-dnf -y install git p7zip
+dnf -y install \
+	mingw32-gnutls \
+	mingw32-libxml2 \
+	mingw32-gettext
+dnf -y install \
+	gcc \
+	libtool \
+	gettext \
+	git \
+	p7zip
 
-mkdir work
+
+[ -d work ] || mkdir work
 cd work
 
-git clone https://github.com/cernekee/stoken
+[ -d stoken ] ||  git clone https://github.com/cernekee/stoken
 cd stoken
 git checkout ${STOKEN_TAG}
 ./autogen.sh
-mkdir build32
+[ -d build32 ] || mkdir build32
 cd build32
+git clean -fdx
 mingw32-configure --disable-dependency-tracking --without-tomcrypt --without-gtk
 mingw32-make -j4
 mingw32-make install
@@ -30,8 +38,9 @@ cd openconnect
 git reset --hard
 git checkout ${OC_TAG}
 ./autogen.sh
-mkdir build32
+[ -d build32 ] || mkdir build32
 cd build32
+git clean -fdx
 mingw32-configure --disable-dependency-tracking --with-gnutls --without-openssl --without-libpskc --with-vpnc-script=vpnc-script-win.js
 mingw32-make -j4
 cd ../../

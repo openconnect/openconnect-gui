@@ -3,28 +3,26 @@
 # with mingw32 on MSYS2 toolchain
 #
 
+[ "$MSYSTEM" != "MINGW32" ] && exit -1
+echo "Starting under MINGW32 build environment..."
+
 export OC_TAG=v7.08
 export STOKEN_TAG=v0.92
 
-#dnf -y install mingw64-gnutls mingw64-libxml2 mingw64-gettext
-#dnf -y install gcc libtool
-#dnf -y install gettext
-#dnf -y install git p7zip
-#dnf -y install patch
-
 pacman --needed -S \
-	mingw-w64-i686-gnutls \
-	mingw-w64-i686-libidn2 \
-	mingw-w64-i686-libunistring \
-	mingw-w64-i686-nettle \
-	mingw-w64-i686-gmp \
-	mingw-w64-i686-p11-kit \
-	mingw-w64-i686-zlib \
-	mingw-w64-i686-libxml2 \
-	mingw-w64-i686-zlib \
-	mingw-w64-i686-libxml2 \
-	mingw-w64-i686-lz4 \
-	mingw-w64-i686-libproxy
+    mingw-w64-i686-gnutls \
+    mingw-w64-i686-libidn2 \
+    mingw-w64-i686-libunistring \
+    mingw-w64-i686-nettle \
+    mingw-w64-i686-gmp \
+    mingw-w64-i686-p11-kit \
+    mingw-w64-i686-zlib \
+    mingw-w64-i686-libxml2 \
+    mingw-w64-i686-zlib \
+    mingw-w64-i686-libxml2 \
+    mingw-w64-i686-lz4 \
+    mingw-w64-i686-libproxy
+
 
 [ -d work ] || mkdir work
 cd work
@@ -35,6 +33,7 @@ git checkout ${STOKEN_TAG}
 ./autogen.sh
 [ -d build32 ] || mkdir build32
 cd build32
+git clean -fdx
 ../configure --disable-dependency-tracking --without-tomcrypt --without-gtk
 mingw32-make -j4
 mingw32-make install
@@ -47,6 +46,7 @@ git checkout ${OC_TAG}
 ./autogen.sh
 [ -d build32 ] || mkdir build32
 cd build32
+git clean -fdx
 ../configure --disable-dependency-tracking --with-gnutls --without-openssl --without-libpskc --with-vpnc-script=vpnc-script-win.js
 mingw32-make -j4
 cd ../../
@@ -141,23 +141,23 @@ cd ../
 #sudo mingw32-make uninstall
 
 echo "List of system-wide used packages versions:" \
-	> openconnect-${OC_TAG}_mingw32.txt
+    > openconnect-${OC_TAG}_mingw32.txt
 echo "openconnect-${OC_TAG}" \
-	>> openconnect-${OC_TAG}_mingw32.txt
+    >> openconnect-${OC_TAG}_mingw32.txt
 echo "stoken-${STOKEN_TAG}" \
-	>> openconnect-${OC_TAG}_mingw32.txt
+    >> openconnect-${OC_TAG}_mingw32.txt
 pacman -Q \
-	mingw-w64-i686-gnutls \
-	mingw-w64-i686-libidn2 \
-	mingw-w64-i686-libunistring \
-	mingw-w64-i686-nettle \
-	mingw-w64-i686-gmp \
-	mingw-w64-i686-p11-kit \
-	mingw-w64-i686-libxml2 \
-	mingw-w64-i686-zlib \
-	mingw-w64-i686-libxml2 \
-	mingw-w64-i686-lz4 \
-	mingw-w64-i686-libproxy \
-	>> openconnect-${OC_TAG}_mingw32.txt
+    mingw-w64-i686-gnutls \
+    mingw-w64-i686-libidn2 \
+    mingw-w64-i686-libunistring \
+    mingw-w64-i686-nettle \
+    mingw-w64-i686-gmp \
+    mingw-w64-i686-p11-kit \
+    mingw-w64-i686-libxml2 \
+    mingw-w64-i686-zlib \
+    mingw-w64-i686-libxml2 \
+    mingw-w64-i686-lz4 \
+    mingw-w64-i686-libproxy \
+    >> openconnect-${OC_TAG}_mingw32.txt
 
 mv -v openconnect-*.zip openconnect-*.txt ..
