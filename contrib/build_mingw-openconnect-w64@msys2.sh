@@ -161,4 +161,7 @@ pacman -Q \
     mingw-w64-x86_64-libproxy \
     >> openconnect-${OC_TAG}_mingw64.txt
 
-mv -v openconnect-*.zip openconnect-*.txt ..
+sha512sum.exe openconnect-${OC_TAG}_mingw64.zip > openconnect-${OC_TAG}_mingw64.zip.sha512
+sha512sum.exe openconnect-devel-${OC_TAG}_mingw64.zip > openconnect-devel-${OC_TAG}_mingw64.zip.sha512
+
+mv -v openconnect-*.zip openconnect-*.txt openconnect-*.zip.sha512 ..
