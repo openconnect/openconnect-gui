@@ -1,6 +1,7 @@
 History of user-visible changes.
 
 ## [v1.5.3](https://github.com/openconnect/openconnect-gui/tree/v1.5.3) (unreleased)
+- Don't lose password in batch mode and keys from storage (resolve #220, #142)
 - No disconnection triggered before quit (#202)
 - Don't use system wide defined proxy when disabled in profile (#208)
 - Unable to use socks5 proxy built by ssh tunneling (#187)
