@@ -33,16 +33,13 @@ class LogDialog;
 class LogDialog : public QDialog {
     Q_OBJECT
 public:
-    LogDialog(QWidget* parent = 0);
+    explicit LogDialog(QWidget* parent = 0);
     ~LogDialog();
 
 signals:
 
 public slots:
     void append(const Logger::Message& message);
-
-protected slots:
-    void closeEvent(QCloseEvent* event) override;
 
 private slots:
     void on_pushButtonClear_clicked();
@@ -52,6 +49,8 @@ private slots:
     void onItemSelectionChanged();
 
     void on_checkBox_autoScroll_toggled(bool checked);
+
+    void on_LogDialog_rejected();
 
 private:
     void loadSettings();
