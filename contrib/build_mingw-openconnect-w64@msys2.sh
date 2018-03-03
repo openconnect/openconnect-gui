@@ -135,6 +135,7 @@ cd ../
 rmdir -v nsis
 7za a -tzip -mx=9 -sdel ../openconnect-devel-${OC_TAG}_mingw64.zip *
 cd ../
+rmdir -v pkg
 
 
 #cd stoken/build64
