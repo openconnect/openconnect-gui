@@ -48,5 +48,6 @@ make package VERBOSE=1
 # make package_source VERBOSE=1
 
 mv -vf *.exe ..
+mv -vf *.exe.sha512 ..
 
 cd ..
