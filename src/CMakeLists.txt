@@ -1,4 +1,7 @@
 
+set_property(SOURCE ${PROJECT_NAME}.cpp PROPERTY SKIP_AUTOGEN ON)
+set_property(SOURCE timestamp.cpp PROPERTY SKIP_AUTOGEN ON)
+
 set(${PROJECT_NAME}_SRCS
     ${PROJECT_NAME}.cpp
     ${PROJECT_NAME}.qrc
