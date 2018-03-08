@@ -88,9 +88,6 @@ if(MINGW)
         openconnect-devel-${openconnect-TAG}
         openconnect-${openconnect-TAG}
         vpnc-scripts-${vpnc-scripts-TAG}
-        qt-solutions-${qt-solutions-TAG}
-
-        spdlog-${spdlog-TAG}
     )
 
     set_target_properties(${PROJECT_NAME} PROPERTIES

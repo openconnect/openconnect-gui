@@ -21,3 +21,4 @@ add_library(spdlog::spdlog INTERFACE IMPORTED)
 set_target_properties(spdlog::spdlog PROPERTIES
     INTERFACE_INCLUDE_DIRECTORIES "${CMAKE_BINARY_DIR}/external/include"
 )
+add_dependencies(spdlog::spdlog DEPENDS spdlog-${spdlog-TAG})

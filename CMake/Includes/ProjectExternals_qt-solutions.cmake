@@ -26,3 +26,6 @@ set_target_properties(qt-solutions::qtsingleapplication PROPERTIES
     INTERFACE_INCLUDE_DIRECTORIES "${CMAKE_BINARY_DIR}/external/include"
     IMPORTED_LOCATION ${CMAKE_BINARY_DIR}/external/lib/libqtsingleapplication.a
 )
+set_property(TARGET qt-solutions::qtsingleapplication PROPERTY
+    DEPENDS qt-solutions-${qt-solutions-TAG}
+)
