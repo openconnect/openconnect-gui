@@ -18,7 +18,7 @@ echo "======================================================================="
 cd build-release-$MSYSTEM
 cmake -G "MSYS Makefiles" \
 	-DCMAKE_BUILD_TYPE=Release \
-	..
+	../..
 
 echo "======================================================================="
 echo " Compiling..."
