@@ -7,16 +7,15 @@ void Logger::addMessage(const QString& message, const MessageType& messageType, 
 {
     QWriteLocker lock(&m_lock);
 
-    Message tmp{QDateTime::currentMSecsSinceEpoch(),
-                messageType,
-                componentType,
-                message,
-                ++m_messageCounter,
-                QThread::currentThreadId()
-               };
+    Message tmp{ QDateTime::currentMSecsSinceEpoch(),
+        messageType,
+        componentType,
+        message,
+        ++m_messageCounter,
+        QThread::currentThreadId() };
     m_messages.push_back(tmp);
 
-    if (m_messages.size() >= 20000) {// TODO: magic constant
+    if (m_messages.size() >= 20000) { // TODO: magic constant
         m_messages.pop_front();
     }
 
@@ -27,8 +26,8 @@ QVector<Logger::Message> Logger::getMessages(int lastKnownId) const
 {
     QReadLocker lock(&m_lock);
 
-    int diff{m_messageCounter - lastKnownId};
-    int size{m_messages.size()};
+    int diff{ m_messageCounter - lastKnownId };
+    int size{ m_messages.size() };
 
     if (lastKnownId == -1 || diff >= size) {
         return m_messages;
@@ -47,8 +46,9 @@ void Logger::clear()
     m_messages.clear();
 }
 
-Logger::Logger(QObject *parent) : QObject(parent),
-    m_messageCounter{-1},
-    m_lock{QReadWriteLock::Recursive}
+Logger::Logger(QObject* parent)
+    : QObject(parent)
+    , m_messageCounter{ -1 }
+    , m_lock{ QReadWriteLock::Recursive }
 {
 }

@@ -4,14 +4,14 @@
 #include "server_storage.h"
 
 #include <QPushButton>
-#include <QUrl>
 #include <QSettings>
+#include <QUrl>
 
 #include <memory>
 
-NewProfileDialog::NewProfileDialog(QWidget *parent) :
-    QDialog(parent),
-    ui(new Ui::NewProfileDialog)
+NewProfileDialog::NewProfileDialog(QWidget* parent)
+    : QDialog(parent)
+    , ui(new Ui::NewProfileDialog)
 {
     ui->setupUi(this);
 
@@ -32,15 +32,15 @@ QString NewProfileDialog::getNewProfileName() const
     return ui->lineEditName->text();
 }
 
-void NewProfileDialog::changeEvent(QEvent *e)
+void NewProfileDialog::changeEvent(QEvent* e)
 {
     QDialog::changeEvent(e);
     switch (e->type()) {
-        case QEvent::LanguageChange:
-            ui->retranslateUi(this);
-            break;
-        default:
-            break;
+    case QEvent::LanguageChange:
+        ui->retranslateUi(this);
+        break;
+    default:
+        break;
     }
 }
 
@@ -58,12 +58,12 @@ void NewProfileDialog::on_checkBoxCustomize_toggled(bool checked)
     }
 }
 
-void NewProfileDialog::on_lineEditName_textChanged(const QString &)
+void NewProfileDialog::on_lineEditName_textChanged(const QString&)
 {
     updateButtons();
 }
 
-void NewProfileDialog::on_lineEditGateway_textChanged(const QString &text)
+void NewProfileDialog::on_lineEditGateway_textChanged(const QString& text)
 {
     QUrl url(text, QUrl::StrictMode);
     if (ui->checkBoxCustomize->isChecked() == false && (url.isValid() || text.isEmpty())) {
@@ -76,9 +76,8 @@ void NewProfileDialog::on_lineEditGateway_textChanged(const QString &text)
 #define PREFIX "server:"
 void NewProfileDialog::updateButtons()
 {
-    bool enableButtons{false};
-    if (ui->lineEditName->text().isEmpty() == false &&
-        ui->lineEditGateway->text().isEmpty() == false) {
+    bool enableButtons{ false };
+    if (ui->lineEditName->text().isEmpty() == false && ui->lineEditGateway->text().isEmpty() == false) {
 
         enableButtons = true;
 
@@ -86,7 +85,7 @@ void NewProfileDialog::updateButtons()
         QSettings settings;
         for (const auto& key : settings.allKeys()) {
             if (key.startsWith(PREFIX) && key.endsWith("/server")) {
-                QString str{key};
+                QString str{ key };
                 str.remove(0, sizeof(PREFIX) - 1); /* remove prefix */
                 str.remove(str.size() - 7, 7); /* remove /server suffix */
                 if (str == ui->lineEditName->text()) {
@@ -101,7 +100,7 @@ void NewProfileDialog::updateButtons()
     ui->buttonBox->button(QDialogButtonBox::SaveAll)->setEnabled(enableButtons);
 }
 
-void NewProfileDialog::on_buttonBox_clicked(QAbstractButton *button)
+void NewProfileDialog::on_buttonBox_clicked(QAbstractButton* button)
 {
     if (ui->buttonBox->standardButton(button) == QDialogButtonBox::SaveAll) {
         emit connect();
@@ -110,7 +109,7 @@ void NewProfileDialog::on_buttonBox_clicked(QAbstractButton *button)
 
 void NewProfileDialog::on_buttonBox_accepted()
 {
-    auto ss{std::make_unique<StoredServer>()};
+    auto ss{ std::make_unique<StoredServer>() };
     ss->set_label(ui->lineEditName->text());
     ss->set_servername(ui->lineEditGateway->text());
     ss->save();

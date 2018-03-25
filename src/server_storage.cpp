@@ -22,15 +22,15 @@
 #include <QSettings>
 #include <cstdio>
 
-const char* const StoredServer::m_vpnProtocol[] = {"anyconnect", "nc"};
+const char* const StoredServer::m_vpnProtocol[] = { "anyconnect", "nc" };
 
 StoredServer::~StoredServer(void)
 {
 }
 
-StoredServer::StoredServer() :
-    m_protocol_id(0),
-    m_server_hash_algo(0)
+StoredServer::StoredServer()
+    : m_protocol_id(0)
+    , m_server_hash_algo(0)
 {
     set_window(nullptr);
 }
@@ -169,8 +169,10 @@ int StoredServer::load(QString& name)
         ret = CryptData::decode(this->m_servername,
             settings.value("password").toByteArray(),
             this->m_password);
-        if (ret == false)
+        if (ret == false) {
+            m_last_err = "decoding of password failed";
             rval = -1;
+        }
     }
 
     QByteArray data;
@@ -190,6 +192,7 @@ int StoredServer::load(QString& name)
     ret = CryptData::decode(this->m_servername,
         settings.value("client-key").toByteArray(), str);
     if (ret == false) {
+        m_last_err = "decoding of client keyfailed";
         rval = -1;
     }
 
@@ -207,6 +210,7 @@ int StoredServer::load(QString& name)
         settings.value("token-str").toByteArray(),
         this->m_token_string);
     if (ret == false) {
+        m_last_err = "decoding of OTP token failed";
         rval = -1;
     }
 

@@ -1,17 +1,17 @@
-cmake_minimum_required(VERSION 3.5 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.10 FATAL_ERROR)
 
 if(APPLE)
     if(NOT CMAKE_OSX_SYSROOT)
-        set(CMAKE_OSX_SYSROOT "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.12.sdk" CACHE STRING "" FORCE)
+        set(CMAKE_OSX_SYSROOT "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.13.sdk" CACHE STRING "" FORCE)
     endif()
 
      if(NOT CMAKE_OSX_DEPLOYMENT_TARGET)
-        set(CMAKE_OSX_DEPLOYMENT_TARGET "10.10" CACHE STRING "" FORCE)
+        set(CMAKE_OSX_DEPLOYMENT_TARGET "10.11" CACHE STRING "" FORCE)
     endif()
 endif()
 
 project(openconnect-gui
-    VERSION 1.5.2
+    VERSION 1.5.3
     LANGUAGES CXX
 )
 
@@ -21,8 +21,8 @@ set(PRODUCT_NAME_SHORT "OpenConnect-GUI")
 set(PRODUCT_NAME_LONG "OpenConnect-GUI VPN client")
 set(PRODUCT_NAME_COMPANY "OpenConnect-GUI Team")
 set(PRODUCT_NAME_COMPANY_DOMAIN "openconnect.github.io")
-set(PRODUCT_NAME_COPYRIGHT_SHORT "Copyright (C) 2016-2017 OpenConnect-GUI Team")
-set(PRODUCT_NAME_COPYRIGHT_FULL "Copyright (C) 2014-2015 Red Hat Inc.<br>Copyright (C) 2016-2017 OpenConnect-GUI Team")
+set(PRODUCT_NAME_COPYRIGHT_SHORT "Copyright (C) 2016-2018 OpenConnect-GUI Team")
+set(PRODUCT_NAME_COPYRIGHT_FULL "Copyright (C) 2014-2015 Red Hat Inc.<br>${PRODUCT_NAME_COPYRIGHT_SHORT}")
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/CMake/Modules/")
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/CMake/Includes/")

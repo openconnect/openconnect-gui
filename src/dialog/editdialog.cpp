@@ -56,7 +56,7 @@ static int token_tab(int mode)
 }
 
 static int token_rtab[] = {
-        [0] = OC_TOKEN_MODE_HOTP,
+    [0] = OC_TOKEN_MODE_HOTP,
     [1] = OC_TOKEN_MODE_TOTP,
     [2] = OC_TOKEN_MODE_STOKEN
 };
@@ -336,32 +336,32 @@ void EditDialog::on_loadWinCert_clicked()
     ui->userKeyEdit->setText(st.key_url);
 }
 
-void EditDialog::on_groupnameEdit_textChanged(const QString &arg1)
+void EditDialog::on_groupnameEdit_textChanged(const QString& arg1)
 {
     ui->groupnameClear->setEnabled(!arg1.isEmpty());
 }
 
-void EditDialog::on_caCertEdit_textChanged(const QString &arg1)
+void EditDialog::on_caCertEdit_textChanged(const QString& arg1)
 {
     ui->caCertClear->setEnabled(!arg1.isEmpty());
 }
 
-void EditDialog::on_serverCertHash_textChanged(const QString &arg1)
+void EditDialog::on_serverCertHash_textChanged(const QString& arg1)
 {
     ui->serverCertClear->setEnabled(!arg1.isEmpty());
 }
 
-void EditDialog::on_tokenEdit_textChanged(const QString &arg1)
+void EditDialog::on_tokenEdit_textChanged(const QString& arg1)
 {
     ui->tokenClear->setEnabled(!arg1.isEmpty());
 }
 
-void EditDialog::on_userCertEdit_textChanged(const QString &arg1)
+void EditDialog::on_userCertEdit_textChanged(const QString& arg1)
 {
     ui->userCertClear->setEnabled(!arg1.isEmpty());
 }
 
-void EditDialog::on_userKeyEdit_textChanged(const QString &arg1)
+void EditDialog::on_userKeyEdit_textChanged(const QString& arg1)
 {
     ui->userKeyClear->setEnabled(!arg1.isEmpty());
 }

@@ -1,5 +1,5 @@
 <RCC>
-    <qresource prefix="/new/resource">
+    <qresource prefix="">
         <file>images/trashcan.png</file>
         <file>images/text-editor.png</file>
         <file>images/network-wired.png</file>
@@ -11,6 +11,8 @@
         <file>images/traffic_light_off.png</file>
         <file>images/network-connected.png</file>
         <file>images/network-disconnected.png</file>
+        <file>images/+mac/network-connected.png</file>
+        <file>images/+mac/network-disconnected.png</file>
         <file>images/profiles.png</file>
         <file>images/text-new.png</file>
         <file>Resources/mono_lock.png</file>

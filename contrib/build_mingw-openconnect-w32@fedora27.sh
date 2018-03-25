@@ -4,23 +4,31 @@
 #
 
 export OC_TAG=v7.08
-export STOKEN_TAG=v0.91
+export STOKEN_TAG=v0.92
 
-dnf -y install mingw32-gnutls mingw32-libxml2 mingw32-gettext
-dnf -y install gcc libtool
-dnf -y install gettext
-dnf -y install git p7zip
+dnf -y install \
+	mingw32-gnutls \
+	mingw32-libxml2 \
+	mingw32-gettext
+dnf -y install \
+	gcc \
+	libtool \
+	gettext \
+	git \
+	p7zip
 
-mkdir work
+
+[ -d work ] || mkdir work
 cd work
 
-git clone https://github.com/cernekee/stoken
+[ -d stoken ] ||  git clone https://github.com/cernekee/stoken
 cd stoken
 git checkout ${STOKEN_TAG}
 ./autogen.sh
-mkdir build32
+[ -d build32 ] || mkdir build32
 cd build32
-mingw32-configure
+git clean -fdx
+mingw32-configure --disable-dependency-tracking --without-tomcrypt --without-gtk
 mingw32-make -j4
 mingw32-make install
 cd ../../
@@ -30,9 +38,10 @@ cd openconnect
 git reset --hard
 git checkout ${OC_TAG}
 ./autogen.sh
-mkdir build32
+[ -d build32 ] || mkdir build32
 cd build32
-mingw32-configure --with-vpnc-script=vpnc-script.js
+git clean -fdx
+mingw32-configure --disable-dependency-tracking --with-gnutls --without-openssl --without-libpskc --with-vpnc-script=vpnc-script-win.js
 mingw32-make -j4
 cd ../../
 
@@ -62,6 +71,7 @@ cp ${MINGW_PREFIX}/bin/zlib1.dll .
 cp ${MINGW_PREFIX}/bin/libstoken-1.dll .
 cp ../../openconnect/build32/.libs/libopenconnect-5.dll .
 cp ../../openconnect/build32/.libs/openconnect.exe .
+curl -v -o vpnc-script-win.js http://git.infradead.org/users/dwmw2/vpnc-scripts.git/blob_plain/HEAD:/vpnc-script-win.js
 cd ../../
 
 mkdir -p pkg/lib && cd pkg/lib
@@ -113,6 +123,8 @@ cd ../
 
 echo "List of system-wide used packages versions:" \
 	> openconnect-${OC_TAG}_mingw32.txt
+echo "openconnect-${OC_TAG}" \
+	>> openconnect-${OC_TAG}_mingw32.txt
 echo "stoken-${STOKEN_TAG}" \
 	>> openconnect-${OC_TAG}_mingw32.txt
 rpm -qv \
@@ -122,4 +134,6 @@ rpm -qv \
     mingw32-p11-kit \
     mingw32-zlib \
     mingw32-libxml2 \
-	>> openconnect-${OC_TAG}_mingw32.txt
+    >> openconnect-${OC_TAG}_mingw32.txt
+
+mv -v openconnect-*.zip openconnect-*.txt ..
