@@ -1,6 +1,12 @@
 History of user-visible changes.
 
-## [v1.5.3](https://github.com/openconnect/openconnect-gui/tree/v1.5.3) (unreleased)
+## [v1.5.4](https://github.com/openconnect/openconnect-gui/tree/v1.5.4) (unreleased)
+- TBD
+
+[Full Changelog](https://github.com/openconnect/openconnect-gui/compare/v1.5.3...develop)
+
+
+## [v1.5.3](https://github.com/openconnect/openconnect-gui/tree/v1.5.3) (2018-03-25)
 - Don't lose password in batch mode and keys from storage (resolve #220, #142, #144)
 - No disconnection triggered before quit (#202)
 - Don't use system wide defined proxy when disabled in profile (#208)
