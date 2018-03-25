@@ -36,9 +36,9 @@ build_script:
 
     cmake --build . --config %BUILD_TYPE% --target %TARGET%
 
-    mv *.exe ..
+    move /Y *.exe ..
 
-    mv *.exe.sha512 ..
+    move /Y *.exe.sha512 ..
 
 test: off
 artifacts:
