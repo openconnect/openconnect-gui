@@ -211,6 +211,7 @@ static int process_auth_form(void* privdata, struct oc_auth_form* form)
                 && strcasecmp(opt->name, "password") == 0) {
                 openconnect_set_option_value(opt,
                     vpn->ss->get_password().toLatin1().data());
+                empty = 0;
                 continue;
             }
 
