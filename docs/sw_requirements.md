@@ -9,8 +9,8 @@ This is target platform for the product.
     - Tools/MinGW 5.3.0 component
     - Tools/QtCreator component
     - Tools/QtCreator CDB Debugger support
-- [NSIS 3.0+](http://nsis.sourceforge.net/Main_Page)
-- [CMake 3.6+](https://cmake.org/)
+- [NSIS 3.0+](https://sourceforge.net/projects/nsis)
+- [CMake 3.10+](https://cmake.org/)
 - [Git 2.7+](https://git-scm.com/)
 
 ##### Externals
@@ -18,7 +18,7 @@ This is target platform for the product.
 These projects will be downloaded automatically by CMake.
 
 - [OpenConnect for MinGW32](https://github.com/horar/openconnect/releases)
-- [TAP-windoes](https://openvpn.net/index.php/open-source/downloads.html)
+- [TAP-windows](https://openvpn.net/index.php/open-source/downloads.html)
 - [spdlog](https://github.com/gabime/spdlog)
 - [qt-solutions](https://github.com/qtproject/qt-solutions.git)
 
@@ -42,7 +42,7 @@ This is not main target platform, because openconnect is used by other projects 
     ~~sudo dnf install -y spdlog-devel~~
 
 #### MacOS
-- MacOS 10.10+
+- MacOS 10.13+
 - Xcode 9.2+ incl. command line tools
 - [Qt online installer](http://download.qt.io/official_releases/online_installers/qt-unified-mac-x64-online.dmg) and choose:
     - 5.10.0/"OS X" component
