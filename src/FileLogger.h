@@ -1,6 +1,5 @@
 #pragma once
 
-
 #include "spdlog/spdlog.h"
 
 #include <QObject>
@@ -8,15 +7,13 @@
 
 #include "logger.h"
 
-
-class FileLogger : public QObject
-{
+class FileLogger : public QObject {
     Q_OBJECT
 public:
-    explicit FileLogger(QObject *parent = nullptr,
-                        const QString& logPath = QString("%1/%2").arg(QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation)).arg("logs"),
-                        const size_t logSize = 1024*1024,
-                        const size_t logCount = 5);
+    explicit FileLogger(QObject* parent = nullptr,
+        const QString& logPath = QString("%1/%2").arg(QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation)).arg("logs"),
+        const size_t logSize = 1024 * 1024,
+        const size_t logCount = 5);
     ~FileLogger();
     FileLogger(const FileLogger&) = delete;
     FileLogger& operator=(const FileLogger&) = delete;

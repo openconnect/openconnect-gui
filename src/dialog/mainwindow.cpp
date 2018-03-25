@@ -18,14 +18,14 @@
  */
 
 #include "mainwindow.h"
-#include "ui_mainwindow.h"
-#include "config.h"
 #include "NewProfileDialog.h"
+#include "config.h"
 #include "editdialog.h"
 #include "logdialog.h"
 #include "openconnect-gui.h"
-#include "timestamp.h"
 #include "server_storage.h"
+#include "timestamp.h"
+#include "ui_mainwindow.h"
 #include "vpninfo.h"
 
 #include "logger.h"
@@ -37,24 +37,25 @@ extern "C" {
 
 #include <QCloseEvent>
 #include <QDateTime>
+#include <QDesktopServices>
 #include <QDialog>
+#include <QEventTransition>
+#include <QFileSelector>
 #include <QFutureWatcher>
 #include <QLineEdit>
 #include <QMessageBox>
 #include <QSettings>
+#include <QSignalTransition>
+#include <QStateMachine>
 #include <QUrl>
 #include <QtConcurrent/QtConcurrentRun>
 #include <QtNetwork/QNetworkProxy>
 #include <QtNetwork/QNetworkProxyFactory>
 #include <QtNetwork/QNetworkProxyQuery>
-#include <QStateMachine>
-#include <QSignalTransition>
-#include <QEventTransition>
-#include <QDesktopServices>
 
+#include <cmath>
 #include <cstdarg>
 #include <cstdio>
-#include <cmath>
 
 #ifdef _WIN32
 #define pipe_write(x, y, z) send(x, y, z, 0)
@@ -69,14 +70,22 @@ MainWindow::MainWindow(QWidget* parent, const QString profileName)
     ui->setupUi(this);
 
     connect(ui->viewLogButton, &QPushButton::clicked,
-            this, &MainWindow::createLogDialog);
+        this, &MainWindow::createLogDialog);
 
     timer = new QTimer(this);
     blink_timer = new QTimer(this);
     this->cmd_fd = INVALID_SOCKET;
 
     connect(ui->actionQuit, &QAction::triggered,
-        qApp, &QApplication::quit);
+        [=]() {
+            if (m_disconnectAction->isEnabled()) {
+                connect(this, &MainWindow::readyToShutdown,
+                    qApp, &QApplication::quit);
+                on_disconnectClicked();
+            } else {
+                qApp->quit();
+            }
+        });
 
     connect(blink_timer, &QTimer::timeout,
         this, &MainWindow::blink_ui,
@@ -103,8 +112,9 @@ MainWindow::MainWindow(QWidget* parent, const QString profileName)
         connect(m_trayIcon, &QSystemTrayIcon::activated,
             this, &MainWindow::iconActivated);
 
-        QIcon icon;
-        icon.addPixmap(TRAY_OFF_ICON, QIcon::Normal, QIcon::Off);
+        QFileSelector selector;
+        QIcon icon(selector.select(QStringLiteral(":/images/network-disconnected.png")));
+        icon.setIsMask(true);
         m_trayIcon->setIcon(icon);
         m_trayIcon->show();
     } else {
@@ -135,17 +145,21 @@ MainWindow::MainWindow(QWidget* parent, const QString profileName)
     s2_connectionReady->assignProperty(m_trayIconMenuConnections, "enabled", true);
     machine->addState(s2_connectionReady);
 
-    class ServerListTransition : public QSignalTransition
-    {
+    class ServerListTransition : public QSignalTransition {
     public:
-        ServerListTransition(QComboBox *cb, bool hasServers)
-            : QSignalTransition(cb, SIGNAL(currentIndexChanged(int))), hasServers(hasServers) {}
+        ServerListTransition(QComboBox* cb, bool hasServers)
+            : QSignalTransition(cb, SIGNAL(currentIndexChanged(int)))
+            , hasServers(hasServers)
+        {
+        }
+
     protected:
-        bool eventTest(QEvent *e) {
+        bool eventTest(QEvent* e)
+        {
             if (!QSignalTransition::eventTest(e)) {
                 return false;
             }
-            QStateMachine::SignalEvent *se = static_cast<QStateMachine::SignalEvent*>(e);
+            QStateMachine::SignalEvent* se = static_cast<QStateMachine::SignalEvent*>(e);
             bool isEmpty = se->arguments().at(0).toInt() == -1;
             return (hasServers ? !isEmpty : isEmpty);
         }
@@ -177,8 +191,8 @@ MainWindow::MainWindow(QWidget* parent, const QString profileName)
                 return;
             } else {
                 QMessageBox::warning(this,
-                                     tr("Connection failed"),
-                                     tr("Selected VPN profile '<b>%1</b>' does not exists.").arg(profileName));
+                    tr("Connection failed"),
+                    tr("Selected VPN profile '<b>%1</b>' does not exists.").arg(profileName));
             }
         }
 
@@ -231,43 +245,55 @@ MainWindow::MainWindow(QWidget* parent, const QString profileName)
     }
 
     // TODO: move outside...
-    class MinimizeEventTransition : public QEventTransition
-    {
+    class MinimizeEventTransition : public QEventTransition {
     public:
-        MinimizeEventTransition(QMainWindow* mw,  Qt::WindowState state)
-            : QEventTransition(mw, QEvent::WindowStateChange), m_mw(mw), m_state(state) {}
+        MinimizeEventTransition(QMainWindow* mw, Qt::WindowState state)
+            : QEventTransition(mw, QEvent::WindowStateChange)
+            , m_mw(mw)
+            , m_state(state)
+        {
+        }
+
     protected:
-        bool eventTest(QEvent *e) override {
+        bool eventTest(QEvent* e) override
+        {
             if (!QEventTransition::eventTest(e)) {
                 return false;
             }
-            QStateMachine::WrappedEvent *we = static_cast<QStateMachine::WrappedEvent*>(e);
-            if(we->event()->type() == QEvent::WindowStateChange) {
+            QStateMachine::WrappedEvent* we = static_cast<QStateMachine::WrappedEvent*>(e);
+            if (we->event()->type() == QEvent::WindowStateChange) {
                 return (m_mw->windowState() == m_state);
             }
             return false;
         }
+
     private:
         QMainWindow* m_mw;
         Qt::WindowState m_state;
     };
     // TODO: move outside...
-    class RestoreEventTransition : public QEventTransition
-    {
+    class RestoreEventTransition : public QEventTransition {
     public:
-        RestoreEventTransition(QMainWindow* mw,  Qt::WindowState state)
-            : QEventTransition(mw, QEvent::WindowStateChange), m_mw(mw), m_state(state) {}
+        RestoreEventTransition(QMainWindow* mw, Qt::WindowState state)
+            : QEventTransition(mw, QEvent::WindowStateChange)
+            , m_mw(mw)
+            , m_state(state)
+        {
+        }
+
     protected:
-        bool eventTest(QEvent *e) override {
+        bool eventTest(QEvent* e) override
+        {
             if (!QEventTransition::eventTest(e)) {
                 return false;
             }
-            QStateMachine::WrappedEvent *we = static_cast<QStateMachine::WrappedEvent*>(e);
-            if(we->event()->type() == QEvent::WindowStateChange) {
+            QStateMachine::WrappedEvent* we = static_cast<QStateMachine::WrappedEvent*>(e);
+            if (we->event()->type() == QEvent::WindowStateChange) {
                 return (m_mw->windowState() == m_state);
             }
             return false;
         }
+
     private:
         QMainWindow* m_mw;
         Qt::WindowState m_state;
@@ -341,13 +367,13 @@ void MainWindow::vpn_status_changed(int connected, QString& dns, QString& ip, QS
 
 QString MainWindow::normalize_byte_size(uint64_t bytes)
 {
-    const unsigned unit = 1024;// TODO: add support for SI units? (optional)
+    const unsigned unit = 1024; // TODO: add support for SI units? (optional)
     if (bytes < unit) {
         return QString("%1 B").arg(QString::number(bytes));
     }
     const int exp = static_cast<int>(std::log(bytes) / std::log(unit));
     static const char suffixChar[] = "KMGTPE";
-    return QString("%1 %2B").arg(QString::number(bytes / std::pow(unit, exp), 'f', 3)).arg(suffixChar[exp-1]);
+    return QString("%1 %2B").arg(QString::number(bytes / std::pow(unit, exp), 'f', 3)).arg(suffixChar[exp - 1]);
 }
 
 void MainWindow::statsChanged(QString tx, QString rx, QString dtls)
@@ -415,10 +441,12 @@ void MainWindow::changeStatus(int val)
         m_disconnectAction->setEnabled(true);
 
         ui->iconLabel->setPixmap(ON_ICON);
-        ui->connectionButton->setIcon(QIcon(":/new/resource/images/process-stop.png"));
+        ui->connectionButton->setIcon(QIcon(":/images/process-stop.png"));
         ui->connectionButton->setText(tr("Disconnect"));
 
-        QIcon icon(TRAY_ON_ICON);
+        QFileSelector selector;
+        QIcon icon(selector.select(QStringLiteral(":/images/network-connected.png")));
+        icon.setIsMask(true);
         m_trayIcon->setIcon(icon);
 
         this->ui->ipV4Label->setText(ip);
@@ -442,7 +470,9 @@ void MainWindow::changeStatus(int val)
     } else if (val == STATUS_CONNECTING) {
 
         if (m_trayIcon) {
-            QIcon icon(TRAY_OFF_ICON);
+            QFileSelector selector;
+            QIcon icon(selector.select(QStringLiteral(":/images/network-disconnected.png")));
+            icon.setIsMask(true);
             m_trayIcon->setIcon(icon);
         }
 
@@ -452,7 +482,7 @@ void MainWindow::changeStatus(int val)
         m_disconnectAction->setEnabled(true);
 
         ui->iconLabel->setPixmap(CONNECTING_ICON);
-        ui->connectionButton->setIcon(QIcon(":/new/resource/images/process-stop.png"));
+        ui->connectionButton->setIcon(QIcon(":/images/process-stop.png"));
         ui->connectionButton->setText(tr("Cancel"));
         blink_timer->start(1500);
 
@@ -484,11 +514,13 @@ void MainWindow::changeStatus(int val)
 
         ui->iconLabel->setPixmap(OFF_ICON);
         ui->connectionButton->setEnabled(true);
-        ui->connectionButton->setIcon(QIcon(":/new/resource/images/network-wired.png"));
+        ui->connectionButton->setIcon(QIcon(":/images/network-wired.png"));
         ui->connectionButton->setText(tr("Connect"));
 
         if (m_trayIcon) {
-            QIcon icon(TRAY_OFF_ICON);
+            QFileSelector selector;
+            QIcon icon(selector.select(QStringLiteral(":/images/network-disconnected.png")));
+            icon.setIsMask(true);
             m_trayIcon->setIcon(icon);
 
             if (this->isHidden() == true)
@@ -501,9 +533,11 @@ void MainWindow::changeStatus(int val)
         connect(ui->connectionButton, &QPushButton::clicked,
             this, &MainWindow::on_connectClicked,
             Qt::QueuedConnection);
+
+        emit readyToShutdown();
     } else if (val == STATUS_DISCONNECTING) {
         ui->iconLabel->setPixmap(CONNECTING_ICON);
-        ui->connectionButton->setIcon(QIcon(":/new/resource/images/process-stop.png"));
+        ui->connectionButton->setIcon(QIcon(":/images/process-stop.png"));
         ui->connectionButton->setEnabled(false);
         blink_timer->start(1500);
     } else {
@@ -591,7 +625,7 @@ void MainWindow::on_connectClicked()
     VpnInfo* vpninfo = nullptr;
     StoredServer* ss = new StoredServer();
     QFuture<void> future;
-    QString name, str, url;
+    QString name, url;
     QList<QNetworkProxy> proxies;
     QUrl turl;
     QNetworkProxyQuery query;
@@ -627,8 +661,8 @@ void MainWindow::on_connectClicked()
         vpninfo = new VpnInfo(QString("%1 %2").arg(qApp->applicationName()).arg(qApp->applicationVersion()), ss, this);
     } catch (std::exception& ex) {
         QMessageBox::information(this,
-                                 qApp->applicationName(),
-                                 tr("There was an issue initializing the VPN ") + "(" + ex.what() + ").");
+            qApp->applicationName(),
+            tr("There was an issue initializing the VPN ") + "(" + ex.what() + ").");
         goto fail;
     }
 
@@ -644,22 +678,29 @@ void MainWindow::on_connectClicked()
         goto fail;
     }
 
-    proxies = QNetworkProxyFactory::systemProxyForQuery(query);
-    if (proxies.size() > 0 && proxies.at(0).type() != QNetworkProxy::NoProxy) {
-        if (proxies.at(0).type() == QNetworkProxy::Socks5Proxy)
-            url = "socks5://";
-        else if (proxies.at(0).type() == QNetworkProxy::HttpCachingProxy
-            || proxies.at(0).type() == QNetworkProxy::HttpProxy)
-            url = "http://";
+    if (ss->get_proxy()) {
+        proxies = QNetworkProxyFactory::systemProxyForQuery(query);
+        if (proxies.size() > 0 && proxies.at(0).type() != QNetworkProxy::NoProxy) {
+            if (proxies.at(0).type() == QNetworkProxy::Socks5Proxy)
+                url = "socks5://";
+            else if (proxies.at(0).type() == QNetworkProxy::HttpCachingProxy
+                || proxies.at(0).type() == QNetworkProxy::HttpProxy)
+                url = "http://";
 
-        if (url.isEmpty() == false) {
+            if (url.isEmpty() == false) {
 
-            str = proxies.at(0).user() + ":" + proxies.at(0).password() + "@" + proxies.at(0).hostName();
-            if (proxies.at(0).port() != 0) {
-                str += ":" + QString::number(proxies.at(0).port());
+                QString str;
+                if (proxies.at(0).user() != 0) {
+                    str = proxies.at(0).user() + ":" + proxies.at(0).password() + "@";
+                }
+                str += proxies.at(0).hostName();
+                if (proxies.at(0).port() != 0) {
+                    str += ":" + QString::number(proxies.at(0).port());
+                }
+                Logger::instance().addMessage(tr("Setting proxy to: ") + str);
+                // FIXME: ...
+                int ret = openconnect_set_http_proxy(vpninfo->vpninfo, str.toLatin1().data());
             }
-            Logger::instance().addMessage(tr("Setting proxy to: ") + str);
-            openconnect_set_http_proxy(vpninfo->vpninfo, str.toLatin1().data());
         }
     }
 
@@ -681,7 +722,14 @@ void MainWindow::closeEvent(QCloseEvent* event)
         event->ignore();
     } else {
         event->accept();
-        qApp->quit();
+
+        if (m_disconnectAction->isEnabled()) {
+            connect(this, &MainWindow::readyToShutdown,
+                qApp, &QApplication::quit);
+            on_disconnectClicked();
+        } else {
+            qApp->quit();
+        }
     }
     QMainWindow::closeEvent(event);
 }
@@ -745,25 +793,25 @@ void MainWindow::writeSettings()
 
 void MainWindow::createLogDialog()
 {
-    auto dialog{new LogDialog()};
+    auto dialog{ new LogDialog() };
 
     disconnect(ui->viewLogButton, &QPushButton::clicked,
-            this, &MainWindow::createLogDialog);
+        this, &MainWindow::createLogDialog);
 
     connect(ui->viewLogButton, &QPushButton::clicked,
-            dialog, &QDialog::show);
+        dialog, &QDialog::show);
     connect(ui->viewLogButton, &QPushButton::clicked,
-            dialog, &QDialog::raise);
+        dialog, &QDialog::raise);
     connect(ui->viewLogButton, &QPushButton::clicked,
-            dialog, &QDialog::activateWindow);
+        dialog, &QDialog::activateWindow);
 
     connect(dialog, &QDialog::finished,
-            [this]() {
-        connect(ui->viewLogButton, &QPushButton::clicked,
+        [this]() {
+            connect(ui->viewLogButton, &QPushButton::clicked,
                 this, &MainWindow::createLogDialog);
-    });
+        });
     connect(dialog, &QDialog::finished,
-            dialog, &QDialog::deleteLater);
+        dialog, &QDialog::deleteLater);
 
     dialog->show();
     dialog->raise();
@@ -779,7 +827,7 @@ void MainWindow::createTrayIcon()
     m_disconnectAction = new QAction(tr("Disconnect"), this);
     m_trayIconMenu->addAction(m_disconnectAction);
     connect(m_disconnectAction, &QAction::triggered,
-            this, &MainWindow::on_disconnectClicked);
+        this, &MainWindow::on_disconnectClicked);
 
     m_trayIconMenu->addSeparator();
     m_trayIconMenu->addAction(ui->actionLogWindow);
@@ -816,8 +864,8 @@ void MainWindow::on_actionNewProfile_triggered()
 {
     NewProfileDialog dialog(this);
     connect(&dialog, &NewProfileDialog::connect,
-            this, &MainWindow::on_connectClicked,
-            Qt::QueuedConnection);
+        this, &MainWindow::on_connectClicked,
+        Qt::QueuedConnection);
     if (dialog.exec() != QDialog::Accepted) {
         return;
     }
@@ -891,10 +939,10 @@ void MainWindow::on_actionAbout_triggered()
     txt += tr("<br><br>%1<br>").arg(appCopyright);
     txt += tr("<br><i>%1</i> comes with ABSOLUTELY NO WARRANTY. This is free software, "
               "and you are welcome to redistribute it under the conditions "
-              "of the GNU General Public License version 2.").arg(appDescriptionLong);
+              "of the GNU General Public License version 2.")
+               .arg(appDescriptionLong);
 
     QMessageBox::about(this, "", txt);
-
 }
 
 void MainWindow::on_actionAboutQt_triggered()

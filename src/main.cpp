@@ -24,8 +24,8 @@
 #include "dialog/mainwindow.h"
 #include "openconnect-gui.h"
 
-#include "logger.h"
 #include "FileLogger.h"
+#include "logger.h"
 
 extern "C" {
 #include <gnutls/pkcs11.h>
@@ -36,13 +36,13 @@ extern "C" {
 #if !defined(_WIN32) && !defined(PROJ_GNUTLS_DEBUG)
 #include <QMessageBox>
 #endif
-#include <QSettings>
 #include <QCommandLineParser>
+#include <QSettings>
 #include <QtSingleApplication>
 
 #ifdef __MACH__
-#include <mach-o/dyld.h>
 #include <Security/Security.h>
+#include <mach-o/dyld.h>
 #endif
 
 #include <csignal>
@@ -51,9 +51,8 @@ extern "C" {
 static void log_callback(int level, const char* str)
 {
     Logger::instance().addMessage(QString(str).trimmed(),
-                                  Logger::MessageType::DEBUG,
-                                  Logger::ComponentType::GNUTLS
-                                  );
+        Logger::MessageType::DEBUG,
+        Logger::ComponentType::GNUTLS);
 }
 
 #ifdef __MACH__
@@ -67,8 +66,7 @@ bool relaunch_as_root()
 
     /* Get the path of the current program */
     if (_NSGetExecutablePath(appPath, &size) != 0) {
-        msgBox.setText(QObject::tr
-            ("Could not get program path to elevate privileges."));
+        msgBox.setText(QObject::tr("Could not get program path to elevate privileges."));
         return false;
     }
 
@@ -76,8 +74,7 @@ bool relaunch_as_root()
         kAuthorizationFlagDefaults, &authRef);
 
     if (status != errAuthorizationSuccess) {
-        msgBox.setText(QObject::tr
-            ("Failed to create authorization reference."));
+        msgBox.setText(QObject::tr("Failed to create authorization reference."));
         return false;
     }
     status = AuthorizationExecuteWithPrivileges(authRef, appPath,
@@ -148,7 +145,7 @@ int main(int argc, char* argv[])
     QCoreApplication::setOrganizationName(appOrganizationName);
     QCoreApplication::setOrganizationDomain(appOrganizationDomain);
 
-    QtSingleApplication  app(argc, argv);
+    QtSingleApplication app(argc, argv);
     if (app.isRunning()) {
         QSettings settings;
         if (settings.value(QLatin1Literal("Settings/singleInstanceMode"), true).toBool()) {
@@ -185,21 +182,20 @@ int main(int argc, char* argv[])
 
     QCommandLineParser parser;
     parser.setApplicationDescription(
-                QObject::tr("OpenConnect is a VPN client, that utilizes TLS and DTLS "
-                            "for secure session establishment, and is compatible "
-                            "with the CISCO AnyConnect SSL VPN protocol."));
+        QObject::tr("OpenConnect is a VPN client, that utilizes TLS and DTLS "
+                    "for secure session establishment, and is compatible "
+                    "with the CISCO AnyConnect SSL VPN protocol."));
     parser.addHelpOption();
     parser.addVersionOption();
-    parser.addOption({
-                         {"s", "server"},
-                         QObject::tr("auto-connect to existing profile <name>"),
-                         QObject::tr("name")
+    parser.addOption({ { "s", "server" },
+        QObject::tr("auto-connect to existing profile <name>"),
+        QObject::tr("name")
 
-                     });
+    });
 
     parser.process(app);
 
-    const QString profileName{parser.value(QLatin1String("server"))};
+    const QString profileName{ parser.value(QLatin1String("server")) };
     MainWindow mainWindow(nullptr, profileName);
     app.setActivationWindow(&mainWindow);
 #ifdef PROJ_PKCS11
@@ -212,9 +208,8 @@ int main(int argc, char* argv[])
 
     mainWindow.show();
     QObject::connect(&app, &QtSingleApplication::messageReceived,
-                     [&mainWindow](const QString &message) {
-        Logger::instance().addMessage(message);
-    }
-    );
+        [&mainWindow](const QString& message) {
+            Logger::instance().addMessage(message);
+        });
     return app.exec();
 }

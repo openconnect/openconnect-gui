@@ -4,24 +4,32 @@
 #
 
 export OC_TAG=v7.08
-export STOKEN_TAG=v0.91
+export STOKEN_TAG=v0.92
 
-dnf -y install mingw64-gnutls mingw64-libxml2 mingw64-gettext
-dnf -y install gcc libtool
-dnf -y install gettext
-dnf -y install git p7zip
-dnf -y install patch
+dnf -y install \
+	mingw64-gnutls \
+	mingw64-libxml2 \
+	mingw64-gettext
+dnf -y install \
+	gcc \
+	libtool \
+	gettext \
+	git \
+	p7zip \
+	patch
 
-mkdir work
+
+[ -d work ] || mkdir work
 cd work
 
-git clone https://github.com/cernekee/stoken
+[ -d stoken ] ||  git clone https://github.com/cernekee/stoken
 cd stoken
 git checkout ${STOKEN_TAG}
 ./autogen.sh
-mkdir build64
+[ -d build64 ] || mkdir build64
 cd build64
-mingw64-configure
+git clean -fdx
+mingw64-configure --disable-dependency-tracking --without-tomcrypt --without-gtk
 mingw64-make -j4
 mingw64-make install
 cd ../../
@@ -31,10 +39,10 @@ cd openconnect
 git reset --hard
 git checkout ${OC_TAG}
 ./autogen.sh
-
-mkdir build64
+[ -d build64 ] || mkdir build64
 cd build64
-mingw64-configure --with-vpnc-script=vpnc-script.js
+git clean -fdx
+mingw64-configure --disable-dependency-tracking --with-gnutls --without-openssl --without-libpskc --with-vpnc-script=vpnc-script-win.js
 mingw64-make -j4
 cd ../../
 
@@ -64,6 +72,7 @@ cp ${MINGW_PREFIX}/bin/zlib1.dll .
 cp ${MINGW_PREFIX}/bin/libstoken-1.dll .
 cp ../../openconnect/build64/.libs/libopenconnect-5.dll .
 cp ../../openconnect/build64/.libs/openconnect.exe .
+curl -v -o vpnc-script-win.js http://git.infradead.org/users/dwmw2/vpnc-scripts.git/blob_plain/HEAD:/vpnc-script-win.js
 cd ../../
 
 mkdir -p pkg/lib && cd pkg/lib
@@ -115,8 +124,10 @@ cd ../
 
 echo "List of system-wide used packages versions:" \
 	> openconnect-${OC_TAG}_mingw64.txt
+echo "openconnect-${OC_TAG}" \
+	>> openconnect-${OC_TAG}_mingw64.txt
 echo "stoken-${STOKEN_TAG}" \
-	>> openconnect-${OC_TAG}_mingw32.txt
+	>> openconnect-${OC_TAG}_mingw64.txt
 rpm -qv \
     mingw64-gnutls \
     mingw64-gmp \
@@ -124,4 +135,6 @@ rpm -qv \
     mingw64-p11-kit \
     mingw64-zlib \
     mingw64-libxml2 \
-	>> openconnect-${OC_TAG}_mingw64.txt
+    >> openconnect-${OC_TAG}_mingw64.txt
+
+mv -v openconnect-*.zip openconnect-*.txt ..

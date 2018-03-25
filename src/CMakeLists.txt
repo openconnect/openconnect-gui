@@ -1,54 +1,37 @@
 
+set_property(SOURCE ${PROJECT_NAME}.cpp PROPERTY SKIP_AUTOGEN ON)
+set_property(SOURCE timestamp.cpp PROPERTY SKIP_AUTOGEN ON)
+
 set(${PROJECT_NAME}_SRCS
     ${PROJECT_NAME}.cpp
-    ${PROJECT_NAME}.h
     ${PROJECT_NAME}.qrc
     cert.cpp
-    cert.h
-    common.h
-    config.h
     config.h.in
     cryptdata.cpp
-    cryptdata.h
     dialog/MyCertMsgBox.cpp
-    dialog/MyCertMsgBox.h
     dialog/MyInputDialog.cpp
-    dialog/MyInputDialog.h
     dialog/MyMsgBox.cpp
-    dialog/MyMsgBox.h
     dialog/editdialog.cpp
-    dialog/editdialog.h
     dialog/editdialog.ui
     dialog/NewProfileDialog.cpp
-    dialog/NewProfileDialog.h
     dialog/NewProfileDialog.ui
     dialog/logdialog.cpp
-    dialog/logdialog.h
     dialog/logdialog.ui
     dialog/mainwindow.cpp
-    dialog/mainwindow.h
     dialog/mainwindow.ui
     gtdb.cpp
-    gtdb.h
     key.cpp
-    key.h
     keypair.cpp
-    keypair.h
     main.cpp
     server_storage.cpp
-    server_storage.h
 
-    timestamp.h
     timestamp.cpp
 
     vpninfo.cpp
-    vpninfo.h
 
     logger.cpp
-    logger.h
 
     FileLogger.cpp
-    FileLogger.h
 )
 
 set_source_files_properties(
@@ -105,9 +88,6 @@ if(MINGW)
         openconnect-devel-${openconnect-TAG}
         openconnect-${openconnect-TAG}
         vpnc-scripts-${vpnc-scripts-TAG}
-        qt-solutions-${qt-solutions-TAG}
-
-        spdlog-${spdlog-TAG}
     )
 
     set_target_properties(${PROJECT_NAME} PROPERTIES
@@ -161,6 +141,7 @@ target_link_libraries (${PROJECT_NAME}
     Qt5::Gui
     Qt5::Widgets
     Qt5::Network
+    #??? Qt5::QMacStylePlugin
 )
 
 if(UNIX)
@@ -208,6 +189,13 @@ if(MINGW)
     )
 
     set(additionalLib ${_qwindows_dll})
+    if(NOT Qt5Core_VERSION STRLESS "5.10")
+        install(FILES
+            ${_qwinstyle_dylib}
+            DESTINATION plugins/styles
+            COMPONENT App
+        )
+    endif()
 elseif(APPLE)
     set(APPS "\${CMAKE_INSTALL_PREFIX}/${PROJECT_NAME}.app")
     list(APPEND libSearchDirs "")
@@ -218,13 +206,23 @@ elseif(APPLE)
         DESTINATION ${PROJECT_NAME}.app/Contents/PlugIns/platforms
         COMPONENT App
     )
+    set(additionalLib \${CMAKE_INSTALL_PREFIX}/${PROJECT_NAME}.app/Contents/PlugIns/platforms/libqcocoa.dylib)
+    if(NOT Qt5Core_VERSION STRLESS "5.10")
+        install(FILES
+            ${_qmacstyle_dylib}
+            DESTINATION ${PROJECT_NAME}.app/Contents/PlugIns/styles
+            COMPONENT App
+        )
+        set(additionalLib 
+            ${additionalLib}
+            \${CMAKE_INSTALL_PREFIX}/${PROJECT_NAME}.app/Contents/PlugIns/styles/libqmacstyle.dylib
+        )
+    endif()
     install(FILES
         ${CMAKE_SOURCE_DIR}/bundle/qt.conf
         DESTINATION ${PROJECT_NAME}.app/Contents/Resources
         COMPONENT App
     )
-
-    set(additionalLib \${CMAKE_INSTALL_PREFIX}/${PROJECT_NAME}.app/Contents/PlugIns/platforms/libqcocoa.dylib)
 else()
     message(STATUS "Nothing to bundle...")
 endif()

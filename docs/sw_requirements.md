@@ -5,44 +5,45 @@ This chapter summarize actual development environment. Newer or older versions m
 This is target platform for the product.
 
 - [Qt 5 (incl. mingw32) & QtCreator 4+](http://download.qt.io/official_releases/online_installers/qt-unified-windows-x86-online.exe) and choose:
-    - 5.9.1/MinGW 5.3.0 (32-bit)
+    - 5.10.0/MinGW 5.3.0 (32-bit)
     - Tools/MinGW 5.3.0 component
     - Tools/QtCreator component
     - Tools/QtCreator CDB Debugger support
-- [NSIS 3.0+](http://nsis.sourceforge.net/Main_Page)
-- [CMake 3.6+](https://cmake.org/)
+- [NSIS 3.0+](https://sourceforge.net/projects/nsis)
+- [CMake 3.10+](https://cmake.org/)
 - [Git 2.7+](https://git-scm.com/)
 
 ##### Externals
 
-These project will by downloaded automatically by CMake.
+These projects will be downloaded automatically by CMake.
 
-- [OpenConnect 7.08 for MinGW32](https://github.com/horar/openconnect/releases/tag/v7.08)
-- [TAP-windoes 9.21.2](https://openvpn.net/index.php/open-source/downloads.html)
-- [spdlog 0.13.0](https://github.com/gabime/spdlog)
+- [OpenConnect for MinGW32](https://github.com/horar/openconnect/releases)
+- [TAP-windows](https://openvpn.net/index.php/open-source/downloads.html)
+- [spdlog](https://github.com/gabime/spdlog)
 - [qt-solutions](https://github.com/qtproject/qt-solutions.git)
 
 
 #### GNU/Linux
-##### Fedora 26 (MinGW)
+##### Fedora 27 (MinGW32)
 Just try install following packages:
 
-    sudo dnf install cmake
-    sudo dnf install mingw32-qt5-qtbase
-    sudo dnf install mingw32-nsis
+    sudo dnf install -y git
+    sudo dnf install -y cmake
+    sudo dnf install -y mingw32-qt5-qtbase
+    sudo dnf install -y mingw32-nsis
 
-##### Fedora 26
+##### Fedora 27
 This is not main target platform, because openconnect is used by other projects integrated into desktop environments. On the other side - the minimum of required packages to build this GUI should be installed by following commands:
 
-    sudo dnf install git gitflow
-    sudo dnf install cmake
-    sudo dnf install qt5-qtbase-devel gcc-c++
-    sudo dnf install gnutls-devel openconnect-devel
-    ~~sudo dnf install spdlog-devel~~
+    sudo dnf install -y git gitflow
+    sudo dnf install -y cmake
+    sudo dnf install -y qt5-qtbase-devel gcc-c++
+    sudo dnf install -y gnutls-devel openconnect-devel
+    ~~sudo dnf install -y spdlog-devel~~
 
 #### MacOS
-- MacOS 10.10+
-- Xcode 8.2.1+ incl. command line tools
+- MacOS 10.13+
+- Xcode 9.2+ incl. command line tools
 - [Qt online installer](http://download.qt.io/official_releases/online_installers/qt-unified-mac-x64-online.dmg) and choose:
-    - 5.9.1/"OS X" component
+    - 5.10.0/"OS X" component
     - Tools/QtCreator component

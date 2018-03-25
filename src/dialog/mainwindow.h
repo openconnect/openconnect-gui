@@ -80,7 +80,6 @@ public slots:
 
     void request_update_stats();
 
-
     void on_connectClicked();
     void on_disconnectClicked();
 
@@ -100,6 +99,7 @@ signals:
     void stats_changed_sig(QString, QString, QString);
     void vpn_status_changed_sig(int);
     void timeout(void);
+    void readyToShutdown();
 
 private slots:
     void createLogDialog();
