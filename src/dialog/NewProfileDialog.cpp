@@ -112,6 +112,7 @@ void NewProfileDialog::on_buttonBox_accepted()
     auto ss{ std::make_unique<StoredServer>() };
     ss->set_label(ui->lineEditName->text());
     ss->set_servername(ui->lineEditGateway->text());
+    ss->set_protocol_id(ui->protocolComboBox->currentIndex());
     ss->save();
 
     accept();
