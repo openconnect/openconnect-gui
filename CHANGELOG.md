@@ -2,6 +2,7 @@ History of user-visible changes.
 
 ## [v1.5.4](https://github.com/openconnect/openconnect-gui/tree/v1.5.4) (unreleased)
 - VPN protocol selection on quick profile setup dialog
+- don't forget to set all default vpn profile settings on quick connect setup
 
 [Full Changelog](https://github.com/openconnect/openconnect-gui/compare/v1.5.3...develop)
 

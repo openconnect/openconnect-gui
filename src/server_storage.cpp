@@ -29,7 +29,13 @@ StoredServer::~StoredServer(void)
 }
 
 StoredServer::StoredServer()
-    : m_protocol_id(0)
+    : m_batch_mode{ false }
+    , m_minimize_on_connect{ false }
+    , m_proxy{ false }
+    , m_disable_udp{ false }
+    , m_reconnect_timeout{ 300 }
+    , m_dtls_attempt_period{ 25 }
+    , m_protocol_id(0)
     , m_server_hash_algo(0)
 {
     set_window(nullptr);
@@ -154,10 +160,10 @@ int StoredServer::load(QString& name)
     }
 
     this->m_username = settings.value("username").toString();
-    this->m_batch_mode = settings.value("batch").toBool();
-    this->m_proxy = settings.value("proxy").toBool();
-    this->m_disable_udp = settings.value("disable-udp").toBool();
-    this->m_minimize_on_connect = settings.value("minimize-on-connect").toBool();
+    this->m_batch_mode = settings.value("batch", false).toBool();
+    this->m_proxy = settings.value("proxy", false).toBool();
+    this->m_disable_udp = settings.value("disable-udp", false).toBool();
+    this->m_minimize_on_connect = settings.value("minimize-on-connect", false).toBool();
     this->m_reconnect_timeout = settings.value("reconnect-timeout", 300).toInt();
     this->m_dtls_attempt_period = settings.value("dtls_attempt_period", 25).toInt();
 
