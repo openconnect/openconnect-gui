@@ -69,15 +69,14 @@ QByteArray CryptData::encode(QString& txt, QString password)
     }
 
     DATA_BLOB DataIn;
-    QByteArray passwordArray{password.toUtf8()};
+    QByteArray passwordArray{ password.toUtf8() };
     DataIn.pbData = (BYTE*)passwordArray.data();
     DataIn.cbData = passwordArray.size() + 1;
 
     DATA_BLOB Entropy;
-    QByteArray txtArray{txt.toUtf8()};
+    QByteArray txtArray{ txt.toUtf8() };
     Entropy.pbData = (BYTE*)txtArray.data();
     Entropy.cbData = txtArray.size() + 1;
-
 
     DATA_BLOB DataOut;
     QByteArray res;
@@ -107,12 +106,12 @@ bool CryptData::decode(QString& txt, QByteArray _enc, QString& res)
     }
 
     DATA_BLOB DataIn;
-    QByteArray enc{QByteArray::fromBase64(_enc.mid(4))};
+    QByteArray enc{ QByteArray::fromBase64(_enc.mid(4)) };
     DataIn.pbData = (BYTE*)enc.data();
     DataIn.cbData = enc.size() + 1;
 
     DATA_BLOB Entropy;
-    QByteArray txtArray{txt.toUtf8()};
+    QByteArray txtArray{ txt.toUtf8() };
     Entropy.pbData = (BYTE*)txtArray.data();
     Entropy.cbData = txtArray.size() + 1;
 
