@@ -17,6 +17,7 @@ set(${PROJECT_NAME}_SRCS
     dialog/NewProfileDialog.ui
     dialog/logdialog.cpp
     dialog/logdialog.ui
+    dialog/VpnProtocolModel.cpp
     dialog/mainwindow.cpp
     dialog/mainwindow.ui
     gtdb.cpp
@@ -213,7 +214,7 @@ elseif(APPLE)
             DESTINATION ${PROJECT_NAME}.app/Contents/PlugIns/styles
             COMPONENT App
         )
-        set(additionalLib 
+        set(additionalLib
             ${additionalLib}
             \${CMAKE_INSTALL_PREFIX}/${PROJECT_NAME}.app/Contents/PlugIns/styles/libqmacstyle.dylib
         )
