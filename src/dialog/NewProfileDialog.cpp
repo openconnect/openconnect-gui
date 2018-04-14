@@ -1,6 +1,8 @@
 #include "NewProfileDialog.h"
 #include "ui_NewProfileDialog.h"
 
+#include "VpnProtocolModel.h"
+
 #include "server_storage.h"
 
 #include <QPushButton>
@@ -14,6 +16,8 @@ NewProfileDialog::NewProfileDialog(QWidget* parent)
     , ui(new Ui::NewProfileDialog)
 {
     ui->setupUi(this);
+    VpnProtocolModel* model = new VpnProtocolModel(this);
+    ui->protocolComboBox->setModel(model);
 
     ui->buttonBox->button(QDialogButtonBox::SaveAll)->setText(tr("Save && Connect"));
     ui->buttonBox->button(QDialogButtonBox::SaveAll)->setDefault(true);
@@ -113,6 +117,7 @@ void NewProfileDialog::on_buttonBox_accepted()
     ss->set_label(ui->lineEditName->text());
     ss->set_servername(ui->lineEditGateway->text());
     ss->set_protocol_id(ui->protocolComboBox->currentIndex());
+    ss->set_protocol_name(ui->protocolComboBox->currentData(Qt::UserRole + 1).toString());
     ss->save();
 
     accept();

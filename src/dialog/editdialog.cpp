@@ -18,6 +18,7 @@
  */
 
 #include "editdialog.h"
+#include "VpnProtocolModel.h"
 #include "common.h"
 #include "server_storage.h"
 #include "ui_editdialog.h"
@@ -118,6 +119,9 @@ EditDialog::EditDialog(QString server, QWidget* parent)
     , ss(new StoredServer())
 {
     ui->setupUi(this);
+
+    VpnProtocolModel* model = new VpnProtocolModel(this);
+    ui->protocolComboBox->setModel(model);
 
     if (ss->load(server) < 0) {
         QMessageBox::information(this,
@@ -250,6 +254,7 @@ void EditDialog::on_buttonBox_accepted()
     }
 
     ss->set_protocol_id(ui->protocolComboBox->currentIndex());
+    ss->set_protocol_name(ui->protocolComboBox->currentData(Qt::UserRole + 1).toString());
 
     ss->save();
     this->accept();

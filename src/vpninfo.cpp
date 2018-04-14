@@ -420,7 +420,7 @@ VpnInfo::VpnInfo(QString name, StoredServer* ss, MainWindow* m)
             ss->get_token_str().toLatin1().data());
     }
 
-    openconnect_set_protocol(vpninfo, ss->get_protocol());
+    openconnect_set_protocol(vpninfo, ss->get_protocol_name());
 
     openconnect_set_setup_tun_handler(vpninfo, setup_tun_vfn);
 }
