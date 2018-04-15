@@ -94,16 +94,6 @@
          <verstretch>0</verstretch>
         </sizepolicy>
        </property>
-       <item>
-        <property name="text">
-         <string>Cisco AnyConnect</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>Juniper Network Connect</string>
-        </property>
-       </item>
       </widget>
      </item>
     </layout>
