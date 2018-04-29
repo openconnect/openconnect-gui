@@ -370,3 +370,8 @@ void EditDialog::on_userKeyEdit_textChanged(const QString& arg1)
 {
     ui->userKeyClear->setEnabled(!arg1.isEmpty());
 }
+
+void EditDialog::on_loadWinCertList_itemSelectionChanged()
+{
+    ui->loadWinCert->setEnabled(!ui->loadWinCertList->selectedItems().empty());
+}
