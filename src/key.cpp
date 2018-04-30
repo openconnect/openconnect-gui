@@ -42,6 +42,9 @@ void Key::clear()
         gnutls_x509_privkey_deinit(this->privkey);
         privkey = nullptr;
         imported = false;
+    } else if (!this->url.isEmpty()) {
+        url.clear();
+        imported = false;
     }
 }
 
