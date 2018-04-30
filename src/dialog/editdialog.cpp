@@ -66,9 +66,6 @@ void EditDialog::load_win_certs()
 {
 #ifdef USE_SYSTEM_KEYS
     QString prekey = ss->get_key_url();
-    if (prekey.isEmpty() == false) {
-        ui->userKeyEdit->setText(prekey);
-    }
 
     this->winCerts.clear();
     ui->loadWinCertList->clear();
@@ -93,6 +90,9 @@ void EditDialog::load_win_certs()
             ui->loadWinCertList->addItem(l);
             if (prekey.isEmpty() == false) {
                 if (QString::compare(prekey, QString::fromUtf8(key_url), Qt::CaseSensitive) == 0) {
+                    ui->userCertEdit->setText(cert_url);
+                    ui->userKeyEdit->setText(prekey);
+
                     idx = row;
                 }
             }
