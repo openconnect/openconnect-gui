@@ -375,3 +375,11 @@ void EditDialog::on_loadWinCertList_itemSelectionChanged()
 {
     ui->loadWinCert->setEnabled(!ui->loadWinCertList->selectedItems().empty());
 }
+
+void EditDialog::on_resetWinCertSelection_clicked()
+{
+    ui->loadWinCertList->setCurrentRow(-1);
+
+    on_userCertClear_clicked();
+    on_userKeyClear_clicked();
+}

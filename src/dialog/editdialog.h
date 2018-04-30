@@ -59,6 +59,8 @@ private slots:
 
     void on_loadWinCertList_itemSelectionChanged();
 
+    void on_resetWinCertSelection_clicked();
+
 private:
     void load_win_certs();
 
