@@ -25,7 +25,6 @@ Look to [OpenConnect-GUI](http://openconnect.github.io/openconnect-gui/) project
 - [Creating release package](docs/release.md)
 - [OpenConnect library compilation and dependencies](docs/openconnect.md)
 - [Web page maintenance](docs/webpage.md)
-
 - [Snapshot builds](docs/snapshots.md)
 
 # License
