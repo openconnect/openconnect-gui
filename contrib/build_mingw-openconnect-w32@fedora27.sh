@@ -2,6 +2,11 @@
 # Sample script to checkout & build 'openconnect' project
 # with mingw32 toolchain
 #
+# It should be used only as illustration how to build application
+# and create an installer package
+#
+# (c) 2018, Lubomir Carik
+#
 
 export OC_TAG=v7.08
 export STOKEN_TAG=v0.92

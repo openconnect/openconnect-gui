@@ -2,6 +2,11 @@
 # Sample script to checkout & build 'openconnect' project
 # with mingw64 on MSYS2 toolchain
 #
+# It should be used only as illustration how to build application
+# and create an installer package
+#
+# (c) 2018, Lubomir Carik
+#
 
 [ "$MSYSTEM" != "MINGW64" ] && exit -1
 echo "Starting under MINGW64 build environment..."
