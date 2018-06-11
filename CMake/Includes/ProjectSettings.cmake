@@ -13,8 +13,9 @@ option(PROJ_INI_SETTINGS "Store the settings in INI files." OFF)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
 
 add_compile_options("-Wall")
 add_compile_options("-Wextra")
