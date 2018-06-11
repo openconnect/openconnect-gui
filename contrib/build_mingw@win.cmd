@@ -32,9 +32,9 @@ echo Setting up environment for 'clang' usage...
 set PATH="C:\Dev\LLVM\bin\";%PATH%
 
 echo Setting up environment for 'wix' toolset usage...
-set PATH="C:\Program Files (x86)\WiX Toolset v3.10\bin";%PATH%
-set WIX="C:\Program Files (x86)\WiX Toolset v3.10\"
-set CPACK_WIX_ROOT="C:\Program Files (x86)\WiX Toolset v3.10\"
+set PATH="C:\Program Files (x86)\WiX Toolset v3.11\bin";%PATH%
+set WIX="C:\Program Files (x86)\WiX Toolset v3.11\"
+set CPACK_WIX_ROOT="C:\Program Files (x86)\WiX Toolset v3.11\"
 
 echo "======================================================================="
 echo " Preparing sandbox..."
