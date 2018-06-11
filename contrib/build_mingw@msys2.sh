@@ -10,15 +10,15 @@
 echo "======================================================================="
 echo " Preparing sandbox..."
 echo "======================================================================="
-mkdir -pv build-release-$MSYSTEM
+mkdir -pv work/build-release-$MSYSTEM
 
 echo "======================================================================="
 echo " Generating project..."
 echo "======================================================================="
-cd build-release-$MSYSTEM
+cd work/build-release-$MSYSTEM
 cmake -G "MSYS Makefiles" \
 	-DCMAKE_BUILD_TYPE=Release \
-	../..
+	../../..
 
 echo "======================================================================="
 echo " Compiling..."
@@ -47,7 +47,7 @@ cmake .
 make package VERBOSE=1
 # make package_source VERBOSE=1
 
-mv -vf *.exe ..
-mv -vf *.exe.sha512 ..
+mv -vf *.exe ../..
+mv -vf *.exe.sha512 ../..
 
 cd ..
