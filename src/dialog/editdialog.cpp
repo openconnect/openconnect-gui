@@ -271,6 +271,7 @@ void EditDialog::on_userCertButton_clicked()
         tr("Open certificate"), "",
         tr("Certificate Files (*.crt *.pem *.der *.p12)"));
 
+    // FIXME: check empty result
     ui->userCertEdit->setText(filename);
 }
 
@@ -280,6 +281,7 @@ void EditDialog::on_userKeyButton_clicked()
         tr("Open private key"), "",
         tr("Private key Files (*.key *.pem *.der *.p8 *.p12)"));
 
+    // FIXME: check empty result
     ui->userKeyEdit->setText(filename);
 }
 
@@ -289,6 +291,7 @@ void EditDialog::on_caCertButton_clicked()
         tr("Open certificate"), "",
         tr("Certificate Files (*.crt *.pem *.der)"));
 
+    // FIXME: check empty result
     ui->caCertEdit->setText(filename);
 }
 
