@@ -1,6 +1,6 @@
 set(openconnect-TAG v7.08)
 set(vpnc-scripts-TAG master)
-set(spdlog-TAG v0.16.3)
+set(spdlog-TAG v0.17.0)
 set(qt-solutions-TAG master)
 set(tap-driver-TAG 9.21.2)
 
