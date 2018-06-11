@@ -12,6 +12,10 @@ the required security.
 
 Look to [OpenConnect-GUI](http://openconnect.github.io/openconnect-gui/) project webpage for detailed description, screen shots and other related projects.
 
+## Supported Platforms
+- Microsoft Windows 7 and newer
+- macOS 10.11 and newer
+
 ## Development info
 - [Software requirements](docs/sw_requirements.md)
 - [Development with QtCreator](docs/dev_QtCreator.md)
