@@ -14,7 +14,7 @@ echo "Starting under MINGW64 build environment..."
 export OC_TAG=v7.08
 export STOKEN_TAG=v0.92
 
-pacman --needed -S \
+pacman --needed --noconfirm -S \
     mingw-w64-x86_64-gnutls \
     mingw-w64-x86_64-libidn2 \
     mingw-w64-x86_64-libunistring \
