@@ -47,8 +47,8 @@ echo " Generating project..."
 echo "======================================================================="
 cd build-release
 cmake -G "MinGW Makefiles" ^
-	-DCMAKE_BUILD_TYPE=Release ^
-	..\..\
+    -DCMAKE_BUILD_TYPE=Release ^
+    ..\..\
 
 echo "======================================================================="
 echo " Compiling..."
@@ -61,14 +61,14 @@ REM echo "======================================================================
 REM rd /s /q out
 REM md out
 REM windeployqt ^
-REM 	src\openconnect-gui.exe ^
-REM 	--verbose 1 ^
-REM 	--compiler-runtime ^
-REM 	--release ^
-REM 	--force ^
-REM 	--no-webkit2 ^
-REM 	--no-quick-import ^
-REM 	--no-translations
+REM     src\openconnect-gui.exe ^
+REM     --verbose 1 ^
+REM     --compiler-runtime ^
+REM     --release ^
+REM     --force ^
+REM     --no-webkit2 ^
+REM     --no-quick-import ^
+REM     --no-translations
 
 echo "======================================================================="
 echo " Packaging..."

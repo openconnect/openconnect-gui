@@ -12,16 +12,16 @@ export OC_TAG=v7.08
 export STOKEN_TAG=v0.92
 
 dnf -y install \
-	mingw64-gnutls \
-	mingw64-libxml2 \
-	mingw64-gettext
+    mingw64-gnutls \
+    mingw64-libxml2 \
+    mingw64-gettext
 dnf -y install \
-	gcc \
-	libtool \
-	gettext \
-	git \
-	p7zip \
-	patch
+    gcc \
+    libtool \
+    gettext \
+    git \
+    p7zip \
+    patch
 
 
 [ -d work ] || mkdir work
@@ -128,11 +128,11 @@ cd ../
 #sudo mingw64-make uninstall
 
 echo "List of system-wide used packages versions:" \
-	> openconnect-${OC_TAG}_mingw64.txt
+    > openconnect-${OC_TAG}_mingw64.txt
 echo "openconnect-${OC_TAG}" \
-	>> openconnect-${OC_TAG}_mingw64.txt
+    >> openconnect-${OC_TAG}_mingw64.txt
 echo "stoken-${STOKEN_TAG}" \
-	>> openconnect-${OC_TAG}_mingw64.txt
+    >> openconnect-${OC_TAG}_mingw64.txt
 rpm -qv \
     mingw64-gnutls \
     mingw64-gmp \
