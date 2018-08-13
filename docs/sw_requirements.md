@@ -10,7 +10,7 @@ This is target platform for the product.
     - Tools/QtCreator component
     - Tools/QtCreator CDB Debugger support
 - [NSIS 3.0+](https://sourceforge.net/projects/nsis)
-- [CMake 3.10+](https://cmake.org/)
+- [CMake 3.11+](https://cmake.org/)
 - [Git 2.7+](https://git-scm.com/)
 
 ##### Externals
