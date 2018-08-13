@@ -1,7 +1,7 @@
 ### Compilation & package preparation
 
 Hints related to command line compilation and package preparation
-may be found in [shell script](../build_mingw@win.cmd) in project root.
+may be found in [shell script](../contrib/build_mingw@win.cmd) in project root.
 
 #### Hints For macOS
 
