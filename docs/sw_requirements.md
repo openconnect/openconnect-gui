@@ -43,7 +43,7 @@ This is not main target platform, because openconnect is used by other projects 
 
 #### MacOS
 - MacOS 10.13+
-- Xcode 9.2+ incl. command line tools
+- Xcode 9.4+ incl. command line tools
 - [Qt online installer](http://download.qt.io/official_releases/online_installers/qt-unified-mac-x64-online.dmg) and choose:
     - 5.11.1/"OS X" component
     - Tools/QtCreator component
