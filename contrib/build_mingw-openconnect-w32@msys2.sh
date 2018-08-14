@@ -34,7 +34,7 @@ cd work
 
 [ -d stoken ] ||  git clone https://github.com/cernekee/stoken
 cd stoken
-git checkout ${STOKEN_TAG}
+git checkout -b ${STOKEN_TAG} ${STOKEN_TAG}
 ./autogen.sh
 [ -d build32 ] || mkdir build32
 cd build32
@@ -47,7 +47,7 @@ cd ../../
 [ -d openconnect ] || git clone git://git.infradead.org/users/dwmw2/openconnect.git
 cd openconnect
 git reset --hard
-git checkout ${OC_TAG}
+git checkout -b ${OC_TAG} ${OC_TAG}
 ./autogen.sh
 [ -d build32 ] || mkdir build32
 cd build32
