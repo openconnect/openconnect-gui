@@ -11,7 +11,9 @@
 [ "$MSYSTEM" != "MINGW64" ] && exit -1
 echo "Starting under MINGW64 build environment..."
 
+export OC_URL=git://git.infradead.org/users/dwmw2/openconnect.git
 export OC_TAG=v7.08
+export STOKEN_URL=https://github.com/cernekee/stoken
 export STOKEN_TAG=v0.92
 
 pacman --needed --noconfirm -S \
@@ -32,7 +34,7 @@ pacman --needed --noconfirm -S \
 [ -d work ] || mkdir work
 cd work
 
-[ -d stoken ] ||  git clone https://github.com/cernekee/stoken
+[ -d stoken ] ||  git clone ${STOKEN_URL}
 cd stoken
 git checkout -b ${STOKEN_TAG} ${STOKEN_TAG}
 ./autogen.sh
@@ -44,7 +46,7 @@ mingw32-make -j4
 mingw32-make install
 cd ../../
 
-[ -d openconnect ] || git clone git://git.infradead.org/users/dwmw2/openconnect.git
+[ -d openconnect ] || git clone ${OC_URL}
 cd openconnect
 git reset --hard
 git checkout -b ${OC_TAG} ${OC_TAG}
