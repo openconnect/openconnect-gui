@@ -658,7 +658,7 @@ void MainWindow::on_connectClicked()
 
     /* ss is now deallocated by vpninfo */
     try {
-        vpninfo = new VpnInfo(QString("%1 %2").arg(qApp->applicationName()).arg(qApp->applicationVersion()), ss, this);
+        vpninfo = new VpnInfo(QStringLiteral("Open AnyConnect VPN Agent"), ss, this);
     } catch (std::exception& ex) {
         QMessageBox::information(this,
             qApp->applicationName(),
