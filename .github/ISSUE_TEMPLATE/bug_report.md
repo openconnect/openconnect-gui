@@ -16,31 +16,38 @@ external dependencies. We understand that it is not always possible to reduce
 your code to a small test case, but we would appreciate to have as much data as
 possible. Thank you!
 -->
+---
+name: Bug report
+about: Create a report to help us improve
 
-### Description of the Issue
-<!--- Provide a more detailed description to the issue itself -->
+---
 
-### Specifications
-- **Version**: <!-- compulsory. you must provide your version -->
-- **Platform**: <!-- e.g. if Windows, version and 32-bit or 64-bit, localization -->
+**Describe the bug**
+A clear and concise description of what the bug is.
 
-### Steps to Reproduce the Issue
-<!--- Set of steps to reproduce this issue -->
-1. 
-2. 
-3. 
+**To Reproduce**
+Steps to reproduce the behavior:
+1. Go to '...'
+2. Click on '....'
+3. Scroll down to '....'
+4. See error
 
-### Expected Behavior
-<!--- What did you expect to happen -->
+**Expected behavior**
+A clear and concise description of what you expected to happen.
 
-### Actual Behavior
-<!--- What actually happend -->
+**Screenshots**
+If applicable, add screenshots to help explain your problem.
 
-### Other Information
-<!--- Feel free to include any other info, such as screenshots, log files etc.
+**Desktop (please complete the following information):**
+ - OS: [e.g. iOS]
+ - Browser [e.g. chrome, safari]
+ - Version [e.g. 22]
 
-If you paste any text into your issue, make sure to wrap it with a text fence so it renders correctly:
-```text
-# output goes here
-```
--->
+**Smartphone (please complete the following information):**
+ - Device: [e.g. iPhone6]
+ - OS: [e.g. iOS8.1]
+ - Browser [e.g. stock browser, safari]
+ - Version [e.g. 22]
+
+**Additional context**
+Add any other context about the problem here.
