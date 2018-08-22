@@ -5,12 +5,12 @@ This chapter summarize actual development environment. Newer or older versions m
 This is target platform for the product.
 
 - [Qt 5 (incl. mingw32) & QtCreator 4+](http://download.qt.io/official_releases/online_installers/qt-unified-windows-x86-online.exe) and choose:
-    - 5.10.0/MinGW 5.3.0 (32-bit)
+    - 5.11.1/MinGW 5.3.0 (32-bit)
     - Tools/MinGW 5.3.0 component
     - Tools/QtCreator component
     - Tools/QtCreator CDB Debugger support
 - [NSIS 3.0+](https://sourceforge.net/projects/nsis)
-- [CMake 3.10+](https://cmake.org/)
+- [CMake 3.11+](https://cmake.org/)
 - [Git 2.7+](https://git-scm.com/)
 
 ##### Externals
@@ -24,7 +24,7 @@ These projects will be downloaded automatically by CMake.
 
 
 #### GNU/Linux
-##### Fedora 27 (MinGW32)
+##### Fedora 28 (MinGW32)
 Just try install following packages:
 
     sudo dnf install -y git
@@ -32,7 +32,7 @@ Just try install following packages:
     sudo dnf install -y mingw32-qt5-qtbase
     sudo dnf install -y mingw32-nsis
 
-##### Fedora 27
+##### Fedora 28
 This is not main target platform, because openconnect is used by other projects integrated into desktop environments. On the other side - the minimum of required packages to build this GUI should be installed by following commands:
 
     sudo dnf install -y git gitflow
@@ -43,7 +43,7 @@ This is not main target platform, because openconnect is used by other projects 
 
 #### MacOS
 - MacOS 10.13+
-- Xcode 9.2+ incl. command line tools
+- Xcode 9.4+ incl. command line tools
 - [Qt online installer](http://download.qt.io/official_releases/online_installers/qt-unified-mac-x64-online.dmg) and choose:
-    - 5.10.0/"OS X" component
+    - 5.11.1/"OS X" component
     - Tools/QtCreator component
