@@ -55,7 +55,7 @@ static void log_callback(int level, const char* str)
         Logger::ComponentType::GNUTLS);
 }
 
-#ifdef __MACH__
+#if defined(Q_OS_MACOS) && defined(PROJ_ADMIN_PRIV_ELEVATION)
 bool relaunch_as_root()
 {
     QMessageBox msgBox;
@@ -136,7 +136,7 @@ int main(int argc, char* argv[])
     QSettings::setDefaultFormat(QSettings::IniFormat);
 #endif
 
-#ifdef Q_OS_MACOS
+#if defined(Q_OS_MACOS) && defined(PROJ_ADMIN_PRIV_ELEVATION)
     /* Re-launching with root privs on OS X needs Qt to allow setsuid */
     QApplication::setSetuidAllowed(true);
 #endif
@@ -156,7 +156,7 @@ int main(int argc, char* argv[])
     app.setApplicationDisplayName(appDescriptionLong);
     app.setQuitOnLastWindowClosed(false);
 
-#ifdef Q_OS_MACOS
+#if defined(Q_OS_MACOS) && defined(PROJ_ADMIN_PRIV_ELEVATION)
     if (geteuid() != 0) {
         if (relaunch_as_root()) {
             /* We have re-launched with root privs. Exit this process. */

@@ -45,7 +45,7 @@ else()
 endif()
 
 if(NOT APPLE)
-    if(PROJ_UAC_ON)
+    if(PROJ_ADMIN_PRIV_ELEVATION)
         set(UAC_FLAG "")
     else()
         set(UAC_FLAG "//")

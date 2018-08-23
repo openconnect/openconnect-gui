@@ -30,6 +30,7 @@ FileLogger::FileLogger(QObject* parent, const QString& logPath, const size_t log
         QMessageBox::critical(nullptr,
             QString("Log file init failed"),
             QString(ex.what()));
+        throw;
     }
 
     connect(&Logger::instance(), &Logger::newLogMessage, this, &FileLogger::addLogMessage);
