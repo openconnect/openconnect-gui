@@ -11,8 +11,13 @@
 [ "$MSYSTEM" != "MINGW64" ] && exit -1
 echo "Starting under MINGW64 build environment..."
 
-export OC_TAG=v7.08
-export STOKEN_TAG=v0.92
+if [ "$1" == "--head" ]; then
+    export OC_TAG=master
+    export STOKEN_TAG=master
+else
+    export OC_TAG=v7.08
+    export STOKEN_TAG=v0.92
+fi
 
 pacman --needed --noconfirm -S \
     mingw-w64-x86_64-gnutls \
