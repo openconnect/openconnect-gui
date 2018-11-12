@@ -1,6 +1,6 @@
 #
 # Sample script to checkout & build 'openconnect' project
-# with mingw32 on MSYS2 toolchain
+# with MINGW32 on MSYS2 toolchain
 #
 # It should be used only as illustration how to build application
 # and create an installer package
@@ -9,7 +9,9 @@
 #
 
 [ "$MSYSTEM" != "MINGW32" ] && exit -1
-echo "Starting under MINGW32 build environment..."
+echo "Starting under $MSYSTEM build environment..."
+
+export BUILD_ARCH=i686
 
 export OC_URL=git://git.infradead.org/users/dwmw2/openconnect.git
 export OC_TAG=v7.08
@@ -17,18 +19,18 @@ export STOKEN_URL=https://github.com/cernekee/stoken
 export STOKEN_TAG=v0.92
 
 pacman --needed --noconfirm -S \
-    mingw-w64-i686-gnutls \
-    mingw-w64-i686-libidn2 \
-    mingw-w64-i686-libunistring \
-    mingw-w64-i686-nettle \
-    mingw-w64-i686-gmp \
-    mingw-w64-i686-p11-kit \
-    mingw-w64-i686-zlib \
-    mingw-w64-i686-libxml2 \
-    mingw-w64-i686-zlib \
-    mingw-w64-i686-libxml2 \
-    mingw-w64-i686-lz4 \
-    mingw-w64-i686-libproxy
+    mingw-w64-${BUILD_ARCH}-gnutls \
+    mingw-w64-${BUILD_ARCH}-libidn2 \
+    mingw-w64-${BUILD_ARCH}-libunistring \
+    mingw-w64-${BUILD_ARCH}-nettle \
+    mingw-w64-${BUILD_ARCH}-gmp \
+    mingw-w64-${BUILD_ARCH}-p11-kit \
+    mingw-w64-${BUILD_ARCH}-zlib \
+    mingw-w64-${BUILD_ARCH}-libxml2 \
+    mingw-w64-${BUILD_ARCH}-zlib \
+    mingw-w64-${BUILD_ARCH}-libxml2 \
+    mingw-w64-${BUILD_ARCH}-lz4 \
+    mingw-w64-${BUILD_ARCH}-libproxy
 
 
 [ -d work ] || mkdir work
@@ -38,8 +40,8 @@ cd work
 cd stoken
 git checkout -b ${STOKEN_TAG} ${STOKEN_TAG}
 ./autogen.sh
-[ -d build32 ] || mkdir build32
-cd build32
+[ -d build-${BUILD_ARCH} ] || mkdir build-${BUILD_ARCH}
+cd build-${BUILD_ARCH}
 git clean -fdx
 ../configure --disable-dependency-tracking --without-tomcrypt --without-gtk
 mingw32-make -j4
@@ -51,8 +53,8 @@ cd openconnect
 git reset --hard
 git checkout -b ${OC_TAG} ${OC_TAG}
 ./autogen.sh
-[ -d build32 ] || mkdir build32
-cd build32
+[ -d build-${BUILD_ARCH} ] || mkdir build-${BUILD_ARCH}
+cd build-${BUILD_ARCH}
 git clean -fdx
 ../configure --disable-dependency-tracking --with-gnutls --without-openssl --without-libpskc --with-vpnc-script=vpnc-script-win.js
 mingw32-make -j4
@@ -89,8 +91,8 @@ cp ${MINGW_PREFIX}/bin/libunistring-2.dll .
 cp ${MINGW_PREFIX}/bin/libidn2-0.dll .
 cp ${MINGW_PREFIX}/bin/libstdc++-6.dll .
 cp ${MINGW_PREFIX}/bin/liblzma-5.dll .
-cp ../../openconnect/build32/.libs/libopenconnect-5.dll .
-cp ../../openconnect/build32/.libs/openconnect.exe .
+cp ../../openconnect/build-${BUILD_ARCH}/.libs/libopenconnect-5.dll .
+cp ../../openconnect/build-${BUILD_ARCH}/.libs/openconnect.exe .
 curl -v -o vpnc-script-win.js http://git.infradead.org/users/dwmw2/vpnc-scripts.git/blob_plain/HEAD:/vpnc-script-win.js
 cd ../../
 
@@ -109,7 +111,7 @@ cp ${MINGW_PREFIX}/lib/libiconv.dll.a .
 cp ${MINGW_PREFIX}/lib/libunistring.dll.a .
 cp ${MINGW_PREFIX}/lib/libidn2.dll.a .
 cp ${MINGW_PREFIX}/lib/liblzma.dll.a .
-cp ../../openconnect/build32/.libs/libopenconnect.dll.a .
+cp ../../openconnect/build-${BUILD_ARCH}/.libs/libopenconnect.dll.a .
 cd ../../
 
 mkdir -p pkg/lib/pkgconfig && cd pkg/lib/pkgconfig
@@ -119,7 +121,7 @@ cp ${MINGW_PREFIX}/lib/pkgconfig/libxml-2.0.pc .
 cp ${MINGW_PREFIX}/lib/pkgconfig/nettle.pc .
 cp ${MINGW_PREFIX}/lib/pkgconfig/zlib.pc .
 cp ${MINGW_PREFIX}/lib/pkgconfig/stoken.pc .
-cp ../../../openconnect/build32/openconnect.pc .
+cp ../../../openconnect/build-${BUILD_ARCH}/openconnect.pc .
 cd ../../../
 
 mkdir -p pkg/include && cd pkg/include
@@ -137,38 +139,38 @@ cd ../../
 export MINGW_PREFIX=
 
 cd pkg/nsis
-7za a -tzip -mx=9 -sdel ../../openconnect-${OC_TAG}_mingw32.zip *
+7za a -tzip -mx=9 -sdel ../../openconnect-${OC_TAG}_$MSYSTEM.zip *
 cd ../
 rmdir -v nsis
-7za a -tzip -mx=9 -sdel ../openconnect-devel-${OC_TAG}_mingw32.zip *
+7za a -tzip -mx=9 -sdel ../openconnect-devel-${OC_TAG}_$MSYSTEM.zip *
 cd ../
 rmdir -v pkg
 
 
-#cd stoken/build32
-#sudo mingw32-make uninstall
+#cd stoken/build-${BUILD_ARCH}
+#sudo $MSYSTEM-make uninstall
 
 echo "List of system-wide used packages versions:" \
-    > openconnect-${OC_TAG}_mingw32.txt
+    > openconnect-${OC_TAG}_$MSYSTEM.txt
 echo "openconnect-${OC_TAG}" \
-    >> openconnect-${OC_TAG}_mingw32.txt
+    >> openconnect-${OC_TAG}_$MSYSTEM.txt
 echo "stoken-${STOKEN_TAG}" \
-    >> openconnect-${OC_TAG}_mingw32.txt
+    >> openconnect-${OC_TAG}_$MSYSTEM.txt
 pacman -Q \
-    mingw-w64-i686-gnutls \
-    mingw-w64-i686-libidn2 \
-    mingw-w64-i686-libunistring \
-    mingw-w64-i686-nettle \
-    mingw-w64-i686-gmp \
-    mingw-w64-i686-p11-kit \
-    mingw-w64-i686-libxml2 \
-    mingw-w64-i686-zlib \
-    mingw-w64-i686-libxml2 \
-    mingw-w64-i686-lz4 \
-    mingw-w64-i686-libproxy \
-    >> openconnect-${OC_TAG}_mingw32.txt
+    mingw-w64-${BUILD_ARCH}-gnutls \
+    mingw-w64-${BUILD_ARCH}-libidn2 \
+    mingw-w64-${BUILD_ARCH}-libunistring \
+    mingw-w64-${BUILD_ARCH}-nettle \
+    mingw-w64-${BUILD_ARCH}-gmp \
+    mingw-w64-${BUILD_ARCH}-p11-kit \
+    mingw-w64-${BUILD_ARCH}-libxml2 \
+    mingw-w64-${BUILD_ARCH}-zlib \
+    mingw-w64-${BUILD_ARCH}-libxml2 \
+    mingw-w64-${BUILD_ARCH}-lz4 \
+    mingw-w64-${BUILD_ARCH}-libproxy \
+    >> openconnect-${OC_TAG}_$MSYSTEM.txt
 
-sha512sum.exe openconnect-${OC_TAG}_mingw32.zip > openconnect-${OC_TAG}_mingw32.zip.sha512
-sha512sum.exe openconnect-devel-${OC_TAG}_mingw32.zip > openconnect-devel-${OC_TAG}_mingw32.zip.sha512
+sha512sum.exe openconnect-${OC_TAG}_$MSYSTEM.zip > openconnect-${OC_TAG}_$MSYSTEM.zip.sha512
+sha512sum.exe openconnect-devel-${OC_TAG}_$MSYSTEM.zip > openconnect-devel-${OC_TAG}_$MSYSTEM.zip.sha512
 
 mv -v openconnect-*.zip openconnect-*.txt openconnect-*.zip.sha512 ..
