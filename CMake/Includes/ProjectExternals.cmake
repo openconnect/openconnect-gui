@@ -1,4 +1,10 @@
-set(openconnect-TAG v7.08)
+set(openconnect-TAG "v7.08" CACHE STRING "Please specify openconnect version")
+set(openconnect-TAG_CHOICES "v7.08" "master")
+set_property(CACHE openconnect-TAG PROPERTY STRINGS ${openconnect-TAG_CHOICES})
+if(NOT openconnect-TAG IN_LIST openconnect-TAG_CHOICES)
+  message(FATAL_ERROR "Specify 'openconnect-TAG'. Must be one of ${openconnect-TAG_CHOICES}")
+endif()
+
 set(vpnc-scripts-TAG master)
 set(spdlog-TAG v1.2.1)
 set(qt-solutions-TAG master)
