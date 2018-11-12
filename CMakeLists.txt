@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.11 FATAL_ERROR)
 
 if(APPLE)
      if(NOT CMAKE_OSX_DEPLOYMENT_TARGET)
-        set(CMAKE_OSX_DEPLOYMENT_TARGET "10.11" CACHE STRING "" FORCE)
+        set(CMAKE_OSX_DEPLOYMENT_TARGET "10.12" CACHE STRING "" FORCE)
     endif()
 endif()
 
