@@ -18,6 +18,8 @@ else
     export OC_TAG=v7.08
     export STOKEN_TAG=v0.92
 fi
+export OC_URL=git://git.infradead.org/users/dwmw2/openconnect.git
+export STOKEN_URL=https://github.com/cernekee/stoken
 
 pacman --needed --noconfirm -S \
     mingw-w64-x86_64-gnutls \
@@ -37,9 +39,9 @@ pacman --needed --noconfirm -S \
 [ -d work ] || mkdir work
 cd work
 
-[ -d stoken ] ||  git clone https://github.com/cernekee/stoken
+[ -d stoken ] ||  git clone ${STOKEN_URL}
 cd stoken
-git checkout ${STOKEN_TAG}
+git checkout -b ${STOKEN_TAG} ${STOKEN_TAG}
 ./autogen.sh
 [ -d build64 ] || mkdir build64
 cd build64
@@ -49,10 +51,10 @@ mingw32-make -j4
 mingw32-make install
 cd ../../
 
-[ -d openconnect ] || git clone git://git.infradead.org/users/dwmw2/openconnect.git
+[ -d openconnect ] || git clone ${OC_URL}
 cd openconnect
 git reset --hard
-git checkout ${OC_TAG}
+git checkout -b ${OC_TAG} ${OC_TAG}
 ./autogen.sh
 [ -d build64 ] || mkdir build64
 cd build64
