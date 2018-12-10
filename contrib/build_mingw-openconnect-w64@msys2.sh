@@ -56,6 +56,8 @@ cd ../../
 [ -d openconnect ] || git clone ${OC_URL}
 cd openconnect
 git reset --hard
+echo "hash:"
+git rev-parse --short HEAD
 git checkout -b ${OC_TAG} ${OC_TAG}
 ./autogen.sh
 [ -d build-${BUILD_ARCH} ] || mkdir build-${BUILD_ARCH}
