@@ -17,7 +17,7 @@ if [ "$1" == "--head" ]; then
     export OC_TAG=master
     export STOKEN_TAG=master
 else
-    export OC_TAG=v7.08
+    export OC_TAG=v8.01
     export STOKEN_TAG=v0.92
 fi
 export OC_URL=git://git.infradead.org/users/dwmw2/openconnect.git

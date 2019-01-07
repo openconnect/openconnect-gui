@@ -8,7 +8,7 @@
 # (c) 2018, Lubomir Carik
 #
 
-export OC_TAG=v7.08
+export OC_TAG=v8.01
 export STOKEN_TAG=v0.92
 
 dnf -y install \
