@@ -5,7 +5,7 @@ REM
 REM It should be used only as illustration how to build application
 REM and create an installer package
 REM
-REM (c) 2016-2018, Lubomir Carik
+REM (c) 2016-2019, Lubomir Carik
 REM
 
 echo "======================================================================="

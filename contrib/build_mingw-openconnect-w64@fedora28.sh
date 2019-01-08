@@ -5,7 +5,7 @@
 # It should be used only as illustration how to build application
 # and create an installer package
 #
-# (c) 2018, Lubomir Carik
+# (c) 2018-2019, Lubomir Carik
 #
 
 export OC_TAG=v8.01

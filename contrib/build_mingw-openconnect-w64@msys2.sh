@@ -5,7 +5,7 @@
 # It should be used only as illustration how to build application
 # and create an installer package
 #
-# (c) 2018, Lubomir Carik
+# (c) 2018-2019, Lubomir Carik
 #
 
 [ "$MSYSTEM" != "MINGW64" ] && exit -1
@@ -20,6 +20,7 @@ else
     export OC_TAG=v8.01
     export STOKEN_TAG=v0.92
 fi
+
 export OC_URL=git://git.infradead.org/users/dwmw2/openconnect.git
 export STOKEN_URL=https://github.com/cernekee/stoken
 
