@@ -96,7 +96,7 @@ cp ${MINGW_PREFIX}/bin/libproxy-1.dll .
 cp ${MINGW_PREFIX}/bin/liblz4.dll .
 cp ${MINGW_PREFIX}/bin/libiconv-2.dll .
 cp ${MINGW_PREFIX}/bin/libunistring-2.dll .
-cp ${MINGW_PREFIX}/bin/libidn2-0.dll .
+cp ${MINGW_PREFIX}/bin/libidn2-4.dll .
 cp ${MINGW_PREFIX}/bin/libstdc++-6.dll .
 cp ${MINGW_PREFIX}/bin/liblzma-5.dll .
 cp ../../openconnect/build-${BUILD_ARCH}/.libs/libopenconnect-5.dll .
