@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.11 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.12 FATAL_ERROR)
 
 project(qtsingleapplication
     LANGUAGES CXX
@@ -12,23 +12,26 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTORCC ON)
 
-find_package(Qt5 5.11 REQUIRED COMPONENTS Core Gui Widgets Network)
+find_package(Qt5 5.12 REQUIRED COMPONENTS Core Gui Widgets Network)
 
-add_definitions(-DUNICODE)
-add_library(qtsingleapplication STATIC
+add_library(${PROJECT_NAME} STATIC
     qtsingleapplication/src/qtsingleapplication.cpp
     qtsingleapplication/src/qtsingleapplication.h
     qtsingleapplication/src/qtlocalpeer.cpp
 )
 
-target_link_libraries(qtsingleapplication
+target_compile_definitions(${PROJECT_NAME}
+    PRIVATE -DUNICODE
+)
+
+target_link_libraries(${PROJECT_NAME}
     Qt5::Core
     Qt5::Gui
     Qt5::Widgets
     Qt5::Network
 )
 
-install(TARGETS qtsingleapplication
+install(TARGETS ${PROJECT_NAME}
     DESTINATION lib
 )
 install(

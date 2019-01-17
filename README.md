@@ -14,7 +14,7 @@ Look to [OpenConnect-GUI](http://openconnect.github.io/openconnect-gui/) project
 
 ## Supported Platforms
 - Microsoft Windows 7 and newer
-- macOS 10.11 and newer
+- macOS 10.12 and newer
 
 ## Development info
 - [Software requirements](docs/sw_requirements.md)

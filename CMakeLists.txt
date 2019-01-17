@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.11 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.12 FATAL_ERROR)
 
 if(APPLE)
      if(NOT CMAKE_OSX_DEPLOYMENT_TARGET)

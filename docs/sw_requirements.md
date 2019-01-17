@@ -5,19 +5,19 @@ This chapter summarize actual development environment. Newer or older versions m
 This is target platform for the product.
 
 - [Qt 5 (incl. mingw32) & QtCreator 4+](http://download.qt.io/official_releases/online_installers/qt-unified-windows-x86-online.exe) and choose:
-    - 5.11.1/MinGW 5.3.0 (32-bit)
-    - Tools/MinGW 5.3.0 component
+    - 5.12.0/MinGW 7.3.0 64-bit
+    - Tools/MinGW 7.3.0 64-bit
     - Tools/QtCreator component
     - Tools/QtCreator CDB Debugger support
 - [NSIS 3.0+](https://sourceforge.net/projects/nsis)
-- [CMake 3.11+](https://cmake.org/)
+- [CMake 3.12+](https://cmake.org/)
 - [Git 2.7+](https://git-scm.com/)
 
 ##### Externals
 
 These projects will be downloaded automatically by CMake.
 
-- [OpenConnect for MinGW32](https://github.com/horar/openconnect/releases)
+- [OpenConnect for MinGW32/MinGW64](https://github.com/horar/openconnect/releases)
 - [TAP-windows](https://openvpn.net/index.php/open-source/downloads.html)
 - [spdlog](https://github.com/gabime/spdlog)
 - [qt-solutions](https://github.com/qtproject/qt-solutions.git)
@@ -43,7 +43,7 @@ This is not main target platform, because openconnect is used by other projects 
 
 #### MacOS
 - MacOS 10.13+
-- Xcode 9.4+ incl. command line tools
+- Xcode 10.0+ incl. command line tools
 - [Qt online installer](http://download.qt.io/official_releases/online_installers/qt-unified-mac-x64-online.dmg) and choose:
-    - 5.11.1/"OS X" component
+    - 5.12.0/"OS X" component
     - Tools/QtCreator component
