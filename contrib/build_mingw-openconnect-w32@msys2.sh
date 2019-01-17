@@ -17,7 +17,7 @@ if [ "$1" == "--head" ]; then
     export OC_TAG=master
     export STOKEN_TAG=master
 else
-    export OC_TAG=v8.01
+    export OC_TAG=v8.02
     export STOKEN_TAG=v0.92
 fi
 
