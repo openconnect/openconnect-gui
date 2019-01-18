@@ -6,7 +6,7 @@ if(NOT openconnect-TAG IN_LIST openconnect-TAG_CHOICES)
 endif()
 
 set(vpnc-scripts-TAG master)
-set(spdlog-TAG v1.3.0)
+set(spdlog-TAG v1.3.1)
 set(qt-solutions-TAG master)
 set(tap-driver-TAG 9.21.2)
 
