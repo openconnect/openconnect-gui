@@ -235,6 +235,7 @@ void EditDialog::on_buttonBox_accepted()
         return;
     }
     ss->set_label(ui->nameEdit->text());
+    ss->set_groupname(ui->groupnameEdit->text());
     ss->set_username(ui->usernameEdit->text());
     ss->set_servername(ui->gatewayEdit->text());
     ss->set_batch_mode(ui->batchModeBox->isChecked());
