@@ -460,7 +460,7 @@ void MainWindow::changeStatus(int val)
         if (this->minimize_on_connect) {
             if (m_trayIcon) {
                 hide();
-                m_trayIcon->showMessage(QLatin1String("Connected"), QLatin1String("You were connected to ") + ui->serverList->currentText(),
+                m_trayIcon->showMessage(QLatin1String("Connected"), QLatin1String("You are connected to ") + ui->serverList->currentText(),
                     QSystemTrayIcon::Information,
                     10000);
             } else {
