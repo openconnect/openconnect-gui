@@ -188,7 +188,7 @@ int Key::tmpfile_export(QString& filename)
 
     tmpfile.resize(0);
     filename = TMP_KEY_PREFIX;
-    tmpfile.setFileTemplate(filename);
+    tmpfile.setFileTemplate(QDir::tempPath() + filename);
 
     gnutls_datum_t out;
     int ret = gnutls_x509_privkey_export2(this->privkey, GNUTLS_X509_FMT_PEM, &out);

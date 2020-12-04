@@ -22,6 +22,7 @@
 #include <QByteArray>
 #include <QString>
 #include <QTemporaryFile>
+#include <QDir>
 extern "C" {
 #include <gnutls/x509.h>
 }

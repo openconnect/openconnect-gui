@@ -20,6 +20,7 @@
 #pragma once
 
 #include <QTemporaryFile>
+#include <QDir>
 extern "C" {
 #include <gnutls/x509.h>
 }

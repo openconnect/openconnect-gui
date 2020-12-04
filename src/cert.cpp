@@ -177,7 +177,7 @@ int Cert::tmpfile_export(QString& filename)
 
     tmpfile.resize(0);
     filename = TMP_CERT_PREFIX;
-    tmpfile.setFileTemplate(filename);
+    tmpfile.setFileTemplate(QDir::tempPath() + filename);
 
     tmpfile.open();
     ret = tmpfile.write(qa);

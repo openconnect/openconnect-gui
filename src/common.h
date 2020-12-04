@@ -22,8 +22,8 @@
 /* undef on normal builds */
 #undef PROJ_GNUTLS_DEBUG
 
-#define TMP_CERT_PREFIX "tmp-certXXXXXX"
-#define TMP_KEY_PREFIX "tmp-keyXXXXXX"
+#define TMP_CERT_PREFIX "/tmp-certXXXXXX"
+#define TMP_KEY_PREFIX "/tmp-keyXXXXXX"
 
 #define OFF_ICON QPixmap(QString::fromLatin1(":/images/traffic_light_red.png"))
 #define ON_ICON QPixmap(QString::fromLatin1(":/images/traffic_light_green.png"))
