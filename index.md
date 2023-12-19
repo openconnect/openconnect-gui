@@ -1,12 +1,13 @@
 ## Welcome to OpenConnect graphical client pages.
 
-[OpenConnect](http://www.infradead.org/openconnect/) is a VPN client, that utilizes TLS and DTLS for secure session establishment, and is compatible with the CISCO AnyConnect SSL VPN protocol. OpenConnect-gui is the graphical client of OpenConnect for the Microsoft Windows system (or any other system [Qt](http://www.qt.io) and OpenConnect run at).
+OpenConnect is a VPN client, that utilizes TLS and DTLS for secure session establishment, and is compatible with the CISCO AnyConnect SSL VPN protocol. OpenConnect-gui is the graphical client of OpenConnect for the Microsoft Windows system (or any other system [Qt](http://www.qt.io) and OpenConnect run at).
 
 The client is currently at beta testing phase.
 
 ***
- * [Download](https://github.com/openconnect/openconnect-gui/releases)
- * [Issue tracker](https://github.com/openconnect/openconnect-gui/issues)
+ * [Download](https://gitlab.com/openconnect/openconnect-gui/-/releases)
+ * [Issue tracker](https://gitlab.com/openconnect/openconnect-gui/-/issues)
+ * [Source code](https://gitlab.com/openconnect/openconnect-gui/)
  * [Frequently Asked Questions](https://github.com/openconnect/openconnect-gui/wiki/FAQ)
 
 ***
@@ -46,4 +47,4 @@ OpenConnect is available in almost every platform.
 * [Android](https://github.com/cernekee/ics-openconnect): An implementation of OpenConnect for android mobile phones.
 * [OpenWRT](https://github.com/openwrt/packages/tree/master/net/openconnect): A port to OpenWrt and its luci interface.
 
-The [OpenConnect server](http://www.infradead.org/ocserv/) is available for Linux and most BSD systems
+The [OpenConnect server](https://ocserv.gitlab.io/www/) is available for Linux and most BSD systems
